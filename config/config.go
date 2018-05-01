@@ -1,8 +1,8 @@
 package config
 
 import (
-    "github.com/ASankaran/arbor/proxy"
-    "github.com/ASankaran/arbor/security"
+    "github.com/arbor-dev/arbor/proxy"
+    "github.com/arbor-dev/arbor/security"
 )
 
 const TestURL string = "http://localhost:8001"

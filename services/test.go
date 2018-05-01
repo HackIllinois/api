@@ -3,7 +3,8 @@ package services
 import (
 	"net/http"
 	"../config"
-	"github.com/ASankaran/arbor"
+	"../middleware"
+	"github.com/arbor-dev/arbor"
 )
 
 const TestURL = config.TestURL
@@ -32,14 +33,24 @@ var TestRoutes = arbor.RouteCollection {
 }
 
 func UserAuth(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, TestURL + r.URL.String(), TestFormat, "", r, []string{"User"})
+	is_authorized, err := middleware.IsAuthorized(r, []string{"User"})
+	if err != nil  || !is_authorized {
+		w.WriteHeader(403)
+		return
+	}
+	arbor.POST(w, TestURL + r.URL.String(), TestFormat, "", r)
 }
 
 func AdminAuth(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, TestURL + r.URL.String(), TestFormat, "", r, []string{"Admin"})
+	is_authorized, err := middleware.IsAuthorized(r, []string{"Admin"})
+	if err != nil  || !is_authorized {
+		w.WriteHeader(403)
+		return
+	}
+	arbor.POST(w, TestURL + r.URL.String(), TestFormat, "", r)
 }
 
 func NoAuth(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, TestURL + r.URL.String(), TestFormat, "", r, nil)
+	arbor.POST(w, TestURL + r.URL.String(), TestFormat, "", r)
 }
 

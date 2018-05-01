@@ -3,7 +3,7 @@ package main
 import (
 	"./config"
 	"./services"
-	"github.com/ASankaran/arbor"
+	"github.com/arbor-dev/arbor"
 )
 
 func main() {

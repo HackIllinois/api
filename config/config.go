@@ -6,6 +6,7 @@ import (
 )
 
 const TestURL string = "http://localhost:8001"
+const AuthURL string = "http://localhost:8002"
 
 func LoadArborConfig() {
     security.AccessLogLocation = "log/access.log"

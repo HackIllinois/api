@@ -2,14 +2,9 @@ package main
 
 import (
 	"time"
+	"./config"
 	jwt "github.com/dgrijalva/jwt-go"
 )
-
-var secret []byte
-
-func init() {
-	secret = []byte("secret_string")
-}
 
 func MakeToken(id int, email string, roles []string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims {
@@ -19,7 +14,7 @@ func MakeToken(id int, email string, roles []string) (string, error) {
 		"roles": roles,
 	})
 
-	signed_token, err := token.SignedString(secret)
+	signed_token, err := token.SignedString(config.TOKEN_SECRET)
 
 	return signed_token, err
 }

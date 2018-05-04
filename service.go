@@ -2,6 +2,7 @@ package main
 
 import (
 	"time"
+	"errors"
 	"./models"
 	"./config"
 	jwt "github.com/dgrijalva/jwt-go"
@@ -40,7 +41,7 @@ func GetGithubEmail(oauth_token string) (string, error) {
 	err = request.JSON(&emails)
 
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	for _, email := range emails {
@@ -49,7 +50,7 @@ func GetGithubEmail(oauth_token string) (string, error) {
 		}
 	}
 
-	return "", nil
+	return "", errors.New("No primary email")
 }
 
 func GetOauthToken(code string) (string, error) {
@@ -72,7 +73,11 @@ func GetOauthToken(code string) (string, error) {
 	err = request.JSON(&oauth_token)
 
 	if err != nil {
-		return "", nil
+		return "", err
+	}
+
+	if oauth_token.Token == "" {
+		return "", errors.New("Invalid oauth code")
 	}
 
 	return oauth_token.Token, nil

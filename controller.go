@@ -7,6 +7,7 @@ import (
 	"github.com/justinas/alice"
 	"./models"
 	"./config"
+	"./errors"
 )
 
 func SetupController(route *mux.Route) {
@@ -27,19 +28,23 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	oauth_token, err := GetOauthToken(oauth_code.Code)
 
 	if err != nil {
-		// TODO: Handle error
+		panic(errors.UnprocessableError(err.Error()))
 	}
 
 	email, err := GetGithubEmail(oauth_token)
 
 	if err != nil {
-		// TODO: Handle error
+		panic(errors.UnprocessableError(err.Error()))
 	}
+
+	// TODO: Get User ID from User Service
+
+	// TODO: Get Roles from DB
 
 	signed_token, err := MakeToken(0, email, []string{"User"})
 
 	if err != nil {
-		// TODO: Handle error
+		panic(errors.UnprocessableError(err.Error()))
 	}
 
 	token := models.Token {

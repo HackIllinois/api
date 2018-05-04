@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 	"./models"
+	"./config"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/levigross/grequests"
 )
@@ -49,4 +50,30 @@ func GetGithubEmail(oauth_token string) (string, error) {
 	}
 
 	return "", nil
+}
+
+func GetOauthToken(code string) (string, error) {
+	request, err := grequests.Post("https://github.com/login/oauth/access_token", &grequests.RequestOptions {
+		Params: map[string]string {
+			"client_id" : config.GITHUB_CLIENT_ID,
+			"client_secret" : config.GITHUB_CLIENT_SECRET,
+			"code" : code,
+		},
+		Headers: map[string]string {
+			"Accept" : "application/json",
+		},
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	var oauth_token models.GithubOauthToken
+	err = request.JSON(&oauth_token)
+
+	if err != nil {
+		return "", nil
+	}
+
+	return oauth_token.Token, nil
 }

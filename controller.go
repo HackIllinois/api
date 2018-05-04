@@ -6,20 +6,35 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"./models"
+	"./config"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/github/", alice.New().ThenFunc(LoginGithub)).Methods("POST")
+	router.Handle("/", alice.New().ThenFunc(Authorize)).Methods("GET")
+	router.Handle("/code/", alice.New().ThenFunc(Login)).Methods("POST")
 }
 
-func LoginGithub(w http.ResponseWriter, r *http.Request) {
-	var login models.Login
-	json.NewDecoder(r.Body).Decode(&login)
+func Authorize(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "https://github.com/login/oauth/authorize?client_id=" + config.GITHUB_CLIENT_ID, 302);
+}
 
-	// TODO: Login github here
-	email, _ := GetGithubEmail(login.Oauth)
+func Login(w http.ResponseWriter, r *http.Request) {
+	var oauth_code models.OauthCode
+	json.NewDecoder(r.Body).Decode(&oauth_code)
+
+	oauth_token, err := GetOauthToken(oauth_code.Code)
+
+	if err != nil {
+		// TODO: Handle error
+	}
+
+	email, err := GetGithubEmail(oauth_token)
+
+	if err != nil {
+		// TODO: Handle error
+	}
 
 	signed_token, err := MakeToken(0, email, []string{"User"})
 

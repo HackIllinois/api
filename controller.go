@@ -6,7 +6,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"./models"
-	"./config"
 	"./errors"
 )
 
@@ -18,20 +17,26 @@ func SetupController(route *mux.Route) {
 }
 
 func Authorize(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "https://github.com/login/oauth/authorize?client_id=" + config.GITHUB_CLIENT_ID, 302);
+	redirect_url, err := GetAuthorizeRedirect("github")
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	http.Redirect(w, r, redirect_url, 302);
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	var oauth_code models.OauthCode
 	json.NewDecoder(r.Body).Decode(&oauth_code)
 
-	oauth_token, err := GetGithubOauthToken(oauth_code.Code)
+	oauth_token, err := GetOauthToken(oauth_code.Code, "github")
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	email, err := GetGithubEmail(oauth_token)
+	email, err := GetEmail(oauth_token, "github")
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

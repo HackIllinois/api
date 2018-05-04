@@ -53,7 +53,7 @@ func GetGithubEmail(oauth_token string) (string, error) {
 	return "", errors.New("No primary email")
 }
 
-func GetOauthToken(code string) (string, error) {
+func GetGithubOauthToken(code string) (string, error) {
 	request, err := grequests.Post("https://github.com/login/oauth/access_token", &grequests.RequestOptions {
 		Params: map[string]string {
 			"client_id" : config.GITHUB_CLIENT_ID,

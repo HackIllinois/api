@@ -25,7 +25,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var oauth_code models.OauthCode
 	json.NewDecoder(r.Body).Decode(&oauth_code)
 
-	oauth_token, err := GetOauthToken(oauth_code.Code)
+	oauth_token, err := GetGithubOauthToken(oauth_code.Code)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

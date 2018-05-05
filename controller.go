@@ -6,25 +6,54 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"./models"
+	"./errors"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/github/", alice.New().ThenFunc(LoginGithub)).Methods("POST")
+	router.Handle("/", alice.New().ThenFunc(Authorize)).Methods("GET")
+	router.Handle("/code/", alice.New().ThenFunc(Login)).Methods("POST")
 }
 
-func LoginGithub(w http.ResponseWriter, r *http.Request) {
-	var login models.Login
-	json.NewDecoder(r.Body).Decode(&login)
+func Authorize(w http.ResponseWriter, r *http.Request) {
+	provider := r.URL.Query().Get("provider")
 
-	// TODO: Login github here
-	email, _ := GetGithubEmail(login.Oauth)
+	redirect_url, err := GetAuthorizeRedirect(provider)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	http.Redirect(w, r, redirect_url, 302);
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	var oauth_code models.OauthCode
+	json.NewDecoder(r.Body).Decode(&oauth_code)
+
+	provider := r.URL.Query().Get("provider")
+
+	oauth_token, err := GetOauthToken(oauth_code.Code, provider)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	email, err := GetEmail(oauth_token, provider)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	// TODO: Get User ID from User Service
+
+	// TODO: Get Roles from DB
 
 	signed_token, err := MakeToken(0, email, []string{"User"})
 
 	if err != nil {
-		// TODO: Handle error
+		panic(errors.UnprocessableError(err.Error()))
 	}
 
 	token := models.Token {

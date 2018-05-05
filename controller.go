@@ -17,7 +17,9 @@ func SetupController(route *mux.Route) {
 }
 
 func Authorize(w http.ResponseWriter, r *http.Request) {
-	redirect_url, err := GetAuthorizeRedirect("github")
+	provider := r.URL.Query().Get("provider")
+
+	redirect_url, err := GetAuthorizeRedirect(provider)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
@@ -30,13 +32,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var oauth_code models.OauthCode
 	json.NewDecoder(r.Body).Decode(&oauth_code)
 
-	oauth_token, err := GetOauthToken(oauth_code.Code, "github")
+	provider := r.URL.Query().Get("provider")
+
+	oauth_token, err := GetOauthToken(oauth_code.Code, provider)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	email, err := GetEmail(oauth_token, "github")
+	email, err := GetEmail(oauth_token, provider)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

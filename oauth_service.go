@@ -31,3 +31,12 @@ func GetOauthToken(code string, provider string) (string, error) {
 		return "", errors.New("Invalid provider")
 	}
 }
+
+func GetUniqueId(oauth_token string, provider string) (string, error) {
+	switch provider {
+	case "github":
+		return GetGithubUniqueId(oauth_token)
+	default:
+		return "", errors.New("Invalid provider")
+	}
+}

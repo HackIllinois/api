@@ -16,6 +16,9 @@ func SetupController(route *mux.Route) {
 	router.Handle("/code/", alice.New().ThenFunc(Login)).Methods("POST")
 }
 
+/*
+	Redirects the client to the oauth authorization url of the specified provider
+*/
 func Authorize(w http.ResponseWriter, r *http.Request) {
 	provider := r.URL.Query().Get("provider")
 
@@ -28,6 +31,10 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, redirect_url, 302);
 }
 
+/*
+	Converts a valid oauth code in the request body to an oauth token
+	Gets basic user information from the oauth provider and returns a jwt token
+*/
 func Login(w http.ResponseWriter, r *http.Request) {
 	var oauth_code models.OauthCode
 	json.NewDecoder(r.Body).Decode(&oauth_code)

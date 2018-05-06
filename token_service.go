@@ -6,6 +6,9 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
+/*
+	Generates a signed oauth token with the user's id, email, and roles embedded in the claims
+*/
 func MakeToken(id int, email string, roles []string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims {
 		"exp": time.Now().Add(time.Hour * 72).Unix(),

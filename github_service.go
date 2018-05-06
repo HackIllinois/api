@@ -8,6 +8,9 @@ import (
 	"github.com/levigross/grequests"
 )
 
+/*
+	Uses a valid oauth token to get the user's primary email
+*/
 func GetGithubEmail(oauth_token string) (string, error) {
 	request, err := grequests.Get("https://api.github.com/user/emails", &grequests.RequestOptions {
 		Headers: map[string]string {"Authorization" : "token " + oauth_token},
@@ -33,6 +36,9 @@ func GetGithubEmail(oauth_token string) (string, error) {
 	return "", errors.New("No primary email")
 }
 
+/*
+	Uses a valid oauth code to get a valid oauth token for the user
+*/
 func GetGithubOauthToken(code string) (string, error) {
 	request, err := grequests.Post("https://github.com/login/oauth/access_token", &grequests.RequestOptions {
 		Params: map[string]string {
@@ -63,6 +69,9 @@ func GetGithubOauthToken(code string) (string, error) {
 	return oauth_token.Token, nil
 }
 
+/*
+	Uses a valid oauth token to get the user's unique id
+*/
 func GetGithubUniqueId(oauth_token string) (string, error) {
 	request, err := grequests.Get("https://api.github.com/user", &grequests.RequestOptions {
 		Headers: map[string]string {"Authorization" : "token " + oauth_token},

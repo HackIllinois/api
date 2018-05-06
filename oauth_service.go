@@ -5,6 +5,9 @@ import (
 	"./config"
 )
 
+/*
+	Return the oauth authoization url for the given provider
+*/
 func GetAuthorizeRedirect(provider string) (string, error) {
 	switch provider {
 	case "github":
@@ -14,6 +17,9 @@ func GetAuthorizeRedirect(provider string) (string, error) {
 	}
 }
 
+/*
+	Gets the user's email from the specified oauth provider
+*/
 func GetEmail(oauth_token string, provider string) (string, error) {
 	switch provider {
 	case "github":
@@ -23,6 +29,9 @@ func GetEmail(oauth_token string, provider string) (string, error) {
 	}
 }
 
+/*
+	Converts an oauth code to an oauth token for the specified provider
+*/
 func GetOauthToken(code string, provider string) (string, error) {
 	switch provider {
 	case "github":
@@ -32,6 +41,9 @@ func GetOauthToken(code string, provider string) (string, error) {
 	}
 }
 
+/*
+	Gets the user's unique id from the specified oauth provider
+*/
 func GetUniqueId(oauth_token string, provider string) (string, error) {
 	switch provider {
 	case "github":

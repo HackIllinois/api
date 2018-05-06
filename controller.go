@@ -59,9 +59,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	// TODO: Get Roles from DB
+	roles, err := GetUserRoles(id)
 
-	signed_token, err := MakeToken(id, email, []string{"User"})
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	signed_token, err := MakeToken(id, email, roles)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

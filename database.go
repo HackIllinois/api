@@ -68,3 +68,17 @@ func Insert(collection_name string, item interface{}) error {
 
 	return err
 }
+
+/*
+	Finds an item based on the given selector and updates it with the data in update
+*/
+func Update(collection_name string, selector interface{}, update interface{}) error {
+	current_session := GetSession()
+	defer current_session.Close()
+
+	collection := current_session.DB(config.AUTH_DB_NAME).C(collection_name)
+
+	err := collection.Update(selector, update)
+
+	return err
+}

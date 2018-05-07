@@ -53,15 +53,25 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	// TODO: Get User ID from User Service
-
-	// TODO: Get Roles from DB
-
-	signed_token, err := MakeToken(0, email, []string{"User"})
+	id, err := GetUniqueId(oauth_token, provider)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
+
+	roles, err := GetUserRoles(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	signed_token, err := MakeToken(id, email, roles)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	// TODO: Make call to user service to update basic user info
 
 	token := models.Token {
 		Token: signed_token,

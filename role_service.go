@@ -6,6 +6,11 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+/*
+	Get the user's roles by id
+	If the user has no roles they will be assigned the role User
+	This occurs the first time the user logs into the service
+*/
 func GetUserRoles(id string) ([]string, error) {
 	query := bson.M {
 		"id": id,

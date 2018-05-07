@@ -7,6 +7,9 @@ import (
 
 var global_session *mgo.Session
 
+/*
+	Initialize connection to mongo database
+*/
 func init() {
 	session, err := mgo.Dial(config.AUTH_DB_HOST)
 
@@ -17,10 +20,16 @@ func init() {
 	}
 }
 
+/*
+	Returns a copy of the global session for use by a connection
+*/
 func GetSession() *mgo.Session {
 	return global_session.Copy()
 }
 
+/*
+	Find one element matching the given query parameters
+*/
 func FindOne(collection_name string, query interface{}, result interface{}) error {
 	current_session := GetSession()
 	defer current_session.Close()
@@ -32,6 +41,9 @@ func FindOne(collection_name string, query interface{}, result interface{}) erro
 	return err
 }
 
+/*
+	Find all elements matching the given query parameters
+*/
 func FindAll(collection_name string, query interface{}, result interface{}) error {
 	current_session := GetSession()
 	defer current_session.Close()
@@ -43,6 +55,9 @@ func FindAll(collection_name string, query interface{}, result interface{}) erro
 	return err
 }
 
+/*
+	Insert the given item into the collection
+*/
 func Insert(collection_name string, item interface{}) error {
 	current_session := GetSession()
 	defer current_session.Close()

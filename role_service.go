@@ -8,10 +8,10 @@ import (
 
 /*
 	Get the user's roles by id
-	If the user has no roles they will be assigned the role User
-	This occurs the first time the user logs into the service
+	If the user has no roles and create_user is true they will be assigned the role User
+	This generally occurs the first time the user logs into the service
 */
-func GetUserRoles(id string) ([]string, error) {
+func GetUserRoles(id string, create_user bool) ([]string, error) {
 	query := bson.M {
 		"id": id,
 	}
@@ -20,7 +20,7 @@ func GetUserRoles(id string) ([]string, error) {
 	err := FindOne("roles", query, &roles)
 
 	if err != nil {
-		if err == mgo.ErrNotFound {
+		if err == mgo.ErrNotFound && create_user {
 			Insert("roles", &models.UserRoles {
 				ID: id,
 				Roles: []string{"User"},
@@ -37,4 +37,20 @@ func GetUserRoles(id string) ([]string, error) {
 	}
 
 	return roles.Roles, nil
+}
+
+/*
+	Sets the roles for the user with the specified id
+*/
+func SetUserRoles(id string, roles []string) error {
+	selector := bson.M {
+		"id": id,
+	}
+
+	err := Update("roles", selector, &models.UserRoles {
+		ID: id,
+		Roles: roles,
+	})
+
+	return err
 }

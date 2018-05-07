@@ -14,6 +14,8 @@ func SetupController(route *mux.Route) {
 
 	router.Handle("/", alice.New().ThenFunc(Authorize)).Methods("GET")
 	router.Handle("/code/", alice.New().ThenFunc(Login)).Methods("POST")
+	router.Handle("/roles/", alice.New().ThenFunc(GetRoles)).Methods("GET")
+	router.Handle("/roles/", alice.New().ThenFunc(SetRoles)).Methods("PUT")
 }
 
 /*
@@ -59,7 +61,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	roles, err := GetUserRoles(id)
+	roles, err := GetUserRoles(id, true)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
@@ -78,4 +80,59 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(token)
+}
+
+/*
+	Gets the roles for the user with the given id
+*/
+func GetRoles(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	if id == "" {
+		panic(errors.UnprocessableError("Must provide id parameter"))
+	}
+
+	roles, err := GetUserRoles(id, false)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	user_roles := models.UserRoles {
+		ID: id,
+		Roles: roles,
+	}
+
+	json.NewEncoder(w).Encode(user_roles)
+}
+
+/*
+	Updated the roles for the user with the given id
+*/
+func SetRoles(w http.ResponseWriter, r *http.Request) {
+	var user_roles models.UserRoles
+	json.NewDecoder(r.Body).Decode(&user_roles)
+
+	if user_roles.ID == "" {
+		panic(errors.UnprocessableError("Must provide id parameter"))
+	}
+
+	err := SetUserRoles(user_roles.ID, user_roles.Roles)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	roles, err := GetUserRoles(user_roles.ID, false)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	updated_roles := models.UserRoles {
+		ID: user_roles.ID,
+		Roles: roles,
+	}
+
+	json.NewEncoder(w).Encode(updated_roles)
 }

@@ -2,7 +2,7 @@ package middleware
 
 import (
     "net/http"
-    "../errors"
+    "github.com/hackillinois/api-auth/errors"
     "encoding/json"
     "fmt"
 )

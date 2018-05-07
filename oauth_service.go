@@ -2,7 +2,7 @@ package main
 
 import (
 	"errors"
-	"./config"
+	"github.com/hackillinois/api-auth/config"
 )
 
 /*

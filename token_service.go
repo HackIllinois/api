@@ -2,7 +2,7 @@ package main
 
 import (
 	"time"
-	"./config"
+	"github.com/hackillinois/api-auth/config"
 	jwt "github.com/dgrijalva/jwt-go"
 )
 

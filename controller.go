@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
-	"./models"
-	"./errors"
+	"github.com/hackillinois/api-auth/models"
+	"github.com/hackillinois/api-auth/errors"
 )
 
 func SetupController(route *mux.Route) {

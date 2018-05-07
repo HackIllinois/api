@@ -3,8 +3,8 @@ package main
 import (
 	"strconv"
 	"errors"
-	"./models"
-	"./config"
+	"github.com/hackillinois/api-auth/models"
+	"github.com/hackillinois/api-auth/config"
 	"github.com/levigross/grequests"
 )
 

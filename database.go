@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./config"
+	"github.com/hackillinois/api-auth/config"
 	"gopkg.in/mgo.v2"
 )
 

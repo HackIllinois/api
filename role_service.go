@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./models"
+	"github.com/hackillinois/api-auth/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/hackillinois/api-auth/controller"
 	"log"
 	"net/http"
 	"github.com/gorilla/mux"
@@ -9,7 +10,7 @@ import (
 
 func main() {
 	router := mux.NewRouter()
-	SetupController(router.PathPrefix("/auth"))
+	controller.SetupController(router.PathPrefix("/auth"))
 
 	router.Use(middleware.ErrorMiddleware)
 	router.Use(middleware.ContentTypeMiddleware)

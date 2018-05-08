@@ -1,5 +1,12 @@
 language: go
 go:
     - "1.10.x"
+services:
+    mongodb
+install:
+    false
+before_script:
+    go get -u -v github.com/hackillinois/api-auth
 script:
+    go build github.com/hackillinois/api-auth
     go test github.com/hackillinois/api-auth/tests

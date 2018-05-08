@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/hackillinois/api-auth/controller"
+	"github.com/HackIllinois/api-auth/controller"
 	"log"
 	"net/http"
 	"github.com/gorilla/mux"
-	"github.com/hackillinois/api-auth/middleware"
+	"github.com/HackIllinois/api-auth/middleware"
 )
 
 func main() {

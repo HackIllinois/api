@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"github.com/hackillinois/api-auth/service"
+	"github.com/HackIllinois/api-auth/service"
 	"net/http"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
-	"github.com/hackillinois/api-auth/models"
-	"github.com/hackillinois/api-auth/errors"
+	"github.com/HackIllinois/api-auth/models"
+	"github.com/HackIllinois/api-auth/errors"
 )
 
 func SetupController(route *mux.Route) {

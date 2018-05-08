@@ -6,5 +6,5 @@ services:
 install:
     true
 script:
-    - go build github.com/Hackillinois/api-auth
-    - go test github.com/Hackillinois/api-auth/tests
+    - go build github.com/HackIllinois/api-auth
+    - go test github.com/HackIllinois/api-auth/tests

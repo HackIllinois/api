@@ -5,9 +5,6 @@ services:
     mongodb
 install:
     true
-before_script:
-    - go get -u -v github.com/hackillinois/api-auth
-    - cd $GOPATH/src/github.com/hackillinois/api-auth && git checkout $TRAVIS_BRANCH
 script:
     - go build github.com/hackillinois/api-auth
     - go test github.com/hackillinois/api-auth/tests

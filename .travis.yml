@@ -4,7 +4,7 @@ go:
 services:
     mongodb
 install:
-    false
+    true
 before_script:
     go get -u -v github.com/hackillinois/api-auth
 script:

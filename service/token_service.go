@@ -1,8 +1,8 @@
-package main
+package service
 
 import (
 	"time"
-	"github.com/hackillinois/api-auth/config"
+	"github.com/HackIllinois/api-auth/config"
 	jwt "github.com/dgrijalva/jwt-go"
 )
 

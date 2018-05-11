@@ -1,7 +1,7 @@
-package main
+package database
 
 import (
-	"github.com/hackillinois/api-auth/config"
+	"github.com/HackIllinois/api-auth/config"
 	"gopkg.in/mgo.v2"
 )
 

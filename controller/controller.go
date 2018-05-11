@@ -1,12 +1,13 @@
-package main
+package controller
 
 import (
+	"github.com/HackIllinois/api-auth/service"
 	"net/http"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
-	"github.com/hackillinois/api-auth/models"
-	"github.com/hackillinois/api-auth/errors"
+	"github.com/HackIllinois/api-auth/models"
+	"github.com/HackIllinois/api-auth/errors"
 )
 
 func SetupController(route *mux.Route) {
@@ -24,7 +25,7 @@ func SetupController(route *mux.Route) {
 func Authorize(w http.ResponseWriter, r *http.Request) {
 	provider := r.URL.Query().Get("provider")
 
-	redirect_url, err := GetAuthorizeRedirect(provider)
+	redirect_url, err := service.GetAuthorizeRedirect(provider)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
@@ -43,31 +44,31 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	provider := r.URL.Query().Get("provider")
 
-	oauth_token, err := GetOauthToken(oauth_code.Code, provider)
+	oauth_token, err := service.GetOauthToken(oauth_code.Code, provider)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	email, err := GetEmail(oauth_token, provider)
+	email, err := service.GetEmail(oauth_token, provider)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	id, err := GetUniqueId(oauth_token, provider)
+	id, err := service.GetUniqueId(oauth_token, provider)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	roles, err := GetUserRoles(id, true)
+	roles, err := service.GetUserRoles(id, true)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	signed_token, err := MakeToken(id, email, roles)
+	signed_token, err := service.MakeToken(id, email, roles)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
@@ -92,7 +93,7 @@ func GetRoles(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id parameter"))
 	}
 
-	roles, err := GetUserRoles(id, false)
+	roles, err := service.GetUserRoles(id, false)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
@@ -117,13 +118,13 @@ func SetRoles(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id parameter"))
 	}
 
-	err := SetUserRoles(user_roles.ID, user_roles.Roles)
+	err := service.SetUserRoles(user_roles.ID, user_roles.Roles)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	roles, err := GetUserRoles(user_roles.ID, false)
+	roles, err := service.GetUserRoles(user_roles.ID, false)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

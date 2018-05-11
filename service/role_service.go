@@ -1,7 +1,8 @@
-package main
+package service
 
 import (
-	"github.com/hackillinois/api-auth/models"
+	"github.com/HackIllinois/api-auth/database"
+	"github.com/HackIllinois/api-auth/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -17,16 +18,16 @@ func GetUserRoles(id string, create_user bool) ([]string, error) {
 	}
 
 	var roles models.UserRoles
-	err := FindOne("roles", query, &roles)
+	err := database.FindOne("roles", query, &roles)
 
 	if err != nil {
 		if err == mgo.ErrNotFound && create_user {
-			Insert("roles", &models.UserRoles {
+			database.Insert("roles", &models.UserRoles {
 				ID: id,
 				Roles: []string{"User"},
 			})
 
-			err := FindOne("roles", query, &roles)
+			err := database.FindOne("roles", query, &roles)
 
 			if err != nil {
 				return nil, err
@@ -47,7 +48,7 @@ func SetUserRoles(id string, roles []string) error {
 		"id": id,
 	}
 
-	err := Update("roles", selector, &models.UserRoles {
+	err := database.Update("roles", selector, &models.UserRoles {
 		ID: id,
 		Roles: roles,
 	})

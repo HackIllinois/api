@@ -1,8 +1,8 @@
-package main
+package service
 
 import (
 	"errors"
-	"github.com/hackillinois/api-auth/config"
+	"github.com/HackIllinois/api-auth/config"
 )
 
 /*

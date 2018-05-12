@@ -1,19 +1,19 @@
 package service
 
 import (
-	"strconv"
 	"errors"
-	"github.com/HackIllinois/api-auth/models"
 	"github.com/HackIllinois/api-auth/config"
+	"github.com/HackIllinois/api-auth/models"
 	"github.com/levigross/grequests"
+	"strconv"
 )
 
 /*
 	Uses a valid oauth token to get the user's primary email
 */
 func GetGithubEmail(oauth_token string) (string, error) {
-	request, err := grequests.Get("https://api.github.com/user/emails", &grequests.RequestOptions {
-		Headers: map[string]string {"Authorization" : "token " + oauth_token},
+	request, err := grequests.Get("https://api.github.com/user/emails", &grequests.RequestOptions{
+		Headers: map[string]string{"Authorization": "token " + oauth_token},
 	})
 
 	if err != nil {
@@ -40,14 +40,14 @@ func GetGithubEmail(oauth_token string) (string, error) {
 	Uses a valid oauth code to get a valid oauth token for the user
 */
 func GetGithubOauthToken(code string) (string, error) {
-	request, err := grequests.Post("https://github.com/login/oauth/access_token", &grequests.RequestOptions {
-		Params: map[string]string {
-			"client_id" : config.GITHUB_CLIENT_ID,
-			"client_secret" : config.GITHUB_CLIENT_SECRET,
-			"code" : code,
+	request, err := grequests.Post("https://github.com/login/oauth/access_token", &grequests.RequestOptions{
+		Params: map[string]string{
+			"client_id":     config.GITHUB_CLIENT_ID,
+			"client_secret": config.GITHUB_CLIENT_SECRET,
+			"code":          code,
 		},
-		Headers: map[string]string {
-			"Accept" : "application/json",
+		Headers: map[string]string{
+			"Accept": "application/json",
 		},
 	})
 
@@ -73,8 +73,8 @@ func GetGithubOauthToken(code string) (string, error) {
 	Uses a valid oauth token to get the user's unique id
 */
 func GetGithubUniqueId(oauth_token string) (string, error) {
-	request, err := grequests.Get("https://api.github.com/user", &grequests.RequestOptions {
-		Headers: map[string]string {"Authorization" : "token " + oauth_token},
+	request, err := grequests.Get("https://api.github.com/user", &grequests.RequestOptions{
+		Headers: map[string]string{"Authorization": "token " + oauth_token},
 	})
 
 	if err != nil {

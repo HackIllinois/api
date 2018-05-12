@@ -13,7 +13,7 @@ import (
 	This generally occurs the first time the user logs into the service
 */
 func GetUserRoles(id string, create_user bool) ([]string, error) {
-	query := bson.M {
+	query := bson.M{
 		"id": id,
 	}
 
@@ -22,8 +22,8 @@ func GetUserRoles(id string, create_user bool) ([]string, error) {
 
 	if err != nil {
 		if err == mgo.ErrNotFound && create_user {
-			database.Insert("roles", &models.UserRoles {
-				ID: id,
+			database.Insert("roles", &models.UserRoles{
+				ID:    id,
 				Roles: []string{"User"},
 			})
 
@@ -44,12 +44,12 @@ func GetUserRoles(id string, create_user bool) ([]string, error) {
 	Sets the roles for the user with the specified id
 */
 func SetUserRoles(id string, roles []string) error {
-	selector := bson.M {
+	selector := bson.M{
 		"id": id,
 	}
 
-	err := database.Update("roles", selector, &models.UserRoles {
-		ID: id,
+	err := database.Update("roles", selector, &models.UserRoles{
+		ID:    id,
 		Roles: roles,
 	})
 

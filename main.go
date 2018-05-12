@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/HackIllinois/api-auth/controller"
+	"github.com/HackIllinois/api-commons/middleware"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"github.com/gorilla/mux"
-	"github.com/HackIllinois/api-commons/middleware"
 )
 
 func main() {

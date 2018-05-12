@@ -1,14 +1,14 @@
 Authorization
 =============
 
-GET /auth/?provider=PROVIDER
+GET /auth/PROVIDER/
 ----------------------------
 
 Redirects to the `PROVIDER`'s oauth authorization page. Once the user accepts the oauth authorization they will be redirected to the client's auth page with an oauth code. This code should be sent to the api to be exchanged for an api jwt.
 
 Valid `PROVIDER` strings: `github`
 
-POST /auth/code/?provider=PROVIDER
+POST /auth/code/PROVIDER/
 ----------------------------------
 
 Exchanges a valid oauth code from a jwt from the api. This jwt should be placed in the `Authorization` header for all future api requests.

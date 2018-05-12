@@ -15,7 +15,7 @@ func SetupController(route *mux.Route) {
 
 	router.Handle("/{provider}/", alice.New().ThenFunc(Authorize)).Methods("GET")
 	router.Handle("/code/{provider}/", alice.New().ThenFunc(Login)).Methods("POST")
-	router.Handle("/roles/", alice.New().ThenFunc(GetRoles)).Methods("GET")
+	router.Handle("/roles/{id}/", alice.New().ThenFunc(GetRoles)).Methods("GET")
 	router.Handle("/roles/", alice.New().ThenFunc(SetRoles)).Methods("PUT")
 }
 
@@ -87,7 +87,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	Gets the roles for the user with the given id
 */
 func GetRoles(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
+	id := mux.Vars(r)["id"]
 
 	if id == "" {
 		panic(errors.UnprocessableError("Must provide id parameter"))

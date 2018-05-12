@@ -1,5 +1,5 @@
 package models
 
 type OauthCode struct {
-    Code       string   `json:"code"`
+	Code string `json:"code"`
 }

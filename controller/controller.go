@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"github.com/HackIllinois/api-auth/service"
-	"net/http"
 	"encoding/json"
+	"github.com/HackIllinois/api-auth/models"
+	"github.com/HackIllinois/api-auth/service"
+	"github.com/HackIllinois/api-commons/errors"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
-	"github.com/HackIllinois/api-auth/models"
-	"github.com/HackIllinois/api-commons/errors"
+	"net/http"
 )
 
 func SetupController(route *mux.Route) {
@@ -31,7 +31,7 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	http.Redirect(w, r, redirect_url, 302);
+	http.Redirect(w, r, redirect_url, 302)
 }
 
 /*
@@ -76,7 +76,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: Make call to user service to update basic user info
 
-	token := models.Token {
+	token := models.Token{
 		Token: signed_token,
 	}
 
@@ -99,8 +99,8 @@ func GetRoles(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	user_roles := models.UserRoles {
-		ID: id,
+	user_roles := models.UserRoles{
+		ID:    id,
 		Roles: roles,
 	}
 
@@ -130,8 +130,8 @@ func SetRoles(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	updated_roles := models.UserRoles {
-		ID: user_roles.ID,
+	updated_roles := models.UserRoles{
+		ID:    user_roles.ID,
 		Roles: roles,
 	}
 

@@ -1,26 +1,26 @@
 package tests
 
 import (
-	"testing"
-	"reflect"
 	"bytes"
-	"net/http"
-	"net/http/httptest"
 	"encoding/json"
-	"github.com/gorilla/mux"
+	"github.com/HackIllinois/api-auth/config"
 	"github.com/HackIllinois/api-auth/controller"
-	"github.com/HackIllinois/api-auth/service"
 	"github.com/HackIllinois/api-auth/database"
 	"github.com/HackIllinois/api-auth/models"
-	"github.com/HackIllinois/api-auth/config"
+	"github.com/HackIllinois/api-auth/service"
+	"github.com/gorilla/mux"
+	"net/http"
+	"net/http/httptest"
+	"reflect"
+	"testing"
 )
 
 /*
 	Initialize roles database with a test user
 */
 func SetupTestDB(t *testing.T) {
-	err := database.Insert("roles", &models.UserRoles {
-		ID: "testid",
+	err := database.Insert("roles", &models.UserRoles{
+		ID:    "testid",
 		Roles: []string{"User"},
 	})
 
@@ -38,7 +38,6 @@ func CleanupTestDB(t *testing.T) {
 
 	err := session.DB(config.AUTH_DB_NAME).DropDatabase()
 
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,7 +50,7 @@ func TestGetRolesEndpoint(t *testing.T) {
 	SetupTestDB(t)
 
 	req, err := http.NewRequest("GET", "/auth/roles/testid/", nil)
-	req = mux.SetURLVars(req, map[string]string {"id" : "testid"})
+	req = mux.SetURLVars(req, map[string]string{"id": "testid"})
 
 	if err != nil {
 		t.Fatal(err)
@@ -87,8 +86,8 @@ func TestGetRolesEndpoint(t *testing.T) {
 func TestPutRolesEndpoint(t *testing.T) {
 	SetupTestDB(t)
 
-	req_body := models.UserRoles {
-		ID: "testid",
+	req_body := models.UserRoles{
+		ID:    "testid",
 		Roles: []string{"User", "Admin"},
 	}
 

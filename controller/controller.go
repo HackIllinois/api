@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"github.com/HackIllinois/api-auth/models"
-	"github.com/HackIllinois/api-auth/errors"
+	"github.com/HackIllinois/api-commons/errors"
 )
 
 func SetupController(route *mux.Route) {

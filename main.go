@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"github.com/gorilla/mux"
-	"github.com/HackIllinois/api-auth/middleware"
+	"github.com/HackIllinois/api-commons/middleware"
 )
 
 func main() {

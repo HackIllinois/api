@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"github.com/HackIllinois/api-auth/controller"
 	"github.com/HackIllinois/api-auth/service"
 	"github.com/HackIllinois/api-auth/database"
@@ -44,12 +45,13 @@ func CleanupTestDB(t *testing.T) {
 }
 
 /*
-	End to end test for GET /auth/roles/?id=ID
+	End to end test for GET /auth/roles/ID/
 */
 func TestGetRolesEndpoint(t *testing.T) {
 	SetupTestDB(t)
 
-	req, err := http.NewRequest("GET", "/auth/roles/?id=testid", nil)
+	req, err := http.NewRequest("GET", "/auth/roles/testid/", nil)
+	req = mux.SetURLVars(req, map[string]string {"id" : "testid"})
 
 	if err != nil {
 		t.Fatal(err)

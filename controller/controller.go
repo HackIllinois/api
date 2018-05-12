@@ -13,9 +13,9 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/", alice.New().ThenFunc(Authorize)).Methods("GET")
-	router.Handle("/code/", alice.New().ThenFunc(Login)).Methods("POST")
-	router.Handle("/roles/", alice.New().ThenFunc(GetRoles)).Methods("GET")
+	router.Handle("/{provider}/", alice.New().ThenFunc(Authorize)).Methods("GET")
+	router.Handle("/code/{provider}/", alice.New().ThenFunc(Login)).Methods("POST")
+	router.Handle("/roles/{id}/", alice.New().ThenFunc(GetRoles)).Methods("GET")
 	router.Handle("/roles/", alice.New().ThenFunc(SetRoles)).Methods("PUT")
 }
 
@@ -23,7 +23,7 @@ func SetupController(route *mux.Route) {
 	Redirects the client to the oauth authorization url of the specified provider
 */
 func Authorize(w http.ResponseWriter, r *http.Request) {
-	provider := r.URL.Query().Get("provider")
+	provider := mux.Vars(r)["provider"]
 
 	redirect_url, err := service.GetAuthorizeRedirect(provider)
 
@@ -42,7 +42,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var oauth_code models.OauthCode
 	json.NewDecoder(r.Body).Decode(&oauth_code)
 
-	provider := r.URL.Query().Get("provider")
+	provider := mux.Vars(r)["provider"]
 
 	oauth_token, err := service.GetOauthToken(oauth_code.Code, provider)
 
@@ -87,7 +87,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	Gets the roles for the user with the given id
 */
 func GetRoles(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
+	id := mux.Vars(r)["id"]
 
 	if id == "" {
 		panic(errors.UnprocessableError("Must provide id parameter"))

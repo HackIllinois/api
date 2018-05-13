@@ -7,6 +7,9 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+/*
+	Returns the info associated with the given user id
+*/
 func GetUserInfo(id string) (*models.UserInfo, error) {
 	query := bson.M{
 		"id": id,
@@ -22,6 +25,10 @@ func GetUserInfo(id string) (*models.UserInfo, error) {
 	return &user_info, nil
 }
 
+/*
+	Set the info associated with the given user id
+	The record will be created if it does not already exist
+*/
 func SetUserInfo(id string, user_info models.UserInfo) error {
 	selector := bson.M{
 		"id": id,

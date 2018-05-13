@@ -17,6 +17,9 @@ func SetupController(route *mux.Route) {
 	router.Handle("/", alice.New().ThenFunc(SetUserInfo)).Methods("POST")
 }
 
+/*
+	Endpoint to get the info for a specified user
+*/
 func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
@@ -29,6 +32,9 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user_info)
 }
 
+/*
+	Endpoint to set the info for a specified user
+*/
 func SetUserInfo(w http.ResponseWriter, r *http.Request) {
 	var user_info models.UserInfo
 	json.NewDecoder(r.Body).Decode(&user_info)

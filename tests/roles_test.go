@@ -1,16 +1,10 @@
 package tests
 
 import (
-	"bytes"
-	"encoding/json"
 	"github.com/HackIllinois/api-auth/config"
-	"github.com/HackIllinois/api-auth/controller"
 	"github.com/HackIllinois/api-auth/database"
 	"github.com/HackIllinois/api-auth/models"
 	"github.com/HackIllinois/api-auth/service"
-	"github.com/gorilla/mux"
-	"net/http"
-	"net/http/httptest"
 	"reflect"
 	"testing"
 )

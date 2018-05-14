@@ -19,11 +19,8 @@ import (
 	Initialize database with test user info
 */
 func SetupTestDB(t *testing.T) {
-	err := database.Insert("attendees", &models.UserRegistration{
-		ID:        "testid",
-		FirstName: "testfirstname",
-		LastName:  "testlastname",
-	})
+	user_registration := base_registration
+	err := database.Insert("attendees", &user_registration)
 
 	if err != nil {
 		t.Fatal(err)
@@ -56,13 +53,9 @@ func TestGetUserRegistrationService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registration := &models.UserRegistration{
-		ID:        "testid",
-		FirstName: "testfirstname",
-		LastName:  "testlastname",
-	}
+	expected_registration := base_registration
 
-	if !reflect.DeepEqual(user_registration, expected_registration) {
+	if !reflect.DeepEqual(user_registration, &expected_registration) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_registration, user_registration)
 	}
 
@@ -75,11 +68,11 @@ func TestGetUserRegistrationService(t *testing.T) {
 func TestCreateUserRegistrationService(t *testing.T) {
 	SetupTestDB(t)
 
-	err := service.CreateUserRegistration("testid2", models.UserRegistration{
-		ID:        "testid2",
-		FirstName: "testfirstname2",
-		LastName:  "testlastname2",
-	})
+	new_registration := base_registration
+	new_registration.ID = "testid2"
+	new_registration.FirstName = "first2"
+	new_registration.LastName = "last2"
+	err := service.CreateUserRegistration("testid2", new_registration)
 
 	if err != nil {
 		t.Fatal(err)
@@ -91,13 +84,12 @@ func TestCreateUserRegistrationService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registration := &models.UserRegistration{
-		ID:        "testid2",
-		FirstName: "testfirstname2",
-		LastName:  "testlastname2",
-	}
+	expected_registration := base_registration
+	expected_registration.ID = "testid2"
+	expected_registration.FirstName = "first2"
+	expected_registration.LastName = "last2"
 
-	if !reflect.DeepEqual(user_registration, expected_registration) {
+	if !reflect.DeepEqual(user_registration, &expected_registration) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_registration, user_registration)
 	}
 
@@ -110,11 +102,11 @@ func TestCreateUserRegistrationService(t *testing.T) {
 func TestUpdateUserRegistrationService(t *testing.T) {
 	SetupTestDB(t)
 
-	err := service.UpdateUserRegistration("testid", models.UserRegistration{
-		ID:        "testid",
-		FirstName: "testupdatedfirstname",
-		LastName:  "testupdatedlastname",
-	})
+	updated_registration := base_registration
+	updated_registration.ID = "testid"
+	updated_registration.FirstName = "first2"
+	updated_registration.LastName = "last2"
+	err := service.UpdateUserRegistration("testid", updated_registration)
 
 	if err != nil {
 		t.Fatal(err)
@@ -126,13 +118,12 @@ func TestUpdateUserRegistrationService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registration := &models.UserRegistration{
-		ID:        "testid",
-		FirstName: "testupdatedfirstname",
-		LastName:  "testupdatedlastname",
-	}
+	expected_registration := base_registration
+	expected_registration.ID = "testid"
+	expected_registration.FirstName = "first2"
+	expected_registration.LastName = "last2"
 
-	if !reflect.DeepEqual(user_registration, expected_registration) {
+	if !reflect.DeepEqual(user_registration, &expected_registration) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_registration, user_registration)
 	}
 
@@ -164,11 +155,7 @@ func TestGetUserRegistrationEndpoint(t *testing.T) {
 	var user_registration models.UserRegistration
 	json.NewDecoder(res_recorder.Body).Decode(&user_registration)
 
-	expected_registration := models.UserRegistration{
-		ID:        "testid",
-		FirstName: "testfirstname",
-		LastName:  "testlastname",
-	}
+	expected_registration := base_registration
 
 	if !reflect.DeepEqual(user_registration, expected_registration) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_registration, user_registration)
@@ -183,10 +170,9 @@ func TestGetUserRegistrationEndpoint(t *testing.T) {
 func TestCreateCurrentUserRegistrationEndpoint(t *testing.T) {
 	SetupTestDB(t)
 
-	req_body := models.UserRegistration{
-		FirstName: "testfirstname2",
-		LastName:  "testlastname2",
-	}
+	req_body := base_registration
+	req_body.FirstName = "first2"
+	req_body.LastName = "last2"
 
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&req_body)
@@ -210,11 +196,10 @@ func TestCreateCurrentUserRegistrationEndpoint(t *testing.T) {
 	var user_registration models.UserRegistration
 	json.NewDecoder(res_recorder.Body).Decode(&user_registration)
 
-	expected_registration := models.UserRegistration{
-		ID:        "testid2",
-		FirstName: "testfirstname2",
-		LastName:  "testlastname2",
-	}
+	expected_registration := base_registration
+	expected_registration.ID = "testid2"
+	expected_registration.FirstName = "first2"
+	expected_registration.LastName = "last2"
 
 	if !reflect.DeepEqual(user_registration, expected_registration) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_registration, user_registration)
@@ -229,10 +214,9 @@ func TestCreateCurrentUserRegistrationEndpoint(t *testing.T) {
 func TestUpdateCurrentUserRegistrationEndpoint(t *testing.T) {
 	SetupTestDB(t)
 
-	req_body := models.UserRegistration{
-		FirstName: "testupdatedfirstname",
-		LastName:  "testupdatedlastname",
-	}
+	req_body := base_registration
+	req_body.FirstName = "firstupdate"
+	req_body.LastName = "lastupdate"
 
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&req_body)
@@ -256,15 +240,57 @@ func TestUpdateCurrentUserRegistrationEndpoint(t *testing.T) {
 	var user_registration models.UserRegistration
 	json.NewDecoder(res_recorder.Body).Decode(&user_registration)
 
-	expected_registration := models.UserRegistration{
-		ID:        "testid",
-		FirstName: "testupdatedfirstname",
-		LastName:  "testupdatedlastname",
-	}
+	expected_registration := base_registration
+	expected_registration.ID = "testid"
+	expected_registration.FirstName = "firstupdate"
+	expected_registration.LastName = "lastupdate"
 
 	if !reflect.DeepEqual(user_registration, expected_registration) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_registration, user_registration)
 	}
 
 	CleanupTestDB(t)
+}
+
+var base_registration models.UserRegistration = models.UserRegistration{
+	ID:                   "testid",
+	FirstName:            "first",
+	LastName:             "last",
+	Email:                "test@gmail.com",
+	ShirtSize:            "M",
+	Diet:                 "NONE",
+	Age:                  20,
+	GraduationYear:       2019,
+	Transportation:       "BUS",
+	School:               "University of Illinois at Urbana-Champaign",
+	Major:                "Computer Science",
+	Gender:               "MALE",
+	ProfessionalInterest: "INTERNSHIP",
+	GitHub:               "githubusername",
+	Linkedin:             "linkedinusername",
+	Interests:            "things",
+	IsNovice:             true,
+	IsPrivate:            false,
+	PhoneNumber:          "555-287-2903",
+	LongForms: []models.UserLongForm{
+		models.UserLongForm{
+			Response: "longformresponse",
+		},
+	},
+	ExtraInfos: []models.UserExtraInfo{
+		models.UserExtraInfo{
+			Response: "extrainforesponse",
+		},
+	},
+	OsContributors: []models.UserOsContributor{
+		models.UserOsContributor{
+			Name:        "contributorname",
+			ContactInfo: "contact@test.com",
+		},
+	},
+	Collaborators: []models.UserCollaborator{
+		models.UserCollaborator{
+			Github: "collaboratorgithub",
+		},
+	},
 }

@@ -12,10 +12,10 @@ type UserRegistration struct {
 	Transportation       string              `json:"transportation"       validate:"required,oneof=NONE BUS"`
 	School               string              `json:"school"               validate:"required"`
 	Major                string              `json:"major"                validate:"required"`
-	Gender               string              `json:gender                 validate:"required,oneof=MALE FEMALE NONBINARY OTHER"`
+	Gender               string              `json:"gender"               validate:"required,oneof=MALE FEMALE NONBINARY OTHER"`
 	ProfessionalInterest string              `json:"professionalInterest" validate:"required,oneof=INTERNSHIP FULLTIME BOTH"`
 	GitHub               string              `json:"github"               validate:"required"`
-	Linkedin             string              `json"linkedin"              validate:"required"`
+	Linkedin             string              `json:"linkedin"             validate:"required"`
 	Interests            string              `json:"interests"            validate:"required"`
 	IsNovice             bool                `json:"isNovice"             validate:"required|isdefault"`
 	IsPrivate            bool                `json:"isPrivate"            validate:"required|isdefault"`
@@ -40,5 +40,5 @@ type UserOsContributor struct {
 }
 
 type UserCollaborator struct {
-	Github string `json:github validate:"required"`
+	Github string `json:"github" validate:"required"`
 }

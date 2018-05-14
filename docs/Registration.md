@@ -1,0 +1,296 @@
+Registration
+============
+
+GET /registration/USERID/
+-------------------------
+
+Returns the user registration stored for the user with the `id` `USERID`.
+
+Response format:
+```
+{
+	"id": "github0000001"
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "john@gmail.com",
+	"shirtSize": "M",
+	"diet": "NONE",
+	"age": 19,
+	"graduationYear": 2019,
+	"transportation": "NONE",
+	"school": "University of Illinois at Urbana-Champsign",
+	"major": "Computer Science",
+	"gender": "MALE",
+	"professionalInterest": "INTERNSHIP",
+	"github": "JSmith",
+	"linkedin": "john-smith",
+	"interests": "Software",
+	"isNovice": false,
+	"isPrivate": false,
+	"phoneNumber": "555-555-5555",
+	"longforms": [
+		{
+			"response": "This is a longform."
+		}
+	],
+	"extraInfos": [
+		{
+			"response": "This is an extra info."
+		}
+	],
+	"osContributors": [
+		{
+			"name": "Tom",
+			"contactInfo": "tom@gmail.com"
+		}
+	],
+	"collaborators": [
+		{
+			"github": "collabgithub"
+		}
+	]
+}
+```
+
+GET /registration/
+------------------
+
+Returns the user registration stored for the user with the `id` stored in the given JWT in the Authorization header.
+
+Response format:
+```
+{
+	"id": "github0000001"
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "john@gmail.com",
+	"shirtSize": "M",
+	"diet": "NONE",
+	"age": 19,
+	"graduationYear": 2019,
+	"transportation": "NONE",
+	"school": "University of Illinois at Urbana-Champsign",
+	"major": "Computer Science",
+	"gender": "MALE",
+	"professionalInterest": "INTERNSHIP",
+	"github": "JSmith",
+	"linkedin": "john-smith",
+	"interests": "Software",
+	"isNovice": false,
+	"isPrivate": false,
+	"phoneNumber": "555-555-5555",
+	"longforms": [
+		{
+			"response": "This is a longform."
+		}
+	],
+	"extraInfos": [
+		{
+			"response": "This is an extra info."
+		}
+	],
+	"osContributors": [
+		{
+			"name": "Tom",
+			"contactInfo": "tom@gmail.com"
+		}
+	],
+	"collaborators": [
+		{
+			"github": "collabgithub"
+		}
+	]
+}
+```
+
+POST /registration/
+-------------------
+
+Creates a registration for the user with the `id` in the JWT token provided in the Authorization header.
+
+Request format:
+```
+{
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "john@gmail.com",
+	"shirtSize": "M",
+	"diet": "NONE",
+	"age": 19,
+	"graduationYear": 2019,
+	"transportation": "NONE",
+	"school": "University of Illinois at Urbana-Champsign",
+	"major": "Computer Science",
+	"gender": "MALE",
+	"professionalInterest": "INTERNSHIP",
+	"github": "JSmith",
+	"linkedin": "john-smith",
+	"interests": "Software",
+	"isNovice": false,
+	"isPrivate": false,
+	"phoneNumber": "555-555-5555",
+	"longforms": [
+		{
+			"response": "This is a longform."
+		}
+	],
+	"extraInfos": [
+		{
+			"response": "This is an extra info."
+		}
+	],
+	"osContributors": [
+		{
+			"name": "Tom",
+			"contactInfo": "tom@gmail.com"
+		}
+	],
+	"collaborators": [
+		{
+			"github": "collabgithub"
+		}
+	]
+}
+```
+
+Response format:
+```
+{
+	"id": "github0000001"
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "john@gmail.com",
+	"shirtSize": "M",
+	"diet": "NONE",
+	"age": 19,
+	"graduationYear": 2019,
+	"transportation": "NONE",
+	"school": "University of Illinois at Urbana-Champsign",
+	"major": "Computer Science",
+	"gender": "MALE",
+	"professionalInterest": "INTERNSHIP",
+	"github": "JSmith",
+	"linkedin": "john-smith",
+	"interests": "Software",
+	"isNovice": false,
+	"isPrivate": false,
+	"phoneNumber": "555-555-5555",
+	"longforms": [
+		{
+			"response": "This is a longform."
+		}
+	],
+	"extraInfos": [
+		{
+			"response": "This is an extra info."
+		}
+	],
+	"osContributors": [
+		{
+			"name": "Tom",
+			"contactInfo": "tom@gmail.com"
+		}
+	],
+	"collaborators": [
+		{
+			"github": "collabgithub"
+		}
+	]
+}
+```
+
+PUT /registration/
+------------------
+
+Updated the registration for the user with the `id` in the JWT token provided in the Authorization header.
+
+Request format:
+```
+{
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "john@gmail.com",
+	"shirtSize": "M",
+	"diet": "NONE",
+	"age": 19,
+	"graduationYear": 2019,
+	"transportation": "NONE",
+	"school": "University of Illinois at Urbana-Champsign",
+	"major": "Computer Science",
+	"gender": "MALE",
+	"professionalInterest": "INTERNSHIP",
+	"github": "JSmith",
+	"linkedin": "john-smith",
+	"interests": "Software",
+	"isNovice": false,
+	"isPrivate": false,
+	"phoneNumber": "555-555-5555",
+	"longforms": [
+		{
+			"response": "This is a longform."
+		}
+	],
+	"extraInfos": [
+		{
+			"response": "This is an extra info."
+		}
+	],
+	"osContributors": [
+		{
+			"name": "Tom",
+			"contactInfo": "tom@gmail.com"
+		}
+	],
+	"collaborators": [
+		{
+			"github": "collabgithub"
+		}
+	]
+}
+```
+
+Response format:
+```
+{
+	"id": "github0000001"
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "john@gmail.com",
+	"shirtSize": "M",
+	"diet": "NONE",
+	"age": 19,
+	"graduationYear": 2019,
+	"transportation": "NONE",
+	"school": "University of Illinois at Urbana-Champsign",
+	"major": "Computer Science",
+	"gender": "MALE",
+	"professionalInterest": "INTERNSHIP",
+	"github": "JSmith",
+	"linkedin": "john-smith",
+	"interests": "Software",
+	"isNovice": false,
+	"isPrivate": false,
+	"phoneNumber": "555-555-5555",
+	"longforms": [
+		{
+			"response": "This is a longform."
+		}
+	],
+	"extraInfos": [
+		{
+			"response": "This is an extra info."
+		}
+	],
+	"osContributors": [
+		{
+			"name": "Tom",
+			"contactInfo": "tom@gmail.com"
+		}
+	],
+	"collaborators": [
+		{
+			"github": "collabgithub"
+		}
+	]
+}
+```

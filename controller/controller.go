@@ -14,6 +14,7 @@ func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
 	router.Handle("/{id}/", alice.New().ThenFunc(GetUserInfo)).Methods("GET")
+	router.Handle("/", alice.New().ThenFunc(GetCurrentUserInfo)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(SetUserInfo)).Methods("POST")
 }
 
@@ -22,6 +23,21 @@ func SetupController(route *mux.Route) {
 */
 func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
+
+	user_info, err := service.GetUserInfo(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(user_info)
+}
+
+/*
+	Endpoint to get the info for the current user
+*/
+func GetCurrentUserInfo(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
 
 	user_info, err := service.GetUserInfo(id)
 

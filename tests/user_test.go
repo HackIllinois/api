@@ -143,6 +143,44 @@ func TestGetUserInfoEndpoint(t *testing.T) {
 }
 
 /*
+	End to end test for getting the current user info
+*/
+func TestGetCurrentUserInfoEndpoint(t *testing.T) {
+	SetupTestDB(t)
+
+	req, err := http.NewRequest("GET", "/user/", nil)
+	req.Header.Set("HackIllinois-Identity", "testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	res_recorder := httptest.NewRecorder()
+	handler := http.HandlerFunc(controller.GetCurrentUserInfo)
+
+	handler.ServeHTTP(res_recorder, req)
+
+	if res_recorder.Code != http.StatusOK {
+		t.Errorf("Wrong status code. Expected %v Got %v", http.StatusOK, res_recorder.Code)
+	}
+
+	var user_info models.UserInfo
+	json.NewDecoder(res_recorder.Body).Decode(&user_info)
+
+	expected_info := models.UserInfo{
+		ID:       "testid",
+		Username: "testusername",
+		Email:    "testemail@domain.com",
+	}
+
+	if !reflect.DeepEqual(user_info, expected_info) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, user_info)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
 	End to end test for setting user info
 */
 func TestSetUserInfoEndpoint(t *testing.T) {

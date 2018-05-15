@@ -74,7 +74,17 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	// TODO: Make call to user service to update basic user info
+	username, err := service.GetUsername(oauth_token, provider)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	err = service.SendUserInfo(id, username, email)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
 
 	token := models.Token{
 		Token: signed_token,

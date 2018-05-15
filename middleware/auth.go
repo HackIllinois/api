@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"net/http"
-	"../utils"
+	"github.com/HackIllinois/api-gateway/utils"
 	"github.com/justinas/alice"
 )
 

@@ -2,7 +2,7 @@ package services
 
 import (
 	"net/http"
-	"../config"
+	"github.com/HackIllinois/api-gateway/config"
 	"github.com/arbor-dev/arbor"
 )
 

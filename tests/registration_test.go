@@ -1,16 +1,10 @@
 package tests
 
 import (
-	"bytes"
-	"encoding/json"
 	"github.com/HackIllinois/api-registration/config"
-	"github.com/HackIllinois/api-registration/controller"
 	"github.com/HackIllinois/api-registration/database"
 	"github.com/HackIllinois/api-registration/models"
 	"github.com/HackIllinois/api-registration/service"
-	"github.com/gorilla/mux"
-	"net/http"
-	"net/http/httptest"
 	"reflect"
 	"testing"
 )
@@ -124,128 +118,6 @@ func TestUpdateUserRegistrationService(t *testing.T) {
 	expected_registration.LastName = "last2"
 
 	if !reflect.DeepEqual(user_registration, &expected_registration) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_registration, user_registration)
-	}
-
-	CleanupTestDB(t)
-}
-
-/*
-	End to end test for getting user registration
-*/
-func TestGetUserRegistrationEndpoint(t *testing.T) {
-	SetupTestDB(t)
-
-	req, err := http.NewRequest("GET", "/registration/testid/", nil)
-	req = mux.SetURLVars(req, map[string]string{"id": "testid"})
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	res_recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(controller.GetUserRegistration)
-
-	handler.ServeHTTP(res_recorder, req)
-
-	if res_recorder.Code != http.StatusOK {
-		t.Errorf("Wrong status code. Expected %v Got %v", http.StatusOK, res_recorder.Code)
-	}
-
-	var user_registration models.UserRegistration
-	json.NewDecoder(res_recorder.Body).Decode(&user_registration)
-
-	expected_registration := base_registration
-
-	if !reflect.DeepEqual(user_registration, expected_registration) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_registration, user_registration)
-	}
-
-	CleanupTestDB(t)
-}
-
-/*
-	End to end test for creating current user registration
-*/
-func TestCreateCurrentUserRegistrationEndpoint(t *testing.T) {
-	SetupTestDB(t)
-
-	req_body := base_registration
-	req_body.FirstName = "first2"
-	req_body.LastName = "last2"
-
-	body := bytes.Buffer{}
-	json.NewEncoder(&body).Encode(&req_body)
-
-	req, err := http.NewRequest("POST", "/registration/", &body)
-	req.Header.Set("HackIllinois-Identity", "testid2")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	res_recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(controller.CreateCurrentUserRegistration)
-
-	handler.ServeHTTP(res_recorder, req)
-
-	if res_recorder.Code != http.StatusOK {
-		t.Errorf("Wrong status code. Expected %v Got %v", http.StatusOK, res_recorder.Code)
-	}
-
-	var user_registration models.UserRegistration
-	json.NewDecoder(res_recorder.Body).Decode(&user_registration)
-
-	expected_registration := base_registration
-	expected_registration.ID = "testid2"
-	expected_registration.FirstName = "first2"
-	expected_registration.LastName = "last2"
-
-	if !reflect.DeepEqual(user_registration, expected_registration) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_registration, user_registration)
-	}
-
-	CleanupTestDB(t)
-}
-
-/*
-	End to end test for updating current user registration
-*/
-func TestUpdateCurrentUserRegistrationEndpoint(t *testing.T) {
-	SetupTestDB(t)
-
-	req_body := base_registration
-	req_body.FirstName = "firstupdate"
-	req_body.LastName = "lastupdate"
-
-	body := bytes.Buffer{}
-	json.NewEncoder(&body).Encode(&req_body)
-
-	req, err := http.NewRequest("PUT", "/registration/", &body)
-	req.Header.Set("HackIllinois-Identity", "testid")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	res_recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(controller.UpdateCurrentUserRegistration)
-
-	handler.ServeHTTP(res_recorder, req)
-
-	if res_recorder.Code != http.StatusOK {
-		t.Errorf("Wrong status code. Expected %v Got %v", http.StatusOK, res_recorder.Code)
-	}
-
-	var user_registration models.UserRegistration
-	json.NewDecoder(res_recorder.Body).Decode(&user_registration)
-
-	expected_registration := base_registration
-	expected_registration.ID = "testid"
-	expected_registration.FirstName = "firstupdate"
-	expected_registration.LastName = "lastupdate"
-
-	if !reflect.DeepEqual(user_registration, expected_registration) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_registration, user_registration)
 	}
 

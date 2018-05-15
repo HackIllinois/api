@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/HackIllinois/api-commons/middleware"
+	"github.com/HackIllinois/api-user/config"
 	"github.com/HackIllinois/api-user/controller"
 	"github.com/gorilla/mux"
 	"log"
@@ -14,5 +15,5 @@ func main() {
 
 	router.Use(middleware.ErrorMiddleware)
 	router.Use(middleware.ContentTypeMiddleware)
-	log.Fatal(http.ListenAndServe(":8003", router))
+	log.Fatal(http.ListenAndServe(config.USER_PORT, router))
 }

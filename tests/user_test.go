@@ -1,16 +1,10 @@
 package tests
 
 import (
-	"bytes"
-	"encoding/json"
 	"github.com/HackIllinois/api-user/config"
-	"github.com/HackIllinois/api-user/controller"
 	"github.com/HackIllinois/api-user/database"
 	"github.com/HackIllinois/api-user/models"
 	"github.com/HackIllinois/api-user/service"
-	"github.com/gorilla/mux"
-	"net/http"
-	"net/http/httptest"
 	"reflect"
 	"testing"
 )
@@ -92,128 +86,6 @@ func TestSetUserInfoService(t *testing.T) {
 	}
 
 	expected_info := &models.UserInfo{
-		ID:       "testid2",
-		Username: "testusername2",
-		Email:    "testemail2@domain.com",
-	}
-
-	if !reflect.DeepEqual(user_info, expected_info) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, user_info)
-	}
-
-	CleanupTestDB(t)
-}
-
-/*
-	End to end test for getting user info
-*/
-func TestGetUserInfoEndpoint(t *testing.T) {
-	SetupTestDB(t)
-
-	req, err := http.NewRequest("GET", "/user/testid/", nil)
-	req = mux.SetURLVars(req, map[string]string{"id": "testid"})
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	res_recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(controller.GetUserInfo)
-
-	handler.ServeHTTP(res_recorder, req)
-
-	if res_recorder.Code != http.StatusOK {
-		t.Errorf("Wrong status code. Expected %v Got %v", http.StatusOK, res_recorder.Code)
-	}
-
-	var user_info models.UserInfo
-	json.NewDecoder(res_recorder.Body).Decode(&user_info)
-
-	expected_info := models.UserInfo{
-		ID:       "testid",
-		Username: "testusername",
-		Email:    "testemail@domain.com",
-	}
-
-	if !reflect.DeepEqual(user_info, expected_info) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, user_info)
-	}
-
-	CleanupTestDB(t)
-}
-
-/*
-	End to end test for getting the current user info
-*/
-func TestGetCurrentUserInfoEndpoint(t *testing.T) {
-	SetupTestDB(t)
-
-	req, err := http.NewRequest("GET", "/user/", nil)
-	req.Header.Set("HackIllinois-Identity", "testid")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	res_recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(controller.GetCurrentUserInfo)
-
-	handler.ServeHTTP(res_recorder, req)
-
-	if res_recorder.Code != http.StatusOK {
-		t.Errorf("Wrong status code. Expected %v Got %v", http.StatusOK, res_recorder.Code)
-	}
-
-	var user_info models.UserInfo
-	json.NewDecoder(res_recorder.Body).Decode(&user_info)
-
-	expected_info := models.UserInfo{
-		ID:       "testid",
-		Username: "testusername",
-		Email:    "testemail@domain.com",
-	}
-
-	if !reflect.DeepEqual(user_info, expected_info) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, user_info)
-	}
-
-	CleanupTestDB(t)
-}
-
-/*
-	End to end test for setting user info
-*/
-func TestSetUserInfoEndpoint(t *testing.T) {
-	SetupTestDB(t)
-
-	req_body := models.UserInfo{
-		ID:       "testid2",
-		Username: "testusername2",
-		Email:    "testemail2@domain.com",
-	}
-
-	body := bytes.Buffer{}
-	json.NewEncoder(&body).Encode(&req_body)
-
-	req, err := http.NewRequest("POST", "/user/", &body)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	res_recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(controller.SetUserInfo)
-
-	handler.ServeHTTP(res_recorder, req)
-
-	if res_recorder.Code != http.StatusOK {
-		t.Errorf("Wrong status code. Expected %v Got %v", http.StatusOK, res_recorder.Code)
-	}
-
-	var user_info models.UserInfo
-	json.NewDecoder(res_recorder.Body).Decode(&user_info)
-
-	expected_info := models.UserInfo{
 		ID:       "testid2",
 		Username: "testusername2",
 		Email:    "testemail2@domain.com",

@@ -1,17 +1,17 @@
 package services
 
 import (
-	"net/http"
 	"github.com/HackIllinois/api-gateway/config"
 	"github.com/arbor-dev/arbor"
+	"net/http"
 )
 
 const AuthURL = config.AuthURL
 
 const AuthFormat string = "JSON"
 
-var AuthRoutes = arbor.RouteCollection {
-	arbor.Route {
+var AuthRoutes = arbor.RouteCollection{
+	arbor.Route{
 		"GithubAuth",
 		"POST",
 		"/auth/github/",
@@ -20,6 +20,5 @@ var AuthRoutes = arbor.RouteCollection {
 }
 
 func GithubAuth(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, AuthURL + r.URL.String(), AuthFormat, "", r)
+	arbor.POST(w, AuthURL+r.URL.String(), AuthFormat, "", r)
 }
-

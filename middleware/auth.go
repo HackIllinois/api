@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"net/http"
 	"github.com/HackIllinois/api-gateway/utils"
 	"github.com/justinas/alice"
+	"net/http"
 )
 
 func AuthMiddleware(authorized_roles []string) alice.Constructor {

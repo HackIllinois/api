@@ -2,12 +2,12 @@ package services
 
 import (
 	"fmt"
-	"net/http"
 	"github.com/arbor-dev/arbor"
+	"net/http"
 )
 
-var Routes = arbor.RouteCollection {
-	arbor.Route {
+var Routes = arbor.RouteCollection{
+	arbor.Route{
 		"Gateway",
 		"GET",
 		"/",

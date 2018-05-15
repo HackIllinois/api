@@ -1,31 +1,31 @@
 package services
 
 import (
-	"net/http"
 	"github.com/HackIllinois/api-gateway/config"
 	"github.com/HackIllinois/api-gateway/middleware"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
+	"net/http"
 )
 
 const TestURL = config.TestURL
 
 const TestFormat string = "JSON"
 
-var TestRoutes = arbor.RouteCollection {
-	arbor.Route {
+var TestRoutes = arbor.RouteCollection{
+	arbor.Route{
 		"UserAuth",
 		"POST",
 		"/test/userauth/",
 		alice.New(middleware.AuthMiddleware([]string{"User"})).ThenFunc(UserAuth).ServeHTTP,
 	},
-	arbor.Route {
+	arbor.Route{
 		"AdminAuth",
 		"POST",
 		"/test/adminauth/",
 		alice.New(middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(AdminAuth).ServeHTTP,
 	},
-	arbor.Route {
+	arbor.Route{
 		"NoAuth",
 		"POST",
 		"/test/noauth/",
@@ -34,14 +34,13 @@ var TestRoutes = arbor.RouteCollection {
 }
 
 func UserAuth(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, TestURL + r.URL.String(), TestFormat, "", r)
+	arbor.POST(w, TestURL+r.URL.String(), TestFormat, "", r)
 }
 
 func AdminAuth(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, TestURL + r.URL.String(), TestFormat, "", r)
+	arbor.POST(w, TestURL+r.URL.String(), TestFormat, "", r)
 }
 
 func NoAuth(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, TestURL + r.URL.String(), TestFormat, "", r)
+	arbor.POST(w, TestURL+r.URL.String(), TestFormat, "", r)
 }
-

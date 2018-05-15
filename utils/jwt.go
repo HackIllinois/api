@@ -2,8 +2,8 @@ package utils
 
 import (
 	"fmt"
-	"time"
 	jwt "github.com/dgrijalva/jwt-go"
+	"time"
 )
 
 var secret []byte

@@ -3,8 +3,8 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	"github.com/HackIllinois/api-auth/config"
-	"github.com/HackIllinois/api-auth/models"
+	"github.com/HackIllinois/api-registration/config"
+	"github.com/HackIllinois/api-registration/models"
 	"net/http"
 )
 

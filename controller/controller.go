@@ -73,6 +73,12 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	user_registration.GitHub = user_info.Username
 	user_registration.Email = user_info.Email
 
+	err = service.AddAttendeeRole(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
 	err = service.CreateUserRegistration(id, user_registration)
 
 	if err != nil {

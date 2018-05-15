@@ -2,7 +2,9 @@ package services
 
 import (
 	"github.com/HackIllinois/api-gateway/config"
+	"github.com/HackIllinois/api-gateway/middleware"
 	"github.com/arbor-dev/arbor"
+	"github.com/justinas/alice"
 	"net/http"
 )
 
@@ -12,13 +14,43 @@ const AuthFormat string = "JSON"
 
 var AuthRoutes = arbor.RouteCollection{
 	arbor.Route{
-		"GithubAuth",
+		"OauthRedirect",
+		"GET",
+		"/auth/{provider}/",
+		alice.New().ThenFunc(OauthRedirect).ServeHTTP,
+	},
+	arbor.Route{
+		"OauthCode",
 		"POST",
-		"/auth/github/",
-		GithubAuth,
+		"/auth/code/{provider}/",
+		alice.New().ThenFunc(OauthCode).ServeHTTP,
+	},
+	arbor.Route{
+		"GetUserRoles",
+		"GET",
+		"/auth/roles/{id}/",
+		alice.New(middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetUserRoles).ServeHTTP,
+	},
+	arbor.Route{
+		"SetUserRoles",
+		"PUT",
+		"/auth/roles/",
+		alice.New(middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(SetUserRoles).ServeHTTP,
 	},
 }
 
-func GithubAuth(w http.ResponseWriter, r *http.Request) {
+func OauthRedirect(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, AuthURL+r.URL.String(), AuthFormat, "", r)
+}
+
+func OauthCode(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, AuthURL+r.URL.String(), AuthFormat, "", r)
+}
+
+func GetUserRoles(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, AuthURL+r.URL.String(), AuthFormat, "", r)
+}
+
+func SetUserRoles(w http.ResponseWriter, r *http.Request) {
+	arbor.PUT(w, AuthURL+r.URL.String(), AuthFormat, "", r)
 }

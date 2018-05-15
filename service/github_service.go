@@ -94,3 +94,29 @@ func GetGithubUniqueId(oauth_token string) (string, error) {
 
 	return "github" + strconv.Itoa(user_info.ID), nil
 }
+
+/*
+	Uses a valid oauth token to get the user's username
+*/
+func GetGithubUsername(oauth_token string) (string, error) {
+	request, err := grequests.Get("https://api.github.com/user", &grequests.RequestOptions{
+		Headers: map[string]string{"Authorization": "token " + oauth_token},
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	var user_info models.GithubUserInfo
+	err = request.JSON(&user_info)
+
+	if err != nil {
+		return "", err
+	}
+
+	if user_info.ID == 0 {
+		return "", errors.New("Invalid oauth token")
+	}
+
+	return user_info.Username, nil
+}

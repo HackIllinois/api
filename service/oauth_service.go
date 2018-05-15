@@ -52,3 +52,15 @@ func GetUniqueId(oauth_token string, provider string) (string, error) {
 		return "", errors.New("Invalid provider")
 	}
 }
+
+/*
+	Gets the user's username from the specified oauth provider
+*/
+func GetUsername(oauth_token string, provider string) (string, error) {
+	switch provider {
+	case "github":
+		return GetGithubUsername(oauth_token)
+	default:
+		return "", errors.New("Invalid provider")
+	}
+}

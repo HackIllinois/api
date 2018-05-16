@@ -17,25 +17,25 @@ var AuthRoutes = arbor.RouteCollection{
 		"OauthRedirect",
 		"GET",
 		"/auth/{provider}/",
-		alice.New().ThenFunc(OauthRedirect).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware).ThenFunc(OauthRedirect).ServeHTTP,
 	},
 	arbor.Route{
 		"OauthCode",
 		"POST",
 		"/auth/code/{provider}/",
-		alice.New().ThenFunc(OauthCode).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware).ThenFunc(OauthCode).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUserRoles",
 		"GET",
 		"/auth/roles/{id}/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetUserRoles).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetUserRoles).ServeHTTP,
 	},
 	arbor.Route{
 		"SetUserRoles",
 		"PUT",
 		"/auth/roles/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(SetUserRoles).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(SetUserRoles).ServeHTTP,
 	},
 }
 

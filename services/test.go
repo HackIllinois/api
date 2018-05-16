@@ -17,19 +17,19 @@ var TestRoutes = arbor.RouteCollection{
 		"UserAuth",
 		"POST",
 		"/test/userauth/",
-		alice.New(middleware.AuthMiddleware([]string{"User"})).ThenFunc(UserAuth).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(UserAuth).ServeHTTP,
 	},
 	arbor.Route{
 		"AdminAuth",
 		"POST",
 		"/test/adminauth/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(AdminAuth).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(AdminAuth).ServeHTTP,
 	},
 	arbor.Route{
 		"NoAuth",
 		"POST",
 		"/test/noauth/",
-		alice.New().ThenFunc(NoAuth).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware).ThenFunc(NoAuth).ServeHTTP,
 	},
 }
 

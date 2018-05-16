@@ -17,19 +17,19 @@ var UserRoutes = arbor.RouteCollection{
 		"GetCurrentUserInfo",
 		"GET",
 		"/user/",
-		alice.New(middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetCurrentUserInfo).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetCurrentUserInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUserInfo",
 		"GET",
 		"/user/{id}/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetUserInfo).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetUserInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"SetUserInfo",
 		"POST",
 		"/user/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(SetUserInfo).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(SetUserInfo).ServeHTTP,
 	},
 }
 

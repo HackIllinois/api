@@ -16,25 +16,25 @@ var RegistrationRoutes = arbor.RouteCollection{
 	arbor.Route{
 		"GetCurrentRegistrationInfo",
 		"GET",
-		"/user/",
+		"/registration/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetCurrentRegistrationInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateCurrentRegistrationInfo",
 		"POST",
-		"/user/",
+		"/registration/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(CreateCurrentRegistrationInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentRegistrationInfo",
 		"PUT",
-		"/user/",
+		"/registration/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Attendee"})).ThenFunc(UpdateCurrentRegistrationInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetRegistrationInfo",
 		"GET",
-		"/user/{id}/",
+		"/registration/{id}/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetRegistrationInfo).ServeHTTP,
 	},
 }

@@ -59,6 +59,9 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id parameter"))
 	}
 
+	reviewer_id := r.Header.Get("HackIllinois-Identity")
+	decision.Reviewer = reviewer_id
+
 	err := service.UpdateDecision(decision.ID, decision)
 
 	if err != nil {

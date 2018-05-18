@@ -65,6 +65,7 @@ func UpdateDecision(id string, decision models.Decision) error {
 	decision_history.Status = decision.Status
 	decision_history.Wave = decision.Wave
 	decision_history.History = append(decision_history.History, decision)
+	decision_history.Reviewer = decision.Reviewer
 
 	selector := bson.M{
 		"id": id,

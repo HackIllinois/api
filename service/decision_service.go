@@ -18,12 +18,12 @@ func init() {
 /*
 	Returns the decision associated with the given user id
 */
-func GetDecision(id string) (*models.Decision, error) {
+func GetDecision(id string) (*models.DecisionHistory, error) {
 	query := bson.M{
 		"id": id,
 	}
 
-	var decision models.Decision
+	var decision models.DecisionHistory
 	err := database.FindOne("decision", query, &decision)
 
 	if err != nil {
@@ -46,16 +46,34 @@ func UpdateDecision(id string, decision models.Decision) error {
 
 	if decision.Status == "ACCEPTED" && decision.Wave == 0 {
 		return errors.New("Must set a wave for accepted attendee")
+	} else if decision.Status != "ACCEPTED" && decision.Wave != 0 {
+		return errors.New("Cannot set a wave for non-accepted attendee")
 	}
+
+	decision_history, err := GetDecision(id)
+
+	if err != nil {
+		if err == mgo.ErrNotFound {
+			decision_history = &models.DecisionHistory{
+				ID: id,
+			}
+		} else {
+			return err
+		}
+	}
+
+	decision_history.Status = decision.Status
+	decision_history.Wave = decision.Wave
+	decision_history.History = append(decision_history.History, decision)
 
 	selector := bson.M{
 		"id": id,
 	}
 
-	err = database.Update("decision", selector, &decision)
+	err = database.Update("decision", selector, &decision_history)
 
 	if err == mgo.ErrNotFound {
-		err = database.Insert("decision", &decision)
+		err = database.Insert("decision", &decision_history)
 	}
 
 	return err

@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"net/http"
+	"time"
 )
 
 func SetupController(route *mux.Route) {
@@ -61,6 +62,7 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 
 	reviewer_id := r.Header.Get("HackIllinois-Identity")
 	decision.Reviewer = reviewer_id
+	decision.Timestamp = time.Now().Unix()
 
 	err := service.UpdateDecision(decision.ID, decision)
 

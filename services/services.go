@@ -25,5 +25,6 @@ func RegisterAPIs() arbor.RouteCollection {
 	Routes = append(Routes, UserRoutes...)
 	Routes = append(Routes, RegistrationRoutes...)
 	Routes = append(Routes, DecisionRoutes...)
+	Routes = append(Routes, RsvpRoutes...)
 	return Routes
 }

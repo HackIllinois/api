@@ -29,7 +29,7 @@ var RegistrationRoutes = arbor.RouteCollection{
 		"UpdateCurrentRegistrationInfo",
 		"PUT",
 		"/registration/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Attendee"})).ThenFunc(UpdateCurrentRegistrationInfo).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Applicant"})).ThenFunc(UpdateCurrentRegistrationInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetRegistrationInfo",

@@ -17,7 +17,7 @@ var DecisionRoutes = arbor.RouteCollection{
 		"GetCurrentDecision",
 		"GET",
 		"/decision/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Attendee"})).ThenFunc(GetCurrentDecision).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Applicant"})).ThenFunc(GetCurrentDecision).ServeHTTP,
 	},
 	arbor.Route{
 		"GetDecision",

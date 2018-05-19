@@ -70,6 +70,14 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
+	if rsvp.IsAttending {
+		err = service.AddAttendeeRole(id)
+
+		if err != nil {
+			panic(errors.UnprocessableError(err.Error()))
+		}
+	}
+
 	updated_rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
@@ -89,15 +97,35 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id"))
 	}
 
+	original_rsvp, err := service.GetUserRsvp(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
 	var rsvp models.UserRsvp
 	json.NewDecoder(r.Body).Decode(&rsvp)
 
 	rsvp.ID = id
 
-	err := service.UpdateUserRsvp(id, rsvp)
+	err = service.UpdateUserRsvp(id, rsvp)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	if !original_rsvp.IsAttending && rsvp.IsAttending {
+		err = service.AddAttendeeRole(id)
+
+		if err != nil {
+			panic(errors.UnprocessableError(err.Error()))
+		}
+	} else if original_rsvp.IsAttending && !rsvp.IsAttending {
+		err = service.RemoveAttendeeRole(id)
+
+		if err != nil {
+			panic(errors.UnprocessableError(err.Error()))
+		}
 	}
 
 	updated_rsvp, err := service.GetUserRsvp(id)

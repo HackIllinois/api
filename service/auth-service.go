@@ -10,9 +10,9 @@ import (
 )
 
 /*
-	Add Attendee role to user with auth service
+	Add Applicant role to user with auth service
 */
-func AddAttendeeRole(id string) error {
+func AddApplicantRole(id string) error {
 	resp, err := http.Get(config.AUTH_SERVICE + "/auth/roles/" + id + "/")
 
 	if err != nil {
@@ -26,7 +26,7 @@ func AddAttendeeRole(id string) error {
 	var user_roles models.UserRoles
 	json.NewDecoder(resp.Body).Decode(&user_roles)
 
-	user_roles.Roles = append(user_roles.Roles, "Attendee")
+	user_roles.Roles = append(user_roles.Roles, "Applicant")
 
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&user_roles)

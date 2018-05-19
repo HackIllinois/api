@@ -59,12 +59,22 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id"))
 	}
 
+	isAccepted, err := service.IsApplicantAccepted(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	if !isAccepted {
+		panic(errors.UnprocessableError("Applicant must be accepted to rsvp"))
+	}
+
 	var rsvp models.UserRsvp
 	json.NewDecoder(r.Body).Decode(&rsvp)
 
 	rsvp.ID = id
 
-	err := service.CreateUserRsvp(id, rsvp)
+	err = service.CreateUserRsvp(id, rsvp)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

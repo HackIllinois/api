@@ -1,0 +1,8 @@
+language: go
+go:
+    - "1.10.x"
+services:
+    mongodb
+script:
+    - go build github.com/HackIllinois/api-rsvp
+    - go test github.com/HackIllinois/api-rsvp/tests

@@ -79,7 +79,7 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	err = service.AddAttendeeRole(id)
+	err = service.AddApplicantRole(id)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

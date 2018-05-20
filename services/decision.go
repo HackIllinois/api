@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-const DecisionURL = config.DecisionURL
+var DecisionURL = config.DECISION_SERVICE
 
 const DecisionFormat string = "JSON"
 

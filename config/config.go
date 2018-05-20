@@ -6,6 +6,8 @@ import (
 	"os"
 )
 
+var TOKEN_SECRET = os.Getenv("TOKEN_SECRET")
+
 var AUTH_SERVICE = os.Getenv("AUTH_SERVICE")
 var USER_SERVICE = os.Getenv("USER_SERVICE")
 var REGISTRATION_SERVICE = os.Getenv("REGISTRATION_SERVICE")

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"github.com/HackIllinois/api-gateway/config"
 	jwt "github.com/dgrijalva/jwt-go"
 	"time"
 )
@@ -9,7 +10,7 @@ import (
 var secret []byte
 
 func init() {
-	secret = []byte("secret_string")
+	secret = []byte(config.TOKEN_SECRET)
 }
 
 func ExtractFieldFromJWT(token string, field string) ([]string, error) {

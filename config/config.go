@@ -3,14 +3,15 @@ package config
 import (
 	"github.com/arbor-dev/arbor/proxy"
 	"github.com/arbor-dev/arbor/security"
+	"os"
 )
 
-const TestURL string = "http://localhost:8001"
-const AuthURL string = "http://localhost:8002"
-const UserURL string = "http://localhost:8003"
-const RegistrationURL string = "http://localhost:8004"
-const DecisionURL string = "http://localhost:8005"
-const RsvpURL string = "http://localhost:8006"
+var TEST_SERVICE = os.Getenv("TEST_SERVICE")
+var AUTH_SERVICE = os.Getenv("AUTH_SERVICE")
+var USER_SERVICE = os.Getenv("USER_SERVICE")
+var REGISTRATION_SERVICE = os.Getenv("REGISTRATION_SERVICE")
+var DECISION_SERVICE = os.Getenv("DECISION_SERVICE")
+var RSVP_SERVICE = os.Getenv("RSVP_SERVICE")
 
 func LoadArborConfig() {
 	security.AccessLogLocation = "log/access.log"

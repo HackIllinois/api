@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-const AuthURL = config.AuthURL
+var AuthURL = config.AUTH_SERVICE
 
 const AuthFormat string = "JSON"
 

@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-const TestURL = config.TestURL
+var TestURL = config.TEST_SERVICE
 
 const TestFormat string = "JSON"
 

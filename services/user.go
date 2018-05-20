@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-const UserURL = config.UserURL
+var UserURL = config.USER_SERVICE
 
 const UserFormat string = "JSON"
 

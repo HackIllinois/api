@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-const RegistrationURL = config.RegistrationURL
+var RegistrationURL = config.REGISTRATION_SERVICE
 
 const RegistrationFormat string = "JSON"
 

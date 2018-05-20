@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-const RsvpURL = config.RsvpURL
+var RsvpURL = config.RSVP_SERVICE
 
 const RsvpFormat string = "JSON"
 

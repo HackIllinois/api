@@ -20,7 +20,6 @@ func Gateway(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterAPIs() arbor.RouteCollection {
-	Routes = append(Routes, TestRoutes...)
 	Routes = append(Routes, AuthRoutes...)
 	Routes = append(Routes, UserRoutes...)
 	Routes = append(Routes, RegistrationRoutes...)

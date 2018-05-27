@@ -1,16 +1,28 @@
 package tests
 
 import (
+	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-rsvp/config"
-	"github.com/HackIllinois/api-rsvp/database"
 	"github.com/HackIllinois/api-rsvp/models"
 	"github.com/HackIllinois/api-rsvp/service"
 	"reflect"
 	"testing"
 )
 
+var db database.MongoDatabase
+
+func init() {
+	db_connection, err := database.InitMongoDatabase(config.RSVP_DB_HOST, config.RSVP_DB_NAME)
+
+	if err != nil {
+		panic(err)
+	}
+
+	db = db_connection
+}
+
 /*
-	Initialize database with test user info
+	Initialize db with test user info
 */
 func SetupTestDB(t *testing.T) {
 	rsvp := models.UserRsvp{
@@ -18,7 +30,7 @@ func SetupTestDB(t *testing.T) {
 		IsAttending: true,
 	}
 
-	err := database.Insert("rsvps", &rsvp)
+	err := db.Insert("rsvps", &rsvp)
 
 	if err != nil {
 		t.Fatal(err)
@@ -26,10 +38,10 @@ func SetupTestDB(t *testing.T) {
 }
 
 /*
-	Drop test database
+	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	session := database.GetSession()
+	session := db.GetSession()
 	defer session.Close()
 
 	err := session.DB(config.RSVP_DB_NAME).DropDatabase()
@@ -40,7 +52,7 @@ func CleanupTestDB(t *testing.T) {
 }
 
 /*
-	Service level test for getting user rsvp from database
+	Service level test for getting user rsvp from db
 */
 func TestGetUserRsvpService(t *testing.T) {
 	SetupTestDB(t)
@@ -64,7 +76,7 @@ func TestGetUserRsvpService(t *testing.T) {
 }
 
 /*
-	Service level test for creating user rsvp in the database
+	Service level test for creating user rsvp in the db
 */
 func TestCreateUserRsvpService(t *testing.T) {
 	SetupTestDB(t)
@@ -99,7 +111,7 @@ func TestCreateUserRsvpService(t *testing.T) {
 }
 
 /*
-	Service level test for updating user rsvp in the database
+	Service level test for updating user rsvp in the db
 */
 func TestUpdateUserRsvpService(t *testing.T) {
 	SetupTestDB(t)

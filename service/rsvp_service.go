@@ -2,11 +2,24 @@ package service
 
 import (
 	"errors"
-	"github.com/HackIllinois/api-rsvp/database"
+	"github.com/HackIllinois/api-commons/database"
+	"github.com/HackIllinois/api-rsvp/config"
 	"github.com/HackIllinois/api-rsvp/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
+
+var db database.MongoDatabase
+
+func init() {
+	db_connection, err := database.InitMongoDatabase(config.RSVP_DB_HOST, config.RSVP_DB_NAME)
+
+	if err != nil {
+		panic(err)
+	}
+
+	db = db_connection
+}
 
 /*
 	Returns the rsvp associated with the given user id
@@ -17,7 +30,7 @@ func GetUserRsvp(id string) (*models.UserRsvp, error) {
 	}
 
 	var rsvp models.UserRsvp
-	err := database.FindOne("rsvps", query, &rsvp)
+	err := db.FindOne("rsvps", query, &rsvp)
 
 	if err != nil {
 		return nil, err
@@ -39,7 +52,7 @@ func CreateUserRsvp(id string, rsvp models.UserRsvp) error {
 		return errors.New("Rsvp already exists")
 	}
 
-	err = database.Insert("rsvps", &rsvp)
+	err = db.Insert("rsvps", &rsvp)
 
 	return err
 }
@@ -52,7 +65,7 @@ func UpdateUserRsvp(id string, rsvp models.UserRsvp) error {
 		"id": id,
 	}
 
-	err := database.Update("rsvps", selector, &rsvp)
+	err := db.Update("rsvps", selector, &rsvp)
 
 	return err
 }

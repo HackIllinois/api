@@ -1,19 +1,31 @@
 package tests
 
 import (
+	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-decision/config"
-	"github.com/HackIllinois/api-decision/database"
 	"github.com/HackIllinois/api-decision/models"
 	"github.com/HackIllinois/api-decision/service"
 	"reflect"
 	"testing"
 )
 
+var db database.MongoDatabase
+
+func init() {
+	db_connection, err := database.InitMongoDatabase(config.DECISION_DB_HOST, config.DECISION_DB_NAME)
+
+	if err != nil {
+		panic(err)
+	}
+
+	db = db_connection
+}
+
 /*
 	Initialize databse with test decision info
 */
 func SetupTestDB(t *testing.T) {
-	err := database.Insert("decision", &models.DecisionHistory{
+	err := db.Insert("decision", &models.DecisionHistory{
 		ID:        "testid",
 		Status:    "PENDING",
 		Wave:      0,
@@ -36,10 +48,10 @@ func SetupTestDB(t *testing.T) {
 }
 
 /*
-	Drop test database
+	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	session := database.GetSession()
+	session := db.GetSession()
 	defer session.Close()
 
 	err := session.DB(config.DECISION_DB_NAME).DropDatabase()
@@ -50,7 +62,7 @@ func CleanupTestDB(t *testing.T) {
 }
 
 /*
-	Service level test for getting decision info from database
+	Service level test for getting decision info from db
 */
 func TestGetDecisionService(t *testing.T) {
 	SetupTestDB(t)
@@ -86,7 +98,7 @@ func TestGetDecisionService(t *testing.T) {
 }
 
 /*
-	Service level test for updating decision in the database
+	Service level test for updating decision in the db
 */
 func TestUpdateDecisionService(t *testing.T) {
 	SetupTestDB(t)

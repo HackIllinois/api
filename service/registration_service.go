@@ -2,7 +2,8 @@ package service
 
 import (
 	"errors"
-	"github.com/HackIllinois/api-registration/database"
+	"github.com/HackIllinois/api-commons/database"
+	"github.com/HackIllinois/api-registration/config"
 	"github.com/HackIllinois/api-registration/models"
 	"gopkg.in/go-playground/validator.v9"
 	"gopkg.in/mgo.v2"
@@ -15,6 +16,18 @@ func init() {
 	validate = validator.New()
 }
 
+var db database.MongoDatabase
+
+func init() {
+	db_connection, err := database.InitMongoDatabase(config.REGISTRATION_DB_HOST, config.REGISTRATION_DB_NAME)
+
+	if err != nil {
+		panic(err)
+	}
+
+	db = db_connection
+}
+
 /*
 	Returns the registration associated with the given user id
 */
@@ -24,7 +37,7 @@ func GetUserRegistration(id string) (*models.UserRegistration, error) {
 	}
 
 	var user_registration models.UserRegistration
-	err := database.FindOne("attendees", query, &user_registration)
+	err := db.FindOne("attendees", query, &user_registration)
 
 	if err != nil {
 		return nil, err
@@ -52,7 +65,7 @@ func CreateUserRegistration(id string, user_registration models.UserRegistration
 		return errors.New("Registration already exists")
 	}
 
-	err = database.Insert("attendees", &user_registration)
+	err = db.Insert("attendees", &user_registration)
 
 	return err
 }
@@ -71,7 +84,7 @@ func UpdateUserRegistration(id string, user_registration models.UserRegistration
 		"id": id,
 	}
 
-	err = database.Update("attendees", selector, &user_registration)
+	err = db.Update("attendees", selector, &user_registration)
 
 	return err
 }

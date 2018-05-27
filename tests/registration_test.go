@@ -1,20 +1,32 @@
 package tests
 
 import (
+	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-registration/config"
-	"github.com/HackIllinois/api-registration/database"
 	"github.com/HackIllinois/api-registration/models"
 	"github.com/HackIllinois/api-registration/service"
 	"reflect"
 	"testing"
 )
 
+var db database.MongoDatabase
+
+func init() {
+	db_connection, err := database.InitMongoDatabase(config.REGISTRATION_DB_HOST, config.REGISTRATION_DB_NAME)
+
+	if err != nil {
+		panic(err)
+	}
+
+	db = db_connection
+}
+
 /*
-	Initialize database with test user info
+	Initialize db with test user info
 */
 func SetupTestDB(t *testing.T) {
 	user_registration := base_registration
-	err := database.Insert("attendees", &user_registration)
+	err := db.Insert("attendees", &user_registration)
 
 	if err != nil {
 		t.Fatal(err)
@@ -22,10 +34,10 @@ func SetupTestDB(t *testing.T) {
 }
 
 /*
-	Drop test database
+	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	session := database.GetSession()
+	session := db.GetSession()
 	defer session.Close()
 
 	err := session.DB(config.REGISTRATION_DB_NAME).DropDatabase()
@@ -36,7 +48,7 @@ func CleanupTestDB(t *testing.T) {
 }
 
 /*
-	Service level test for getting user registration from database
+	Service level test for getting user registration from db
 */
 func TestGetUserRegistrationService(t *testing.T) {
 	SetupTestDB(t)
@@ -57,7 +69,7 @@ func TestGetUserRegistrationService(t *testing.T) {
 }
 
 /*
-	Service level test for creating user registration in the database
+	Service level test for creating user registration in the db
 */
 func TestCreateUserRegistrationService(t *testing.T) {
 	SetupTestDB(t)
@@ -91,7 +103,7 @@ func TestCreateUserRegistrationService(t *testing.T) {
 }
 
 /*
-	Service level test for updating user registration in the database
+	Service level test for updating user registration in the db
 */
 func TestUpdateUserRegistrationService(t *testing.T) {
 	SetupTestDB(t)

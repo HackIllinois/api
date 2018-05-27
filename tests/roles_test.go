@@ -2,18 +2,30 @@ package tests
 
 import (
 	"github.com/HackIllinois/api-auth/config"
-	"github.com/HackIllinois/api-auth/database"
 	"github.com/HackIllinois/api-auth/models"
 	"github.com/HackIllinois/api-auth/service"
+	"github.com/HackIllinois/api-commons/database"
 	"reflect"
 	"testing"
 )
 
+var db database.MongoDatabase
+
+func init() {
+	db_connection, err := database.InitMongoDatabase(config.AUTH_DB_HOST, config.AUTH_DB_NAME)
+
+	if err != nil {
+		panic(err)
+	}
+
+	db = db_connection
+}
+
 /*
-	Initialize roles database with a test user
+	Initialize roles db with a test user
 */
 func SetupTestDB(t *testing.T) {
-	err := database.Insert("roles", &models.UserRoles{
+	err := db.Insert("roles", &models.UserRoles{
 		ID:    "testid",
 		Roles: []string{"User"},
 	})
@@ -24,10 +36,10 @@ func SetupTestDB(t *testing.T) {
 }
 
 /*
-	Drop test database
+	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	session := database.GetSession()
+	session := db.GetSession()
 	defer session.Close()
 
 	err := session.DB(config.AUTH_DB_NAME).DropDatabase()
@@ -38,7 +50,7 @@ func CleanupTestDB(t *testing.T) {
 }
 
 /*
-	Service level test for getting a user's roles from the database
+	Service level test for getting a user's roles from the db
 */
 func TestGetRolesService(t *testing.T) {
 	SetupTestDB(t)
@@ -68,7 +80,7 @@ func TestGetRolesService(t *testing.T) {
 }
 
 /*
-	Service level test for setting a user's roles in the database
+	Service level test for setting a user's roles in the db
 */
 func TestPutRolesService(t *testing.T) {
 	SetupTestDB(t)

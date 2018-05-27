@@ -2,7 +2,8 @@ package service
 
 import (
 	"errors"
-	"github.com/HackIllinois/api-decision/database"
+	"github.com/HackIllinois/api-commons/database"
+	"github.com/HackIllinois/api-decision/config"
 	"github.com/HackIllinois/api-decision/models"
 	"gopkg.in/go-playground/validator.v9"
 	"gopkg.in/mgo.v2"
@@ -15,6 +16,18 @@ func init() {
 	validate = validator.New()
 }
 
+var db database.MongoDatabase
+
+func init() {
+	db_connection, err := database.InitMongoDatabase(config.DECISION_DB_HOST, config.DECISION_DB_NAME)
+
+	if err != nil {
+		panic(err)
+	}
+
+	db = db_connection
+}
+
 /*
 	Returns the decision associated with the given user id
 */
@@ -24,7 +37,7 @@ func GetDecision(id string) (*models.DecisionHistory, error) {
 	}
 
 	var decision models.DecisionHistory
-	err := database.FindOne("decision", query, &decision)
+	err := db.FindOne("decision", query, &decision)
 
 	if err != nil {
 		return nil, err
@@ -72,10 +85,10 @@ func UpdateDecision(id string, decision models.Decision) error {
 		"id": id,
 	}
 
-	err = database.Update("decision", selector, &decision_history)
+	err = db.Update("decision", selector, &decision_history)
 
 	if err == mgo.ErrNotFound {
-		err = database.Insert("decision", &decision_history)
+		err = db.Insert("decision", &decision_history)
 	}
 
 	return err

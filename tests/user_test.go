@@ -1,19 +1,31 @@
 package tests
 
 import (
+	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-user/config"
-	"github.com/HackIllinois/api-user/database"
 	"github.com/HackIllinois/api-user/models"
 	"github.com/HackIllinois/api-user/service"
 	"reflect"
 	"testing"
 )
 
+var db database.MongoDatabase
+
+func init() {
+	db_connection, err := database.InitMongoDatabase(config.USER_DB_HOST, config.USER_DB_NAME)
+
+	if err != nil {
+		panic(err)
+	}
+
+	db = db_connection
+}
+
 /*
 	Initialize databse with test user info
 */
 func SetupTestDB(t *testing.T) {
-	err := database.Insert("info", &models.UserInfo{
+	err := db.Insert("info", &models.UserInfo{
 		ID:       "testid",
 		Username: "testusername",
 		Email:    "testemail@domain.com",
@@ -25,10 +37,10 @@ func SetupTestDB(t *testing.T) {
 }
 
 /*
-	Drop test database
+	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	session := database.GetSession()
+	session := db.GetSession()
 	defer session.Close()
 
 	err := session.DB(config.USER_DB_NAME).DropDatabase()
@@ -39,7 +51,7 @@ func CleanupTestDB(t *testing.T) {
 }
 
 /*
-	Service level test for getting user info from database
+	Service level test for getting user info from db
 */
 func TestGetUserInfoService(t *testing.T) {
 	SetupTestDB(t)
@@ -64,7 +76,7 @@ func TestGetUserInfoService(t *testing.T) {
 }
 
 /*
-	Service level test for setting user info in the database
+	Service level test for setting user info in the db
 */
 func TestSetUserInfoService(t *testing.T) {
 	SetupTestDB(t)

@@ -2,12 +2,14 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
+	"net/http"
+
 	"github.com/HackIllinois/api-auth/models"
 	"github.com/HackIllinois/api-auth/service"
 	"github.com/HackIllinois/api-commons/errors"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 func SetupController(route *mux.Route) {
@@ -17,6 +19,7 @@ func SetupController(route *mux.Route) {
 	router.Handle("/code/{provider}/", alice.New().ThenFunc(Login)).Methods("POST")
 	router.Handle("/roles/{id}/", alice.New().ThenFunc(GetRoles)).Methods("GET")
 	router.Handle("/roles/", alice.New().ThenFunc(SetRoles)).Methods("PUT")
+	router.Handle("/token/refresh", alice.New().ThenFunc(RefreshToken)).Methods("POST")
 }
 
 /*
@@ -146,4 +149,65 @@ func SetRoles(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_roles)
+}
+
+/*
+	Sends a response with a new JWT token for the user, with updated information.
+	Returns the signed token string.
+*/
+func RefreshToken(w http.ResponseWriter, r *http.Request) string {
+
+	// Decode the current JWT string from the request body
+	var currentTokenString string
+	json.NewDecoder(r.Body).Decode(&currentTokenString)
+
+	// Parse the JWT to get user ID and email
+
+	currentToken, err := jwt.Parse(currentTokenString, func(token *jwt.Token) (interface{}, error) {
+		// Validates the JWT
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+
+		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
+		return hmacSampleSecret, nil
+	})
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	var id string
+	var email string
+
+	// claims is like a ResultSet from an SQL query
+	if claims, ok := currentToken.Claims.(jwt.MapClaims); ok && currentToken.Valid {
+		id = claims["id"]
+		email = claims["email"]
+	} else {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	// Get the roles from the given user ID
+
+	roles, err := service.GetUserRoles(id, true)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	// Create the new token using user ID, email, and (updated) roles.
+
+	signedToken, err := service.MakeToken(id, email, roles)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	newToken := models.Token{
+		Token: signedToken,
+	}
+
+	json.NewEncoder(w).Encode(newToken)
+	return signedToken
 }

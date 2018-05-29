@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/HackIllinois/api-auth/models"
 	"github.com/HackIllinois/api-auth/service"
 	"github.com/HackIllinois/api-commons/errors"
@@ -19,7 +19,7 @@ func SetupController(route *mux.Route) {
 	router.Handle("/code/{provider}/", alice.New().ThenFunc(Login)).Methods("POST")
 	router.Handle("/roles/{id}/", alice.New().ThenFunc(GetRoles)).Methods("GET")
 	router.Handle("/roles/", alice.New().ThenFunc(SetRoles)).Methods("PUT")
-	router.Handle("/token/refresh", alice.New().ThenFunc(RefreshToken)).Methods("POST")
+	router.Handle("/token/refresh/", alice.New().ThenFunc(RefreshToken)).Methods("POST")
 }
 
 /*
@@ -151,6 +151,13 @@ func SetRoles(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(updated_roles)
 }
 
+type UserJWT struct {
+	exp int64,
+	id string,
+	email string,
+	roles []string
+}
+
 /*
 	Sends a response with a new JWT token for the user, with updated information.
 	Returns the signed token string.
@@ -165,12 +172,11 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) string {
 
 	currentToken, err := jwt.Parse(currentTokenString, func(token *jwt.Token) (interface{}, error) {
 		// Validates the JWT
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+		if _, ok := token.Method.(jwt.SigningMethodHS256); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
-		return hmacSampleSecret, nil
+		return []byte(config.TOKEN_SECRET), nil
 	})
 
 	if err != nil {
@@ -181,7 +187,7 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) string {
 	var email string
 
 	// claims is like a ResultSet from an SQL query
-	if claims, ok := currentToken.Claims.(jwt.MapClaims); ok && currentToken.Valid {
+	if claims, ok := currentToken.Claims.(*UserJWT); ok && currentToken.Valid {
 		id = claims["id"]
 		email = claims["email"]
 	} else {

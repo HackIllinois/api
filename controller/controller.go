@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	jwt "github.com/dgrijalva/jwt-go"
+
+	"github.com/HackIllinois/api-auth/config"
 	"github.com/HackIllinois/api-auth/models"
 	"github.com/HackIllinois/api-auth/service"
 	"github.com/HackIllinois/api-commons/errors"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 )
@@ -151,18 +153,11 @@ func SetRoles(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(updated_roles)
 }
 
-type UserJWT struct {
-	exp int64,
-	id string,
-	email string,
-	roles []string
-}
-
 /*
 	Sends a response with a new JWT token for the user, with updated information.
 	Returns the signed token string.
 */
-func RefreshToken(w http.ResponseWriter, r *http.Request) string {
+func RefreshToken(w http.ResponseWriter, r *http.Request) {
 
 	// Decode the current JWT string from the request body
 	var currentTokenString string
@@ -172,7 +167,7 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) string {
 
 	currentToken, err := jwt.Parse(currentTokenString, func(token *jwt.Token) (interface{}, error) {
 		// Validates the JWT
-		if _, ok := token.Method.(jwt.SigningMethodHS256); !ok {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
@@ -182,14 +177,12 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) string {
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
-
-	var id string
-	var email string
-
+	id := ""
+	email := ""
 	// claims is like a ResultSet from an SQL query
-	if claims, ok := currentToken.Claims.(*UserJWT); ok && currentToken.Valid {
-		id = claims["id"]
-		email = claims["email"]
+	if claims, ok := currentToken.Claims.(jwt.MapClaims); ok && currentToken.Valid {
+		id = claims["id"].(string)
+		email = claims["email"].(string)
 	} else {
 		panic(errors.UnprocessableError(err.Error()))
 	}
@@ -215,5 +208,4 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) string {
 	}
 
 	json.NewEncoder(w).Encode(newToken)
-	return signedToken
 }

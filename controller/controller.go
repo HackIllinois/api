@@ -158,18 +158,20 @@ func SetRoles(w http.ResponseWriter, r *http.Request) {
 func RefreshToken(w http.ResponseWriter, r *http.Request) {
 
 	// Decode the current JWT token from the request body
-	var currentToken Token
+	var currentToken models.Token
 	json.NewDecoder(r.Body).Decode(&currentToken)
 
 	// Fetch user ID from the Identification middleware, and email using the token
 
-	id, err := utils.ExtractFieldFromJWT(currentToken, "id")
+	userId, err := utils.ExtractFieldFromJWT(currentToken.Token, "id")
+	id := userId[0]
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	email, err := utils.ExtractFieldFromJWT(currentToken, "email")
+	userEmail, err := utils.ExtractFieldFromJWT(currentToken.Token, "email")
+	email := userEmail[0]
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

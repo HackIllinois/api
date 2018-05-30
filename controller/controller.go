@@ -2,14 +2,12 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
-	"github.com/HackIllinois/api-auth/config"
 	"github.com/HackIllinois/api-auth/models"
 	"github.com/HackIllinois/api-auth/service"
 	"github.com/HackIllinois/api-commons/errors"
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/HackIllinois/api-gateway/utils"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 )
@@ -159,31 +157,21 @@ func SetRoles(w http.ResponseWriter, r *http.Request) {
 */
 func RefreshToken(w http.ResponseWriter, r *http.Request) {
 
-	// Decode the current JWT string from the request body
-	var currentTokenString string
-	json.NewDecoder(r.Body).Decode(&currentTokenString)
+	// Decode the current JWT token from the request body
+	var currentToken Token
+	json.NewDecoder(r.Body).Decode(&currentToken)
 
-	// Parse the JWT to get user ID and email
+	// Fetch user ID from the Identification middleware, and email using the token
 
-	currentToken, err := jwt.Parse(currentTokenString, func(token *jwt.Token) (interface{}, error) {
-		// Validates the JWT
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-		}
-
-		return []byte(config.TOKEN_SECRET), nil
-	})
+	id, err := utils.ExtractFieldFromJWT(currentToken, "id")
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
-	id := ""
-	email := ""
-	// claims is like a ResultSet from an SQL query
-	if claims, ok := currentToken.Claims.(jwt.MapClaims); ok && currentToken.Valid {
-		id = claims["id"].(string)
-		email = claims["email"].(string)
-	} else {
+
+	email, err := utils.ExtractFieldFromJWT(currentToken, "email")
+
+	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 

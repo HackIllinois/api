@@ -41,7 +41,7 @@ func SendUserInfo(id string, username string, email string) error {
 	Given a user ID, fetch the user info corresponding to the ID.
 */
 func GetUserInfo(id string) (models.UserInfo, error) {
-	apiUserUrl := fmt.Sprintf("/user/%s/", id)
+	apiUserUrl := fmt.Sprintf(config.USER_SERVICE+"/user/%s/", id)
 	resp, err := http.Get(apiUserUrl)
 	var userInfo models.UserInfo
 	json.NewDecoder(resp.Body).Decode(&userInfo)

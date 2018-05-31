@@ -2,6 +2,7 @@ package tests
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"reflect"
@@ -15,27 +16,23 @@ import (
 	Tests that GetUserInfo returns the correct user information
 */
 func TestGetUserInfo(t *testing.T) {
-	newId := "1984"
-	newUsername := "jane_smith"
-	newEmail := "jane.smith@gmail.com"
-	actualUserInfo = models.UserInfo{
-		ID:       newId,
-		Username: newUsername,
-		Email:    newEmail,
+	actualUserInfo := models.UserInfo{
+		ID:       "1984",
+		Username: "jane_smith",
+		Email:    "jane.smith@gmail.com",
+	}
+	fmt.Println(actualUserInfo)
+	body := bytes.Buffer{}
+	json.NewEncoder(&body).Encode(&actualUserInfo)
+
+	resp, err := http.Post("http://localhost:8000/user/", "application/json", &body)
+	fmt.Println(resp)
+
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	postBody := []byte(
-		fmt.Sprintf(
-			`{
-				"id" : "%s",
-				"username" : "%s",
-				"email" : "%s",
-			}`,
-			newId, newUsername, newEmail,
-		),
-	)
-	resp, err := http.Post("/user/")
-	fetchedUserInfo := service.GetUserInfo(newId, bytes.NewBuffer(postBody))
+	fetchedUserInfo, err := service.GetUserInfo(actualUserInfo.ID)
 
 	if err != nil {
 		t.Fatal(err)

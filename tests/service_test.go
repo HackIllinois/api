@@ -25,14 +25,13 @@ func TestGetUserInfo(t *testing.T) {
 
 	postBody := []byte(
 		fmt.Sprintf(
-			`
-			{
+			`{
 				"id" : "%s",
 				"username" : "%s",
 				"email" : "%s",
-			}
-			`
-		), newId, newUsername, newEmail
+			}`,
+			newId, newUsername, newEmail
+		)
 	)
 	resp, err := http.Post("/user/")
 	fetchedUserInfo := service.GetUserInfo(newId, bytes.NewBuffer(postBody))

@@ -29,14 +29,14 @@ func TestGetUserInfo(t *testing.T) {
 			{
 				"id" : "%s",
 				"username" : "%s",
-				"email" : "%s"
+				"email" : "%s",
 			}
 			`
 		), newId, newUsername, newEmail
 	)
 	resp, err := http.Post("/user/")
 	fetchedUserInfo := service.GetUserInfo(newId, bytes.NewBuffer(postBody))
-	
+
 	if err != nil {
 		t.Fatal(err)
 	}

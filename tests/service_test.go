@@ -1,11 +1,12 @@
 package tests
 
 import (
-	"fmt"
 	"bytes"
-	"encoding/json"
+	"fmt"
 	"net/http"
+	"reflect"
 	"testing"
+
 	"github.com/HackIllinois/api-auth/models"
 	"github.com/HackIllinois/api-auth/service"
 )
@@ -18,9 +19,9 @@ func TestGetUserInfo(t *testing.T) {
 	newUsername := "jane_smith"
 	newEmail := "jane.smith@gmail.com"
 	actualUserInfo = models.UserInfo{
-		ID: newId,
+		ID:       newId,
 		Username: newUsername,
-		Email: newEmail,
+		Email:    newEmail,
 	}
 
 	postBody := []byte(
@@ -30,8 +31,8 @@ func TestGetUserInfo(t *testing.T) {
 				"username" : "%s",
 				"email" : "%s",
 			}`,
-			newId, newUsername, newEmail
-		)
+			newId, newUsername, newEmail,
+		),
 	)
 	resp, err := http.Post("/user/")
 	fetchedUserInfo := service.GetUserInfo(newId, bytes.NewBuffer(postBody))
@@ -39,7 +40,7 @@ func TestGetUserInfo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	
+
 	if !reflect.DeepEqual(actualUserInfo, fetchedUserInfo) {
 		t.Errorf("Wrong user info. Expected %v, got %v", actualUserInfo, fetchedUserInfo)
 	}

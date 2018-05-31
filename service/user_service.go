@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"net/http"
+
 	"github.com/HackIllinois/api-auth/config"
 	"github.com/HackIllinois/api-auth/models"
-	"net/http"
 )
 
 /*
@@ -33,4 +35,15 @@ func SendUserInfo(id string, username string, email string) error {
 	}
 
 	return nil
+}
+
+/*
+	Given a user ID, fetch the user info corresponding to the ID.
+*/
+func GetUserInfo(id string) (models.UserInfo, error) {
+	apiUserUrl := fmt.Sprintf("/user/%s/", id)
+	resp, err := http.Get(apiUserUrl)
+	var userInfo models.UserInfo
+	json.NewDecoder(resp.Body).Decode(&userInfo)
+	return userInfo, err
 }

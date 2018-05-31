@@ -7,7 +7,6 @@ import (
 	"github.com/HackIllinois/api-auth/models"
 	"github.com/HackIllinois/api-auth/service"
 	"github.com/HackIllinois/api-commons/errors"
-	"github.com/HackIllinois/api-gateway/utils"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 )
@@ -161,17 +160,12 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 	var currentToken models.Token
 	json.NewDecoder(r.Body).Decode(&currentToken)
 
-	// Fetch user ID from the Identification middleware, and email using the token
+	// Fetch user ID from the Identification middleware, and email using the service
 
-	userId, err := utils.ExtractFieldFromJWT(currentToken.Token, "id")
-	id := userId[0]
+	id := r.Header.Get("HackIllinois-Identity")
 
-	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
-	}
-
-	userEmail, err := utils.ExtractFieldFromJWT(currentToken.Token, "email")
-	email := userEmail[0]
+	userInfo, err := service.GetUserInfo(id)
+	email := userInfo.Email
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
@@ -179,7 +173,7 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 
 	// Get the roles from the given user ID
 
-	roles, err := service.GetUserRoles(id, true)
+	roles, err := service.GetUserRoles(id, false)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

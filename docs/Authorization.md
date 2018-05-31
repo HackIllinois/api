@@ -68,7 +68,7 @@ Response format:
 }
 ```
 
-POST /auth/token/refresh
+POST /auth/token/refresh/
 -----------------
 
 Exhanges the current JWT for a new one. This is useful when the user's roles change, and the updated roles need to be encoded into a new JWT, such as during registration. 

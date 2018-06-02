@@ -1,7 +1,11 @@
 package database
 
 import (
+	"crypto/tls"
 	"gopkg.in/mgo.v2"
+	"net"
+	"os"
+	"time"
 )
 
 /*
@@ -27,7 +31,22 @@ type MongoDatabase struct {
 	Initialize connection to mongo database
 */
 func InitMongoDatabase(host string, db_name string) (MongoDatabase, error) {
-	session, err := mgo.Dial(host)
+	dial_info, err := mgo.ParseURL(host)
+
+	if err != nil {
+		return MongoDatabase{}, err
+	}
+
+	if os.Getenv("IS_PRODUCTION") == "true" {
+		dial_info.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
+			tls_config := &tls.Config{}
+			connection, err := tls.Dial("tcp", addr.String(), tls_config)
+			return connection, err
+		}
+		dial_info.Timeout = 60 * time.Second
+	}
+
+	session, err := mgo.DialWithInfo(dial_info)
 
 	db := MongoDatabase{
 		global_session: session,

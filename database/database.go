@@ -2,9 +2,9 @@ package database
 
 import (
 	"crypto/tls"
+	"github.com/HackIllinois/api-commons/config"
 	"gopkg.in/mgo.v2"
 	"net"
-	"os"
 	"time"
 )
 
@@ -37,7 +37,7 @@ func InitMongoDatabase(host string, db_name string) (MongoDatabase, error) {
 		return MongoDatabase{}, err
 	}
 
-	if os.Getenv("IS_PRODUCTION") == "true" {
+	if config.IS_PRODUCTION {
 		dial_info.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
 			tls_config := &tls.Config{}
 			connection, err := tls.Dial("tcp", addr.String(), tls_config)

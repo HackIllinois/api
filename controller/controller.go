@@ -13,25 +13,12 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/{id}/", alice.New().ThenFunc(GetUserRegistration)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(GetCurrentUserRegistration)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(CreateCurrentUserRegistration)).Methods("POST")
 	router.Handle("/", alice.New().ThenFunc(UpdateCurrentUserRegistration)).Methods("PUT")
-}
 
-/*
-	Endpoint to get the registration for a specified user
-*/
-func GetUserRegistration(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-
-	user_registration, err := service.GetUserRegistration(id)
-
-	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
-	}
-
-	json.NewEncoder(w).Encode(user_registration)
+	router.Handle("/filter/", alice.New().ThenFunc(GetFilteredUserRegistrations)).Methods("GET")
+	router.Handle("/{id}/", alice.New().ThenFunc(GetUserRegistration)).Methods("GET")
 }
 
 /*
@@ -137,4 +124,26 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_registration)
+}
+
+/*
+	Endpoint to get registrations based on filters
+*/
+func GetFilteredUserRegistrations(w http.ResponseWriter, r *http.Request) {
+	
+}
+
+/*
+	Endpoint to get the registration for a specified user
+*/
+func GetUserRegistration(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	user_registration, err := service.GetUserRegistration(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(user_registration)
 }

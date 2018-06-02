@@ -151,25 +151,27 @@ func SetRoles(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Sends a response with a new JWT token for the user, with updated information.
-	Returns the signed token string.
+	Responds with a new JWT token for the user, with updated information.
 */
 func RefreshToken(w http.ResponseWriter, r *http.Request) {
 
-	// Decode the current JWT token from the request body
-	var currentToken models.Token
-	json.NewDecoder(r.Body).Decode(&currentToken)
+	// Get the current JWT from the Authorization header
 
-	// Fetch user ID from the Identification middleware, and email using the service
+	current_token := models.Token{
+		Token: r.Header.Get("Authorization"),
+	}
+
+	// Fetch user ID from the Identification middleware, and email using the user service
 
 	id := r.Header.Get("HackIllinois-Identity")
 
-	userInfo, err := service.GetUserInfo(id)
-	email := userInfo.Email
+	user_info, err := service.GetUserInfo(id, current_token.Token)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
+
+	email := user_info.Email
 
 	// Get the roles from the given user ID
 
@@ -181,15 +183,15 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 
 	// Create the new token using user ID, email, and (updated) roles.
 
-	signedToken, err := service.MakeToken(id, email, roles)
+	signed_token, err := service.MakeToken(id, email, roles)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	newToken := models.Token{
-		Token: signedToken,
+	new_token := models.Token{
+		Token: signed_token,
 	}
 
-	json.NewEncoder(w).Encode(newToken)
+	json.NewEncoder(w).Encode(new_token)
 }

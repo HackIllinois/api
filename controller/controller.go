@@ -130,7 +130,14 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	Endpoint to get registrations based on filters
 */
 func GetFilteredUserRegistrations(w http.ResponseWriter, r *http.Request) {
-	
+	parameters := r.URL.Query()
+	user_registrations, err := service.GetFilteredUserRegistrations(parameters)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(user_registrations)
 }
 
 /*

@@ -32,9 +32,7 @@ func init() {
 	Returns the registration associated with the given user id
 */
 func GetUserRegistration(id string) (*models.UserRegistration, error) {
-	query := bson.M{
-		"id": id,
-	}
+	query := bson.M{"id": id}
 
 	var user_registration models.UserRegistration
 	err := db.FindOne("attendees", query, &user_registration)
@@ -80,11 +78,31 @@ func UpdateUserRegistration(id string, user_registration models.UserRegistration
 		return err
 	}
 
-	selector := bson.M{
-		"id": id,
-	}
+	selector := bson.M{"id": id}
 
 	err = db.Update("attendees", selector, &user_registration)
 
 	return err
+}
+
+/*
+	Returns the registrations associated with the given parameters
+*/
+func GetFilteredUserRegistrations(parameters map[string][]string) (*[]models.UserRegistration, error) {
+	query := make(map[string]string)
+	for key, values := range parameters {
+		if len(values) > 1 {
+			return nil, errors.New("Multiple values for "+key)
+		}
+		query[key] = values[0]
+	}
+
+	var user_registrations []models.UserRegistration
+	err := db.FindAll("attendees", query, &user_registrations)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user_registrations, nil
 }

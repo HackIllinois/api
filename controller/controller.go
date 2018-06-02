@@ -18,7 +18,7 @@ func SetupController(route *mux.Route) {
 	router.Handle("/code/{provider}/", alice.New().ThenFunc(Login)).Methods("POST")
 	router.Handle("/roles/{id}/", alice.New().ThenFunc(GetRoles)).Methods("GET")
 	router.Handle("/roles/", alice.New().ThenFunc(SetRoles)).Methods("PUT")
-	router.Handle("/token/refresh/", alice.New().ThenFunc(RefreshToken)).Methods("POST")
+	router.Handle("/token/refresh/", alice.New().ThenFunc(RefreshToken)).Methods("GET")
 }
 
 /*

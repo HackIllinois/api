@@ -68,19 +68,12 @@ Response format:
 }
 ```
 
-POST /auth/token/refresh/
+GET /auth/token/refresh/
 -----------------
 
 Exhanges the current JWT for a new one. This is useful when the user's roles change, and the updated roles need to be encoded into a new JWT, such as during registration. 
 
-The user must hit this endpoint with a valid JWT.
-
-Request format:
-```
-{
-	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFybmF2c2Fua2FyYW5AZ21haWwuY29tIiwiZXhwIjoxNTI1ODQ1MzA0LCJpZCI6MCwicm9sZXMiOlsiVXNlciJdfQ.lYxFGSNDU9q7FoQHNHGvpKu1fTHf8yHsKPg8FDt9L-s"
-}
-```
+The current JWT should be in the Authorization header.
 
 Response format:
 ```

@@ -65,5 +65,5 @@ func GetUserInfo(id string) (*models.UserInfo, error) {
 
 	var user_info models.UserInfo
 	json.NewDecoder(resp.Body).Decode(&user_info)
-	return user_info, err
+	return &user_info, err
 }

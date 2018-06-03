@@ -8,6 +8,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"strconv"
 )
 
 var validate *validator.Validate
@@ -32,9 +33,7 @@ func init() {
 	Returns the decision associated with the given user id
 */
 func GetDecision(id string) (*models.DecisionHistory, error) {
-	query := bson.M{
-		"id": id,
-	}
+	query := bson.M{"id": id}
 
 	var decision models.DecisionHistory
 	err := db.FindOne("decision", query, &decision)
@@ -81,9 +80,7 @@ func UpdateDecision(id string, decision models.Decision) error {
 	decision_history.Reviewer = decision.Reviewer
 	decision_history.Timestamp = decision.Timestamp
 
-	selector := bson.M{
-		"id": id,
-	}
+	selector := bson.M{"id": id}
 
 	err = db.Update("decision", selector, &decision_history)
 
@@ -92,4 +89,35 @@ func UpdateDecision(id string, decision models.Decision) error {
 	}
 
 	return err
+}
+
+/*
+	Returns decisions based on a filter
+*/
+func GetFilteredDecisions(parameters map[string][]string) (*[]models.DecisionHistory, error) {
+	query := make(map[string]interface{})
+	for key, values := range parameters {
+		if len(values) > 1 {
+			return nil, errors.New("Multiple values for " + key)
+		}
+
+		if key == "status" {
+			query[key] = values[0]
+		} else if key == "wave" {
+			wave, err := strconv.Atoi(values[0])
+			if err != nil {
+				return nil, err
+			}
+			query[key] = wave
+		}
+	}
+
+	var decisions []models.DecisionHistory
+	err := db.FindAll("decision", query, &decisions)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &decisions, nil
 }

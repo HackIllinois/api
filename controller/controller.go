@@ -69,7 +69,14 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	Endpoint to get decisions based on a filter
 */
 func GetFilteredDecisions(w http.ResponseWriter, r *http.Request) {
-	
+	parameters := r.URL.Query()
+	decisions, err := service.GetFilteredDecisions(parameters)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(decisions)
 }
 
 /*

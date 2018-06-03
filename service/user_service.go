@@ -41,7 +41,6 @@ func SendUserInfo(id string, username string, email string) error {
 	Given a user ID, fetch the user info corresponding to the ID.
 */
 func GetUserInfo(id string) (*models.UserInfo, error) {
-	var HTTP_STATUS_OK int = 200
 	api_user_url := fmt.Sprintf("%s/user/%s/", config.USER_SERVICE, id)
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", api_user_url, nil)
@@ -57,7 +56,7 @@ func GetUserInfo(id string) (*models.UserInfo, error) {
 		return nil, err
 	}
 
-	if resp.StatusCode != HTTP_STATUS_OK {
+	if resp.StatusCode != http.StatusOK {
 		return nil, errors.New(fmt.Sprintf("GET request to api-user(%s) resulted in a response with a non-200 status code.", api_user_url))
 	}
 

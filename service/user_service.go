@@ -40,27 +40,30 @@ func SendUserInfo(id string, username string, email string) error {
 /*
 	Given a user ID, fetch the user info corresponding to the ID.
 */
-func GetUserInfo(id string, tokenString string) (models.UserInfo, error) {
-	api_user_url := fmt.Sprintf("http://localhost:8000/user/%s/", id)
+func GetUserInfo(id string) (*models.UserInfo, error) {
+	var HTTP_STATUS_OK int = 200
+	api_user_url := fmt.Sprintf("%s/user/%s/", config.USER_SERVICE, id)
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", api_user_url, nil)
 
 	if err != nil {
-		errors.New("GET request to api-user failed to be created")
+		return nil, err
 	}
 
-	req.Header.Set("Authorization", tokenString)
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
 
-	var user_info models.UserInfo
-
 	if err != nil {
-		return user_info, err
+		return nil, err
+	}
+
+	if resp.StatusCode != HTTP_STATUS_OK {
+		return nil, errors.New(fmt.Sprintf("GET request to api-user(%s) resulted in a response with a non-200 status code.", api_user_url))
 	}
 
 	defer resp.Body.Close()
 
+	var user_info models.UserInfo
 	json.NewDecoder(resp.Body).Decode(&user_info)
 	return user_info, err
 }

@@ -155,17 +155,11 @@ func SetRoles(w http.ResponseWriter, r *http.Request) {
 */
 func RefreshToken(w http.ResponseWriter, r *http.Request) {
 
-	// Get the current JWT from the Authorization header
-
-	current_token := models.Token{
-		Token: r.Header.Get("Authorization"),
-	}
-
 	// Fetch user ID from the Identification middleware, and email using the user service
 
 	id := r.Header.Get("HackIllinois-Identity")
 
-	user_info, err := service.GetUserInfo(id, current_token.Token)
+	user_info, err := service.GetUserInfo(id)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

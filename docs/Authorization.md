@@ -71,9 +71,7 @@ Response format:
 GET /auth/token/refresh/
 -----------------
 
-Exhanges the current JWT for a new one. This is useful when the user's roles change, and the updated roles need to be encoded into a new JWT, such as during registration. 
-
-The current JWT should be in the Authorization header.
+Creates a new JWT for the current user. This is useful when the user's roles change, and the updated roles need to be encoded into a new JWT, such as during registration. 
 
 Response format:
 ```

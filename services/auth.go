@@ -42,7 +42,7 @@ var AuthRoutes = arbor.RouteCollection{
 		"RefreshToken",
 		"GET",
 		"/auth/token/refresh/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(RefreshToken).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(RefreshToken).ServeHTTP,
 	},
 }
 

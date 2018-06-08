@@ -20,7 +20,8 @@ func IdentificationMiddleware(next http.Handler) http.Handler {
 					impersonation_id := r.Header.Get("HackIllinois-Impersonation")
 
 					// Check if an impersonation ID is specified
-					// According to https://golang.org/src/net/http/header.go:37, Get returns an empty string if there is no value associated with a given header.
+					// According to https://golang.org/src/net/http/header.go:37, Get returns an empty
+					// string if there is no value associated with a given header.
 
 					if impersonation_id == "" {
 						r.Header.Set("HackIllinois-Identity", id[0])

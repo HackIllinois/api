@@ -2,12 +2,13 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/HackIllinois/api-auth/models"
 	"github.com/HackIllinois/api-auth/service"
 	"github.com/HackIllinois/api-commons/errors"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 func SetupController(route *mux.Route) {
@@ -17,6 +18,7 @@ func SetupController(route *mux.Route) {
 	router.Handle("/code/{provider}/", alice.New().ThenFunc(Login)).Methods("POST")
 	router.Handle("/roles/{id}/", alice.New().ThenFunc(GetRoles)).Methods("GET")
 	router.Handle("/roles/", alice.New().ThenFunc(SetRoles)).Methods("PUT")
+	router.Handle("/token/refresh/", alice.New().ThenFunc(RefreshToken)).Methods("GET")
 }
 
 /*
@@ -146,4 +148,44 @@ func SetRoles(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_roles)
+}
+
+/*
+	Responds with a new JWT token for the user, with updated information.
+*/
+func RefreshToken(w http.ResponseWriter, r *http.Request) {
+
+	// Fetch user ID from the Identification middleware, and email using the user service
+
+	id := r.Header.Get("HackIllinois-Identity")
+
+	user_info, err := service.GetUserInfo(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	email := user_info.Email
+
+	// Get the roles from the given user ID
+
+	roles, err := service.GetUserRoles(id, false)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	// Create the new token using user ID, email, and (updated) roles.
+
+	signed_token, err := service.MakeToken(id, email, roles)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	new_token := models.Token{
+		Token: signed_token,
+	}
+
+	json.NewEncoder(w).Encode(new_token)
 }

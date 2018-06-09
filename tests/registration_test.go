@@ -62,7 +62,7 @@ func TestGetUserRegistrationService(t *testing.T) {
 	expected_registration := base_registration
 
 	if !reflect.DeepEqual(user_registration, &expected_registration) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_registration, user_registration)
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registration, user_registration)
 	}
 
 	CleanupTestDB(t)
@@ -96,7 +96,7 @@ func TestCreateUserRegistrationService(t *testing.T) {
 	expected_registration.LastName = "last2"
 
 	if !reflect.DeepEqual(user_registration, &expected_registration) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_registration, user_registration)
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registration, user_registration)
 	}
 
 	CleanupTestDB(t)
@@ -130,7 +130,77 @@ func TestUpdateUserRegistrationService(t *testing.T) {
 	expected_registration.LastName = "last2"
 
 	if !reflect.DeepEqual(user_registration, &expected_registration) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_registration, user_registration)
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registration, user_registration)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for filtering user registrations in the db
+*/
+func TestGetFilteredUserRegistrationsService(t *testing.T) {
+	SetupTestDB(t)
+
+	registration_1 := base_registration
+
+	registration_2 := base_registration
+	registration_2.ID = "testid2"
+	err := service.CreateUserRegistration(registration_2.ID, registration_2)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Test capitalized keys
+	parameters := map[string][]string{
+		"ID": []string{"testid"},
+	}
+	user_registrations, err := service.GetFilteredUserRegistrations(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_registrations := []models.UserRegistration{
+		registration_1,
+	}
+	if !reflect.DeepEqual(user_registrations, &expected_registrations) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations, user_registrations)
+	}
+
+	// Test multiple values
+	parameters = map[string][]string{
+		"id": []string{"testid,testid2"},
+	}
+	user_registrations, err = service.GetFilteredUserRegistrations(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_registrations = []models.UserRegistration{
+		registration_1,
+		registration_2,
+	}
+	if !reflect.DeepEqual(user_registrations, &expected_registrations) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations, user_registrations)
+	}
+
+	// Test type casting
+	parameters = map[string][]string{
+		"firstName": []string{"first"},
+		"age": []string{"20"},
+		"isNovice": []string{"true"},
+	}
+	user_registrations, err = service.GetFilteredUserRegistrations(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_registrations = []models.UserRegistration{
+		registration_1,
+		registration_2,
+	}
+	if !reflect.DeepEqual(user_registrations, &expected_registrations) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations, user_registrations)
 	}
 
 	CleanupTestDB(t)

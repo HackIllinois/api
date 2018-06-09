@@ -1,16 +1,16 @@
 package service
 
 import (
-	"errors"
 	"bytes"
-	"time"
-	"net/http"
+	"errors"
 	"github.com/HackIllinois/api-upload/config"
 	"github.com/HackIllinois/api-upload/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"net/http"
+	"time"
 )
 
 var sess *session.Session
@@ -31,7 +31,7 @@ func init() {
 func GetUserResumeLink(id string) (*models.UserResume, error) {
 	request, _ := client.GetObjectRequest(&s3.GetObjectInput{
 		Bucket: aws.String(config.S3_BUCKET),
-		Key: aws.String("resumes/" + id + ".pdf"),
+		Key:    aws.String("resumes/" + id + ".pdf"),
 	})
 
 	signed_url, err := request.Presign(15 * time.Minute)
@@ -40,8 +40,8 @@ func GetUserResumeLink(id string) (*models.UserResume, error) {
 		return nil, err
 	}
 
-	resume  := models.UserResume{
-		ID: id,
+	resume := models.UserResume{
+		ID:     id,
 		Resume: signed_url,
 	}
 
@@ -54,14 +54,14 @@ func GetUserResumeLink(id string) (*models.UserResume, error) {
 func UpdateUserResume(id string, file_buffer []byte) error {
 	content_type := http.DetectContentType(file_buffer)
 
-	if(content_type != "application/pdf") {
+	if content_type != "application/pdf" {
 		return errors.New("Resume upload must be a pdf")
 	}
 
 	_, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(config.S3_BUCKET),
-		Key: aws.String("resumes/" + id + ".pdf"),
-		Body: bytes.NewReader(file_buffer),
+		Key:    aws.String("resumes/" + id + ".pdf"),
+		Body:   bytes.NewReader(file_buffer),
 	})
 
 	return err

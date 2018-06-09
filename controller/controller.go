@@ -56,7 +56,17 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 	var user_checkin models.UserCheckin
 	json.NewDecoder(r.Body).Decode(&user_checkin)
 
-	err := service.CreateUserCheckin(user_checkin.ID, user_checkin)
+	isRsvped, err := service.IsAttendeeRsvped(user_checkin.ID)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	if !isRsvped {
+		panic(errors.UnprocessableError("Attendee must be rsvped to checkin"))
+	}
+
+	err = service.CreateUserCheckin(user_checkin.ID, user_checkin)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

@@ -88,30 +88,39 @@ func UpdateUserRegistration(id string, user_registration models.UserRegistration
 	return err
 }
 
-func AssignValueType(key, value string) (interface{}, error) {
-	if key == "age" || key == "graduationyear" {
-		return strconv.Atoi(value)
-	} else if key == "isnovice" || key == "isprivate" {
-		return strconv.ParseBool(value)
-	} else {
-		return value, nil
+func Contains(slice []string, str string) bool {
+	for _, value := range slice {
+		if value == str {
+			return true
+		}
 	}
+	return false
+}
+
+func AssignValueType(key, value string) (interface{}, error) {
+	int_keys := []string{"age", "graduationyear"}
+	if Contains(int_keys, key) {
+		return strconv.Atoi(value)
+	}
+
+	bool_keys := []string{"isnovice", "isprivate"}
+	if Contains(bool_keys, key) {
+		return strconv.ParseBool(value)
+	}
+
+	return value, nil
 }
 
 /*
 	Returns the registrations associated with the given parameters
 */
 func GetFilteredUserRegistrations(parameters map[string][]string) (*[]models.UserRegistration, error) {
-	// Build query
 	query := make(map[string]interface{})
 	for key, values := range parameters {
 		if len(values) == 1 {
 			key = strings.ToLower(key)
-
-			// Handle multiple comma separated values
 			value_list := strings.Split(values[0], ",")
 
-			// Assign correct type to values
 			correctly_typed_value_list := make([]interface{}, len(value_list))
 			for i, value := range value_list {
 				correctly_typed_value, err := AssignValueType(key, value)
@@ -121,15 +130,12 @@ func GetFilteredUserRegistrations(parameters map[string][]string) (*[]models.Use
 					return nil, err
 				}
 			}
-
-			// Update query
 			query[key] = bson.M{"$in": correctly_typed_value_list}
 		} else {
 			return nil, errors.New("Multiple usage of key "+key)
 		}
 	}
 
-	// Run query
 	var user_registrations []models.UserRegistration
 	err := db.FindAll("attendees", query, &user_registrations)
 	if err != nil {

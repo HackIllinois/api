@@ -18,13 +18,13 @@ func SetupController(route *mux.Route) {
 
 /*
 	Endpoint to send mail to a specified set of users,
-	based on a specified template with the given substitutions
+	based on a specified template
 */
 func SendMail(w http.ResponseWriter, r *http.Request) {
-	var mail_info models.MailInfo
-	json.NewDecoder(r.Body).Decode(&mail_info)
+	var mail_order models.MailOrder
+	json.NewDecoder(r.Body).Decode(&mail_order)
 
-	mail_status, err := service.SendMail(mail_info)
+	mail_status, err := service.SendMailByID(mail_order)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

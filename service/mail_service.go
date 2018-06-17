@@ -10,6 +10,37 @@ import (
 )
 
 /*
+	Send mail the the users with the given ids, using the provided template
+	Substitution will be generated based on user info
+*/
+func SendMailByID(mail_order models.MailOrder) (*models.MailStatus, error) {
+	var mail_info models.MailInfo
+
+	mail_info.Content = models.Content{
+		TemplateID: mail_order.Template,
+	}
+
+	mail_info.Recipients = make([]models.Recipient, len(mail_order.IDs))
+	for i, id := range mail_order.IDs {
+		user_info, err := GetUserInfo(id)
+
+		if err != nil {
+			return nil, err
+		}
+
+		mail_info.Recipients[i].Address = models.Address{
+			Email: user_info.Email,
+			Name:  user_info.Username,
+		}
+		mail_info.Recipients[i].Substitutions = models.Substitutions{
+			"name": user_info.Username,
+		}
+	}
+
+	return SendMail(mail_info)
+}
+
+/*
 	Send mail based on the given mailing info
 	Returns the results of sending the mail
 */

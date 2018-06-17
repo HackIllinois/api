@@ -11,3 +11,5 @@ var MAIL_PORT = os.Getenv("MAIL_PORT")
 
 var SPARKPOST_API = os.Getenv("SPARKPOST_API")
 var SPARKPOST_APIKEY = os.Getenv("SPARKPOST_APIKEY")
+
+var USER_SERVICE = os.Getenv("USER_SERVICE")

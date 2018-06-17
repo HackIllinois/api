@@ -6,10 +6,17 @@ type MailInfo struct {
 }
 
 type Recipient struct {
-	Address       string                 `json:"address"`
-	Substitutions map[string]interface{} `json:"substitution_data,omitempty"`
+	Address       Address       `json:"address"`
+	Substitutions Substitutions `json:"substitution_data,omitempty"`
 }
 
 type Content struct {
 	TemplateID string `json:"template_id"`
 }
+
+type Address struct {
+	Email string `json:"email"`
+	Name  string `json:"name,omitempty"`
+}
+
+type Substitutions map[string]interface{}

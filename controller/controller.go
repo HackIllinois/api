@@ -137,10 +137,7 @@ func GetFilteredUserRegistrations(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	wrapped_user_registrations := map[string][]models.UserRegistration{
-		"registrations": *user_registrations,
-	}
-	json.NewEncoder(w).Encode(wrapped_user_registrations)
+	json.NewEncoder(w).Encode(user_registrations)
 }
 
 /*

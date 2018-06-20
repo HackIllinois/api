@@ -114,7 +114,7 @@ func AssignValueType(key, value string) (interface{}, error) {
 /*
 	Returns the registrations associated with the given parameters
 */
-func GetFilteredUserRegistrations(parameters map[string][]string) (*[]models.UserRegistration, error) {
+func GetFilteredUserRegistrations(parameters map[string][]string) (*models.FilteredRegistrations, error) {
 	query := make(map[string]interface{})
 	for key, values := range parameters {
 		if len(values) == 1 {
@@ -136,11 +136,11 @@ func GetFilteredUserRegistrations(parameters map[string][]string) (*[]models.Use
 		}
 	}
 
-	var user_registrations []models.UserRegistration
-	err := db.FindAll("attendees", query, &user_registrations)
+	var filtered_registrations models.FilteredRegistrations
+	err := db.FindAll("attendees", query, &filtered_registrations.Registrations)
 	if err != nil {
 		return nil, err
 	}
 
-	return &user_registrations, nil
+	return &filtered_registrations, nil
 }

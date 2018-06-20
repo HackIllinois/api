@@ -160,8 +160,10 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registrations := []models.UserRegistration{
-		registration_1,
+	expected_registrations := models.FilteredRegistrations{
+		[]models.UserRegistration{
+			registration_1,
+		},
 	}
 	if !reflect.DeepEqual(user_registrations, &expected_registrations) {
 		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations, user_registrations)
@@ -176,9 +178,11 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registrations = []models.UserRegistration{
-		registration_1,
-		registration_2,
+	expected_registrations = models.FilteredRegistrations{
+		[]models.UserRegistration{
+			registration_1,
+			registration_2,
+		},
 	}
 	if !reflect.DeepEqual(user_registrations, &expected_registrations) {
 		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations, user_registrations)
@@ -195,9 +199,11 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registrations = []models.UserRegistration{
-		registration_1,
-		registration_2,
+	expected_registrations = models.FilteredRegistrations{
+		[]models.UserRegistration{
+			registration_1,
+			registration_2,
+		},
 	}
 	if !reflect.DeepEqual(user_registrations, &expected_registrations) {
 		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations, user_registrations)

@@ -13,7 +13,7 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/mail/send/", alice.New().ThenFunc(SendMail)).Methods("POST")
+	router.Handle("/send/", alice.New().ThenFunc(SendMail)).Methods("POST")
 }
 
 /*

@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+
 	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-decision/config"
 	"github.com/HackIllinois/api-decision/models"
@@ -75,6 +76,7 @@ func UpdateDecision(id string, decision models.Decision) error {
 		}
 	}
 
+	decision_history.Finalized = decision.Finalized
 	decision_history.Status = decision.Status
 	decision_history.Wave = decision.Wave
 	decision_history.History = append(decision_history.History, decision)

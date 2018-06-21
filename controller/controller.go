@@ -77,7 +77,7 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	decision.Reviewer = reviewer_id
 	decision.Timestamp = time.Now().Unix()
 
-	err := service.UpdateDecision(decision.ID, decision)
+	err = service.UpdateDecision(decision.ID, decision)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

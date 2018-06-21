@@ -1,12 +1,13 @@
 package tests
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-decision/config"
 	"github.com/HackIllinois/api-decision/models"
 	"github.com/HackIllinois/api-decision/service"
-	"reflect"
-	"testing"
 )
 
 var db database.MongoDatabase
@@ -26,6 +27,7 @@ func init() {
 */
 func SetupTestDB(t *testing.T) {
 	err := db.Insert("decision", &models.DecisionHistory{
+		Finalized: false,
 		ID:        "testid",
 		Status:    "PENDING",
 		Wave:      0,
@@ -33,6 +35,7 @@ func SetupTestDB(t *testing.T) {
 		Timestamp: 1,
 		History: []models.Decision{
 			models.Decision{
+				Finalized: false,
 				ID:        "testid",
 				Status:    "PENDING",
 				Wave:      0,
@@ -74,6 +77,7 @@ func TestGetDecisionService(t *testing.T) {
 	}
 
 	expected_decision := &models.DecisionHistory{
+		Finalized: false,
 		ID:        "testid",
 		Status:    "PENDING",
 		Wave:      0,
@@ -81,6 +85,7 @@ func TestGetDecisionService(t *testing.T) {
 		Timestamp: 1,
 		History: []models.Decision{
 			models.Decision{
+				Finalized: false,
 				ID:        "testid",
 				Status:    "PENDING",
 				Wave:      0,
@@ -104,6 +109,7 @@ func TestUpdateDecisionService(t *testing.T) {
 	SetupTestDB(t)
 
 	err := service.UpdateDecision("testid", models.Decision{
+		Finalized: false,
 		ID:        "testid",
 		Status:    "ACCEPTED",
 		Wave:      1,
@@ -122,6 +128,7 @@ func TestUpdateDecisionService(t *testing.T) {
 	}
 
 	expected_decision := &models.DecisionHistory{
+		Finalized: false,
 		ID:        "testid",
 		Status:    "ACCEPTED",
 		Wave:      1,
@@ -129,6 +136,7 @@ func TestUpdateDecisionService(t *testing.T) {
 		Timestamp: 2,
 		History: []models.Decision{
 			models.Decision{
+				Finalized: false,
 				ID:        "testid",
 				Status:    "PENDING",
 				Wave:      0,
@@ -136,6 +144,7 @@ func TestUpdateDecisionService(t *testing.T) {
 				Timestamp: 1,
 			},
 			models.Decision{
+				Finalized: false,
 				ID:        "testid",
 				Status:    "ACCEPTED",
 				Wave:      1,

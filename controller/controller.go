@@ -63,7 +63,11 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id parameter"))
 	}
 
-	existing_decision := service.GetDecision(decision.ID)
+	existing_decision, err := service.GetDecision(decision.ID)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
 
 	if existing_decision.Finalized {
 		json.NewEncoder(w).Encode(existing_decision)
@@ -106,6 +110,10 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	existing_decision.Timestamp = time.Now().Unix()
 
 	err := service.UpdateDecision(existing_decision.ID, existing_decision)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
 
 	updated_decision, err := service.GetDecision(existing_decision.ID)
 

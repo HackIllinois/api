@@ -295,8 +295,8 @@ Response format:
 }
 ```
 
-GET /registration/?key=value
-------------------
+GET /registration/filter/?key=value
+-----------------------------------
 
 Returns the user registrations, filtered with the given key-value pairs
 

@@ -2,13 +2,14 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+	"time"
+
 	"github.com/HackIllinois/api-commons/errors"
 	"github.com/HackIllinois/api-decision/models"
 	"github.com/HackIllinois/api-decision/service"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
-	"net/http"
-	"time"
 )
 
 func SetupController(route *mux.Route) {
@@ -17,6 +18,7 @@ func SetupController(route *mux.Route) {
 	router.Handle("/{id}/", alice.New().ThenFunc(GetDecision)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(GetCurrentDecision)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(UpdateDecision)).Methods("POST")
+	router.Handle("/finalize/", alice.New().ThenFunc(FinalizeDecision)).Methods("POST")
 }
 
 /*
@@ -50,7 +52,8 @@ func GetCurrentDecision(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Endpoint to update the decision for the specified user
+	Endpoint to update the decision for the specified user.
+	If the existing decision is finalized, then it is not updated.
 */
 func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	var decision models.Decision
@@ -58,6 +61,12 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 
 	if decision.ID == "" {
 		panic(errors.UnprocessableError("Must provide id parameter"))
+	}
+
+	existing_decision := service.GetDecision(decision.ID)
+
+	if existing_decision.Finalized {
+		json.NewEncoder(w).Encode(existing_decision)
 	}
 
 	reviewer_id := r.Header.Get("HackIllinois-Identity")
@@ -71,6 +80,34 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updated_decision, err := service.GetDecision(decision.ID)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(updated_decision)
+}
+
+/*
+	Finalizes the decision associated with the provided ID.
+	Finalized decisions are blocked from further review.
+*/
+func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
+	var existing_decision models.Decision
+	json.NewDecoder(r.Body).Decode(&existing_decision)
+
+	if existing_decision.ID == "" {
+		panic(errors.UnprocessableError("Must provide id parameter"))
+	}
+
+	reviewer_id := r.Header.Get("HackIllinois-Identity")
+	existing_decision.Reviewer = reviewer_id
+	existing_decision.Finalized = true
+	existing_decision.Timestamp = time.Now().Unix()
+
+	err := service.UpdateDecision(existing_decision.ID, existing_decision)
+
+	updated_decision, err := service.GetDecision(existing_decision.ID)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

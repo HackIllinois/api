@@ -67,3 +67,15 @@ Response format:
 	]
 }
 ```
+
+GET /auth/token/refresh/
+-----------------
+
+Creates a new JWT for the current user. This is useful when the user's roles change, and the updated roles need to be encoded into a new JWT, such as during registration. 
+
+Response format:
+```
+{
+	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFybmF2c2Fua2FyYW5AZ21haWwuY29tIiwiZXhwIjoxNTI1ODQ1MzA0LCJpZCI6MCwicm9sZXMiOlsiVXNlciJdfQ.lYxFGSNDU9q7FoQHNHGvpKu1fTHf8yHsKPg8FDt9L-s"
+}
+```

@@ -18,7 +18,7 @@ Response format:
 	"age": 19,
 	"graduationYear": 2019,
 	"transportation": "NONE",
-	"school": "University of Illinois at Urbana-Champsign",
+	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
 	"gender": "MALE",
 	"professionalInterest": "INTERNSHIP",
@@ -69,7 +69,7 @@ Response format:
 	"age": 19,
 	"graduationYear": 2019,
 	"transportation": "NONE",
-	"school": "University of Illinois at Urbana-Champsign",
+	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
 	"gender": "MALE",
 	"professionalInterest": "INTERNSHIP",
@@ -119,7 +119,7 @@ Request format:
 	"age": 19,
 	"graduationYear": 2019,
 	"transportation": "NONE",
-	"school": "University of Illinois at Urbana-Champsign",
+	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
 	"gender": "MALE",
 	"professionalInterest": "INTERNSHIP",
@@ -165,7 +165,7 @@ Response format:
 	"age": 19,
 	"graduationYear": 2019,
 	"transportation": "NONE",
-	"school": "University of Illinois at Urbana-Champsign",
+	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
 	"gender": "MALE",
 	"professionalInterest": "INTERNSHIP",
@@ -215,7 +215,7 @@ Request format:
 	"age": 19,
 	"graduationYear": 2019,
 	"transportation": "NONE",
-	"school": "University of Illinois at Urbana-Champsign",
+	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
 	"gender": "MALE",
 	"professionalInterest": "INTERNSHIP",
@@ -261,7 +261,7 @@ Response format:
 	"age": 19,
 	"graduationYear": 2019,
 	"transportation": "NONE",
-	"school": "University of Illinois at Urbana-Champsign",
+	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
 	"gender": "MALE",
 	"professionalInterest": "INTERNSHIP",
@@ -293,4 +293,102 @@ Response format:
 		}
 	]
 }
+```
+
+GET /registration/filter/?key=value
+-----------------------------------
+
+Returns the user registrations, filtered with the given key-value pairs
+
+Response format:
+```
+{
+	"registrations": [
+		{
+			"id": "github0000001"
+			"firstName": "John",
+			"lastName": "Smith",
+			"email": "john@gmail.com",
+			"shirtSize": "M",
+			"diet": "NONE",
+			"age": 19,
+			"graduationYear": 2019,
+			"transportation": "NONE",
+			"school": "University of Illinois at Urbana-Champaign",
+			"major": "Computer Science",
+			"gender": "MALE",
+			"professionalInterest": "INTERNSHIP",
+			"github": "JSmith",
+			"linkedin": "john-smith",
+			"interests": "Software",
+			"isNovice": false,
+			"isPrivate": false,
+			"phoneNumber": "555-555-5555",
+			"longforms": [
+				{
+					"response": "This is a longform."
+				}
+			],
+			"extraInfos": [
+				{
+					"response": "This is an extra info."
+				}
+			],
+			"osContributors": [
+				{
+					"name": "Tom",
+					"contactInfo": "tom@gmail.com"
+				}
+			],
+			"collaborators": [
+				{
+					"github": "collabgithub"
+				}
+			]
+		},
+		{
+			"id": "github0000002"
+			"firstName": "John",
+			"lastName": "Doe",
+			"email": "jdoe@gmail.com",
+			"shirtSize": "M",
+			"diet": "NONE",
+			"age": 19,
+			"graduationYear": 2019,
+			"transportation": "NONE",
+			"school": "Purdue",
+			"major": "Computer Science",
+			"gender": "MALE",
+			"professionalInterest": "INTERNSHIP",
+			"github": "JDoe",
+			"linkedin": "john-doe",
+			"interests": "Software",
+			"isNovice": false,
+			"isPrivate": false,
+			"phoneNumber": "666-666-6666",
+			"longforms": [
+				{
+					"response": "This is a longform."
+				}
+			],
+			"extraInfos": [
+				{
+					"response": "This is an extra info."
+				}
+			],
+			"osContributors": [
+				{
+					"name": "Tom",
+					"contactInfo": "tom@gmail.com"
+				}
+			],
+			"collaborators": [
+				{
+					"github": "collabgithub"
+				}
+			]
+		}
+	]
+}
+
 ```

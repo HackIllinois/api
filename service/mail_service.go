@@ -111,3 +111,50 @@ func SendMail(mail_info models.MailInfo) (*models.MailStatus, error) {
 
 	return &mail_status, nil
 }
+
+/*
+	Create a mailing list with the given id and initial set of user, if provided
+*/
+func CreateMailList(mail_list models.MailList) error {
+	if mail_list.UserIDs == nil {
+		mail_list.UserIDs = []string{}
+	}
+
+	return db.Insert("lists", &mail_list)
+}
+
+/*
+	Adds the given users to the specified mailing list
+*/
+func AddToMailList(mail_list models.MailList) error {
+	selector := bson.M{
+		"id": mail_list.ListID,
+	}
+
+	modifier := bson.M{
+		"$addToSet": bson.M{
+			"userids": mail_list.UserIDs,
+		},
+	}
+
+	return db.Update("lists", selector, &modifier)
+}
+
+/*
+	Removes the given users from the specified mailing list
+*/
+func RemoveFromMailList(mail_list models.MailList) error {
+	selector := bson.M{
+		"id": mail_list.ListID,
+	}
+
+	modifier := bson.M{
+		"$pull": bson.M{
+			"userids": bson.M{
+				"$in": mail_list.UserIDs,
+			},
+		},
+	}
+
+	return db.Update("lists", selector, &modifier)
+}

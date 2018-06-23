@@ -28,12 +28,7 @@ func init() {
 	Substitution will be generated based on user info
 */
 func SendMailByList(mail_order_list models.MailOrderList) (*models.MailStatus, error) {
-	query := bson.M{
-		"id": mail_order_list.ListID,
-	}
-
-	var mail_list models.MailList
-	err := db.FindOne("lists", query, &mail_list)
+	mail_list, err := GetMailList(mail_order_list.ListID)
 
 	if err != nil {
 		return nil, err
@@ -128,12 +123,14 @@ func CreateMailList(mail_list models.MailList) error {
 */
 func AddToMailList(mail_list models.MailList) error {
 	selector := bson.M{
-		"id": mail_list.ListID,
+		"id": mail_list.ID,
 	}
 
 	modifier := bson.M{
 		"$addToSet": bson.M{
-			"userids": mail_list.UserIDs,
+			"userids": bson.M{
+				"$each": mail_list.UserIDs,
+			},
 		},
 	}
 
@@ -145,7 +142,7 @@ func AddToMailList(mail_list models.MailList) error {
 */
 func RemoveFromMailList(mail_list models.MailList) error {
 	selector := bson.M{
-		"id": mail_list.ListID,
+		"id": mail_list.ID,
 	}
 
 	modifier := bson.M{
@@ -157,4 +154,22 @@ func RemoveFromMailList(mail_list models.MailList) error {
 	}
 
 	return db.Update("lists", selector, &modifier)
+}
+
+/*
+	Gets the mail list with the given id
+*/
+func GetMailList(id string) (*models.MailList, error) {
+	query := bson.M{
+		"id": id,
+	}
+
+	var mail_list models.MailList
+	err := db.FindOne("lists", query, &mail_list)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &mail_list, nil
 }

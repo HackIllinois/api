@@ -1,6 +1,6 @@
 package models
 
 type MailList struct {
-	ListID  string   `json:"listId"`
+	ID      string   `json:"id"`
 	UserIDs []string `json:"userIds"`
 }

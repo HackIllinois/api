@@ -1,11 +1,12 @@
 package services
 
 import (
+	"net/http"
+
 	"github.com/HackIllinois/api-gateway/config"
 	"github.com/HackIllinois/api-gateway/middleware"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 var AuthURL = config.AUTH_SERVICE
@@ -37,6 +38,12 @@ var AuthRoutes = arbor.RouteCollection{
 		"/auth/roles/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(SetUserRoles).ServeHTTP,
 	},
+	arbor.Route{
+		"RefreshToken",
+		"GET",
+		"/auth/token/refresh/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(RefreshToken).ServeHTTP,
+	},
 }
 
 func OauthRedirect(w http.ResponseWriter, r *http.Request) {
@@ -53,4 +60,8 @@ func GetUserRoles(w http.ResponseWriter, r *http.Request) {
 
 func SetUserRoles(w http.ResponseWriter, r *http.Request) {
 	arbor.PUT(w, AuthURL+r.URL.String(), AuthFormat, "", r)
+}
+
+func RefreshToken(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, AuthURL+r.URL.String(), AuthFormat, "", r)
 }

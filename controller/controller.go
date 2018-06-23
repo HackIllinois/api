@@ -48,34 +48,40 @@ func GetCurrentDecision(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
+	if !decision.Finalized {
+		decision.Status = "PENDING"
+	}
+
 	json.NewEncoder(w).Encode(decision)
 }
 
 /*
 	Endpoint to update the decision for the specified user.
-	If the existing decision is finalized, then it is not updated.
+	If the existing decision is finalized, an error is reported.
 */
 func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	var decision models.Decision
 	json.NewDecoder(r.Body).Decode(&decision)
 
 	if decision.ID == "" {
-		panic(errors.UnprocessableError("Must provide id parameter"))
+		panic(errors.UnprocessableError("Must provide ID parameter."))
 	}
 
-	existing_decision, err := service.GetDecision(decision.ID)
+	existing_decision_history, err := service.GetDecision(decision.ID)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	if existing_decision.Finalized {
-		json.NewEncoder(w).Encode(existing_decision)
+	if existing_decision_history.Finalized {
+		panic(errors.UnprocessableError("Cannot modify finalized decisions."))
 	}
 
 	reviewer_id := r.Header.Get("HackIllinois-Identity")
 	decision.Reviewer = reviewer_id
 	decision.Timestamp = time.Now().Unix()
+	// Finalized is always false, unless explicitly set to true via the appropriate endpoint.
+	decision.Finalized = false
 
 	err = service.UpdateDecision(decision.ID, decision)
 
@@ -97,25 +103,43 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	Finalized decisions are blocked from further review.
 */
 func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
-	var existing_decision models.Decision
-	json.NewDecoder(r.Body).Decode(&existing_decision)
+	var decision_finalized models.DecisionFinalized
+	json.NewDecoder(r.Body).Decode(&decision_finalized)
+	
+	id := r.Header.Get("HackIllinois-Identity")
 
-	if existing_decision.ID == "" {
-		panic(errors.UnprocessableError("Must provide id parameter"))
+	if id == "" {
+		panic(errors.UnprocessableError("Must provide id parameter to retrieve current decision	"))
 	}
 
-	reviewer_id := r.Header.Get("HackIllinois-Identity")
-	existing_decision.Reviewer = reviewer_id
-	existing_decision.Finalized = true
-	existing_decision.Timestamp = time.Now().Unix()
+	// Assuming we are working on the current user's decision 
+	existing_decision_history, err := service.GetDecision(id)
 
-	err := service.UpdateDecision(existing_decision.ID, existing_decision)
+	// If the decision is NOT already finalized, set it to what was provided in the request body
+	if !existing_decision_history.Finalized {
+		var latest_decision models.Decision
+		latest_decision.Finalized = decision_finalized.Finalized
+		latest_decision.ID = id
+		latest_decision.Status = existing_decision_history.Status
+		latest_decision.Wave = existing_decision_history.Wave + 1
+		// Are we sure we don't need to store the information of the person who finalized this decision?                                   
+		// The reviewer needn't necessarily be the same as the person who last changed the status
+		// However, using the ID from id seems weird, since that was used to fetch the decision, meaning it is the reviewee's ID
+		// This endpoint should only be accessible by staff, so we should ideally check for privileges like Admin etc.
+		latest_decision.Reviewer = existing_decision_history.Reviewer
+		latest_decision.Timestamp = time.Now().Unix()
 
-	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		err := service.UpdateDecision(id, latest_decision)
+		
+		if err != nil {
+			panic(errors.UnprocessableError("Error updating the decision, in an attempt to finalize it."))
+		}
+	}
+	else {
+		panic(errors.UnprocessableError("Decision already finalized."))
 	}
 
-	updated_decision, err := service.GetDecision(existing_decision.ID)
+	updated_decision, err := service.GetDecision(existing_decision_history.ID)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

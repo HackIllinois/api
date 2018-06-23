@@ -127,15 +127,12 @@ Response format:
 POST /decision/finalize/
 --------------------------
 
-Finalizes the decision for the user as specified in the `id` field of the request. The full decision history is returned in the response. 
+Finalizes the decision for the current user. The full decision history is returned in the response. 
 
 Request format:
 ```
 {
 	"finalized": false,
-	"id": "github9279532",
-	"status": "ACCEPTED",
-	"wave": 1
 }
 ```
 

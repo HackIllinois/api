@@ -4,10 +4,43 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-mail/config"
 	"github.com/HackIllinois/api-mail/models"
+	"gopkg.in/mgo.v2/bson"
 	"net/http"
 )
+
+var db database.MongoDatabase
+
+func init() {
+	db_connection, err := database.InitMongoDatabase(config.MAIL_DB_HOST, config.MAIL_DB_NAME)
+
+	if err != nil {
+		panic(err)
+	}
+
+	db = db_connection
+}
+
+/*
+	Send mail to the users in the given mailing list, using the provided template
+	Substitution will be generated based on user info
+*/
+func SendMailByList(mail_order_list models.MailOrderList) (*models.MailStatus, error) {
+	mail_list, err := GetMailList(mail_order_list.ListID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	mail_order := models.MailOrder{
+		IDs:      mail_list.UserIDs,
+		Template: mail_order_list.Template,
+	}
+
+	return SendMailByID(mail_order)
+}
 
 /*
 	Send mail the the users with the given ids, using the provided template
@@ -72,4 +105,71 @@ func SendMail(mail_info models.MailInfo) (*models.MailStatus, error) {
 	json.NewDecoder(resp.Body).Decode(&mail_status)
 
 	return &mail_status, nil
+}
+
+/*
+	Create a mailing list with the given id and initial set of user, if provided
+*/
+func CreateMailList(mail_list models.MailList) error {
+	if mail_list.UserIDs == nil {
+		mail_list.UserIDs = []string{}
+	}
+
+	return db.Insert("lists", &mail_list)
+}
+
+/*
+	Adds the given users to the specified mailing list
+*/
+func AddToMailList(mail_list models.MailList) error {
+	selector := bson.M{
+		"id": mail_list.ID,
+	}
+
+	modifier := bson.M{
+		"$addToSet": bson.M{
+			"userids": bson.M{
+				"$each": mail_list.UserIDs,
+			},
+		},
+	}
+
+	return db.Update("lists", selector, &modifier)
+}
+
+/*
+	Removes the given users from the specified mailing list
+*/
+func RemoveFromMailList(mail_list models.MailList) error {
+	selector := bson.M{
+		"id": mail_list.ID,
+	}
+
+	modifier := bson.M{
+		"$pull": bson.M{
+			"userids": bson.M{
+				"$in": mail_list.UserIDs,
+			},
+		},
+	}
+
+	return db.Update("lists", selector, &modifier)
+}
+
+/*
+	Gets the mail list with the given id
+*/
+func GetMailList(id string) (*models.MailList, error) {
+	query := bson.M{
+		"id": id,
+	}
+
+	var mail_list models.MailList
+	err := db.FindOne("lists", query, &mail_list)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &mail_list, nil
 }

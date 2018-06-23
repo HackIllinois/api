@@ -4,10 +4,48 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-mail/config"
 	"github.com/HackIllinois/api-mail/models"
+	"gopkg.in/mgo.v2/bson"
 	"net/http"
 )
+
+var db database.MongoDatabase
+
+func init() {
+	db_connection, err := database.InitMongoDatabase(config.MAIL_DB_HOST, config.MAIL_DB_NAME)
+
+	if err != nil {
+		panic(err)
+	}
+
+	db = db_connection
+}
+
+/*
+	Send mail to the users in the given mailing list, using the provided template
+	Substitution will be generated based on user info
+*/
+func SendMailByList(mail_order_list models.MailOrderList) (*models.MailStatus, error) {
+	query := bson.M{
+		"id": mail_order_list.ListID,
+	}
+
+	var mail_list models.MailList
+	err := db.FindOne("lists", query, &mail_list)
+
+	if err != nil {
+		return nil, err
+	}
+
+	mail_order := models.MailOrder{
+		IDs:      mail_list.UserIDs,
+		Template: mail_order_list.Template,
+	}
+
+	return SendMailByID(mail_order)
+}
 
 /*
 	Send mail the the users with the given ids, using the provided template

@@ -32,6 +32,12 @@ var RegistrationRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Applicant"})).ThenFunc(UpdateCurrentRegistrationInfo).ServeHTTP,
 	},
 	arbor.Route{
+		"GetFilteredRegistrationInfo",
+		"GET",
+		"/registration/filter/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetFilteredRegistrationInfo).ServeHTTP,
+	},
+	arbor.Route{
 		"GetRegistrationInfo",
 		"GET",
 		"/registration/{id}/",
@@ -49,6 +55,10 @@ func CreateCurrentRegistrationInfo(w http.ResponseWriter, r *http.Request) {
 
 func UpdateCurrentRegistrationInfo(w http.ResponseWriter, r *http.Request) {
 	arbor.PUT(w, RegistrationURL+r.URL.String(), RegistrationFormat, "", r)
+}
+
+func GetFilteredRegistrationInfo(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, RegistrationURL+r.URL.String(), RegistrationFormat, "", r)
 }
 
 func GetRegistrationInfo(w http.ResponseWriter, r *http.Request) {

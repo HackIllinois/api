@@ -14,11 +14,13 @@ import (
 /*
 	Send basic user info to the user service
 */
-func SendUserInfo(id string, username string, email string) error {
+func SendUserInfo(id string, username string, first_name string, last_name string, email string) error {
 	user_info := models.UserInfo{
-		ID:       id,
-		Username: username,
-		Email:    email,
+		ID:        id,
+		Username:  username,
+		FirstName: first_name,
+		LastName:  last_name,
+		Email:     email,
 	}
 
 	body := bytes.Buffer{}

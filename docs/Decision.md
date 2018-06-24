@@ -132,7 +132,8 @@ Finalizes the decision for the current user. The full decision history is return
 Request format:
 ```
 {
-	"finalized": false,
+	"id": "github9279532",
+	"finalized": false
 }
 ```
 

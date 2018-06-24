@@ -1,5 +1,6 @@
 package models
 
 type DecisionFinalized struct {
-	Finalized bool `json:"finalized"`
+	ID          string  `json:"id"`
+	Finalized   bool    `json:"finalized"`
 }

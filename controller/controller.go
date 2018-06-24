@@ -33,6 +33,11 @@ func GetDecision(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
+	// Affects the response, but not the status of the actual decision.
+	if !decision.Finalized {
+		decision.Status = "PENDING"
+	}
+
 	json.NewEncoder(w).Encode(decision)
 }
 
@@ -48,6 +53,7 @@ func GetCurrentDecision(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
+	// Affects the response, but not the status of the actual decision.
 	if !decision.Finalized {
 		decision.Status = "PENDING"
 	}
@@ -64,9 +70,9 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&decision)
 
 	if decision.ID == "" {
-		panic(errors.UnprocessableError("Must provide ID parameter."))
+		panic(errors.UnprocessableError("Must provide id parameter."))
 	}
-
+// Only affects the response, not status of the actual decision.
 	existing_decision_history, err := service.GetDecision(decision.ID)
 
 	if err != nil {
@@ -106,7 +112,7 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	var decision_finalized models.DecisionFinalized
 	json.NewDecoder(r.Body).Decode(&decision_finalized)
 	
-	id := r.Header.Get("HackIllinois-Identity")
+	id := decision_finalized.ID
 
 	if id == "" {
 		panic(errors.UnprocessableError("Must provide id parameter to retrieve current decision	"))
@@ -121,12 +127,8 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 		latest_decision.Finalized = decision_finalized.Finalized
 		latest_decision.ID = id
 		latest_decision.Status = existing_decision_history.Status
-		latest_decision.Wave = existing_decision_history.Wave + 1
-		// Are we sure we don't need to store the information of the person who finalized this decision?                                   
-		// The reviewer needn't necessarily be the same as the person who last changed the status
-		// However, using the ID from id seems weird, since that was used to fetch the decision, meaning it is the reviewee's ID
-		// This endpoint should only be accessible by staff, so we should ideally check for privileges like Admin etc.
-		latest_decision.Reviewer = existing_decision_history.Reviewer
+		latest_decision.Wave = existing_decision_history.Wave
+		latest_decision.Reviewer = r.Header.Get("HackIllinois-Identity")
 		latest_decision.Timestamp = time.Now().Unix()
 
 		err := service.UpdateDecision(id, latest_decision)
@@ -139,7 +141,7 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Decision already finalized."))
 	}
 
-	updated_decision, err := service.GetDecision(existing_decision_history.ID)
+	updated_decision, err := service.GetDecision(id)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

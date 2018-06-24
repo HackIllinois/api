@@ -136,8 +136,7 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(errors.UnprocessableError("Error updating the decision, in an attempt to finalize it."))
 		}
-	}
-	else {
+	} else {
 		panic(errors.UnprocessableError("Decision already finalized."))
 	}
 

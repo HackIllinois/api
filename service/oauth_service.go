@@ -83,7 +83,7 @@ func GetFirstName(oauth_token string, provider string) (string, error) {
 
 		split_name := strings.SplitAfterN(name, name_delimiter, number_of_names)
 
-		return split_name[0], nil
+		return strings.TrimSpace(split_name[0]), nil
 	default:
 		return "", errors.New("Invalid provider")
 	}
@@ -110,7 +110,7 @@ func GetLastName(oauth_token string, provider string) (string, error) {
 		if len(split_name) < 2 {
 			return "", nil
 		} else {
-			return split_name[1], nil
+			return strings.TrimSpace(split_name[1]), nil
 		}
 	default:
 		return "", errors.New("Invalid provider")

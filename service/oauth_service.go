@@ -1,6 +1,7 @@
 package service
 
 import (
+	"strings"
 	"errors"
 	"github.com/HackIllinois/api-auth/config"
 )
@@ -66,12 +67,43 @@ func GetUsername(oauth_token string, provider string) (string, error) {
 }
 
 /*
-	Gets the user's name from the specified oauth provider
+	Gets the user's first name from the specified oauth provider
 */
-func GetName(oauth_token string, provider string) (string, error) {
+func GetFirstName(oauth_token string, provider string) (string, error) {
+	const number_of_names int = 2 
+	const name_delimiter string = " "
+
 	switch provider {
 	case "github":
-		return GetGithubName(oauth_token)
+		name := GetGithubName(oauth_token) 
+		
+		split_name := strings.SplitAfterN(name, name_delimiter, number_of_names)
+
+		return split_name[0]
+	default:
+		return "", errors.New("Invalid provider")
+	}
+}
+
+/*
+	Gets the user's last name from the specified oauth provider
+*/
+func GetLastName(oauth_token string, provider string) (string, error) {
+	const number_of_names int = 2 
+	const name_delimiter string = " "
+
+	switch provider {
+	case "github":
+		name := GetGithubName(oauth_token) 
+		
+		split_name := strings.SplitAfterN(name, name_delimiter, number_of_names)
+
+		// If there is only a single name, or if the name cannot be split.
+		if len(split_name) < 2 {
+			return ""
+		} else {
+			return split_name[1]
+		}
 	default:
 		return "", errors.New("Invalid provider")
 	}

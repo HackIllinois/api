@@ -11,6 +11,8 @@ Response format:
 {
 	"id": "github09829234",
 	"username": "ExampleUsername",
+	"firstName": "ExampleFirstName",
+	"lastName": "ExampleLastName",
 	"email": "examplemail@gmail.com"
 }
 ```
@@ -25,6 +27,8 @@ Response format:
 {
 	"id": "github09829234",
 	"username": "ExampleUsername",
+	"firstName": "ExampleFirstName",
+	"lastName": "ExampleLastName",
 	"email": "examplemail@gmail.com"
 }
 ```
@@ -39,6 +43,8 @@ Request format:
 {
 	"id": "github000001",
 	"username": "test",
+	"firstName": "ExampleFirstName",
+	"lastName": "ExampleLastName",
 	"email": "test@gmail.com"
 }
 ```
@@ -48,6 +54,8 @@ Response format:
 {
 	"id": "github000001",
 	"username": "test",	
+	"firstName": "ExampleFirstName",
+	"lastName": "ExampleLastName",
 	"email": "test@gmail.com"
 }
 ```

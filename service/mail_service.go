@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -63,10 +64,10 @@ func SendMailByID(mail_order models.MailOrder) (*models.MailStatus, error) {
 
 		mail_info.Recipients[i].Address = models.Address{
 			Email: user_info.Email,
-			Name:  user_info.Username,
+			Name:  fmt.Sprintf("%s %s", user_info.FirstName, user_info.LastName),
 		}
 		mail_info.Recipients[i].Substitutions = models.Substitutions{
-			"name": user_info.Username,
+			"name": user_info.FirstName,
 		}
 	}
 

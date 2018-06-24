@@ -67,7 +67,7 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	if decision.ID == "" {
 		panic(errors.UnprocessableError("Must provide id parameter."))
 	}
-// Only affects the response, not status of the actual decision.
+
 	existing_decision_history, err := service.GetDecision(decision.ID)
 
 	if err != nil {
@@ -113,7 +113,7 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id parameter to retrieve current decision	"))
 	}
 
-	// Assuming we are working on the current user's decision 
+	// Assuming we are working on the specified user's decision 
 	existing_decision_history, err := service.GetDecision(id)
 
 	// If the decision is NOT already finalized, set it to what was provided in the request body

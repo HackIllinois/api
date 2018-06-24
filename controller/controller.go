@@ -33,11 +33,6 @@ func GetDecision(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	// Affects the response, but not the status of the actual decision.
-	if !decision.Finalized {
-		decision.Status = "PENDING"
-	}
-
 	json.NewEncoder(w).Encode(decision)
 }
 
@@ -53,7 +48,7 @@ func GetCurrentDecision(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	// Affects the response, but not the status of the actual decision.
+	// Masks the decision if not finalized
 	if !decision.Finalized {
 		decision.Status = "PENDING"
 	}

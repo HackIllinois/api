@@ -151,3 +151,53 @@ func TestUpdateDecisionService(t *testing.T) {
 
 	CleanupTestDB(t)
 }
+
+/*
+	Service level test for getting filtered decision info from db
+*/
+func TestGetFilteredDecisionsService(t *testing.T) {
+	SetupTestDB(t)
+
+	decision2 := models.DecisionHistory{
+		ID:        "testid2",
+		Status:    "PENDING",
+		Wave:      1,
+		Reviewer:  "reviewerid",
+		Timestamp: 2,
+		History: []models.Decision{
+			models.Decision{
+				ID:        "testid2",
+				Status:    "PENDING",
+				Wave:      1,
+				Reviewer:  "reviewerid",
+				Timestamp: 2,
+			},
+		},
+	}
+	err := db.Insert("decision", &decision2)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	parameters := map[string][]string{
+		"id": []string{"testid2"},
+		"wave": []string{"1"},
+	}
+	decisions, err := service.GetFilteredDecisions(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_decisions := models.FilteredDecisions {
+		[]models.DecisionHistory{
+			decision2,
+		},
+	}
+
+	if !reflect.DeepEqual(decisions, &expected_decisions) {
+		t.Errorf("Wrong decision info. Expected %v, got %v", expected_decisions, decisions)
+	}
+
+	CleanupTestDB(t)
+}

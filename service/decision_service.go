@@ -95,3 +95,18 @@ func UpdateDecision(id string, decision models.Decision) error {
 
 	return err
 }
+
+/*
+	Checks if a decision with the provided id exists.
+*/
+func HasDecision(id string) (bool, error) {
+	_, err := GetDecision(id)
+
+	if err == nil {
+		return true, nil
+	} else if err == mgo.ErrNotFound {
+		return false, nil
+	} else {
+		return false, err
+	}
+}

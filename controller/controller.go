@@ -68,18 +68,25 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id parameter."))
 	}
 
-	existing_decision_history, err := service.GetDecision(decision.ID)
+	has_decision, err := service.HasDecision(decision.ID)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	if existing_decision_history.Finalized {
-		panic(errors.UnprocessableError("Cannot modify finalized decisions."))
+	if has_decision {
+		existing_decision_history, err := service.GetDecision(decision.ID)
+	
+		if err != nil {
+			panic(errors.UnprocessableError(err.Error()))
+		}
+
+		if existing_decision_history.Finalized {
+			panic(errors.UnprocessableError("Cannot modify finalized decisions."))
+		}
 	}
 
-	reviewer_id := r.Header.Get("HackIllinois-Identity")
-	decision.Reviewer = reviewer_id
+	decision.Reviewer = r.Header.Get("HackIllinois-Identity")
 	decision.Timestamp = time.Now().Unix()
 	// Finalized is always false, unless explicitly set to true via the appropriate endpoint.
 	decision.Finalized = false

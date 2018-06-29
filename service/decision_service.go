@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+
 	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-decision/config"
 	"github.com/HackIllinois/api-decision/models"
@@ -76,6 +77,7 @@ func UpdateDecision(id string, decision models.Decision) error {
 		}
 	}
 
+	decision_history.Finalized = decision.Finalized
 	decision_history.Status = decision.Status
 	decision_history.Wave = decision.Wave
 	decision_history.History = append(decision_history.History, decision)
@@ -91,6 +93,21 @@ func UpdateDecision(id string, decision models.Decision) error {
 	}
 
 	return err
+}
+
+/*
+	Checks if a decision with the provided id exists.
+*/
+func HasDecision(id string) (bool, error) {
+	_, err := GetDecision(id)
+
+	if err == nil {
+		return true, nil
+	} else if err == mgo.ErrNotFound {
+		return false, nil
+	} else {
+		return false, err
+	}
 }
 
 func Contains(slice []string, str string) bool {

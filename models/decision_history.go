@@ -1,6 +1,7 @@
 package models
 
 type DecisionHistory struct {
+	Finalized bool       `json:"finalized"`
 	ID        string     `json:"id"`
 	Status    string     `json:"status"`
 	Wave      int        `json:"wave"`

@@ -14,24 +14,10 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/{id}/", alice.New().ThenFunc(GetDecision)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(GetCurrentDecision)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(UpdateDecision)).Methods("POST")
-}
-
-/*
-	Endpoint to get the decision for the specified user
-*/
-func GetDecision(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-
-	decision, err := service.GetDecision(id)
-
-	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
-	}
-
-	json.NewEncoder(w).Encode(decision)
+	router.Handle("/filter/", alice.New().ThenFunc(GetFilteredDecisions)).Methods("GET")
+	router.Handle("/{id}/", alice.New().ThenFunc(GetDecision)).Methods("GET")
 }
 
 /*
@@ -77,4 +63,33 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_decision)
+}
+
+/*
+	Endpoint to get decisions based on a filter
+*/
+func GetFilteredDecisions(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+	decisions, err := service.GetFilteredDecisions(parameters)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(decisions)
+}
+
+/*
+	Endpoint to get the decision for the specified user
+*/
+func GetDecision(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	decision, err := service.GetDecision(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(decision)
 }

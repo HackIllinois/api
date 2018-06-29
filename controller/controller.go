@@ -15,25 +15,11 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/{id}/", alice.New().ThenFunc(GetDecision)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(GetCurrentDecision)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(UpdateDecision)).Methods("POST")
 	router.Handle("/finalize/", alice.New().ThenFunc(FinalizeDecision)).Methods("POST")
-}
-
-/*
-	Endpoint to get the decision for the specified user
-*/
-func GetDecision(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-
-	decision, err := service.GetDecision(id)
-
-	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
-	}
-
-	json.NewEncoder(w).Encode(decision)
+	router.Handle("/filter/", alice.New().ThenFunc(GetFilteredDecisions)).Methods("GET")
+	router.Handle("/{id}/", alice.New().ThenFunc(GetDecision)).Methods("GET")
 }
 
 /*
@@ -76,7 +62,7 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 
 	if has_decision {
 		existing_decision_history, err := service.GetDecision(decision.ID)
-	
+
 		if err != nil {
 			panic(errors.UnprocessableError(err.Error()))
 		}
@@ -113,14 +99,14 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	var decision_finalized models.DecisionFinalized
 	json.NewDecoder(r.Body).Decode(&decision_finalized)
-	
+
 	id := decision_finalized.ID
 
 	if id == "" {
 		panic(errors.UnprocessableError("Must provide id parameter to retrieve current decision	"))
 	}
 
-	// Assuming we are working on the specified user's decision 
+	// Assuming we are working on the specified user's decision
 	existing_decision_history, err := service.GetDecision(id)
 
 	// If the decision is NOT already finalized, set it to what was provided in the request body
@@ -134,7 +120,7 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 		latest_decision.Timestamp = time.Now().Unix()
 
 		err := service.UpdateDecision(id, latest_decision)
-		
+
 		if err != nil {
 			panic(errors.UnprocessableError("Error updating the decision, in an attempt to finalize it."))
 		}
@@ -149,4 +135,33 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_decision)
+}
+
+/*
+	Endpoint to get decisions based on a filter
+*/
+func GetFilteredDecisions(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+	decisions, err := service.GetFilteredDecisions(parameters)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(decisions)
+}
+
+/*
+	Endpoint to get the decision for the specified user
+*/
+func GetDecision(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	decision, err := service.GetDecision(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(decision)
 }

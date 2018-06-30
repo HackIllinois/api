@@ -1,10 +1,10 @@
 package service
 
 import (
-	"fmt"
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-mail/config"
 	"github.com/HackIllinois/api-mail/models"
@@ -79,6 +79,10 @@ func SendMailByID(mail_order models.MailOrder) (*models.MailStatus, error) {
 	Returns the results of sending the mail
 */
 func SendMail(mail_info models.MailInfo) (*models.MailStatus, error) {
+	if !config.IS_PRODUCTION {
+		return SendMailDev(mail_info)
+	}
+
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&mail_info)
 
@@ -105,6 +109,20 @@ func SendMail(mail_info models.MailInfo) (*models.MailStatus, error) {
 	var mail_status models.MailStatus
 	json.NewDecoder(resp.Body).Decode(&mail_status)
 
+	return &mail_status, nil
+}
+
+/*
+	Returns the expected success response in the same format as SparkPost
+	This is only to be used in development environments
+*/
+func SendMailDev(mail_info models.MailInfo) (*models.MailStatus, error) {
+	mail_status := models.MailStatus{
+		Results: models.MailStatusResults{
+			Rejected: 0,
+			Accepted: len(mail_info.Recipients),
+		},
+	}
 	return &mail_status, nil
 }
 

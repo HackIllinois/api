@@ -44,30 +44,8 @@ Returns the decision stored for the user associated with the `id` in the given J
 Response format:
 ```
 {
-	"finalized": false,
 	"id": "github9279532",
-	"status": "ACCEPTED",
-	"wave": 1,
-	"reviewer": "github9279532",
-	"timestamp": 1526673862,
-	"history": [
-		{
-			"finalized": false,
-			"id": "github9279532",
-			"status": "PENDING",
-			"wave": 0,
-			"reviewer": "github9279532",
-			"timestamp": 1526673845
-		},
-		{
-			"finalized": false,
-			"id": "github9279532",
-			"status": "ACCEPTED",
-			"wave": 1,
-			"reviewer": "github9279532",
-			"timestamp": 1526673862
-		}
-	]
+	"status": "ACCEPTED"
 }
 ```
 

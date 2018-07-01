@@ -34,12 +34,17 @@ func GetCurrentDecision(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	// Masks the decision if not finalized
-	if !decision.Finalized {
-		decision.Status = "PENDING"
+	decision_view := models.DecisionView{
+		ID: decision.ID,
+		Status: decision.Status,
 	}
 
-	json.NewEncoder(w).Encode(decision)
+	// Masks the decision if not finalized
+	if !decision.Finalized {
+		decision_view.Status = "PENDING"
+	}
+
+	json.NewEncoder(w).Encode(decision_view)
 }
 
 /*

@@ -111,7 +111,7 @@ func GetQrCodeString(w http.ResponseWriter, r *http.Request) {
 	
 	id := r.Header.Get("HackIllinois-Identity")
 	
-	uriString, err := service.GetQrString()
+	uriString, err := service.GetQrString(id)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

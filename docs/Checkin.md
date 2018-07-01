@@ -74,3 +74,17 @@ Response format:
 	"hasPickedUpSwag": true
 }
 ```
+
+GET /checkin/qr/
+----------
+
+Get the string to be embedded in the user's QR code. 
+The QR code string will contain information stored in the form of a URI.
+
+Response format:
+```
+{
+	"id": "github0000001",
+	"qrString": "hackillinois://info?name=FirstName%20LastName&hasCheckedIn=true"
+}
+```

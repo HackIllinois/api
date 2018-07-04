@@ -85,7 +85,7 @@ Response format:
 ```
 {
 	"id": "github0000001",
-	"qrInfo": "hackillinois://info?name=FirstName%20LastName&hasCheckedIn=true"
+	"qrInfo": "hackillinois://info?name=FirstName&hasCheckedIn=true&hasPickedUpSwag=true"
 }
 ```
 
@@ -99,6 +99,6 @@ Response format:
 ```
 {
 	"id": "github0000001",
-	"qrInfo": "hackillinois://info?name=FirstName%20LastName&hasCheckedIn=true"
+	"qrInfo": "hackillinois://info?name=FirstName&hasCheckedIn=true&hasPickedUpSwag=true"
 }
 ```

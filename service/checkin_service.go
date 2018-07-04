@@ -2,13 +2,13 @@ package service
 
 import (
 	"errors"
-	"strconv"
-	"net/url"
 	"github.com/HackIllinois/api-checkin/config"
 	"github.com/HackIllinois/api-checkin/models"
 	"github.com/HackIllinois/api-commons/database"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"net/url"
+	"strconv"
 )
 
 var db database.MongoDatabase
@@ -78,7 +78,7 @@ func UpdateUserCheckin(id string, user_checkin models.UserCheckin) error {
 func GetQrInfo(id string) (string, error) {
 
 	// Retrieve all the info that needs to be embedded
-	
+
 	checkin_status, err := GetUserCheckin(id)
 
 	if err != nil {
@@ -95,8 +95,8 @@ func GetQrInfo(id string) (string, error) {
 
 	// All the fields that will be embedded in the QR code URI
 	parameters := url.Values{
-		"userId": []string{id},
-		"hasCheckedIn": []string{strconv.FormatBool(checkin_status.HasCheckedIn)},
+		"userId":          []string{id},
+		"hasCheckedIn":    []string{strconv.FormatBool(checkin_status.HasCheckedIn)},
 		"hasPickedUpSwag": []string{strconv.FormatBool(checkin_status.HasPickedUpSwag)},
 	}
 

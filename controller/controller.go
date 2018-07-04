@@ -108,9 +108,9 @@ func UpdateUserCheckin(w http.ResponseWriter, r *http.Request) {
 /*
 	Endpoint to get the string to be embedded into the current user's QR code
 */
-func GetCurrentQrCodeInfo(w http.ResponseWriter, r *http.Request) {	
+func GetCurrentQrCodeInfo(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
-	
+
 	uri, err := service.GetQrInfo(id)
 
 	if err != nil {
@@ -118,19 +118,19 @@ func GetCurrentQrCodeInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	qr_info_container := models.QrInfoContainer{
-		ID: id,
+		ID:     id,
 		QrInfo: uri,
 	}
 
-	json.NewEncoder(w).Encode(qr_info_container)	
+	json.NewEncoder(w).Encode(qr_info_container)
 }
 
 /*
 	Endpoint to get the string to be embedded into the specified user's QR code
 */
-func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {	
+func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	
+
 	uri, err := service.GetQrInfo(id)
 
 	if err != nil {
@@ -138,9 +138,9 @@ func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	qr_info_container := models.QrInfoContainer{
-		ID: id,
+		ID:     id,
 		QrInfo: uri,
 	}
 
-	json.NewEncoder(w).Encode(qr_info_container)	
+	json.NewEncoder(w).Encode(qr_info_container)
 }

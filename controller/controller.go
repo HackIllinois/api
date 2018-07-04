@@ -17,7 +17,8 @@ func SetupController(route *mux.Route) {
 	router.Handle("/", alice.New().ThenFunc(CreateUserCheckin)).Methods("POST")
 	router.Handle("/", alice.New().ThenFunc(UpdateUserCheckin)).Methods("PUT")
 	router.Handle("/", alice.New().ThenFunc(GetCurrentUserCheckin)).Methods("GET")
-	router.Handle("/qr/", alice.New().ThenFunc(GetQrCodeString)).Methods("GET")
+	router.Handle("/qr/", alice.New().ThenFunc(GetCurrentQrCodeInfo)).Methods("GET")
+	router.Handle("/qr/{id}/", alice.New().ThenFunc(GetQrCodeInfo)).Methods("GET")
 }
 
 /*
@@ -107,20 +108,39 @@ func UpdateUserCheckin(w http.ResponseWriter, r *http.Request) {
 /*
 	Endpoint to get the string to be embedded into the current user's QR code
 */
-func GetQrCodeString(w http.ResponseWriter, r *http.Request) {	
-	
+func GetCurrentQrCodeInfo(w http.ResponseWriter, r *http.Request) {	
 	id := r.Header.Get("HackIllinois-Identity")
 	
-	uriString, err := service.GetQrString(id)
+	uri, err := service.GetQrInfo(id)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	qr_string_container := models.QrStringContainer{
+	qr_info_container := models.QrInfoContainer{
 		ID: id,
-		QrString: uriString,
+		QrInfo: uri,
 	}
 
-	json.NewEncoder(w).Encode(qr_string_container)	
+	json.NewEncoder(w).Encode(qr_info_container)	
+}
+
+/*
+	Endpoint to get the string to be embedded into the specified user's QR code
+*/
+func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {	
+	id := mux.Vars(r)["id"]
+	
+	uri, err := service.GetQrInfo(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	qr_info_container := models.QrInfoContainer{
+		ID: id,
+		QrInfo: uri,
+	}
+
+	json.NewEncoder(w).Encode(qr_info_container)	
 }

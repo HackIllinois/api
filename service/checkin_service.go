@@ -75,7 +75,7 @@ func UpdateUserCheckin(id string, user_checkin models.UserCheckin) error {
 /*
 	Generates a QR string for a user with the provided ID, as a URI
 */
-func GetQrString(id string) (string, error) {
+func GetQrInfo(id string) (string, error) {
 
 	// Retrieve all the info that needs to be embedded
 	
@@ -84,10 +84,6 @@ func GetQrString(id string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	has_checked_in_string := strconv.FormatBool(checkin_status.HasCheckedIn)
-
-	has_picked_up_swag_string := strconv.FormatBool(checkin_status.HasPickedUpSwag)
 
 	// Construct the URI
 
@@ -100,8 +96,8 @@ func GetQrString(id string) (string, error) {
 	// All the fields that will be embedded in the QR code URI
 	parameters := url.Values{
 		"userId": []string{id},
-		"hasCheckedIn": []string{has_checked_in_string},
-		"hasPickedUpSwag": []string{has_picked_up_swag_string},
+		"hasCheckedIn": []string{strconv.FormatBool(checkin_status.HasCheckedIn)},
+		"hasPickedUpSwag": []string{strconv.FormatBool(checkin_status.HasPickedUpSwag)},
 	}
 
 	uri.RawQuery = parameters.Encode()

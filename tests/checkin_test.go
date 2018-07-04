@@ -150,3 +150,24 @@ func TestUpdateUserCheckinService(t *testing.T) {
 
 	CleanupTestDB(t)
 }
+
+/*
+	Service level test for generating QR code URI
+*/
+func TestGetQrInfo(t *testing.T) {
+	SetupTestDB(t)
+	
+	actual_uri, err := service.GetQrInfo("testid")
+	
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_uri := "hackillinois://info?hasCheckedIn=true&hasPickedUpSwag=true&userId=testid"
+
+	if !reflect.DeepEqual(actual_uri, expected_uri) {
+		t.Errorf("Wrong QR code URI. Expected %v, got %v", expected_uri, actual_uri)
+	}
+
+	CleanupTestDB(t)
+}

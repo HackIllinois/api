@@ -20,16 +20,28 @@ var DecisionRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Applicant"})).ThenFunc(GetCurrentDecision).ServeHTTP,
 	},
 	arbor.Route{
-		"GetDecision",
-		"GET",
-		"/decision/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetDecision).ServeHTTP,
-	},
-	arbor.Route{
 		"UpdateDecision",
 		"POST",
 		"/decision/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(UpdateDecision).ServeHTTP,
+	},
+	arbor.Route{
+		"GetFilteredDecisions",
+		"GET",
+		"/decision/filter/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetFilteredDecisions).ServeHTTP,
+	},
+	arbor.Route{
+		"FinalizeDecision",
+		"POST",
+		"/decision/finalize/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(FinalizeDecision).ServeHTTP,
+	},
+	arbor.Route{
+		"GetDecision",
+		"GET",
+		"/decision/{id}/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetDecision).ServeHTTP,
 	},
 }
 
@@ -43,4 +55,12 @@ func GetDecision(w http.ResponseWriter, r *http.Request) {
 
 func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, DecisionURL+r.URL.String(), DecisionFormat, "", r)
+}
+
+func GetFilteredDecisions(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, DecisionURL+r.URL.String(), DecisionFormat, "", r)
+}
+
+func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, DecisionURL+r.URL.String(), DecisionFormat, "", r)
 }

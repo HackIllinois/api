@@ -13,11 +13,11 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/{id}/", alice.New().ThenFunc(GetUserCheckin)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(CreateUserCheckin)).Methods("POST")
 	router.Handle("/", alice.New().ThenFunc(UpdateUserCheckin)).Methods("PUT")
 	router.Handle("/", alice.New().ThenFunc(GetCurrentUserCheckin)).Methods("GET")
 	router.Handle("/qr/", alice.New().ThenFunc(GetCurrentQrCodeInfo)).Methods("GET")
+	router.Handle("/{id}/", alice.New().ThenFunc(GetUserCheckin)).Methods("GET")
 	router.Handle("/qr/{id}/", alice.New().ThenFunc(GetQrCodeInfo)).Methods("GET")
 }
 

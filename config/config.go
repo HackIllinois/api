@@ -15,6 +15,7 @@ var DECISION_SERVICE = os.Getenv("DECISION_SERVICE")
 var RSVP_SERVICE = os.Getenv("RSVP_SERVICE")
 var CHECKIN_SERVICE = os.Getenv("CHECKIN_SERVICE")
 var UPLOAD_SERVICE = os.Getenv("UPLOAD_SERVICE")
+var MAIL_SERVICE = os.Getenv("MAIL_SERVICE")
 
 func LoadArborConfig() {
 	security.AccessLogLocation = "log/access.log"

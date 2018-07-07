@@ -59,6 +59,8 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 
 	user_registration.GitHub = user_info.Username
 	user_registration.Email = user_info.Email
+	user_registration.FirstName = user_info.FirstName
+	user_registration.LastName = user_info.LastName
 
 	err = service.CreateUserRegistration(id, user_registration)
 
@@ -110,6 +112,8 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 
 	user_registration.GitHub = user_info.Username
 	user_registration.Email = user_info.Email
+	user_registration.FirstName = user_info.FirstName
+	user_registration.LastName = user_info.LastName
 
 	err = service.UpdateUserRegistration(id, user_registration)
 

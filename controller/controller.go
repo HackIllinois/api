@@ -82,7 +82,19 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	err = service.SendUserInfo(id, username, email)
+	first_name, err := service.GetFirstName(oauth_token, provider)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	last_name, err := service.GetLastName(oauth_token, provider)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	err = service.SendUserInfo(id, username, first_name, last_name, email)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

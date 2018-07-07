@@ -1,11 +1,12 @@
 package services
 
 import (
+	"net/http"
+
 	"github.com/HackIllinois/api-gateway/config"
 	"github.com/HackIllinois/api-gateway/middleware"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 var DecisionURL = config.DECISION_SERVICE
@@ -62,5 +63,5 @@ func GetFilteredDecisions(w http.ResponseWriter, r *http.Request) {
 }
 
 func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, DecisionURL+r.URL.String(), DecisionFormat, "", r)
+	arbor.POST(w, DecisionURL+r.URL.String(), DecisionFormat, "", r)
 }

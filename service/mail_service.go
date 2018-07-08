@@ -8,6 +8,7 @@ import (
 	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-mail/config"
 	"github.com/HackIllinois/api-mail/models"
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
 )
@@ -135,18 +136,15 @@ func CreateMailList(mail_list models.MailList) error {
 		mail_list.UserIDs = []string{}
 	}
 
-	query := bson.M{
-		"id": mail_list.ID,
-	}
+	_, err := GetMailList(mail_list.ID)
 
-	var mail_lists []models.MailList
-	db.FindAll("lists", query, &mail_lists)
-
-	if len(mail_lists) >= 1 {
+	if err == mgo.ErrNotFound {
+		return db.Insert("lists", &mail_list)	
+	} else if err != nil {
+		return err
+	} else {
 		return errors.New("Mail list with given ID already exists.")
 	}
-
-	return db.Insert("lists", &mail_list)
 }
 
 /*

@@ -2,8 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
 
@@ -109,21 +107,34 @@ func GetQrInfo(id string) (string, error) {
 }
 
 /*
-	Returns true if the user with specified id is registered, and false if not.
+	Returns true, nil if a user with specified ID is allowed to checkin, and false, nil if not allowed.
 */
-func IsUserRegistered(id string) (bool, error) {
-	api_registration_url := fmt.Sprintf("%s/registration/%s/", config.REGISTRATION_SERVICE, id)
-
-	resp, err := http.Get(api_registration_url)
+func CanUserCheckin(id string, user_has_override bool) (bool, error) {
+	is_user_registered, err := IsUserRegistered(id)
 
 	if err != nil {
 		return false, err
 	}
 
-	defer resp.Body.Close()
+	// To checkin, the user must either (have RSVPed) or (have registered and got an override)
+	if is_user_registered && user_has_override {
 
-	if resp.StatusCode == http.StatusOK {
 		return true, nil
+
+	} else {
+
+		// We do not want to call the below service function if the above condition is met, as it results
+		// in a 400 (Bad Request) / error if the user's RSVP info cannot be found.
+		// Therefore, we do not combine the conditions, and return as early as possible.
+		is_user_rsvped, err := IsAttendeeRsvped(id)
+
+		if err != nil {
+			return false, err
+		}
+
+		if is_user_rsvped {
+			return true, nil
+		}
 	}
 
 	return false, nil

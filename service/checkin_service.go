@@ -118,24 +118,17 @@ func CanUserCheckin(id string, user_has_override bool) (bool, error) {
 
 	// To checkin, the user must either (have RSVPed) or (have registered and got an override)
 	if is_user_registered && user_has_override {
-
 		return true, nil
+	}
+	
+	// We do not want to call the below service function if the above condition is met, as it results
+	// in a 400 (Bad Request) / error if the user's RSVP info cannot be found.
+	// Therefore, we do not combine the conditions, and return as early as possible.
+	is_user_rsvped, err := IsAttendeeRsvped(id)
 
-	} else {
-
-		// We do not want to call the below service function if the above condition is met, as it results
-		// in a 400 (Bad Request) / error if the user's RSVP info cannot be found.
-		// Therefore, we do not combine the conditions, and return as early as possible.
-		is_user_rsvped, err := IsAttendeeRsvped(id)
-
-		if err != nil {
-			return false, err
-		}
-
-		if is_user_rsvped {
-			return true, nil
-		}
+	if err != nil {
+		return false, err
 	}
 
-	return false, nil
+	return is_user_rsvped, nil
 }

@@ -58,33 +58,13 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 	var user_checkin models.UserCheckin
 	json.NewDecoder(r.Body).Decode(&user_checkin)
 
-	is_user_registered, err := service.IsUserRegistered(user_checkin.ID)
+	can_user_checkin, err := service.CanUserCheckin(user_checkin.ID, user_checkin.Override)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	user_checkin_allowed := false
-
-	// To checkin, the user must either (have RSVPed) or (have registered and got an override)
-	if is_user_registered && user_checkin.Override {
-
-		user_checkin_allowed = true
-
-	} else {
-
-		isRsvped, err := service.IsAttendeeRsvped(user_checkin.ID)
-
-		if err != nil {
-			panic(errors.UnprocessableError(err.Error()))
-		}
-
-		if isRsvped {
-			user_checkin_allowed = true
-		}
-	}
-
-	if !user_checkin_allowed {
+	if !can_user_checkin {
 		panic(errors.UnprocessableError("Attendee must be RSVPed to check-in (or have a staff override)."))
 	}
 

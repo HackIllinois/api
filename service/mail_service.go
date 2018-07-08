@@ -127,11 +127,23 @@ func SendMailDev(mail_info models.MailInfo) (*models.MailStatus, error) {
 }
 
 /*
-	Create a mailing list with the given id and initial set of user, if provided
+	Create a mailing list with the given id and initial set of user, if provided.
+	Returns an error if a list with given ID already exists.
 */
 func CreateMailList(mail_list models.MailList) error {
 	if mail_list.UserIDs == nil {
 		mail_list.UserIDs = []string{}
+	}
+
+	query := bson.M{
+		"id": mail_list.ID,
+	}
+
+	var mail_lists []models.MailList
+	db.FindAll("lists", query, &mail_lists)
+
+	if len(mail_lists) >= 1 {
+		return errors.New("Mail list with given ID already exists.")
 	}
 
 	return db.Insert("lists", &mail_list)

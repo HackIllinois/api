@@ -38,6 +38,7 @@ Request format:
 ```
 {
 	"id": "github0000001",
+	"override": true,
 	"hasCheckedIn": true,
 	"hasPickedUpSwag": true
 }
@@ -47,6 +48,7 @@ Response format:
 ```
 {
 	"id": "github0000001",
+	"override": true,
 	"hasCheckedIn": true,
 	"hasPickedUpSwag": true
 }

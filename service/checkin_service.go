@@ -2,13 +2,16 @@ package service
 
 import (
 	"errors"
+	"fmt"
+	"net/http"
+	"net/url"
+	"strconv"
+
 	"github.com/HackIllinois/api-checkin/config"
 	"github.com/HackIllinois/api-checkin/models"
 	"github.com/HackIllinois/api-commons/database"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"net/url"
-	"strconv"
 )
 
 var db database.MongoDatabase
@@ -103,4 +106,25 @@ func GetQrInfo(id string) (string, error) {
 	uri.RawQuery = parameters.Encode()
 
 	return uri.String(), nil
+}
+
+/*
+	Returns true if the user with specified id is registered, and false if not.
+*/
+func IsUserRegistered(id string) (bool, error) {
+	api_registration_url := fmt.Sprintf("%s/registration/%s/", config.REGISTRATION_SERVICE, id)
+
+	resp, err := http.Get(api_registration_url)
+
+	if err != nil {
+		return false, err
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusOK {
+		return true, nil
+	}
+
+	return false, nil
 }

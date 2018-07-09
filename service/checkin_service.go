@@ -2,13 +2,14 @@ package service
 
 import (
 	"errors"
+	"net/url"
+	"strconv"
+
 	"github.com/HackIllinois/api-checkin/config"
 	"github.com/HackIllinois/api-checkin/models"
 	"github.com/HackIllinois/api-commons/database"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"net/url"
-	"strconv"
 )
 
 var db database.MongoDatabase
@@ -103,4 +104,31 @@ func GetQrInfo(id string) (string, error) {
 	uri.RawQuery = parameters.Encode()
 
 	return uri.String(), nil
+}
+
+/*
+	Returns true, nil if a user with specified ID is allowed to checkin, and false, nil if not allowed.
+*/
+func CanUserCheckin(id string, user_has_override bool) (bool, error) {
+	is_user_registered, err := IsUserRegistered(id)
+
+	if err != nil {
+		return false, err
+	}
+
+	// To checkin, the user must either (have RSVPed) or (have registered and got an override)
+	if is_user_registered && user_has_override {
+		return true, nil
+	}
+	
+	// We do not want to call the below service function if the above condition is met, as it results
+	// in a 400 (Bad Request) / error if the user's RSVP info cannot be found.
+	// Therefore, we do not combine the conditions, and return as early as possible.
+	is_user_rsvped, err := IsAttendeeRsvped(id)
+
+	if err != nil {
+		return false, err
+	}
+
+	return is_user_rsvped, nil
 }

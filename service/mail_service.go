@@ -8,6 +8,7 @@ import (
 	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-mail/config"
 	"github.com/HackIllinois/api-mail/models"
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
 )
@@ -127,14 +128,23 @@ func SendMailDev(mail_info models.MailInfo) (*models.MailStatus, error) {
 }
 
 /*
-	Create a mailing list with the given id and initial set of user, if provided
+	Create a mailing list with the given id and initial set of user, if provided.
+	Returns an error if a list with given ID already exists.
 */
 func CreateMailList(mail_list models.MailList) error {
 	if mail_list.UserIDs == nil {
 		mail_list.UserIDs = []string{}
 	}
 
-	return db.Insert("lists", &mail_list)
+	_, err := GetMailList(mail_list.ID)
+
+	if err == mgo.ErrNotFound {
+		return db.Insert("lists", &mail_list)	
+	} else if err != nil {
+		return err
+	} else {
+		return errors.New("Mail list with given ID already exists.")
+	}
 }
 
 /*

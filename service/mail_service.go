@@ -59,12 +59,8 @@ func AddUserToMailList(id string, decision *models.DecisionHistory) error {
 			// Error creating / executing the create POST request.
 			return err_create
 		}
-	} else if err_update != nil {
-
-		// Error creating / executing the update POST request.
-		return err_update
 	}
-
-	// The user should be in the correct mail list.
-	return nil
+	// If there was an error creating / executing the update POST request, it is returned.
+	// Otherwise, the user should be in the correct mail list.
+	return err_update
 }

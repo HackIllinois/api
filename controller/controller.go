@@ -139,6 +139,14 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
+	if updated_decision.Finalized {
+		err = service.AddUserToMailList(id, updated_decision)
+
+		if err != nil {
+			panic(errors.UnprocessableError(err.Error()))
+		}
+	}
+
 	json.NewEncoder(w).Encode(updated_decision)
 }
 

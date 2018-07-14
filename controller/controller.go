@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/HackIllinois/api-auth/config"
 	"github.com/HackIllinois/api-auth/models"
 	"github.com/HackIllinois/api-auth/service"
 	"github.com/HackIllinois/api-commons/errors"
@@ -27,7 +28,13 @@ func SetupController(route *mux.Route) {
 func Authorize(w http.ResponseWriter, r *http.Request) {
 	provider := mux.Vars(r)["provider"]
 
-	redirect_url, err := service.GetAuthorizeRedirect(provider)
+	redirect_uri := r.URL.Query().Get("redirect_uri")
+
+	if redirect_uri == "" {
+		redirect_uri = config.AUTH_REDIRECT_URI
+	}
+
+	redirect_url, err := service.GetAuthorizeRedirect(provider, redirect_uri)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
@@ -46,7 +53,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	provider := mux.Vars(r)["provider"]
 
-	oauth_token, err := service.GetOauthToken(oauth_code.Code, provider)
+	redirect_uri := r.URL.Query().Get("redirect_uri")
+
+	if redirect_uri == "" {
+		redirect_uri = config.AUTH_REDIRECT_URI
+	}
+
+	oauth_token, err := service.GetOauthToken(oauth_code.Code, provider, redirect_uri)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

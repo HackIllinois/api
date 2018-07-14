@@ -88,6 +88,63 @@ func UpdateUserRegistration(id string, user_registration models.UserRegistration
 	return err
 }
 
+/*
+	Returns the registration associated with the given mentor id
+*/
+func GetMentorRegistration(id string) (*models.MentorRegistration, error) {
+	query := bson.M{"id": id}
+
+	var mentor_registration models.MentorRegistration
+	err := db.FindOne("mentors", query, &user_registration)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &mentor_registration, nil
+}
+
+/*
+	Creates the registration associated with the given mentor id
+*/
+func CreateMentorRegistration(id string, mentor_registration models.MentorRegistration) error {
+	err := validate.Struct(mentor_registration)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = GetMentorRegistration(id)
+
+	if err != mgo.ErrNotFound {
+		if err != nil {
+			return err
+		}
+		return errors.New("Registration already exists")
+	}
+
+	err = db.Insert("mentors", &mentor_registration)
+
+	return err
+}
+
+/*
+	Updates the registration associated with the given mentor id
+*/
+func UpdateMentorRegistration(id string, mentor_registration models.MentorRegistration) error {
+	err := validate.Struct(mentor_registration)
+
+	if err != nil {
+		return err
+	}
+
+	selector := bson.M{"id": id}
+
+	err = db.Update("mentors", selector, &mentor_registration)
+
+	return err
+}
+
 func Contains(slice []string, str string) bool {
 	for _, value := range slice {
 		if value == str {

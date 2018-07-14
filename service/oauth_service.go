@@ -9,12 +9,12 @@ import (
 /*
 	Return the oauth authoization url for the given provider
 */
-func GetAuthorizeRedirect(provider string) (string, error) {
+func GetAuthorizeRedirect(provider string, redirect_uri string) (string, error) {
 	switch provider {
 	case "github":
-		return "https://github.com/login/oauth/authorize?client_id=" + config.GITHUB_CLIENT_ID, nil
+		return "https://github.com/login/oauth/authorize?client_id=" + config.GITHUB_CLIENT_ID + "&redirect_uri=" + redirect_uri, nil
 	case "google":
-		return "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + config.GOOGLE_CLIENT_ID + "&redirect_uri=" + config.AUTH_REDIRECT_URI + "&scope=profile%20email&response_type=code", nil
+		return "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + config.GOOGLE_CLIENT_ID + "&redirect_uri=" + redirect_uri + "&scope=profile%20email&response_type=code", nil
 	default:
 		return "", errors.New("Invalid provider")
 	}
@@ -37,12 +37,12 @@ func GetEmail(oauth_token string, provider string) (string, error) {
 /*
 	Converts an oauth code to an oauth token for the specified provider
 */
-func GetOauthToken(code string, provider string) (string, error) {
+func GetOauthToken(code string, provider string, redirect_uri string) (string, error) {
 	switch provider {
 	case "github":
 		return GetGithubOauthToken(code)
 	case "google":
-		return GetGoogleOauthToken(code)
+		return GetGoogleOauthToken(code, redirect_uri)
 	default:
 		return "", errors.New("Invalid provider")
 	}

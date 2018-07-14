@@ -36,13 +36,13 @@ func GetGoogleEmail(oauth_token string) (string, error) {
 /*
 	Uses a valid oauth code to get a valid oauth token for the user
 */
-func GetGoogleOauthToken(code string) (string, error) {
+func GetGoogleOauthToken(code string, redirect_uri string) (string, error) {
 	request, err := grequests.Post("https://www.googleapis.com/oauth2/v4/token", &grequests.RequestOptions{
 		Params: map[string]string{
 			"client_id":     config.GOOGLE_CLIENT_ID,
 			"client_secret": config.GOOGLE_CLIENT_SECRET,
 			"code":          code,
-			"redirect_uri":  config.AUTH_REDIRECT_URI,
+			"redirect_uri":  redirect_uri,
 			"grant_type":    "authorization_code",
 		},
 		Headers: map[string]string{

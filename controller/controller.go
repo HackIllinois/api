@@ -50,7 +50,8 @@ func GetCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Endpoint to create the rsvp for the current user
+	Endpoint to create the rsvp for the current user.
+	On successful creation, sends the user a confirmation mail.
 */
 func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
@@ -94,11 +95,19 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
+	mail_template := "rsvp_confirmation"
+	err = service.SendUserMail(id, mail_template)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
 	json.NewEncoder(w).Encode(updated_rsvp)
 }
 
 /*
-	Endpoint to update the rsvp for the current user
+	Endpoint to update the rsvp for the current user.
+	On successful update, sends the user a confirmation mail.
 */
 func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
@@ -139,6 +148,13 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updated_rsvp, err := service.GetUserRsvp(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	mail_template := "rsvp_update"
+	err = service.SendUserMail(id, mail_template)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

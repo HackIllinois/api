@@ -1,19 +1,23 @@
 Authorization
 =============
 
-GET /auth/PROVIDER/
-----------------------------
+GET /auth/PROVIDER/?redirect_uri=AUTHREDIRECTURI
+------------------------------------------------
 
 Redirects to the `PROVIDER`'s oauth authorization page. Once the user accepts the oauth authorization they will be redirected to the client's auth page with an oauth code. This code should be sent to the api to be exchanged for an api jwt.
 
-Valid `PROVIDER` strings: `github`
+Valid `PROVIDER` strings: `github`, `google`
 
-POST /auth/code/PROVIDER/
-----------------------------------
+`AUTHREDIRECTURI` can be specified to override the default oauth redirect uri.
+
+POST /auth/code/PROVIDER/?redirect_uri=AUTHREDIRECTURI
+------------------------------------------------------
 
 Exchanges a valid oauth code from a jwt from the api. This jwt should be placed in the `Authorization` header for all future api requests.
 
-Valid `PROVIDER` strings: `github`
+Valid `PROVIDER` strings: `github`, `google`
+
+`AUTHREDIRECTURI` can be specified to override the default oauth redirect uri.
 
 Request format:
 ```

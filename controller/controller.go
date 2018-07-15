@@ -35,7 +35,7 @@ func GetCurrentDecision(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decision_view := models.DecisionView{
-		ID: decision.ID,
+		ID:     decision.ID,
 		Status: decision.Status,
 	}
 

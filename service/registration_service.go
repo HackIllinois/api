@@ -132,7 +132,7 @@ func GetFilteredUserRegistrations(parameters map[string][]string) (*models.Filte
 			}
 			query[key] = bson.M{"$in": correctly_typed_value_list}
 		} else {
-			return nil, errors.New("Multiple usage of key "+key)
+			return nil, errors.New("Multiple usage of key " + key)
 		}
 	}
 

@@ -1,23 +1,23 @@
 package service
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"encoding/json"
-	"bytes"
-	
+
 	"github.com/HackIllinois/api-registration/config"
 	"github.com/HackIllinois/api-registration/models"
 )
 
 /*
-	Send user with specified id a confirmation email, with template as specified. 
+	Send user with specified id a confirmation email, with template as specified.
 */
 func SendUserMail(id string, template string) error {
-	api_mail_url := fmt.Sprintf("%s/send/", config.MAIL_SERVICE)
+	api_mail_url := fmt.Sprintf("%s/mail/send/", config.MAIL_SERVICE)
 
 	mail_order := models.MailOrder{
-		IDs: []string{id},
+		IDs:      []string{id},
 		Template: template,
 	}
 

@@ -95,7 +95,7 @@ func GetMentorRegistration(id string) (*models.MentorRegistration, error) {
 	query := bson.M{"id": id}
 
 	var mentor_registration models.MentorRegistration
-	err := db.FindOne("mentors", query, &user_registration)
+	err := db.FindOne("mentors", query, &mentor_registration)
 
 	if err != nil {
 		return nil, err

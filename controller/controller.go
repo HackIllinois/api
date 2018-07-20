@@ -35,7 +35,7 @@ func GetCurrentDecision(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decision_view := models.DecisionView{
-		ID: decision.ID,
+		ID:     decision.ID,
 		Status: decision.Status,
 	}
 
@@ -137,6 +137,14 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	if updated_decision.Finalized {
+		err = service.AddUserToMailList(id, updated_decision)
+
+		if err != nil {
+			panic(errors.UnprocessableError(err.Error()))
+		}
 	}
 
 	json.NewEncoder(w).Encode(updated_decision)

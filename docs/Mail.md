@@ -1,7 +1,7 @@
 Mail
 ====
 
-POST /send/
+POST /mail/send/
 -----------
 
 Sends an email to the users in the list `ids` with based on the given template with generated substitutions.
@@ -26,7 +26,7 @@ Response format:
 }
 ```
 
-POST /send/list/
+POST /mail/send/list/
 ----------------
 
 Sends an email to the users in the mailing list `listId` with based on the given template with generated substitutions.
@@ -49,7 +49,7 @@ Response format:
 }
 ```
 
-POST /list/create/
+POST /mail/list/create/
 ------------------
 
 Creates a mailing list with the ID `id` and with the initial list of users in `userIds`, if provided.  
@@ -74,7 +74,7 @@ Response format:
 }
 ```
 
-POST /list/add/
+POST /mail/list/add/
 ---------------
 
 Modifies the mailing list with the ID `id` adding the users in the list `userIds`.
@@ -100,7 +100,7 @@ Response format:
 }
 ```
 
-POST /list/remove/
+POST /mail/list/remove/
 ------------------
 
 Modifies the mailing list with the ID `id` adding the removing in the list `userIds`.
@@ -125,7 +125,7 @@ Response format:
 }
 ```
 
-GET /list/LISTID/
+GET /mail/list/LISTID/
 -----------------
 
 Returns the mailing list with the ID `LISTID`.

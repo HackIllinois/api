@@ -139,7 +139,7 @@ func CreateMailList(mail_list models.MailList) error {
 	_, err := GetMailList(mail_list.ID)
 
 	if err == mgo.ErrNotFound {
-		return db.Insert("lists", &mail_list)	
+		return db.Insert("lists", &mail_list)
 	} else if err != nil {
 		return err
 	} else {

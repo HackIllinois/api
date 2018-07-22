@@ -13,14 +13,14 @@ import (
 	Add applicant role to user with auth service
 */
 func AddApplicantRole(id string) error {
-	AddRole(id, "applicant")
+	return AddRole(id, "applicant")
 }
 
 /*
 	Add mentor role to user with auth service
 */
 func AddMentorRole(id string) error {
-	AddRole(id, "mentor")
+	return AddRole(id, "mentor")
 }
 
 /*

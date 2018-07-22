@@ -295,6 +295,24 @@ Response format:
 }
 ```
 
+GET /registration/mentor/USERID/
+-------------------------
+
+Returns the mentor registration stored for the mentor with the `id` `USERID`.
+
+Response format:
+```
+{
+	"id": "github0000001"
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "john@gmail.com",
+	"shirtSize": "M",
+	"github": "JSmith",
+	"linkedin": "john-smith"
+}
+```
+
 GET /registration/mentor/
 -------------------------
 

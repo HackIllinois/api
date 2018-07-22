@@ -16,13 +16,14 @@ func SetupController(route *mux.Route) {
 	router.Handle("/", alice.New().ThenFunc(GetCurrentUserRegistration)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(CreateCurrentUserRegistration)).Methods("POST")
 	router.Handle("/", alice.New().ThenFunc(UpdateCurrentUserRegistration)).Methods("PUT")
+	router.Handle("/filter/", alice.New().ThenFunc(GetFilteredUserRegistrations)).Methods("GET")
 
 	router.Handle("/mentor/", alice.New().ThenFunc(GetCurrentMentorRegistration)).Methods("GET")
 	router.Handle("/mentor/", alice.New().ThenFunc(CreateCurrentMentorRegistration)).Methods("POST")
 	router.Handle("/mentor/", alice.New().ThenFunc(UpdateCurrentMentorRegistration)).Methods("PUT")
 
-	router.Handle("/filter/", alice.New().ThenFunc(GetFilteredUserRegistrations)).Methods("GET")
 	router.Handle("/{id}/", alice.New().ThenFunc(GetUserRegistration)).Methods("GET")
+	router.Handle("/mentor/{id}", alice.New().ThenFunc(GetMentorRegistration)).Methods("GET")
 }
 
 /*
@@ -135,6 +136,20 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
+	Endpoint to get registrations based on filters
+*/
+func GetFilteredUserRegistrations(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+	user_registrations, err := service.GetFilteredUserRegistrations(parameters)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(user_registrations)
+}
+
+/*
 	Endpoint to get the registration for the current mentor
 */
 func GetCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
@@ -238,20 +253,6 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Endpoint to get registrations based on filters
-*/
-func GetFilteredUserRegistrations(w http.ResponseWriter, r *http.Request) {
-	parameters := r.URL.Query()
-	user_registrations, err := service.GetFilteredUserRegistrations(parameters)
-
-	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
-	}
-
-	json.NewEncoder(w).Encode(user_registrations)
-}
-
-/*
 	Endpoint to get the registration for a specified user
 */
 func GetUserRegistration(w http.ResponseWriter, r *http.Request) {
@@ -264,4 +265,19 @@ func GetUserRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(user_registration)
+}
+
+/*
+	Endpoint to get the registration for a specified mentor
+*/
+func GetMentorRegistration(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	mentor_registration, err := service.GetMentorRegistration(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(mentor_registration)
 }

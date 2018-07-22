@@ -187,12 +187,6 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	err = service.AddInitialDecision(id)
-
-	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
-	}
-
 	updated_registration, err := service.GetMentorRegistration(id)
 
 	if err != nil {

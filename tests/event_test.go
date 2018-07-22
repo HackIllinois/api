@@ -26,15 +26,15 @@ func init() {
 */
 func SetupTestDB(t *testing.T) {
 	event := models.Event{
-		Name: "testname",
-		Description: "testdescription",
-		StartTime: 1000,
-		EndTime: 2000,
+		Name:                "testname",
+		Description:         "testdescription",
+		StartTime:           1000,
+		EndTime:             2000,
 		LocationDescription: "testlocationdescription",
-		Latitude: 123.456,
-		Longitude: 123.456,
-		Sponsor: "testsponsor",
-		EventType: "WORKSHOP",
+		Latitude:            123.456,
+		Longitude:           123.456,
+		Sponsor:             "testsponsor",
+		EventType:           "WORKSHOP",
 	}
 
 	err := db.Insert("events", &event)
@@ -71,15 +71,15 @@ func TestGetEventService(t *testing.T) {
 	}
 
 	expected_event := models.Event{
-		Name: "testname",
-		Description: "testdescription",
-		StartTime: 1000,
-		EndTime: 2000,
+		Name:                "testname",
+		Description:         "testdescription",
+		StartTime:           1000,
+		EndTime:             2000,
 		LocationDescription: "testlocationdescription",
-		Latitude: 123.456,
-		Longitude: 123.456,
-		Sponsor: "testsponsor",
-		EventType: "WORKSHOP",
+		Latitude:            123.456,
+		Longitude:           123.456,
+		Sponsor:             "testsponsor",
+		EventType:           "WORKSHOP",
 	}
 
 	if !reflect.DeepEqual(event, &expected_event) {
@@ -96,15 +96,15 @@ func TestCreateEventService(t *testing.T) {
 	SetupTestDB(t)
 
 	new_event := models.Event{
-		Name: "testname2",
-		Description: "testdescription2",
-		StartTime: 1000,
-		EndTime: 2000,
+		Name:                "testname2",
+		Description:         "testdescription2",
+		StartTime:           1000,
+		EndTime:             2000,
 		LocationDescription: "testlocationdescription",
-		Latitude: 123.456,
-		Longitude: 123.456,
-		Sponsor: "testsponsor",
-		EventType: "WORKSHOP",
+		Latitude:            123.456,
+		Longitude:           123.456,
+		Sponsor:             "testsponsor",
+		EventType:           "WORKSHOP",
 	}
 
 	err := service.CreateEvent("testname2", new_event)
@@ -120,15 +120,15 @@ func TestCreateEventService(t *testing.T) {
 	}
 
 	expected_event := models.Event{
-		Name: "testname2",
-		Description: "testdescription2",
-		StartTime: 1000,
-		EndTime: 2000,
+		Name:                "testname2",
+		Description:         "testdescription2",
+		StartTime:           1000,
+		EndTime:             2000,
 		LocationDescription: "testlocationdescription",
-		Latitude: 123.456,
-		Longitude: 123.456,
-		Sponsor: "testsponsor",
-		EventType: "WORKSHOP",
+		Latitude:            123.456,
+		Longitude:           123.456,
+		Sponsor:             "testsponsor",
+		EventType:           "WORKSHOP",
 	}
 
 	if !reflect.DeepEqual(event, &expected_event) {
@@ -145,15 +145,15 @@ func TestUpdateEventService(t *testing.T) {
 	SetupTestDB(t)
 
 	event := models.Event{
-		Name: "testname",
-		Description: "testdescription2",
-		StartTime: 1000,
-		EndTime: 2000,
+		Name:                "testname",
+		Description:         "testdescription2",
+		StartTime:           1000,
+		EndTime:             2000,
 		LocationDescription: "testlocationdescription",
-		Latitude: 123.456,
-		Longitude: 123.456,
-		Sponsor: "testsponsor",
-		EventType: "WORKSHOP",
+		Latitude:            123.456,
+		Longitude:           123.456,
+		Sponsor:             "testsponsor",
+		EventType:           "WORKSHOP",
 	}
 
 	err := service.UpdateEvent("testname", event)
@@ -169,15 +169,15 @@ func TestUpdateEventService(t *testing.T) {
 	}
 
 	expected_event := models.Event{
-		Name: "testname",
-		Description: "testdescription2",
-		StartTime: 1000,
-		EndTime: 2000,
+		Name:                "testname",
+		Description:         "testdescription2",
+		StartTime:           1000,
+		EndTime:             2000,
 		LocationDescription: "testlocationdescription",
-		Latitude: 123.456,
-		Longitude: 123.456,
-		Sponsor: "testsponsor",
-		EventType: "WORKSHOP",
+		Latitude:            123.456,
+		Longitude:           123.456,
+		Sponsor:             "testsponsor",
+		EventType:           "WORKSHOP",
 	}
 
 	if !reflect.DeepEqual(updated_event, &expected_event) {

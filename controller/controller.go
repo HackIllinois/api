@@ -181,7 +181,7 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	err = service.AddApplicantRole(id)
+	err = service.AddMentorRole(id)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

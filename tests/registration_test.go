@@ -22,11 +22,18 @@ func init() {
 }
 
 /*
-	Initialize db with test user info
+	Initialize db with test user and mentor info
 */
 func SetupTestDB(t *testing.T) {
-	user_registration := base_registration
+	user_registration := base_user_registration
 	err := db.Insert("attendees", &user_registration)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	mentor_registration := base_mentor_registration
+	err = db.Insert("mentors", &mentor_registration)
 
 	if err != nil {
 		t.Fatal(err)
@@ -59,7 +66,7 @@ func TestGetUserRegistrationService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registration := base_registration
+	expected_registration := base_user_registration
 
 	if !reflect.DeepEqual(user_registration, &expected_registration) {
 		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registration, user_registration)
@@ -74,7 +81,7 @@ func TestGetUserRegistrationService(t *testing.T) {
 func TestCreateUserRegistrationService(t *testing.T) {
 	SetupTestDB(t)
 
-	new_registration := base_registration
+	new_registration := base_user_registration
 	new_registration.ID = "testid2"
 	new_registration.FirstName = "first2"
 	new_registration.LastName = "last2"
@@ -90,7 +97,7 @@ func TestCreateUserRegistrationService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registration := base_registration
+	expected_registration := base_user_registration
 	expected_registration.ID = "testid2"
 	expected_registration.FirstName = "first2"
 	expected_registration.LastName = "last2"
@@ -108,7 +115,7 @@ func TestCreateUserRegistrationService(t *testing.T) {
 func TestUpdateUserRegistrationService(t *testing.T) {
 	SetupTestDB(t)
 
-	updated_registration := base_registration
+	updated_registration := base_user_registration
 	updated_registration.ID = "testid"
 	updated_registration.FirstName = "first2"
 	updated_registration.LastName = "last2"
@@ -124,7 +131,7 @@ func TestUpdateUserRegistrationService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registration := base_registration
+	expected_registration := base_user_registration
 	expected_registration.ID = "testid"
 	expected_registration.FirstName = "first2"
 	expected_registration.LastName = "last2"
@@ -137,14 +144,103 @@ func TestUpdateUserRegistrationService(t *testing.T) {
 }
 
 /*
+	Service level test for getting mentor registration from db
+*/
+func TestGetMentorRegistrationService(t *testing.T) {
+	SetupTestDB(t)
+
+	mentor_registration, err := service.GetMentorRegistration("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_registration := base_mentor_registration
+
+	if !reflect.DeepEqual(mentor_registration, &expected_registration) {
+		t.Errorf("Wrong mentor info.\nExpected %v\ngot %v\n", expected_registration, mentor_registration)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for creating mentor registration in the db
+*/
+func TestCreateMentorRegistrationService(t *testing.T) {
+	SetupTestDB(t)
+
+	new_registration := base_mentor_registration
+	new_registration.ID = "testid2"
+	new_registration.FirstName = "first2"
+	new_registration.LastName = "last2"
+	err := service.CreateMentorRegistration("testid2", new_registration)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	mentor_registration, err := service.GetMentorRegistration("testid2")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_registration := base_mentor_registration
+	expected_registration.ID = "testid2"
+	expected_registration.FirstName = "first2"
+	expected_registration.LastName = "last2"
+
+	if !reflect.DeepEqual(mentor_registration, &expected_registration) {
+		t.Errorf("Wrong mentor info.\nExpected %v\ngot %v\n", expected_registration, mentor_registration)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for updating mentor registration in the db
+*/
+func TestUpdateMentorRegistrationService(t *testing.T) {
+	SetupTestDB(t)
+
+	updated_registration := base_mentor_registration
+	updated_registration.ID = "testid"
+	updated_registration.FirstName = "first2"
+	updated_registration.LastName = "last2"
+	err := service.UpdateMentorRegistration("testid", updated_registration)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	mentor_registration, err := service.GetMentorRegistration("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_registration := base_mentor_registration
+	expected_registration.ID = "testid"
+	expected_registration.FirstName = "first2"
+	expected_registration.LastName = "last2"
+
+	if !reflect.DeepEqual(mentor_registration, &expected_registration) {
+		t.Errorf("Wrong mentor info.\nExpected %v\ngot %v\n", expected_registration, mentor_registration)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
 	Service level test for filtering user registrations in the db
 */
 func TestGetFilteredUserRegistrationsService(t *testing.T) {
 	SetupTestDB(t)
 
-	registration_1 := base_registration
+	registration_1 := base_user_registration
 
-	registration_2 := base_registration
+	registration_2 := base_user_registration
 	registration_2.ID = "testid2"
 	err := service.CreateUserRegistration(registration_2.ID, registration_2)
 	if err != nil {
@@ -212,7 +308,7 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 	CleanupTestDB(t)
 }
 
-var base_registration models.UserRegistration = models.UserRegistration{
+var base_user_registration models.UserRegistration = models.UserRegistration{
 	ID:                   "testid",
 	FirstName:            "first",
 	LastName:             "last",
@@ -253,4 +349,14 @@ var base_registration models.UserRegistration = models.UserRegistration{
 			Github: "collaboratorgithub",
 		},
 	},
+}
+
+var base_mentor_registration models.MentorRegistration = models.MentorRegistration{
+	ID:                   "testid",
+	FirstName:            "first",
+	LastName:             "last",
+	Email:                "test@gmail.com",
+	ShirtSize:            "M",
+	GitHub:               "githubusername",
+	Linkedin:             "linkedinusername",
 }

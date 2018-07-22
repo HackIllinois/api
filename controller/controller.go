@@ -16,9 +16,14 @@ func SetupController(route *mux.Route) {
 	router.Handle("/", alice.New().ThenFunc(GetCurrentUserRegistration)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(CreateCurrentUserRegistration)).Methods("POST")
 	router.Handle("/", alice.New().ThenFunc(UpdateCurrentUserRegistration)).Methods("PUT")
-
 	router.Handle("/filter/", alice.New().ThenFunc(GetFilteredUserRegistrations)).Methods("GET")
+
+	router.Handle("/mentor/", alice.New().ThenFunc(GetCurrentMentorRegistration)).Methods("GET")
+	router.Handle("/mentor/", alice.New().ThenFunc(CreateCurrentMentorRegistration)).Methods("POST")
+	router.Handle("/mentor/", alice.New().ThenFunc(UpdateCurrentMentorRegistration)).Methods("PUT")
+
 	router.Handle("/{id}/", alice.New().ThenFunc(GetUserRegistration)).Methods("GET")
+	router.Handle("/mentor/{id}", alice.New().ThenFunc(GetMentorRegistration)).Methods("GET")
 }
 
 /*
@@ -161,6 +166,109 @@ func GetFilteredUserRegistrations(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
+	Endpoint to get the registration for the current mentor
+*/
+func GetCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	mentor_registration, err := service.GetMentorRegistration(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(mentor_registration)
+}
+
+/*
+	Endpoint to create the registration for the current mentor
+*/
+func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	if id == "" {
+		panic(errors.UnprocessableError("Must provide id"))
+	}
+
+	var mentor_registration models.MentorRegistration
+	json.NewDecoder(r.Body).Decode(&mentor_registration)
+
+	mentor_registration.ID = id
+
+	user_info, err := service.GetUserInfo(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	mentor_registration.GitHub = user_info.Username
+	mentor_registration.Email = user_info.Email
+	mentor_registration.FirstName = user_info.FirstName
+	mentor_registration.LastName = user_info.LastName
+
+	err = service.CreateMentorRegistration(id, mentor_registration)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	err = service.AddMentorRole(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	updated_registration, err := service.GetMentorRegistration(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(updated_registration)
+}
+
+/*
+	Endpoint to update the registration for the current mentor
+*/
+func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	if id == "" {
+		panic(errors.UnprocessableError("Must provide id"))
+	}
+
+	var mentor_registration models.MentorRegistration
+	json.NewDecoder(r.Body).Decode(&mentor_registration)
+
+	mentor_registration.ID = id
+
+	user_info, err := service.GetUserInfo(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	mentor_registration.GitHub = user_info.Username
+	mentor_registration.Email = user_info.Email
+	mentor_registration.FirstName = user_info.FirstName
+	mentor_registration.LastName = user_info.LastName
+
+	err = service.UpdateMentorRegistration(id, mentor_registration)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	updated_registration, err := service.GetMentorRegistration(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(updated_registration)
+}
+
+/*
 	Endpoint to get the registration for a specified user
 */
 func GetUserRegistration(w http.ResponseWriter, r *http.Request) {
@@ -173,4 +281,19 @@ func GetUserRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(user_registration)
+}
+
+/*
+	Endpoint to get the registration for a specified mentor
+*/
+func GetMentorRegistration(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	mentor_registration, err := service.GetMentorRegistration(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(mentor_registration)
 }

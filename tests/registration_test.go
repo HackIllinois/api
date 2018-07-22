@@ -287,8 +287,8 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 	// Test type casting
 	parameters = map[string][]string{
 		"firstName": []string{"first"},
-		"age": []string{"20"},
-		"isNovice": []string{"true"},
+		"age":       []string{"20"},
+		"isNovice":  []string{"true"},
 	}
 	user_registrations, err = service.GetFilteredUserRegistrations(parameters)
 	if err != nil {

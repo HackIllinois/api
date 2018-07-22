@@ -1,0 +1,22 @@
+language: go
+go:
+    - "1.10.x"
+services:
+    mongodb
+script:
+    - go build github.com/HackIllinois/api-stat
+    - go test github.com/HackIllinois/api-stat/tests
+before_deploy:
+    - mkdir deploy
+    - zip deploy/api-stat.zip api-stat buildspec.yml Dockerfile
+deploy:
+    provider: s3
+    access_key_id: $HACKILLINOIS_ACCESS_KEY
+    secret_access_key: $HACKILLINOIS_SECRET_KEY
+    bucket: hackillinois-api
+    skip_cleanup: true
+    local_dir: deploy
+    upload-dir: api-stat
+    on:
+        branch: master
+

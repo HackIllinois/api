@@ -295,6 +295,102 @@ Response format:
 }
 ```
 
+GET /registration/mentor/USERID/
+-------------------------
+
+Returns the mentor registration stored for the mentor with the `id` `USERID`.
+
+Response format:
+```
+{
+	"id": "github0000001"
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "john@gmail.com",
+	"shirtSize": "M",
+	"github": "JSmith",
+	"linkedin": "john-smith"
+}
+```
+
+GET /registration/mentor/
+-------------------------
+
+Returns the mentor registration stored for the mentor with the `id` stored in the given JWT in the Authorization header.
+
+Response format:
+```
+{
+	"id": "github0000001"
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "john@gmail.com",
+	"shirtSize": "M",
+	"github": "JSmith",
+	"linkedin": "john-smith"
+}
+```
+
+POST /registration/mentor/
+--------------------------
+
+Creates a registration for the mentor with the `id` in the JWT token provided in the Authorization header.
+
+Request format:
+```
+{
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "john@gmail.com",
+	"shirtSize": "M",
+	"github": "JSmith",
+	"linkedin": "john-smith"
+}
+```
+
+Response format:
+```
+{
+	"id": "github0000001"
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "john@gmail.com",
+	"shirtSize": "M",
+	"github": "JSmith",
+	"linkedin": "john-smith"
+}
+```
+
+PUT /registration/mentor/
+-------------------------
+
+Updated the registration for the user with the `id` in the JWT token provided in the Authorization header.
+
+Request format:
+```
+{
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "john@gmail.com",
+	"shirtSize": "M",
+	"github": "JSmith",
+	"linkedin": "john-smith"
+}
+```
+
+Response format:
+```
+{
+	"id": "github0000001"
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "john@gmail.com",
+	"shirtSize": "M",
+	"github": "JSmith",
+	"linkedin": "john-smith"
+}
+```
+
 GET /registration/filter/?key=value
 -----------------------------------
 

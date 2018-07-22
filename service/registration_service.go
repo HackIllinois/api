@@ -8,7 +8,6 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-
 	"strconv"
 	"strings"
 )
@@ -88,29 +87,6 @@ func UpdateUserRegistration(id string, user_registration models.UserRegistration
 	return err
 }
 
-func Contains(slice []string, str string) bool {
-	for _, value := range slice {
-		if value == str {
-			return true
-		}
-	}
-	return false
-}
-
-func AssignValueType(key, value string) (interface{}, error) {
-	int_keys := []string{"age", "graduationyear"}
-	if Contains(int_keys, key) {
-		return strconv.Atoi(value)
-	}
-
-	bool_keys := []string{"isnovice", "isprivate"}
-	if Contains(bool_keys, key) {
-		return strconv.ParseBool(value)
-	}
-
-	return value, nil
-}
-
 /*
 	Returns the registrations associated with the given parameters
 */
@@ -143,4 +119,84 @@ func GetFilteredUserRegistrations(parameters map[string][]string) (*models.Filte
 	}
 
 	return &filtered_registrations, nil
+}
+
+func AssignValueType(key, value string) (interface{}, error) {
+	int_keys := []string{"age", "graduationyear"}
+	if Contains(int_keys, key) {
+		return strconv.Atoi(value)
+	}
+
+	bool_keys := []string{"isnovice", "isprivate"}
+	if Contains(bool_keys, key) {
+		return strconv.ParseBool(value)
+	}
+
+	return value, nil
+}
+
+func Contains(slice []string, str string) bool {
+	for _, value := range slice {
+		if value == str {
+			return true
+		}
+	}
+	return false
+}
+
+/*
+	Returns the registration associated with the given mentor id
+*/
+func GetMentorRegistration(id string) (*models.MentorRegistration, error) {
+	query := bson.M{"id": id}
+
+	var mentor_registration models.MentorRegistration
+	err := db.FindOne("mentors", query, &mentor_registration)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &mentor_registration, nil
+}
+
+/*
+	Creates the registration associated with the given mentor id
+*/
+func CreateMentorRegistration(id string, mentor_registration models.MentorRegistration) error {
+	err := validate.Struct(mentor_registration)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = GetMentorRegistration(id)
+
+	if err != mgo.ErrNotFound {
+		if err != nil {
+			return err
+		}
+		return errors.New("Registration already exists")
+	}
+
+	err = db.Insert("mentors", &mentor_registration)
+
+	return err
+}
+
+/*
+	Updates the registration associated with the given mentor id
+*/
+func UpdateMentorRegistration(id string, mentor_registration models.MentorRegistration) error {
+	err := validate.Struct(mentor_registration)
+
+	if err != nil {
+		return err
+	}
+
+	selector := bson.M{"id": id}
+
+	err = db.Update("mentors", selector, &mentor_registration)
+
+	return err
 }

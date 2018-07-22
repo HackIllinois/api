@@ -5,9 +5,16 @@ import (
 	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-event/config"
 	"github.com/HackIllinois/api-event/models"
+	"gopkg.in/go-playground/validator.v9"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
+
+var validate *validator.Validate
+
+func init() {
+	validate = validator.New()
+}
 
 var db database.MongoDatabase
 
@@ -43,7 +50,13 @@ func GetEvent(name string) (*models.Event, error) {
 	Creates an event with the given name
 */
 func CreateEvent(name string, event models.Event) error {
-	_, err := GetEvent(name)
+	err := validate.Struct(event)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = GetEvent(name)
 
 	if err != mgo.ErrNotFound {
 		if err != nil {
@@ -61,11 +74,17 @@ func CreateEvent(name string, event models.Event) error {
 	Updates the event with the given name
 */
 func UpdateEvent(name string, event models.Event) error {
+	err := validate.Struct(event)
+
+	if err != nil {
+		return err
+	}
+
 	selector := bson.M{
 		"name": name,
 	}
 
-	err := db.Update("events", selector, &event)
+	err = db.Update("events", selector, &event)
 
 	return err
 }

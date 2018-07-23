@@ -41,13 +41,13 @@ var RegistrationRoutes = arbor.RouteCollection{
 		"GetCurrentMentorRegistration",
 		"GET",
 		"/registration/mentor/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Mentor"})).ThenFunc(GetRegistration).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateCurrentMentorRegistration",
 		"POST",
 		"/registration/mentor/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Mentor"})).ThenFunc(CreateRegistration).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(CreateRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentMentorRegistration",

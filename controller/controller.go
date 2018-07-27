@@ -13,6 +13,9 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
+	router.Handle("/", alice.New().ThenFunc(GetAllCurrentRegistrations)).Methods("GET")
+	router.Handle("/{id}/", alice.New().ThenFunc(GetAllRegistrations)).Methods("GET")
+
 	router.Handle("/attendee/", alice.New().ThenFunc(GetCurrentUserRegistration)).Methods("GET")
 	router.Handle("/attendee/", alice.New().ThenFunc(CreateCurrentUserRegistration)).Methods("POST")
 	router.Handle("/attendee/", alice.New().ThenFunc(UpdateCurrentUserRegistration)).Methods("PUT")
@@ -24,6 +27,44 @@ func SetupController(route *mux.Route) {
 
 	router.Handle("/attendee/{id}/", alice.New().ThenFunc(GetUserRegistration)).Methods("GET")
 	router.Handle("/mentor/{id}", alice.New().ThenFunc(GetMentorRegistration)).Methods("GET")
+}
+
+/*
+	Endpoint to get all registrations (attendee, mentor) for the current user.
+	If registrations could not be found for either attendee or mentor, that field is set to nil/null.
+*/
+func GetAllCurrentRegistrations(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	user_registration, _ := service.GetUserRegistration(id)
+
+	mentor_registration, _ := service.GetMentorRegistration(id)
+
+	var all_registration = models.AllRegistration{
+		Attendee: user_registration,
+		Mentor:   mentor_registration,
+	}
+
+	json.NewEncoder(w).Encode(&all_registration)
+}
+
+/*
+	Endpoint to get all registrations (attendee, mentor) for the specified user.
+	If registrations could not be found for either attendee or mentor, that field is set to nil.
+*/
+func GetAllRegistrations(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	user_registration, _ := service.GetUserRegistration(id)
+
+	mentor_registration, _ := service.GetMentorRegistration(id)
+
+	var all_registration = models.AllRegistration{
+		Attendee: user_registration,
+		Mentor:   mentor_registration,
+	}
+
+	json.NewEncoder(w).Encode(&all_registration)
 }
 
 /*

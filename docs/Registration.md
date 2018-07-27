@@ -1,6 +1,132 @@
 Registration
 ============
 
+GET /registration/
+-------------------------
+
+Returns all the registrations stored for the current user. If registrations are not found for either Attendee or Mentor,
+that field is set to null.
+
+Response format:
+```
+{
+	"attendee": {
+		"id": "github0000001"
+		"firstName": "John",
+		"lastName": "Smith",
+		"email": "john@gmail.com",
+		"shirtSize": "M",
+		"diet": "NONE",
+		"age": 19,
+		"graduationYear": 2019,
+		"transportation": "NONE",
+		"school": "University of Illinois at Urbana-Champaign",
+		"major": "Computer Science",
+		"gender": "MALE",
+		"professionalInterest": "INTERNSHIP",
+		"github": "JSmith",
+		"linkedin": "john-smith",
+		"interests": "Software",
+		"isNovice": false,
+		"isPrivate": false,
+		"phoneNumber": "555-555-5555",
+		"longforms": [
+			{
+				"response": "This is a longform."
+			}
+		],
+		"extraInfos": [
+			{
+				"response": "This is an extra info."
+			}
+		],
+		"osContributors": [
+			{
+				"name": "Tom",
+				"contactInfo": "tom@gmail.com"
+			}
+		],
+		"collaborators": [
+			{
+				"github": "collabgithub"
+			}
+		]
+	},
+	"mentor": {
+		"id": "github0000001"
+		"firstName": "John",
+		"lastName": "Smith",
+		"email": "john@gmail.com",
+		"shirtSize": "M",
+		"github": "JSmith",
+		"linkedin": "john-smith"
+	} 
+}
+```
+
+GET /registration/USERID/
+-------------------------
+
+Returns all registrations stored for the user with the `id` `USERID`.
+If registrations are not found for either Attendee or Mentor, that field is set to null.
+
+Response format:
+```
+{
+	"attendee": {
+		"id": "github0000001"
+		"firstName": "John",
+		"lastName": "Smith",
+		"email": "john@gmail.com",
+		"shirtSize": "M",
+		"diet": "NONE",
+		"age": 19,
+		"graduationYear": 2019,
+		"transportation": "NONE",
+		"school": "University of Illinois at Urbana-Champaign",
+		"major": "Computer Science",
+		"gender": "MALE",
+		"professionalInterest": "INTERNSHIP",
+		"github": "JSmith",
+		"linkedin": "john-smith",
+		"interests": "Software",
+		"isNovice": false,
+		"isPrivate": false,
+		"phoneNumber": "555-555-5555",
+		"longforms": [
+			{
+				"response": "This is a longform."
+			}
+		],
+		"extraInfos": [
+			{
+				"response": "This is an extra info."
+			}
+		],
+		"osContributors": [
+			{
+				"name": "Tom",
+				"contactInfo": "tom@gmail.com"
+			}
+		],
+		"collaborators": [
+			{
+				"github": "collabgithub"
+			}
+		]
+	},
+	"mentor": {
+		"id": "github0000001"
+		"firstName": "John",
+		"lastName": "Smith",
+		"email": "john@gmail.com",
+		"shirtSize": "M",
+		"github": "JSmith",
+		"linkedin": "john-smith"
+	}
+}
+```
+
 GET /registration/attendee/USERID/
 -------------------------
 

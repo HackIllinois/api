@@ -14,6 +14,18 @@ const RegistrationFormat string = "JSON"
 
 var RegistrationRoutes = arbor.RouteCollection{
 	arbor.Route{
+		"GetAllCurrentRegistrations",
+		"GET",
+		"/registration/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetRegistration).ServeHTTP,
+	},
+	arbor.Route{
+		"GetAllRegistrations",
+		"GET",
+		"/registration/{id}/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetRegistration).ServeHTTP,
+	},
+	arbor.Route{
 		"GetCurrentUserRegistration",
 		"GET",
 		"/registration/attendee/",

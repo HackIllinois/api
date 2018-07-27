@@ -1,7 +1,7 @@
 Registration
 ============
 
-GET /registration/USERID/
+GET /registration/attendee/USERID/
 -------------------------
 
 Returns the user registration stored for the user with the `id` `USERID`.
@@ -52,7 +52,7 @@ Response format:
 }
 ```
 
-GET /registration/
+GET /registration/attendee/
 ------------------
 
 Returns the user registration stored for the user with the `id` stored in the given JWT in the Authorization header.
@@ -103,7 +103,7 @@ Response format:
 }
 ```
 
-POST /registration/
+POST /registration/attendee/
 -------------------
 
 Creates a registration for the user with the `id` in the JWT token provided in the Authorization header.
@@ -199,7 +199,7 @@ Response format:
 }
 ```
 
-PUT /registration/
+PUT /registration/attendee/
 ------------------
 
 Updated the registration for the user with the `id` in the JWT token provided in the Authorization header.

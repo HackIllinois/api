@@ -23,29 +23,29 @@ func SetupController(route *mux.Route) {
 }
 
 /*
-	Redirects the client to the oauth authorization url of the specified provider
+	Redirects the client to the OAuth authorization url of the specified provider.
 */
 func Authorize(w http.ResponseWriter, r *http.Request) {
 	provider := mux.Vars(r)["provider"]
 
-	redirect_uri := r.URL.Query().Get("redirect_uri")
+	client_application_url := r.URL.Query().Get("redirect_uri")
 
-	if redirect_uri == "" {
-		redirect_uri = config.AUTH_REDIRECT_URI
+	if client_application_url == "" {
+		client_application_url = config.AUTH_REDIRECT_URI
 	}
 
-	redirect_url, err := service.GetAuthorizeRedirect(provider, redirect_uri)
+	oauth_authorization_url, err := service.GetAuthorizeRedirect(provider, client_application_url)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	http.Redirect(w, r, redirect_url, 302)
+	http.Redirect(w, r, oauth_authorization_url, 302)
 }
 
 /*
-	Converts a valid oauth code in the request body to an oauth token
-	Gets basic user information from the oauth provider and returns a jwt token
+	Converts a valid OAuth authorization code in the request body to an OAuth token.
+	Gets basic user information from the OAuth provider and returns a JWT.
 */
 func Login(w http.ResponseWriter, r *http.Request) {
 	var oauth_code models.OauthCode
@@ -53,13 +53,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	provider := mux.Vars(r)["provider"]
 
-	redirect_uri := r.URL.Query().Get("redirect_uri")
+	client_application_url := r.URL.Query().Get("redirect_uri")
 
-	if redirect_uri == "" {
-		redirect_uri = config.AUTH_REDIRECT_URI
+	if client_application_url == "" {
+		client_application_url = config.AUTH_REDIRECT_URI
 	}
 
-	oauth_token, err := service.GetOauthToken(oauth_code.Code, provider, redirect_uri)
+	oauth_token, err := service.GetOauthToken(oauth_code.Code, provider, client_application_url)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
@@ -121,7 +121,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Gets the roles for the user with the given id
+	Gets the roles for the user with the given id.
 */
 func GetRoles(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
@@ -145,7 +145,7 @@ func GetRoles(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Updated the roles for the user with the given id
+	Updates the roles for the user with the given id.
 */
 func SetRoles(w http.ResponseWriter, r *http.Request) {
 	var user_roles models.UserRoles

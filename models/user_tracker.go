@@ -1,6 +1,6 @@
 package models
 
 type UserTracker struct {
-	ID     string   `json:"id"`
+	UserID string   `json:"userId"`
 	Events []string `json:"events"`
 }

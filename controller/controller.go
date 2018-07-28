@@ -17,9 +17,9 @@ func SetupController(route *mux.Route) {
 	router.Handle("/", alice.New().ThenFunc(CreateEvent)).Methods("POST")
 	router.Handle("/", alice.New().ThenFunc(UpdateEvent)).Methods("PUT")
 
-	router.Handle("/event/track/", alice.New().ThenFunc(MarkUserAsAttendingEvent)).Methods("POST")
-	router.Handle("/event/track/event/{name}/", alice.New().ThenFunc(GetEventTrackingInfo)).Methods("GET")
-	router.Handle("/event/track/user/{id}/", alice.New().ThenFunc(GetUserTrackingInfo)).Methods("GET")
+	router.Handle("/track/", alice.New().ThenFunc(MarkUserAsAttendingEvent)).Methods("POST")
+	router.Handle("/track/event/{name}/", alice.New().ThenFunc(GetEventTrackingInfo)).Methods("GET")
+	router.Handle("/track/user/{id}/", alice.New().ThenFunc(GetUserTrackingInfo)).Methods("GET")
 }
 
 /*

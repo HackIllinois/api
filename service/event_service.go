@@ -130,6 +130,12 @@ func GetUserTracker(user_id string) (*models.UserTracker, error) {
 	err := db.FindOne("usertrackers", query, &tracker)
 
 	if err != nil {
+		if err == mgo.ErrNotFound {
+			return &models.UserTracker{
+				UserID: user_id,
+				Events: []string{},
+			}, nil
+		}
 		return nil, err
 	}
 

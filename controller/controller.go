@@ -16,6 +16,10 @@ func SetupController(route *mux.Route) {
 	router.Handle("/{name}/", alice.New().ThenFunc(GetEvent)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(CreateEvent)).Methods("POST")
 	router.Handle("/", alice.New().ThenFunc(UpdateEvent)).Methods("PUT")
+
+	router.Handle("/event/track/", alice.New().ThenFunc(MarkUserAsAttendingEvent)).Methods("POST")
+	router.Handle("/event/track/event/{name}/", alice.New().ThenFunc(GetEventTrackingInfo)).Methods("GET")
+	router.Handle("/event/track/user/{id}/", alice.New().ThenFunc(GetUserTrackingInfo)).Methods("GET")
 }
 
 /*
@@ -75,4 +79,77 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_event)
+}
+
+/*
+	Endpoint to get tracking info by event
+*/
+func GetEventTrackingInfo(w http.ResponseWriter, r *http.Request) {
+	name := mux.Vars(r)["name"]
+
+	tracker, err := service.GetEventTracker(name)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(tracker)
+}
+
+/*
+	Endpoint to get tracking info by user
+*/
+func GetUserTrackingInfo(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	tracker, err := service.GetUserTracker(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(tracker)
+}
+
+/*
+	Mark a user as attending an event
+*/
+func MarkUserAsAttendingEvent(w http.ResponseWriter, r *http.Request) {
+	var tracking_info models.TrackingInfo
+	json.NewDecoder(r.Body).Decode(&tracking_info)
+
+	is_checkedin, err := service.IsUserCheckedIn(tracking_info.UserID)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	if !is_checkedin {
+		panic(errors.UnprocessableError("User must be checked in to attend event"))
+	}
+
+	err = service.MarkUserAsAttendingEvent(tracking_info.EventName, tracking_info.UserID)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	event_tracker, err := service.GetEventTracker(tracking_info.EventName)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	user_tracker, err := service.GetUserTracker(tracking_info.UserID)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	tracking_status := &models.TrackingStatus{
+		EventTracker: *event_tracker,
+		UserTracker:  *user_tracker,
+	}
+
+	json.NewEncoder(w).Encode(tracking_status)
 }

@@ -20,12 +20,6 @@ var RegistrationRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetRegistration).ServeHTTP,
 	},
 	arbor.Route{
-		"GetAllRegistrations",
-		"GET",
-		"/registration/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetRegistration).ServeHTTP,
-	},
-	arbor.Route{
 		"GetCurrentUserRegistration",
 		"GET",
 		"/registration/attendee/",
@@ -77,6 +71,12 @@ var RegistrationRoutes = arbor.RouteCollection{
 		"GetMentorRegistration",
 		"GET",
 		"/registration/mentor/{id}/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetRegistration).ServeHTTP,
+	},
+	arbor.Route{
+		"GetAllRegistrations",
+		"GET",
+		"/registration/{id}/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetRegistration).ServeHTTP,
 	},
 }

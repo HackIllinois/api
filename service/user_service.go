@@ -63,13 +63,13 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 	query := make(map[string]interface{})
 
 	for key, values := range parameters {
+		key = strings.ToLower(key)
+
 		if len(values) > 1 {
 			return nil, errors.New("Multiple usage of key " + key)
 		}
 
-		key = strings.ToLower(key)
-		value_list := strings.Split(values[0], ",")
-		query[key] = bson.M{"$in": value_list}
+		query[key] = bson.M{"$in": strings.Split(values[0], ",")}
 	}
 
 	var filtered_users models.FilteredUsers

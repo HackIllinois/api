@@ -352,11 +352,11 @@ var base_user_registration models.UserRegistration = models.UserRegistration{
 }
 
 var base_mentor_registration models.MentorRegistration = models.MentorRegistration{
-	ID:                   "testid",
-	FirstName:            "first",
-	LastName:             "last",
-	Email:                "test@gmail.com",
-	ShirtSize:            "M",
-	GitHub:               "githubusername",
-	Linkedin:             "linkedinusername",
+	ID:        "testid",
+	FirstName: "first",
+	LastName:  "last",
+	Email:     "test@gmail.com",
+	ShirtSize: "M",
+	GitHub:    "githubusername",
+	Linkedin:  "linkedinusername",
 }

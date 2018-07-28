@@ -67,6 +67,17 @@ func CreateEvent(name string, event models.Event) error {
 
 	err = db.Insert("events", &event)
 
+	if err != nil {
+		return err
+	}
+
+	event_tracker := models.EventTracker{
+		EventName: name,
+		Users:     []string{},
+	}
+
+	err = db.Insert("eventtrackers", &event_tracker)
+
 	return err
 }
 

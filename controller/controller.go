@@ -14,17 +14,17 @@ func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
 	router.Handle("/", alice.New().ThenFunc(GetAllCurrentRegistrations)).Methods("GET")
-	router.Handle("/{id}/", alice.New().ThenFunc(GetAllRegistrations)).Methods("GET")
-
+	
 	router.Handle("/attendee/", alice.New().ThenFunc(GetCurrentUserRegistration)).Methods("GET")
 	router.Handle("/attendee/", alice.New().ThenFunc(CreateCurrentUserRegistration)).Methods("POST")
 	router.Handle("/attendee/", alice.New().ThenFunc(UpdateCurrentUserRegistration)).Methods("PUT")
 	router.Handle("/filter/", alice.New().ThenFunc(GetFilteredUserRegistrations)).Methods("GET")
-
+	
 	router.Handle("/mentor/", alice.New().ThenFunc(GetCurrentMentorRegistration)).Methods("GET")
 	router.Handle("/mentor/", alice.New().ThenFunc(CreateCurrentMentorRegistration)).Methods("POST")
 	router.Handle("/mentor/", alice.New().ThenFunc(UpdateCurrentMentorRegistration)).Methods("PUT")
-
+	
+	router.Handle("/{id}/", alice.New().ThenFunc(GetAllRegistrations)).Methods("GET")
 	router.Handle("/attendee/{id}/", alice.New().ThenFunc(GetUserRegistration)).Methods("GET")
 	router.Handle("/mentor/{id}", alice.New().ThenFunc(GetMentorRegistration)).Methods("GET")
 }

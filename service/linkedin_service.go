@@ -15,9 +15,10 @@ const LINKEDIN_USER_INFO_URL = "https://api.linkedin.com/v1/people/~:(id,formatt
 */
 func GetLinkedinEmail(oauth_token string) (string, error) {
 	request, err := grequests.Get(LINKEDIN_USER_INFO_URL, &grequests.RequestOptions{
-		Headers: map[string]string{"Authorization": fmt.Sprintf("Bearer %v", oauth_token),
-			"Content-Type": "application/json",
-			"x-li-format":  "json"},
+		Headers: map[string]string{
+			"Authorization": fmt.Sprintf("Bearer %v", oauth_token),
+			"Content-Type":  "application/json",
+			"x-li-format":   "json"},
 	})
 
 	if err != nil {
@@ -81,9 +82,10 @@ func GetLinkedinOauthToken(code string, redirect_uri string) (string, error) {
 */
 func GetLinkedinUniqueId(oauth_token string) (string, error) {
 	request, err := grequests.Get(LINKEDIN_USER_INFO_URL, &grequests.RequestOptions{
-		Headers: map[string]string{"Authorization": fmt.Sprintf("Bearer %v", oauth_token),
-			"Content-Type": "application/json",
-			"x-li-format":  "json"},
+		Headers: map[string]string{
+			"Authorization": fmt.Sprintf("Bearer %v", oauth_token),
+			"Content-Type":  "application/json",
+			"x-li-format":   "json"},
 	})
 
 	if err != nil {
@@ -105,13 +107,14 @@ func GetLinkedinUniqueId(oauth_token string) (string, error) {
 }
 
 /*
-	Uses a valid oauth token to get the user's username
+	Uses a valid OAuth token to get the user's username.
 */
 func GetLinkedinUsername(oauth_token string) (string, error) {
 	request, err := grequests.Get(LINKEDIN_USER_INFO_URL, &grequests.RequestOptions{
-		Headers: map[string]string{"Authorization": fmt.Sprintf("Bearer %v", oauth_token),
-			"Content-Type": "application/json",
-			"x-li-format":  "json"},
+		Headers: map[string]string{
+			"Authorization": fmt.Sprintf("Bearer %v", oauth_token),
+			"Content-Type":  "application/json",
+			"x-li-format":   "json"},
 	})
 
 	if err != nil {
@@ -133,7 +136,7 @@ func GetLinkedinUsername(oauth_token string) (string, error) {
 }
 
 /*
-	Uses a valid oauth token to get the user's name
+	Uses a valid OAuth token to get the user's name.
 */
 func GetLinkedinFirstName(oauth_token string) (string, error) {
 	request, err := grequests.Get(LINKEDIN_USER_INFO_URL, &grequests.RequestOptions{
@@ -161,7 +164,7 @@ func GetLinkedinFirstName(oauth_token string) (string, error) {
 }
 
 /*
-	Uses a valid oauth token to get the user's last name
+	Uses a valid OAuth token to get the user's last name.
 */
 func GetLinkedinLastName(oauth_token string) (string, error) {
 	request, err := grequests.Get(LINKEDIN_USER_INFO_URL, &grequests.RequestOptions{

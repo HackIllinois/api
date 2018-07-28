@@ -66,7 +66,7 @@ func SetUserInfo(w http.ResponseWriter, r *http.Request) {
 */
 func GetFilteredUserInfo(w http.ResponseWriter, r *http.Request) {
 	parameters := r.URL.Query()
-	user_info, err := service.GetFilteredUserInfo(id)
+	user_info, err := service.GetFilteredUserInfo(parameters)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

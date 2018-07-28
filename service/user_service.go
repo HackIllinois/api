@@ -55,3 +55,28 @@ func SetUserInfo(id string, user_info models.UserInfo) error {
 
 	return err
 }
+
+/*
+	Returns the users associated with the given parameters
+*/
+func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers, error) {
+	query := make(map[string]interface{})
+
+	for key, values := range parameters {
+		if len(values) > 1 {
+			return nil, errors.New("Multiple usage of key " + key)
+		}
+
+		key = strings.ToLower(key)
+		value_list := strings.Split(values[0], ",")
+		query[key] = bson.M{"$in": value_list}
+	}
+
+	var filtered_users models.FilteredUsers
+	err := db.FindAll("info", query, &filtered_users.Users)
+	if err != nil {
+		return nil, err
+	}
+
+	return &filtered_users, nil
+}

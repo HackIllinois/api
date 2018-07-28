@@ -123,7 +123,7 @@ func GetEventTracker(event_name string) (*models.EventTracker, error) {
 */
 func GetUserTracker(user_id string) (*models.UserTracker, error) {
 	query := bson.M{
-		"userId": user_id,
+		"userid": user_id,
 	}
 
 	var tracker models.UserTracker
@@ -158,8 +158,7 @@ func IsUserAttendingEvent(event_name string, user_id string) (bool, error) {
 
 /*
 	Marks the specified user as attending the specified event
-	The user must be checkedin and not already marked as attending
-	for this to return successfully
+	The user must not already marked as attending for this to return successfully
 */
 func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 	is_attending, err := IsUserAttendingEvent(event_name, user_id)
@@ -170,16 +169,6 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 
 	if is_attending {
 		return errors.New("User has already been marked as attending")
-	}
-
-	is_checkedin, err := IsUserCheckedIn(user_id)
-
-	if err != nil {
-		return err
-	}
-
-	if !is_checkedin {
-		return errors.New("User must be checked in to attend event")
 	}
 
 	event_selector := bson.M{
@@ -209,6 +198,14 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 	}
 
 	err = db.Update("usertrackers", user_selector, &user_modifier)
+
+	if err == mgo.ErrNotFound {
+		user_tracker := models.UserTracker{
+			UserID: user_id,
+			Events: []string{event_name},
+		}
+		err = db.Insert("usertrackers", &user_tracker)
+	}
 
 	return err
 }

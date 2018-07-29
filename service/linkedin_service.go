@@ -103,7 +103,7 @@ func GetLinkedinUniqueId(oauth_token string) (string, error) {
 		return "", errors.New("Invalid OAuth token.")
 	}
 
-	return fmt.Sprintf("Linkedin%v", user_info.ID), nil
+	return fmt.Sprintf("linkedin%v", user_info.ID), nil
 }
 
 /*

@@ -90,3 +90,64 @@ Response format:
 	"eventType": "WORKSHOP"
 }
 ```
+
+POST /event/track/
+------------------
+
+Marks the specified user as attending the specified event. Returns the tracker for the user and the tracker for the event.
+
+Request format:
+```
+{
+	"eventName": "Example Event",
+	"userId": "github0000001"
+}
+```
+
+Response format:
+```
+{
+	"eventTracker": {
+		"eventName": "Example Event",
+		"users": [
+			"github0000001",
+		]
+	},
+	"userTracker": {
+		"userId": "github0000001",
+		"events": [
+			"Example Event"
+		]
+	}
+}
+```
+
+GET /event/track/event/EVENTNAME/
+---------------------------------
+
+Returns the tracker for the event with the name `EVENTNAME`.
+
+Response format:
+```
+{
+	"eventName": "Example Event",
+	"users": [
+		"github0000001",
+	]
+}
+```
+
+GET /event/track/user/USERID/
+-----------------------------
+
+Returns the tracker for the user with the id `USERID`.
+
+Response format:
+```
+{
+	"userId": "github0000001",
+	"events": [
+		"Example Event"
+	]
+}
+```

@@ -42,6 +42,17 @@ func SetupTestDB(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	event_tracker := models.EventTracker{
+		EventName: "testname",
+		Users:     []string{},
+	}
+
+	err = db.Insert("eventtrackers", &event_tracker)
+
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 /*
@@ -182,6 +193,103 @@ func TestUpdateEventService(t *testing.T) {
 
 	if !reflect.DeepEqual(updated_event, &expected_event) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_event, updated_event)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for marking a user as attending an event
+*/
+func TestMarkUserAsAttendingEventService(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.MarkUserAsAttendingEvent("testname", "testuser")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	event_tracker, err := service.GetEventTracker("testname")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_tracker := models.EventTracker{
+		EventName: "testname",
+		Users:     []string{"testuser"},
+	}
+
+	if !reflect.DeepEqual(event_tracker, &expected_event_tracker) {
+		t.Errorf("Wrong tracker info. Expected %v, got %v", expected_event_tracker, event_tracker)
+	}
+
+	user_tracker, err := service.GetUserTracker("testuser")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_user_tracker := models.UserTracker{
+		UserID: "testuser",
+		Events: []string{"testname"},
+	}
+
+	if !reflect.DeepEqual(user_tracker, &expected_user_tracker) {
+		t.Errorf("Wrong tracker info. Expected %v, got %v", expected_user_tracker, user_tracker)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for marking a user as attending an event
+	when they have already been marked as attending
+*/
+func TestMarkUserAsAttendingEventErrorService(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.MarkUserAsAttendingEvent("testname", "testuser")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = service.MarkUserAsAttendingEvent("testname", "testuser")
+
+	if err == nil {
+		t.Fatal("User was marked as attending event twice")
+	}
+
+	event_tracker, err := service.GetEventTracker("testname")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_tracker := models.EventTracker{
+		EventName: "testname",
+		Users:     []string{"testuser"},
+	}
+
+	if !reflect.DeepEqual(event_tracker, &expected_event_tracker) {
+		t.Errorf("Wrong tracker info. Expected %v, got %v", expected_event_tracker, event_tracker)
+	}
+
+	user_tracker, err := service.GetUserTracker("testuser")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_user_tracker := models.UserTracker{
+		UserID: "testuser",
+		Events: []string{"testname"},
+	}
+
+	if !reflect.DeepEqual(user_tracker, &expected_user_tracker) {
+		t.Errorf("Wrong tracker info. Expected %v, got %v", expected_user_tracker, user_tracker)
 	}
 
 	CleanupTestDB(t)

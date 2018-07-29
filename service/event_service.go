@@ -67,6 +67,17 @@ func CreateEvent(name string, event models.Event) error {
 
 	err = db.Insert("events", &event)
 
+	if err != nil {
+		return err
+	}
+
+	event_tracker := models.EventTracker{
+		EventName: name,
+		Users:     []string{},
+	}
+
+	err = db.Insert("eventtrackers", &event_tracker)
+
 	return err
 }
 
@@ -85,6 +96,122 @@ func UpdateEvent(name string, event models.Event) error {
 	}
 
 	err = db.Update("events", selector, &event)
+
+	return err
+}
+
+/*
+	Returns the event tracker for the specified event
+*/
+func GetEventTracker(event_name string) (*models.EventTracker, error) {
+	query := bson.M{
+		"eventname": event_name,
+	}
+
+	var tracker models.EventTracker
+	err := db.FindOne("eventtrackers", query, &tracker)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &tracker, nil
+}
+
+/*
+	Returns the user tracker for the specified user
+*/
+func GetUserTracker(user_id string) (*models.UserTracker, error) {
+	query := bson.M{
+		"userid": user_id,
+	}
+
+	var tracker models.UserTracker
+	err := db.FindOne("usertrackers", query, &tracker)
+
+	if err != nil {
+		if err == mgo.ErrNotFound {
+			return &models.UserTracker{
+				UserID: user_id,
+				Events: []string{},
+			}, nil
+		}
+		return nil, err
+	}
+
+	return &tracker, nil
+}
+
+/*
+	Returns true is the user has already been marked as attending
+	the specified event, false otherwise
+*/
+func IsUserAttendingEvent(event_name string, user_id string) (bool, error) {
+	tracker, err := GetEventTracker(event_name)
+
+	if err != nil {
+		return false, err
+	}
+
+	for _, id := range tracker.Users {
+		if user_id == id {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+/*
+	Marks the specified user as attending the specified event
+	The user must not already marked as attending for this to return successfully
+*/
+func MarkUserAsAttendingEvent(event_name string, user_id string) error {
+	is_attending, err := IsUserAttendingEvent(event_name, user_id)
+
+	if err != nil {
+		return err
+	}
+
+	if is_attending {
+		return errors.New("User has already been marked as attending")
+	}
+
+	event_selector := bson.M{
+		"eventname": event_name,
+	}
+
+	event_modifier := bson.M{
+		"$addToSet": bson.M{
+			"users": user_id,
+		},
+	}
+
+	err = db.Update("eventtrackers", event_selector, &event_modifier)
+
+	if err != nil {
+		return err
+	}
+
+	user_selector := bson.M{
+		"userid": user_id,
+	}
+
+	user_modifier := bson.M{
+		"$addToSet": bson.M{
+			"events": event_name,
+		},
+	}
+
+	err = db.Update("usertrackers", user_selector, &user_modifier)
+
+	if err == mgo.ErrNotFound {
+		user_tracker := models.UserTracker{
+			UserID: user_id,
+			Events: []string{event_name},
+		}
+		err = db.Insert("usertrackers", &user_tracker)
+	}
 
 	return err
 }

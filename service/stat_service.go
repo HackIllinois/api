@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-stat/config"
 	"github.com/HackIllinois/api-stat/models"
@@ -81,10 +82,36 @@ func GetAllServices() ([]models.Service, error) {
 }
 
 /*
+	Retreive stats from a specified registered service
+*/
+func GetAggregatedStats(name string) (*models.Stat, error) {
+	service, err := GetService(name)
+
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := http.Get(service.URL)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		var stat models.Stat
+		json.NewDecoder(resp.Body).Decode(&stat)
+
+		return &stat, nil
+	}
+
+	return nil, errors.New("Could not retreive stats from registed service")
+}
+
+/*
 	Retreives stats from the registered services
 	Returns a map of service name to stats
 */
-func GetAggregatedStats() (*models.AggregatedStat, error) {
+func GetAllAggregatedStats() (*models.AggregatedStat, error) {
 	stats := models.AggregatedStat{}
 
 	services, err := GetAllServices()
@@ -94,13 +121,10 @@ func GetAggregatedStats() (*models.AggregatedStat, error) {
 	}
 
 	for _, service := range services {
-		resp, err := http.Get(service.URL)
+		stat, err := GetAggregatedStats(service.Name)
 
-		if !(err == nil || resp.StatusCode == http.StatusOK) {
-			var stat models.Stat
-			json.NewDecoder(resp.Body).Decode(&stat)
-
-			stats[service.Name] = stat
+		if err == nil {
+			stats[service.Name] = *stat
 		} else {
 			stats[service.Name] = nil
 		}

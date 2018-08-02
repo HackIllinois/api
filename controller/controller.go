@@ -15,6 +15,10 @@ func SetupController(route *mux.Route) {
 
 	router.Handle("/service/{name}/", alice.New().ThenFunc(GetService)).Methods("GET")
 	router.Handle("/service/", alice.New().ThenFunc(RegisterService)).Methods("POST")
+
+	router.Handle("/stat/{name}/", alice.New().ThenFunc(GetStat)).Methods("GET")
+	router.Handle("/stat/", alice.New().ThenFunc(GetAllStat)).Methods("GET")
+
 }
 
 /*
@@ -56,4 +60,32 @@ func RegisterService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_api_service)
+}
+
+/*
+	Endpoint to retreive stats for a specified service
+*/
+func GetStat(w http.ResponseWriter, r *http.Request) {
+	name := mux.Vars(r)["name"]
+
+	stat, err := service.GetAggregatedStats(name)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(stat)
+}
+
+/*
+	Endpoint to retreive stats for all services
+*/
+func GetAllStat(w http.ResponseWriter, r *http.Request) {
+	all_stat, err := service.GetAllAggregatedStats()
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(all_stat)
 }

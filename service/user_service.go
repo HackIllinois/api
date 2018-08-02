@@ -1,11 +1,13 @@
 package service
 
 import (
+	"errors"
 	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-user/config"
 	"github.com/HackIllinois/api-user/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"strings"
 )
 
 var db database.MongoDatabase
@@ -63,12 +65,11 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 	query := make(map[string]interface{})
 
 	for key, values := range parameters {
-		key = strings.ToLower(key)
-
 		if len(values) > 1 {
 			return nil, errors.New("Multiple usage of key " + key)
 		}
 
+		key = strings.ToLower(key)
 		query[key] = bson.M{"$in": strings.Split(values[0], ",")}
 	}
 

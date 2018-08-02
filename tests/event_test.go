@@ -70,6 +70,67 @@ func CleanupTestDB(t *testing.T) {
 }
 
 /*
+	Service level test for getting all events from db
+*/
+func TestGetAllEventsService(t *testing.T) {
+	SetupTestDB(t)
+
+	event := models.Event{
+		Name:                "testname2",
+		Description:         "testdescription2",
+		StartTime:           1000,
+		EndTime:             2000,
+		LocationDescription: "testlocationdescription",
+		Latitude:            123.456,
+		Longitude:           123.456,
+		Sponsor:             "testsponsor",
+		EventType:           "WORKSHOP",
+	}
+
+	err := db.Insert("events", &event)
+
+	actual_event_list, err := service.GetAllEvents()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_list := models.EventList{
+		Events: []models.Event{
+			models.Event{
+				Name:                "testname",
+				Description:         "testdescription",
+				StartTime:           1000,
+				EndTime:             2000,
+				LocationDescription: "testlocationdescription",
+				Latitude:            123.456,
+				Longitude:           123.456,
+				Sponsor:             "testsponsor",
+				EventType:           "WORKSHOP",
+			},
+			models.Event{
+				Name:                "testname2",
+				Description:         "testdescription2",
+				StartTime:           1000,
+				EndTime:             2000,
+				LocationDescription: "testlocationdescription",
+				Latitude:            123.456,
+				Longitude:           123.456,
+				Sponsor:             "testsponsor",
+				EventType:           "WORKSHOP",
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(actual_event_list, &expected_event_list) {
+		t.Errorf("Wrong event list. Expected %v, got %v", expected_event_list, actual_event_list)
+	}
+
+	CleanupTestDB(t)
+
+}
+
+/*
 	Service level test for getting event from db
 */
 func TestGetEventService(t *testing.T) {

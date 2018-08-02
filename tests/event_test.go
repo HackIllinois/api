@@ -150,6 +150,71 @@ func TestCreateEventService(t *testing.T) {
 }
 
 /*
+	Service level test for deleting an event in the db
+*/
+func TestDeleteEventService(t *testing.T) {
+	SetupTestDB(t)
+
+	event_name := "testname"
+
+	// Mark 3 users as attending the event
+
+	err := service.MarkUserAsAttendingEvent(event_name, "user0")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = service.MarkUserAsAttendingEvent(event_name, "user1")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = service.MarkUserAsAttendingEvent(event_name, "user2")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Try to delete the event
+
+	_, err = service.DeleteEvent(event_name)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Try to find the event in the events db
+	event, err := service.GetEvent(event_name)
+
+	if err == nil {
+		t.Errorf("Found event %v in events database.", event)
+	}
+
+	// Try to find the event in the eventtrackers db
+	event_tracker, err := service.GetEventTracker(event_name)
+
+	if err == nil {
+		t.Errorf("Found event in the eventtracker %v.", event_tracker)
+	}
+
+	// Try to find the event in the usertrackers db
+	var user_trackers []models.UserTracker
+	db.FindAll("usertrackers", nil, &user_trackers)
+
+	for _, user_tracker := range user_trackers {
+		for _, event := range user_tracker.Events {
+			if event == event_name {
+				t.Errorf("Found event in the usertracker %v.", user_tracker)
+			}
+		}
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
 	Service level test for updating an event in the db
 */
 func TestUpdateEventService(t *testing.T) {

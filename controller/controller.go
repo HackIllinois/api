@@ -14,6 +14,7 @@ func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
 	router.Handle("/{name}/", alice.New().ThenFunc(GetEvent)).Methods("GET")
+	router.Handle("/{name}/", alice.New().ThenFunc(DeleteEvent)).Methods("DELETE")
 	router.Handle("/", alice.New().ThenFunc(CreateEvent)).Methods("POST")
 	router.Handle("/", alice.New().ThenFunc(UpdateEvent)).Methods("PUT")
 
@@ -29,6 +30,23 @@ func GetEvent(w http.ResponseWriter, r *http.Request) {
 	name := mux.Vars(r)["name"]
 
 	event, err := service.GetEvent(name)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(event)
+}
+
+/*
+	Endpoint to delete an event with the specified name.
+	It removes the event from the event trackers, and every user's tracker.
+	On successful deletion, it returns the event that was deleted.
+*/
+func DeleteEvent(w http.ResponseWriter, r *http.Request) {
+	name := mux.Vars(r)["name"]
+
+	event, err := service.DeleteEvent(name)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

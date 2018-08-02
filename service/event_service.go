@@ -47,6 +47,75 @@ func GetEvent(name string) (*models.Event, error) {
 }
 
 /*
+	Deletes the event with the given name.
+	Removes the event from event trackers and every user's tracker.
+	Returns the event that was deleted.
+*/
+func DeleteEvent(name string) (*models.Event, error) {
+
+	// Gets event to be able to return it later
+
+	event, err := GetEvent(name)
+
+	if err != nil {
+		return nil, err
+	}
+
+	query := bson.M{
+		"name": name,
+	}
+
+	// Remove event from events database
+
+	err = db.RemoveOne("events", query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Remove from event trackers database
+	
+	event_selector := bson.M{
+		"eventname": name,
+	}
+	
+	err = db.RemoveOne("eventtrackers", event_selector)
+	
+	if err != nil {
+		return nil, err
+	}
+	
+	// Iterate through all usertrackers to remove event, and update each user tracker
+	
+	var user_trackers []models.UserTracker
+	db.FindAll("usertrackers", nil, &user_trackers)
+	
+	for _, user_tracker := range user_trackers {
+		updated_events := []string{}
+		
+		for _, event := range user_tracker.Events {
+			if event != name {
+				updated_events = append(updated_events, event)
+			}
+		}
+		
+		user_tracker.Events = updated_events
+		
+		user_tracker_selector := bson.M{
+			"userid": user_tracker.UserID,
+		}
+		
+		err = db.Update("usertrackers", user_tracker_selector, &user_tracker)
+		
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return event, nil
+}
+
+/*
 	Creates an event with the given name
 */
 func CreateEvent(name string, event models.Event) error {

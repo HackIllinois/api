@@ -21,6 +21,41 @@ Response format:
 }
 ```
 
+GET /event/
+---------------------
+
+Returns a list of all events.
+
+Response format:
+```
+{
+	events: [
+		{
+			"name": "Example Event",
+			"description": "This is a description",
+			"startTime": 1532202702,
+			"endTime": 1532212702,
+			"locationDescription": "Example Location",
+			"latitude": 40.1138,
+			"longitude": -88.2249,
+			"sponsor": "Example sponsor",
+			"eventType": "WORKSHOP"
+		},
+		{
+			"name": "Example Event 2",
+			"description": "This is another description",
+			"startTime": 1532202703,
+			"endTime": 1532212703,
+			"locationDescription": "Example Location 2",
+			"latitude": 40.1139,
+			"longitude": -88.2250,
+			"sponsor": "Example sponsor 2",
+			"eventType": "WORKSHOP"
+		}
+	]
+}
+```
+
 POST /event/
 -----------
 

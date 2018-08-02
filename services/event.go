@@ -38,6 +38,12 @@ var EventRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetEvent).ServeHTTP,
 	},
 	arbor.Route{
+		"DeleteEvent",
+		"DELETE",
+		"/event/{name}/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(DeleteEvent).ServeHTTP,
+	},
+	arbor.Route{
 		"CreateEvent",
 		"POST",
 		"/event/",
@@ -53,6 +59,10 @@ var EventRoutes = arbor.RouteCollection{
 
 func GetEvent(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, EventURL+r.URL.String(), EventFormat, "", r)
+}
+
+func DeleteEvent(w http.ResponseWriter, r *http.Request) {
+	arbor.DELETE(w, EventURL+r.URL.String(), EventFormat, "", r)
 }
 
 func CreateEvent(w http.ResponseWriter, r *http.Request) {

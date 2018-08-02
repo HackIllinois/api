@@ -35,6 +35,17 @@ func SetupTestDB(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	additional_api_service := models.Service{
+		Name: "additionaltestname",
+		URL:  "http://localhost:8059",
+	}
+
+	err = db.Insert("services", &additional_api_service)
+
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 /*
@@ -140,6 +151,42 @@ func TestReregisterServiceService(t *testing.T) {
 
 	if !reflect.DeepEqual(updated_api_service, &expected_api_service) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_api_service, updated_api_service)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for retreiving all registered services
+*/
+func TestGetAllServiceService(t *testing.T) {
+	SetupTestDB(t)
+
+	all_services, err := service.GetAllServices()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_services := make([]models.Service, 2)
+
+	expected_services[0] = models.Service{
+		Name: "testname",
+		URL:  "http://localhost:8050",
+	}
+
+	expected_services[1] = models.Service{
+		Name: "additionaltestname",
+		URL:  "http://localhost:8059",
+	}
+
+	ordered_equals := reflect.DeepEqual(all_services, expected_services)
+
+	expected_services[0], expected_services[1] = expected_services[1], expected_services[0]
+	reversed_equals := reflect.DeepEqual(all_services, expected_services)
+
+	if !(ordered_equals || reversed_equals) {
+		t.Errorf("Wrong stat info. Expected %v, got %v", expected_services, all_services)
 	}
 
 	CleanupTestDB(t)

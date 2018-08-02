@@ -1,11 +1,13 @@
 package service
 
 import (
+	"encoding/json"
 	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-stat/config"
 	"github.com/HackIllinois/api-stat/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"net/http"
 )
 
 var db database.MongoDatabase
@@ -62,4 +64,47 @@ func RegisterService(name string, service models.Service) error {
 	err = db.Update("services", selector, &service)
 
 	return err
+}
+
+/*
+	Returns all services that were registered
+*/
+func GetAllServices() ([]models.Service, error) {
+	var services []models.Service
+	err := db.FindAll("services", bson.M{}, &services)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return services, nil
+}
+
+/*
+	Retreives stats from the registered services
+	Returns a map of service name to stats
+*/
+func GetAggregatedStats() (*models.AggregatedStat, error) {
+	stats := models.AggregatedStat{}
+
+	services, err := GetAllServices()
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, service := range services {
+		resp, err := http.Get(service.URL)
+
+		if !(err == nil || resp.StatusCode == http.StatusOK) {
+			var stat models.Stat
+			json.NewDecoder(resp.Body).Decode(&stat)
+
+			stats[service.Name] = stat
+		} else {
+			stats[service.Name] = nil
+		}
+	}
+
+	return &stats, nil
 }

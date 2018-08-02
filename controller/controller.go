@@ -16,8 +16,8 @@ func SetupController(route *mux.Route) {
 	router.Handle("/service/{name}/", alice.New().ThenFunc(GetService)).Methods("GET")
 	router.Handle("/service/", alice.New().ThenFunc(RegisterService)).Methods("POST")
 
-	router.Handle("/stat/{name}/", alice.New().ThenFunc(GetStat)).Methods("GET")
-	router.Handle("/stat/", alice.New().ThenFunc(GetAllStat)).Methods("GET")
+	router.Handle("/{name}/", alice.New().ThenFunc(GetStat)).Methods("GET")
+	router.Handle("/", alice.New().ThenFunc(GetAllStat)).Methods("GET")
 
 }
 

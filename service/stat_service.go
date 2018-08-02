@@ -98,13 +98,14 @@ func GetAggregatedStats(name string) (*models.Stat, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		var stat models.Stat
-		json.NewDecoder(resp.Body).Decode(&stat)
-
-		return &stat, nil
+		return nil, errors.New("Could not retreive stats from registed service")
 	}
 
-	return nil, errors.New("Could not retreive stats from registed service")
+	var stat models.Stat
+	json.NewDecoder(resp.Body).Decode(&stat)
+
+	return &stat, nil
+
 }
 
 /*

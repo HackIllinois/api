@@ -9,13 +9,16 @@ import (
 )
 
 /*
-	Database interface exposing the method necessary to querying, inserting, and updating records
+	Database interface exposing the methods necessary to querying, inserting, updating, upserting, and removing records
 */
 type Database interface {
 	Connect(host string) error
 	FindOne(collection_name string, query interface{}, result interface{}) error
 	FindAll(collection_name string, query interface{}, result interface{}) error
+	RemoveOne(collection_name string, query interface{}) error
+	RemoveAll(collection_name string, query interface{}) (*mgo.ChangeInfo, error)
 	Insert(collection_name string, item interface{}) error
+	Upsert(collection_name string, selector interface{}, update interface{}) (*mgo.ChangeInfo, error)
 	Update(collection_name string, selector interface{}, update interface{}) error
 }
 
@@ -92,6 +95,34 @@ func (db MongoDatabase) FindAll(collection_name string, query interface{}, resul
 }
 
 /*
+	Remove one element matching the given query parameters
+*/
+func (db MongoDatabase) RemoveOne(collection_name string, query interface{}) error {
+	current_session := db.GetSession()
+	defer current_session.Close()
+
+	collection := current_session.DB(db.name).C(collection_name)
+
+	err := collection.Remove(query)
+
+	return err
+}
+
+/*
+	Remove all elements matching the given query parameters
+*/
+func (db MongoDatabase) RemoveAll(collection_name string, query interface{}) (*mgo.ChangeInfo, error) {
+	current_session := db.GetSession()
+	defer current_session.Close()
+
+	collection := current_session.DB(db.name).C(collection_name)
+
+	change_info, err := collection.RemoveAll(query)
+
+	return change_info, err
+}
+
+/*
 	Insert the given item into the collection
 */
 func (db MongoDatabase) Insert(collection_name string, item interface{}) error {
@@ -103,6 +134,21 @@ func (db MongoDatabase) Insert(collection_name string, item interface{}) error {
 	err := collection.Insert(item)
 
 	return err
+}
+
+/*
+	Upsert the given item into the collection i.e.,
+	if the item exists, it is updated with the given values, else a new item with those values is created.
+*/
+func (db MongoDatabase) Upsert(collection_name string, selector interface{}, update interface{}) (*mgo.ChangeInfo, error) {
+	current_session := db.GetSession()
+	defer current_session.Close()
+
+	collection := current_session.DB(db.name).C(collection_name)
+
+	change_info, err := collection.Upsert(selector, update)
+
+	return change_info, err
 }
 
 /*

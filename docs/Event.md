@@ -56,7 +56,7 @@ Response format:
 }
 ```
 
-DELETE /event/EVENTNAME
+DELETE /event/EVENTNAME/
 -----------
 
 Endpoint to delete an event with name `EVENTNAME`. `EVENTNAME` should be url encoded.

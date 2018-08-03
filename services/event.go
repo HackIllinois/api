@@ -45,6 +45,12 @@ var EventRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(DeleteEvent).ServeHTTP,
 	},
 	arbor.Route{
+		"GetAllEvents",
+		"GET",
+		"/event/",
+		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetEvent).ServeHTTP,
+	},
+	arbor.Route{
 		"CreateEvent",
 		"POST",
 		"/event/",

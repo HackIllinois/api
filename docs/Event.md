@@ -91,6 +91,27 @@ Response format:
 }
 ```
 
+DELETE /event/EVENTNAME/
+-----------
+
+Endpoint to delete an event with name `EVENTNAME`. `EVENTNAME` should be url encoded.
+It removes the `EVENTNAME` from the event trackers, and every user's tracker.
+
+Response format:
+```
+{
+	"name": "Example Event",
+	"description": "This is a description",
+	"startTime": 1532202702,
+	"endTime": 1532212702,
+	"locationDescription": "Example Location",
+	"latitude": 40.1138,
+	"longitude": -88.2249,
+	"sponsor": "Example sponsor",
+	"eventType": "WORKSHOP"
+}
+```
+
 PUT /event/
 ----------
 

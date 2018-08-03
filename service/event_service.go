@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+
 	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-event/config"
 	"github.com/HackIllinois/api-event/models"
@@ -44,6 +45,55 @@ func GetEvent(name string) (*models.Event, error) {
 	}
 
 	return &event, nil
+}
+
+/*
+	Deletes the event with the given name.
+	Removes the event from event trackers and every user's tracker.
+	Returns the event that was deleted.
+*/
+func DeleteEvent(name string) (*models.Event, error) {
+
+	// Gets event to be able to return it later
+
+	event, err := GetEvent(name)
+
+	if err != nil {
+		return nil, err
+	}
+
+	query := bson.M{
+		"name": name,
+	}
+
+	// Remove event from events database
+
+	err = db.RemoveOne("events", query)
+
+	// Remove from event trackers database
+
+	event_selector := bson.M{
+		"eventname": name,
+	}
+
+	err = db.RemoveOne("eventtrackers", event_selector)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Find all elements, and remove `name` from the Events slice
+	// All the updates are individually atomic
+
+	update_expression := bson.M{
+		"$pull": bson.M{
+			"events": name,
+		},
+	}
+
+	_, err = db.UpdateAll("usertrackers", nil, &update_expression)
+
+	return event, err
 }
 
 /*

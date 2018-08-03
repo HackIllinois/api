@@ -13,24 +13,11 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/{id}/", alice.New().ThenFunc(GetUserInfo)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(GetCurrentUserInfo)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(SetUserInfo)).Methods("POST")
-}
+	router.Handle("/filter/", alice.New().ThenFunc(GetFilteredUserInfo)).Methods("GET")
 
-/*
-	Endpoint to get the info for a specified user
-*/
-func GetUserInfo(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-
-	user_info, err := service.GetUserInfo(id)
-
-	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
-	}
-
-	json.NewEncoder(w).Encode(user_info)
+	router.Handle("/{id}/", alice.New().ThenFunc(GetUserInfo)).Methods("GET")
 }
 
 /*
@@ -72,4 +59,33 @@ func SetUserInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_info)
+}
+
+/*
+	Endpoint to get user info based on filters
+*/
+func GetFilteredUserInfo(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+	user_info, err := service.GetFilteredUserInfo(parameters)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(user_info)
+}
+
+/*
+	Endpoint to get the info for a specified user
+*/
+func GetUserInfo(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	user_info, err := service.GetUserInfo(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(user_info)
 }

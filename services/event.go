@@ -1,11 +1,12 @@
 package services
 
 import (
+	"net/http"
+
 	"github.com/HackIllinois/api-gateway/config"
 	"github.com/HackIllinois/api-gateway/middleware"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 var EventURL = config.EVENT_SERVICE

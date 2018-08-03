@@ -1,11 +1,13 @@
 package service
 
 import (
+	"errors"
 	"github.com/HackIllinois/api-commons/database"
 	"github.com/HackIllinois/api-user/config"
 	"github.com/HackIllinois/api-user/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"strings"
 )
 
 var db database.MongoDatabase
@@ -54,4 +56,28 @@ func SetUserInfo(id string, user_info models.UserInfo) error {
 	}
 
 	return err
+}
+
+/*
+	Returns the users associated with the given parameters
+*/
+func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers, error) {
+	query := make(map[string]interface{})
+
+	for key, values := range parameters {
+		if len(values) > 1 {
+			return nil, errors.New("Multiple usage of key " + key)
+		}
+
+		key = strings.ToLower(key)
+		query[key] = bson.M{"$in": strings.Split(values[0], ",")}
+	}
+
+	var filtered_users models.FilteredUsers
+	err := db.FindAll("info", query, &filtered_users.Users)
+	if err != nil {
+		return nil, err
+	}
+
+	return &filtered_users, nil
 }

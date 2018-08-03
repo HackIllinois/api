@@ -2,12 +2,13 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/HackIllinois/api-commons/errors"
 	"github.com/HackIllinois/api-event/models"
 	"github.com/HackIllinois/api-event/service"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 func SetupController(route *mux.Route) {
@@ -17,6 +18,7 @@ func SetupController(route *mux.Route) {
 	router.Handle("/{name}/", alice.New().ThenFunc(DeleteEvent)).Methods("DELETE")
 	router.Handle("/", alice.New().ThenFunc(CreateEvent)).Methods("POST")
 	router.Handle("/", alice.New().ThenFunc(UpdateEvent)).Methods("PUT")
+	router.Handle("/", alice.New().ThenFunc(GetAllEvents)).Methods("GET")
 
 	router.Handle("/track/", alice.New().ThenFunc(MarkUserAsAttendingEvent)).Methods("POST")
 	router.Handle("/track/event/{name}/", alice.New().ThenFunc(GetEventTrackingInfo)).Methods("GET")
@@ -53,6 +55,19 @@ func DeleteEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(event)
+}
+
+/*
+	Endpoint to get all events
+*/
+func GetAllEvents(w http.ResponseWriter, r *http.Request) {
+	event_list, err := service.GetAllEvents()
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(event_list)
 }
 
 /*

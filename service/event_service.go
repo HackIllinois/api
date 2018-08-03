@@ -70,10 +70,6 @@ func DeleteEvent(name string) (*models.Event, error) {
 
 	err = db.RemoveOne("events", query)
 
-	if err != nil {
-		return nil, err
-	}
-
 	// Remove from event trackers database
 
 	event_selector := bson.M{
@@ -98,6 +94,25 @@ func DeleteEvent(name string) (*models.Event, error) {
 	_, err = db.UpdateAll("usertrackers", nil, &update_expression)
 
 	return event, err
+}
+
+/*
+	Returns all the events
+*/
+func GetAllEvents() (*models.EventList, error) {
+	var events []models.Event
+	// nil implies there are no filters on the query, therefore everything in the "events" collection is returned.
+	err := db.FindAll("events", nil, &events)
+
+	if err != nil {
+		return nil, err
+	}
+
+	event_list := models.EventList{
+		Events: events,
+	}
+
+	return &event_list, nil
 }
 
 /*

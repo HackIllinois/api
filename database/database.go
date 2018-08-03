@@ -2,10 +2,11 @@ package database
 
 import (
 	"crypto/tls"
-	"github.com/HackIllinois/api-commons/config"
-	"gopkg.in/mgo.v2"
 	"net"
 	"time"
+
+	"github.com/HackIllinois/api-commons/config"
+	"gopkg.in/mgo.v2"
 )
 
 /*
@@ -20,6 +21,7 @@ type Database interface {
 	Insert(collection_name string, item interface{}) error
 	Upsert(collection_name string, selector interface{}, update interface{}) (*mgo.ChangeInfo, error)
 	Update(collection_name string, selector interface{}, update interface{}) error
+	UpdateAll(collection_name string, selector interface{}, update interface{}) (*mgo.ChangeInfo, error)
 }
 
 /*
@@ -163,4 +165,18 @@ func (db MongoDatabase) Update(collection_name string, selector interface{}, upd
 	err := collection.Update(selector, update)
 
 	return err
+}
+
+/*
+	Finds all items based on the given selector and updates them with the data in update
+*/
+func (db MongoDatabase) UpdateAll(collection_name string, selector interface{}, update interface{}) (*mgo.ChangeInfo, error) {
+	current_session := db.GetSession()
+	defer current_session.Close()
+
+	collection := current_session.DB(db.name).C(collection_name)
+
+	change_info, err := collection.UpdateAll(selector, update)
+
+	return change_info, err
 }

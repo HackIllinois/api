@@ -1,0 +1,15 @@
+package config
+
+import (
+	"os"
+)
+
+var REGISTRATION_DB_HOST = os.Getenv("REGISTRATION_DB_HOST")
+var REGISTRATION_DB_NAME = os.Getenv("REGISTRATION_DB_NAME")
+
+var REGISTRATION_PORT = os.Getenv("REGISTRATION_PORT")
+
+var USER_SERVICE = os.Getenv("USER_SERVICE")
+var AUTH_SERVICE = os.Getenv("AUTH_SERVICE")
+var DECISION_SERVICE = os.Getenv("DECISION_SERVICE")
+var MAIL_SERVICE = os.Getenv("MAIL_SERVICE")

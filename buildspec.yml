@@ -1,0 +1,53 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - GATEWAY_URI=461497099412.dkr.ecr.us-east-1.amazonaws.com/hackillinois-api-gateway
+      - AUTH_URI=461497099412.dkr.ecr.us-east-1.amazonaws.com/hackillinois-api-auth
+      - USER_URI=461497099412.dkr.ecr.us-east-1.amazonaws.com/hackillinois-api-user
+      - REGISTRATION_URI=461497099412.dkr.ecr.us-east-1.amazonaws.com/hackillinois-api-registration
+      - DECISION_URI=461497099412.dkr.ecr.us-east-1.amazonaws.com/hackillinois-api-decision
+      - RSVP_URI=461497099412.dkr.ecr.us-east-1.amazonaws.com/hackillinois-api-rsvp
+      - CHECKIN_URI=461497099412.dkr.ecr.us-east-1.amazonaws.com/hackillinois-api-checkin
+      - UPLOAD_URI=461497099412.dkr.ecr.us-east-1.amazonaws.com/hackillinois-api-upload
+      - MAIL_URI=461497099412.dkr.ecr.us-east-1.amazonaws.com/hackillinois-api-mail
+      - EVENT_URI=461497099412.dkr.ecr.us-east-1.amazonaws.com/hackillinois-api-event
+      - STAT_URI=461497099412.dkr.ecr.us-east-1.amazonaws.com/hackillinois-api-stat
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker images...
+      - cd gateway && docker build -t hackillinois-api-gateway . && docker tag hackillinois-api-gateway $GATEWAY_URI:latest && cd ..
+      - cd auth && docker build -t hackillinois-api-auth . && docker tag hackillinois-api-auth $AUTH_URI:latest && cd ..
+      - cd user && docker build -t hackillinois-api-user . && docker tag hackillinois-api-user $USER_URI:latest && cd ..
+      - cd registration && docker build -t hackillinois-api-registration . && docker tag hackillinois-api-registration $REGISTRATION_URI:latest && cd ..
+      - cd decision && docker build -t hackillinois-api-decision . && docker tag hackillinois-api-decision $DECISION_URI:latest && cd ..
+      - cd rsvp && docker build -t hackillinois-api-rsvp . && docker tag hackillinois-api-rsvp $RSVP_URI:latest && cd ..
+      - cd checkin && docker build -t hackillinois-api-checkin . && docker tag hackillinois-api-checkin $CHECKIN_URI:latest && cd ..
+      - cd upload && docker build -t hackillinois-api-upload . && docker tag hackillinois-api-upload $UPLOAD_URI:latest && cd ..
+      - cd mail && docker build -t hackillinois-api-mail . && docker tag hackillinois-api-mail $MAIL_URI:latest && cd ..
+      - cd event && docker build -t hackillinois-api-event . && docker tag hackillinois-api-event $EVENT_URI:latest && cd ..
+      - cd stat && docker build -t hackillinois-api-stat . && docker tag hackillinois-api-stat $STAT_URI:latest && cd ..
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $GATEWAY_URI:latest
+      - docker push $AUTH_URI:latest
+      - docker push $USER_URI:latest
+      - docker push $REGISTRATION_URI:latest
+      - docker push $DECISION_URI:latest
+      - docker push $RSVP_URI:latest
+      - docker push $CHECKIN_URI:latest
+      - docker push $UPLOAD_URI:latest
+      - docker push $MAIL_URI:latest
+      - docker push $EVENT_URI:latest
+      - docker push $STAT_URI:latest
+      - echo Writing image definitions file...
+      - printf '[{"name":"hackillinois-api-gateway","imageUri":"%s"},{"name":"hackillinois-api-auth","imageUri":"%s"},{"name":"hackillinois-api-user","imageUri":"%s"},{"name":"hackillinois-api-registration","imageUri":"%s"},{"name":"hackillinois-api-decision","imageUri":"%s"},{"name":"hackillinois-api-rsvp","imageUri":"%s"},{"name":"hackillinois-api-checkin","imageUri":"%s"},{"name":"hackillinois-api-upload","imageUri":"%s"},{"name":"hackillinois-api-mail","imageUri":"%s"},{"name":"hackillinois-api-event","imageUri":"%s"},{"name":"hackillinois-api-stat","imageUri":"%s"}]' $GATEWAY_URI:latest $AUTH_URI:latest $USER_URI:latest $REGISTRATION_URI:latest $DECISION_URI:latest $RSVP_URI:latest $CHECKIN_URI:latest $UPLOAD_URI:latest $MAIL_URI:latest $EVENT_URI:latest $STAT_URI:latest > imagedefinitions.json
+artifacts:
+    files: imagedefinitions.json

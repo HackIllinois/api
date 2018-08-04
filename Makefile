@@ -26,8 +26,11 @@ fmt:
 
 .PHONY: deploy
 deploy:
+	mkdir -p $(BASE_DIR)/build/
+	$(foreach target,$(DEPLOY_TARGETS),mkdir -p $(BASE_DIR)/build/$(target)/;cp $(GOPATH)/bin/hackillinois-api-$(target) $(BASE_DIR)/build/$(target)/hackillinois-api-$(target);)
+	$(foreach target,$(DEPLOY_GATEWAY_TARGETS),cp $(BASE_DIR)/$(target)/Dockerfile $(BASE_DIR)/build/$(target)/Dockerfile;)
+	$(foreach target,$(DEPLOY_SERVICE_TARGETS),cp $(BASE_DIR)/services/$(target)/Dockerfile $(BASE_DIR)/build/$(target)/Dockerfile;)
+	cp $(BASE_DIR)/buildspec.yml $(BASE_DIR)/build/buildspec.yml
 	mkdir -p $(BASE_DIR)/deploy/
-	$(foreach target,$(DEPLOY_TARGETS),mkdir -p $(BASE_DIR)/deploy/$(target)/;cp $(GOPATH)/bin/hackillinois-api-$(target) $(BASE_DIR)/deploy/$(target)/hackillinois-api-$(target);)
-	$(foreach target,$(DEPLOY_GATEWAY_TARGETS),cp $(BASE_DIR)/$(target)/Dockerfile $(BASE_DIR)/deploy/$(target)/Dockerfile;)
-	$(foreach target,$(DEPLOY_SERVICE_TARGETS),cp $(BASE_DIR)/services/$(target)/Dockerfile $(BASE_DIR)/deploy/$(target)/Dockerfile;)
-	cp $(BASE_DIR)/buildspec.yml $(BASE_DIR)/deploy/buildspec.yml
+	cd $(BASE_DIR)/build && zip -r $(BASE_DIR)/deploy/hackillinois-api.zip * && cd $(CURDIR)
+	rm -rf build/

@@ -3,6 +3,8 @@ go:
     - "1.10.x"
 services:
     mongodb
+install:
+    - go get -t ./...
 script:
     - make all
     - make test

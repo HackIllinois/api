@@ -26,9 +26,9 @@ func init() {
 */
 func SetupTestDB(t *testing.T) {
 	err := db.Insert("info", &models.UserInfo{
-		ID:        "testid",
-		Username:  "testusername",
-		Email:     "testemail@domain.com",
+		ID:       "testid",
+		Username: "testusername",
+		Email:    "testemail@domain.com",
 	})
 
 	if err != nil {
@@ -36,9 +36,9 @@ func SetupTestDB(t *testing.T) {
 	}
 
 	err = db.Insert("info", &models.UserInfo{
-		ID:        "testid2",
-		Username:  "testusername",
-		Email:     "testemail@domain.com",
+		ID:       "testid2",
+		Username: "testusername",
+		Email:    "testemail@domain.com",
 	})
 
 	if err != nil {

@@ -5,9 +5,9 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/checkin/config"
 	"github.com/HackIllinois/api/services/checkin/models"
-	"github.com/HackIllinois/api/common/database"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -120,7 +120,7 @@ func CanUserCheckin(id string, user_has_override bool) (bool, error) {
 	if is_user_registered && user_has_override {
 		return true, nil
 	}
-	
+
 	// We do not want to call the below service function if the above condition is met, as it results
 	// in a 400 (Bad Request) / error if the user's RSVP info cannot be found.
 	// Therefore, we do not combine the conditions, and return as early as possible.

@@ -1,9 +1,9 @@
 package service
 
 import (
+	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
-	"github.com/HackIllinois/api/common/database"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

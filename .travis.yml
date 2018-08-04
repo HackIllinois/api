@@ -9,3 +9,15 @@ script:
     - "[ $(gofmt -l . | wc -l) == 0 ]"
     - make all
     - make test
+before_deploy:
+    - make deploy
+deploy:
+    provider: s3
+    access_key_id: $HACKILLINOIS_ACCESS_KEY
+    secret_access_key: $HACKILLINOIS_SECRET_KEY
+    bucket: hackillinois-api
+    skip_cleanup: true
+    local_dir: deploy
+    upload-dir: /
+    on:
+        branch: master

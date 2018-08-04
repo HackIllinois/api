@@ -16,3 +16,7 @@ all:
 .PHONY: test
 test:
 	go test $(BUILD_PACKAGE)/tests
+
+.PHONY: fmt
+fmt:
+	go fmt ./...

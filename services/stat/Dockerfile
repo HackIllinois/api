@@ -9,6 +9,6 @@ ADD hackillinois-api-stat /opt/hackillinois/
 RUN apt-get update
 RUN apt-get install -y ca-certificates
 
-RUN chmod +x api-stat
+RUN chmod +x hackillinois-api-stat
 
 CMD ["./hackillinois-api-stat"]

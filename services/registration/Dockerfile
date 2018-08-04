@@ -9,6 +9,6 @@ ADD hackillinois-api-registration /opt/hackillinois/
 RUN apt-get update
 RUN apt-get install -y ca-certificates
 
-RUN chmod +x api-registration
+RUN chmod +x hackillinois-api-registration
 
 CMD ["./hackillinois-api-registration"]

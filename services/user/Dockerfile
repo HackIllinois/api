@@ -9,6 +9,6 @@ ADD hackillinois-api-user /opt/hackillinois/
 RUN apt-get update
 RUN apt-get install -y ca-certificates
 
-RUN chmod +x api-user
+RUN chmod +x hackillinois-api-user
 
 CMD ["./hackillinois-api-user"]

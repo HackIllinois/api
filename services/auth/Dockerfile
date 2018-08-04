@@ -9,6 +9,6 @@ ADD hackillinois-api-auth /opt/hackillinois/
 RUN apt-get update
 RUN apt-get install -y ca-certificates
 
-RUN chmod +x api-auth
+RUN chmod +x hackillinois-api-auth
 
 CMD ["./hackillinois-api-auth"]

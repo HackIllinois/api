@@ -9,6 +9,6 @@ ADD hackillinois-api-checkin /opt/hackillinois/
 RUN apt-get update
 RUN apt-get install -y ca-certificates
 
-RUN chmod +x api-checkin
+RUN chmod +x hackillinois-api-checkin
 
 CMD ["./hackillinois-api-checkin"]

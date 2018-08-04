@@ -9,6 +9,6 @@ ADD hackillinois-api-rsvp /opt/hackillinois/
 RUN apt-get update
 RUN apt-get install -y ca-certificates
 
-RUN chmod +x api-rsvp
+RUN chmod +x hackillinois-api-rsvp
 
 CMD ["./hackillinois-api-rsvp"]

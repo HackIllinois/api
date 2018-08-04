@@ -6,7 +6,7 @@ WORKDIR /opt/hackillinois/
 
 ADD hackillinois-api-gateway /opt/hackillinois/
 
-RUN chmod +x api-gateway
+RUN chmod +x hackillinois-api-gateway
 RUN mkdir log/
 RUN touch log/access.log
 

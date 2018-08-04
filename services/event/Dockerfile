@@ -9,6 +9,6 @@ ADD hackillinois-api-event /opt/hackillinois/
 RUN apt-get update
 RUN apt-get install -y ca-certificates
 
-RUN chmod +x api-event
+RUN chmod +x hackillinois-api-event
 
 CMD ["./hackillinois-api-event"]

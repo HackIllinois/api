@@ -6,6 +6,6 @@ services:
 install:
     - go get -t ./...
 script:
-    - [ $(gofmt -l . | wc -l) == 0  ]
+    - "[ $(gofmt -l . | wc -l) == 0 ]"
     - make all
     - make test

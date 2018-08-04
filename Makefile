@@ -12,3 +12,11 @@ $(TARGETS): % : $(addsuffix %,$(SUBDIRS))
 
 $(SUBDIRS_TARGETS):
 	$(MAKE) -C $(@D) $(@F:.%=%)
+
+.PHONY: run
+run:
+	@$(BASE_DIR)/scripts/run.sh
+
+.PHONY: fmt
+fmt:
+	go fmt ./...

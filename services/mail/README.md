@@ -8,12 +8,12 @@ Setup
 
 First download the source:
 ```
-go get -u github.com/HackIllinois/api-mail
+go get -u github.com/HackIllinois/api/services/mail
 ```
 
 Move into the source directory:
 ```
-cd $GOPATH/src/github.com/HackIllinois/api-mail
+cd $GOPATH/src/github.com/HackIllinois/api/services/mail
 ```
 
 And install the service

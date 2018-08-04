@@ -4,8 +4,8 @@ go:
 services:
     mongodb
 script:
-    - go build github.com/HackIllinois/api-decision
-    - go test github.com/HackIllinois/api-decision/tests
+    - go build github.com/HackIllinois/api/services/decision
+    - go test github.com/HackIllinois/api/services/decision/tests
 before_deploy:
     - mkdir deploy
     - zip deploy/api-decision.zip api-decision buildspec.yml Dockerfile

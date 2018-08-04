@@ -8,12 +8,12 @@ Setup
 
 First download the source:
 ```
-go get -u github.com/HackIllinois/api-decision
+go get -u github.com/HackIllinois/api/services/decision
 ```
 
 Move into the source directory:
 ```
-cd $GOPATH/src/github.com/HackIllinois/api-decision
+cd $GOPATH/src/github.com/HackIllinois/api/services/decision
 ```
 
 And install the service

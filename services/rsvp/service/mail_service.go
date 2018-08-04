@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/HackIllinois/api-rsvp/config"
-	"github.com/HackIllinois/api-rsvp/models"
+	"github.com/HackIllinois/api/services/rsvp/config"
+	"github.com/HackIllinois/api/services/rsvp/models"
 )
 
 /*

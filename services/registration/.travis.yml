@@ -4,8 +4,8 @@ go:
 services:
     mongodb
 script:
-    - go build github.com/HackIllinois/api-registration
-    - go test github.com/HackIllinois/api-registration/tests
+    - go build github.com/HackIllinois/api/services/registration
+    - go test github.com/HackIllinois/api/services/registration/tests
 before_deploy:
     - mkdir deploy
     - zip deploy/api-registration.zip api-registration buildspec.yml Dockerfile

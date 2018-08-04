@@ -5,9 +5,9 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/HackIllinois/api-checkin/config"
-	"github.com/HackIllinois/api-checkin/models"
-	"github.com/HackIllinois/api-commons/database"
+	"github.com/HackIllinois/api/services/checkin/config"
+	"github.com/HackIllinois/api/services/checkin/models"
+	"github.com/HackIllinois/api/common/database"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

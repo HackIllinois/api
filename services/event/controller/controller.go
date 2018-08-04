@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/HackIllinois/api-commons/errors"
-	"github.com/HackIllinois/api-event/models"
-	"github.com/HackIllinois/api-event/service"
+	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/services/event/models"
+	"github.com/HackIllinois/api/services/event/service"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 )

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/HackIllinois/api-checkin/config"
-	"github.com/HackIllinois/api-checkin/controller"
-	"github.com/HackIllinois/api-commons/middleware"
+	"github.com/HackIllinois/api/services/checkin/config"
+	"github.com/HackIllinois/api/services/checkin/controller"
+	"github.com/HackIllinois/api/common/middleware"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"

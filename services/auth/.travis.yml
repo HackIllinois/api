@@ -4,8 +4,8 @@ go:
 services:
     mongodb
 script:
-    - go build github.com/HackIllinois/api-auth
-    - go test github.com/HackIllinois/api-auth/tests
+    - go build github.com/HackIllinois/api/services/auth
+    - go test github.com/HackIllinois/api/services/auth/tests
 before_deploy:
     - mkdir deploy
     - zip deploy/api-auth.zip api-auth buildspec.yml Dockerfile

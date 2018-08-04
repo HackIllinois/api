@@ -8,12 +8,12 @@ Setup
 
 First download the source:
 ```
-go get -u github.com/HackIllinois/api-auth
+go get -u github.com/HackIllinois/api/services/auth
 ```
 
 Move into the source directory:
 ```
-cd $GOPATH/src/github.com/HackIllinois/api-auth
+cd $GOPATH/src/github.com/HackIllinois/api/services/auth
 ```
 
 And install the service

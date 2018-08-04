@@ -4,8 +4,8 @@ go:
 services:
     mongodb
 script:
-    - go build github.com/HackIllinois/api-rsvp
-    - go test github.com/HackIllinois/api-rsvp/tests
+    - go build github.com/HackIllinois/api/services/rsvp
+    - go test github.com/HackIllinois/api/services/rsvp/tests
 before_deploy:
     - mkdir deploy
     - zip deploy/api-rsvp.zip api-rsvp buildspec.yml Dockerfile

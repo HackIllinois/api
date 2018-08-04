@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
-	"github.com/HackIllinois/api-commons/database"
-	"github.com/HackIllinois/api-registration/config"
-	"github.com/HackIllinois/api-registration/models"
+	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/services/registration/config"
+	"github.com/HackIllinois/api/services/registration/models"
 	"gopkg.in/go-playground/validator.v9"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/HackIllinois/api-commons/middleware"
-	"github.com/HackIllinois/api-upload/config"
-	"github.com/HackIllinois/api-upload/controller"
+	"github.com/HackIllinois/api/common/middleware"
+	"github.com/HackIllinois/api/services/upload/config"
+	"github.com/HackIllinois/api/services/upload/controller"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"

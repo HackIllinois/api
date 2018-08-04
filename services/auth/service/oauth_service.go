@@ -3,7 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
-	"github.com/HackIllinois/api-auth/config"
+	"github.com/HackIllinois/api/services/auth/config"
 	"strings"
 )
 

@@ -4,8 +4,8 @@ go:
 services:
     mongodb
 script:
-    - go build github.com/HackIllinois/api-stat
-    - go test github.com/HackIllinois/api-stat/tests
+    - go build github.com/HackIllinois/api/services/stat
+    - go test github.com/HackIllinois/api/services/stat/tests
 before_deploy:
     - mkdir deploy
     - zip deploy/api-stat.zip api-stat buildspec.yml Dockerfile

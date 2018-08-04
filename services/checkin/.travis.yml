@@ -4,8 +4,8 @@ go:
 services:
     mongodb
 script:
-    - go build github.com/HackIllinois/api-checkin
-    - go test github.com/HackIllinois/api-checkin/tests
+    - go build github.com/HackIllinois/api/services/checkin
+    - go test github.com/HackIllinois/api/services/checkin/tests
 before_deploy:
     - mkdir deploy
     - zip deploy/api-checkin.zip api-checkin buildspec.yml Dockerfile

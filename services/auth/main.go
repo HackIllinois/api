@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/HackIllinois/api-auth/config"
-	"github.com/HackIllinois/api-auth/controller"
-	"github.com/HackIllinois/api-commons/middleware"
+	"github.com/HackIllinois/api/services/auth/config"
+	"github.com/HackIllinois/api/services/auth/controller"
+	"github.com/HackIllinois/api/common/middleware"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"

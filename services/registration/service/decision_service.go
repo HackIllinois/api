@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/HackIllinois/api-registration/config"
-	"github.com/HackIllinois/api-registration/models"
+	"github.com/HackIllinois/api/services/registration/config"
+	"github.com/HackIllinois/api/services/registration/models"
 	"net/http"
 )
 

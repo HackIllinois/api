@@ -18,6 +18,5 @@ deploy:
     bucket: hackillinois-api
     skip_cleanup: true
     local_dir: deploy
-    upload-dir: /
     on:
         branch: master

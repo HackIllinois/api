@@ -1,0 +1,22 @@
+language: go
+go:
+    - "1.10.x"
+services:
+    mongodb
+script:
+    - go build github.com/HackIllinois/api-mail
+    - go test github.com/HackIllinois/api-mail/tests
+before_deploy:
+    - mkdir deploy
+    - zip deploy/api-mail.zip api-mail buildspec.yml Dockerfile
+deploy:
+    provider: s3
+    access_key_id: $HACKILLINOIS_ACCESS_KEY
+    secret_access_key: $HACKILLINOIS_SECRET_KEY
+    bucket: hackillinois-api
+    skip_cleanup: true
+    local_dir: deploy
+    upload-dir: api-mail
+    on:
+        branch: master
+

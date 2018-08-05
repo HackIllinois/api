@@ -35,3 +35,11 @@ deploy:
 	mkdir -p $(BASE_DIR)/deploy/
 	$(foreach target,$(DEPLOY_TARGETS),mkdir -p $(BASE_DIR)/deploy/api-$(target)/;cd $(BASE_DIR)/build/$(target);zip -r $(BASE_DIR)/deploy/api-$(target)/api-$(target).zip *; cd $(CURDIR);)
 	rm -rf build/
+
+.PHONY: release
+release: all
+	$(foreach target,$(DEPLOY_TARGETS),cp $(GOPATH)/bin/hackillinois-api-$(target) $(BASE_DIR)/release/hackillinois-api-$(target);)
+	cd $(BASE_DIR)/release/ && docker build -t hackillinois-api:release . && cd $(CURDIR)
+	docker save -o $(BASE_DIR)/release/hackillinois-api-image.tar hackillinois-api:release
+	docker image rm -f hackillinois-api:release
+	$(foreach target,$(DEPLOY_TARGETS),rm $(BASE_DIR)/release/hackillinois-api-$(target);)

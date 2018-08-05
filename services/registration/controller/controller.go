@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"net/http"
+	"time"
 )
 
 func SetupController(route *mux.Route) {
@@ -109,6 +110,9 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	user_registration.FirstName = user_info.FirstName
 	user_registration.LastName = user_info.LastName
 
+	user_registration.CreatedAt = time.Now().Unix()
+	user_registration.UpdatedAt = time.Now().Unix()
+
 	err = service.CreateUserRegistration(id, user_registration)
 
 	if err != nil {
@@ -165,10 +169,19 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
+	original_registration, err := service.GetUserRegistration(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
 	user_registration.GitHub = user_info.Username
 	user_registration.Email = user_info.Email
 	user_registration.FirstName = user_info.FirstName
 	user_registration.LastName = user_info.LastName
+
+	user_registration.CreatedAt = original_registration.CreatedAt
+	user_registration.UpdatedAt = time.Now().Unix()
 
 	err = service.UpdateUserRegistration(id, user_registration)
 
@@ -247,6 +260,9 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	mentor_registration.FirstName = user_info.FirstName
 	mentor_registration.LastName = user_info.LastName
 
+	mentor_registration.CreatedAt = time.Now().Unix()
+	mentor_registration.UpdatedAt = time.Now().Unix()
+
 	err = service.CreateMentorRegistration(id, mentor_registration)
 
 	if err != nil {
@@ -289,10 +305,19 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
+	original_registration, err := service.GetMentorRegistration(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
 	mentor_registration.GitHub = user_info.Username
 	mentor_registration.Email = user_info.Email
 	mentor_registration.FirstName = user_info.FirstName
 	mentor_registration.LastName = user_info.LastName
+
+	mentor_registration.CreatedAt = original_registration.CreatedAt
+	mentor_registration.UpdatedAt = time.Now().Unix()
 
 	err = service.UpdateMentorRegistration(id, mentor_registration)
 

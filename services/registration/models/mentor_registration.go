@@ -8,4 +8,6 @@ type MentorRegistration struct {
 	ShirtSize string `json:"shirtSize"   validate:"required,oneof=S M L XL"`
 	GitHub    string `json:"github"      validate:"required"`
 	Linkedin  string `json:"linkedin"    validate:"required"`
+	CreatedAt int64  `json:"createdAt"   validate:"required"`
+	UpdatedAt int64  `json:"updatedAt"   validate:"required"`
 }

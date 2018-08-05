@@ -4,23 +4,9 @@ trap cleanup INT
 
 function cleanup {
 	echo "Cleaning up services"
-	pgrep "api" | xargs kill
+	pgrep "hackillinois-" | xargs kill
 	rm -rf log/
 	exit 0
-}
-
-function install {
-	go install github.com/HackIllinois/api-gateway
-	go install github.com/HackIllinois/api-auth
-	go install github.com/HackIllinois/api-user
-	go install github.com/HackIllinois/api-registration
-	go install github.com/HackIllinois/api-decision
-	go install github.com/HackIllinois/api-rsvp
-	go install github.com/HackIllinois/api-checkin
-	go install github.com/HackIllinois/api-upload
-	go install github.com/HackIllinois/api-mail
-	go install github.com/HackIllinois/api-event
-	go install github.com/HackIllinois/api-stat
 }
 
 function auth {
@@ -37,7 +23,7 @@ function auth {
 	export AUTH_PORT=:8002
 	export USER_SERVICE=http://localhost:8003
 
-	api-auth &
+	hackillinois-api-auth &
 }
 
 function user {
@@ -45,7 +31,7 @@ function user {
 	export USER_DB_NAME=user
 	export USER_PORT=:8003
 
-	api-user &
+	hackillinois-api-user &
 }
 
 function registration {
@@ -57,7 +43,7 @@ function registration {
 	export DECISION_SERVICE=http://localhost:8005
 	export MAIL_SERVICE=http://localhost:8009
 
-	api-registration &
+	hackillinois-api-registration &
 }
 
 function decision {
@@ -66,7 +52,7 @@ function decision {
 	export DECISION_PORT=:8005
 	export MAIL_SERVICE=http://localhost:8009
 
-	api-decision &
+	hackillinois-api-decision &
 }
 
 function rsvp {
@@ -77,7 +63,7 @@ function rsvp {
 	export DECISION_SERVICE=http://localhost:8005
 	export MAIL_SERVICE=http://localhost:8009
 	
-	api-rsvp &
+	hackillinois-api-rsvp &
 }
 
 function checkin {
@@ -87,7 +73,7 @@ function checkin {
 	export RSVP_SERVICE=http://localhost:8006
 	export REGISTRATION_SERVICE=http://localhost:8004
 
-	api-checkin &
+	hackillinois-api-checkin &
 }
 
 function upload {
@@ -95,7 +81,7 @@ function upload {
 	export S3_REGION=us-east-1
 	export S3_BUCKET=hackillinois-upload-2019
 
-	api-upload &
+	hackillinois-api-upload &
 }
 
 function mail {
@@ -105,7 +91,7 @@ function mail {
 	export USER_SERVICE=http://localhost:8003
 	export MAIL_PORT=:8009
 
-	api-mail &
+	hackillinois-api-mail &
 }
 
 function event {
@@ -114,7 +100,7 @@ function event {
 	export EVENT_PORT=:8010
 	export CHECKIN_SERVICE=http://localhost:8007
 
-	api-event &
+	hackillinois-api-event &
 }
 
 function stat {
@@ -122,7 +108,7 @@ function stat {
 	export STAT_DB_NAME=stat
 	export STAT_PORT=:8011
 
-	api-stat &
+	hackillinois-api-stat &
 }
 
 function gateway {
@@ -142,10 +128,9 @@ function gateway {
 	mkdir log/
 	touch log/access.log
 
-	api-gateway -u &
+	hackillinois-api-gateway -u &
 }
 
-install
 auth
 user
 registration

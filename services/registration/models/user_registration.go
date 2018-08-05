@@ -24,6 +24,8 @@ type UserRegistration struct {
 	ExtraInfos           []UserExtraInfo     `json:"extraInfos"           validate:"required,dive,required"`
 	OsContributors       []UserOsContributor `json:"osContributors"       validate:"required,dive,required"`
 	Collaborators        []UserCollaborator  `json:"collaborators"        validate:"required,dive,required"`
+	CreatedAt            int64               `json:"createdAt"            validate:"required"`
+	UpdatedAt            int64               `json:"updatedAt"            validate:"required"`
 }
 
 type UserLongForm struct {

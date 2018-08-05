@@ -349,6 +349,8 @@ var base_user_registration models.UserRegistration = models.UserRegistration{
 			Github: "collaboratorgithub",
 		},
 	},
+	CreatedAt: 10,
+	UpdatedAt: 15,
 }
 
 var base_mentor_registration models.MentorRegistration = models.MentorRegistration{
@@ -359,4 +361,6 @@ var base_mentor_registration models.MentorRegistration = models.MentorRegistrati
 	ShirtSize: "M",
 	GitHub:    "githubusername",
 	Linkedin:  "linkedinusername",
+	CreatedAt: 10,
+	UpdatedAt: 15,
 }

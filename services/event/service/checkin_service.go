@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/HackIllinois/api/services/event/config"
+	"github.com/ReflectionsProjections/api/services/event/config"
 	"net/http"
 )
 

@@ -2,8 +2,8 @@ package service
 
 import (
 	"errors"
-	"github.com/HackIllinois/api/services/auth/config"
-	"github.com/HackIllinois/api/services/auth/models"
+	"github.com/ReflectionsProjections/api/services/auth/config"
+	"github.com/ReflectionsProjections/api/services/auth/models"
 	"github.com/levigross/grequests"
 )
 

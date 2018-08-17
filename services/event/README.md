@@ -8,12 +8,12 @@ Setup
 
 First download the source:
 ```
-go get -u github.com/HackIllinois/api/services/event
+go get -u github.com/ReflectionsProjections/api/services/event
 ```
 
 Move into the source directory:
 ```
-cd $GOPATH/src/github.com/HackIllinois/api/services/event
+cd $GOPATH/src/github.com/ReflectionsProjections/api/services/event
 ```
 
 And install the service

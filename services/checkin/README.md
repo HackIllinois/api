@@ -8,12 +8,12 @@ Setup
 
 First download the source:
 ```
-go get -u github.com/HackIllinois/api/services/checkin
+go get -u github.com/ReflectionsProjections/api/services/checkin
 ```
 
 Move into the source directory:
 ```
-cd $GOPATH/src/github.com/HackIllinois/api/services/checkin
+cd $GOPATH/src/github.com/ReflectionsProjections/api/services/checkin
 ```
 
 And install the service

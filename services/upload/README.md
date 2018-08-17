@@ -8,12 +8,12 @@ Setup
 
 First download the source:
 ```
-go get -u github.com/HackIllinois/api/services/upload
+go get -u github.com/ReflectionsProjections/api/services/upload
 ```
 
 Move into the source directory:
 ```
-cd $GOPATH/src/github.com/HackIllinois/api/services/upload
+cd $GOPATH/src/github.com/ReflectionsProjections/api/services/upload
 ```
 
 And install the service

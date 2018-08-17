@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/HackIllinois/api/common/errors"
-	"github.com/HackIllinois/api/services/auth/config"
-	"github.com/HackIllinois/api/services/auth/models"
-	"github.com/HackIllinois/api/services/auth/service"
+	"github.com/ReflectionsProjections/api/common/errors"
+	"github.com/ReflectionsProjections/api/services/auth/config"
+	"github.com/ReflectionsProjections/api/services/auth/models"
+	"github.com/ReflectionsProjections/api/services/auth/service"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 )

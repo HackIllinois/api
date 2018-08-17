@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
-	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/user/config"
-	"github.com/HackIllinois/api/services/user/models"
+	"github.com/ReflectionsProjections/api/common/database"
+	"github.com/ReflectionsProjections/api/services/user/config"
+	"github.com/ReflectionsProjections/api/services/user/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"strings"

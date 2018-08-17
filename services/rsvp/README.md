@@ -8,12 +8,12 @@ Setup
 
 First download the source:
 ```
-go get -u github.com/HackIllinois/api/services/rsvp
+go get -u github.com/ReflectionsProjections/api/services/rsvp
 ```
 
 Move into the source directory:
 ```
-cd $GOPATH/src/github.com/HackIllinois/api/services/rsvp
+cd $GOPATH/src/github.com/ReflectionsProjections/api/services/rsvp
 ```
 
 And install the service

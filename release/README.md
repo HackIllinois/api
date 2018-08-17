@@ -23,7 +23,7 @@ Note that the build script will cleanup after completing so no intermediates or 
 
 Running the API from GitHub Releases Image
 ------------------------------------------
-First install docker on your deployment target. Once ready go to [GitHub Releases](https://github.com/HackIllinois/api/releases) and download the lastest `hackillinois-api-image.tar` image archive.
+First install docker on your deployment target. Once ready go to [GitHub Releases](https://github.com/ReflectionsProjections/api/releases) and download the lastest `hackillinois-api-image.tar` image archive.
 
 Setup external dependencies:
 - MongoDB Server

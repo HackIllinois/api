@@ -8,12 +8,12 @@ Setup
 
 First download the source:
 ```
-go get -u github.com/HackIllinois/api/services/registration
+go get -u github.com/ReflectionsProjections/api/services/registration
 ```
 
 Move into the source directory:
 ```
-cd $GOPATH/src/github.com/HackIllinois/api/services/registration
+cd $GOPATH/src/github.com/ReflectionsProjections/api/services/registration
 ```
 
 And install the service

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/HackIllinois/api/common/middleware"
-	"github.com/HackIllinois/api/services/stat/config"
-	"github.com/HackIllinois/api/services/stat/controller"
+	"github.com/ReflectionsProjections/api/common/middleware"
+	"github.com/ReflectionsProjections/api/services/stat/config"
+	"github.com/ReflectionsProjections/api/services/stat/controller"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"

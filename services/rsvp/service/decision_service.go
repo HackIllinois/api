@@ -3,8 +3,8 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	"github.com/HackIllinois/api/services/rsvp/config"
-	"github.com/HackIllinois/api/services/rsvp/models"
+	"github.com/ReflectionsProjections/api/services/rsvp/config"
+	"github.com/ReflectionsProjections/api/services/rsvp/models"
 	"net/http"
 )
 

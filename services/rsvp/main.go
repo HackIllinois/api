@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/HackIllinois/api/common/middleware"
-	"github.com/HackIllinois/api/services/rsvp/config"
-	"github.com/HackIllinois/api/services/rsvp/controller"
+	"github.com/ReflectionsProjections/api/common/middleware"
+	"github.com/ReflectionsProjections/api/services/rsvp/config"
+	"github.com/ReflectionsProjections/api/services/rsvp/controller"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"

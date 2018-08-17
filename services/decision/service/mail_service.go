@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/HackIllinois/api/services/decision/config"
-	"github.com/HackIllinois/api/services/decision/models"
+	"github.com/ReflectionsProjections/api/services/decision/config"
+	"github.com/ReflectionsProjections/api/services/decision/models"
 )
 
 /*

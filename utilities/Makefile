@@ -11,3 +11,6 @@ $(TARGETS): % : $(addsuffix %,$(SUBDIRS))
 
 $(SUBDIRS_TARGETS):
 	$(MAKE) -C $(@D) $(@F:.%=%)
+
+.PHONY: test
+test:

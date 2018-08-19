@@ -8,12 +8,12 @@ Setup
 
 First download the source:
 ```
-go get -u github.com/HackIllinois/api/services/stat
+go get -u github.com/ReflectionsProjections/api/services/stat
 ```
 
 Move into the source directory:
 ```
-cd $GOPATH/src/github.com/HackIllinois/api/services/stat
+cd $GOPATH/src/github.com/ReflectionsProjections/api/services/stat
 ```
 
 And install the service

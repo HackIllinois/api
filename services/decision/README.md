@@ -8,12 +8,12 @@ Setup
 
 First download the source:
 ```
-go get -u github.com/HackIllinois/api/services/decision
+go get -u github.com/ReflectionsProjections/api/services/decision
 ```
 
 Move into the source directory:
 ```
-cd $GOPATH/src/github.com/HackIllinois/api/services/decision
+cd $GOPATH/src/github.com/ReflectionsProjections/api/services/decision
 ```
 
 And install the service

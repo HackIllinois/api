@@ -1,10 +1,10 @@
 package tests
 
 import (
-	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/mail/config"
-	"github.com/HackIllinois/api/services/mail/models"
-	"github.com/HackIllinois/api/services/mail/service"
+	"github.com/ReflectionsProjections/api/common/database"
+	"github.com/ReflectionsProjections/api/services/mail/config"
+	"github.com/ReflectionsProjections/api/services/mail/models"
+	"github.com/ReflectionsProjections/api/services/mail/service"
 	"reflect"
 	"testing"
 )

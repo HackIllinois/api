@@ -13,9 +13,9 @@ before_deploy:
     - make deploy
 deploy:
     provider: s3
-    access_key_id: $HACKILLINOIS_ACCESS_KEY
-    secret_access_key: $HACKILLINOIS_SECRET_KEY
-    bucket: hackillinois-api
+    access_key_id: $RP_AWS_ACCESS_KEY
+    secret_access_key: $RP_AWS_SECRET_KEY
+    bucket: $RP_API_BUILD_BUCKET
     skip_cleanup: true
     local_dir: deploy
     on:

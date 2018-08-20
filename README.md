@@ -31,8 +31,7 @@ make run
 For release deployment see the `README.md` file in `release/`.
 
 ## Contributing
-Contributing guidelines will be available soon.
-
+For contributing guidelines see the `CONTRIBUTING.md` file in the repository root.
 
 ## Documentation
 Documentation will be available soon.

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/utilities/accountgen/models"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var auth_db database.MongoDatabase
@@ -43,7 +44,13 @@ func PopulateAuthInfo(id string, roles []string) error {
 		Roles: roles,
 	}
 
-	return auth_db.Insert("roles", &user_roles)
+	selector := bson.M{
+		"id": id,
+	}
+
+	_, err := auth_db.Upsert("roles", selector, &user_roles)
+
+	return err
 }
 
 func PopulateUserInfo(id string, username string, firstName string, lastName string, email string) error {
@@ -55,5 +62,11 @@ func PopulateUserInfo(id string, username string, firstName string, lastName str
 		Email: email,
 	}
 
-	return user_db.Insert("info", &user_info)
+	selector := bson.M{
+		"id": id,
+	}
+
+	_, err := user_db.Upsert("info", selector, &user_info)
+
+	return err
 }

@@ -40,7 +40,7 @@ func CreateAccount(id string, roles []string, username string, firstName string,
 
 func PopulateAuthInfo(id string, roles []string) error {
 	user_roles := models.UserRoles{
-		ID: id,
+		ID:    id,
 		Roles: roles,
 	}
 
@@ -55,11 +55,11 @@ func PopulateAuthInfo(id string, roles []string) error {
 
 func PopulateUserInfo(id string, username string, firstName string, lastName string, email string) error {
 	user_info := models.UserInfo{
-		ID: id,
-		Username: username,
+		ID:        id,
+		Username:  username,
 		FirstName: firstName,
-		LastName: lastName,
-		Email: email,
+		LastName:  lastName,
+		Email:     email,
 	}
 
 	selector := bson.M{

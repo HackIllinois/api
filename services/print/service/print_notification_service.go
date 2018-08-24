@@ -23,8 +23,8 @@ func init() {
 /*
 	Returns the response from the SNS publish request
 */
-func PublishPrintJob(job PrintJob) (*sns.PublishOutput, error) {
-	identifier, err = GetUserInfo(job.ID)
+func PublishPrintJob(job models.PrintJob) (*sns.PublishOutput, error) {
+	identifier, err := GetUserInfo(job.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -35,15 +35,15 @@ func PublishPrintJob(job PrintJob) (*sns.PublishOutput, error) {
 	payload := fmt.Sprintf(QR_PREFIX, job.ID, identifier)
 	request, resp := client.PublishRequest(&sns.PublishInput {
 		MessageStructure: aws.String("json"),
-		TopicARN: aws.String(config.PRINT_TOPIC),
+		TopicArn: aws.String(config.PRINT_TOPIC),
 		Subject: aws.String(job.Location),
 		Message: aws.String(payload),
 	})
 
-	_, err := request.Send()
+	err := request.Send()
 	if err != nil {
 		return nil, err
 	}
 
-	return &resp, nil
+	return resp, nil
 }

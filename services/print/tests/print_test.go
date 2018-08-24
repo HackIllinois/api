@@ -20,7 +20,7 @@ func TestPrintValidUser(t *testing.T) {
 	}
 
 	print_resp, _ := service.PublishPrintJob(&models.PrintJob {ID: "1", Location: models.DCL})
-	expected_resp := sns.PublishOutput { MessageId : aws.String("printjob-uuid"), }
+	expected_resp := &sns.PublishOutput { MessageId : aws.String("printjob-uuid") }
 	if !reflect.DeepEqual(print_resp, expected_resp) {
 		t.Errorf("Wrong sns response recieved Expected %v, got %v", print_resp, expected_resp)
 	}

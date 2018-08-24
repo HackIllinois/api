@@ -21,11 +21,11 @@ func SetupController(route *mux.Route) {
 */
 func CreatePrintJob(w http.ResponseWriter, r *http.Request) {
 	var print_job models.PrintJob
-	json.NewDecoder(r.Body).Decode(&user_checkin)
+	json.NewDecoder(r.Body).Decode(&print_job)
 
-	resp, err = service.PublishPrintJob(print_job.ID, print_job.Email)
+	resp, err := service.PublishPrintJob(print_job)
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.PrintError(err.Error()))
 	}
 
   // TODO log stuff when extensive logging is implemented

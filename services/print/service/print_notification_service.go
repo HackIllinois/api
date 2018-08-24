@@ -23,7 +23,7 @@ func init() {
 /*
 	Returns the response from the SNS publish request
 */
-func PublishPrintJob(job models.PrintJob) (*sns.PublishOutput, error) {
+func PublishPrintJob(job *models.PrintJob) (*sns.PublishOutput, error) {
 	identifier, err := GetUserInfo(job.ID)
 	if err != nil {
 		return nil, err

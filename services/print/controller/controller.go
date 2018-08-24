@@ -23,7 +23,7 @@ func CreatePrintJob(w http.ResponseWriter, r *http.Request) {
 	var print_job models.PrintJob
 	json.NewDecoder(r.Body).Decode(&print_job)
 
-	_, err := service.PublishPrintJob(print_job)
+	_, err := service.PublishPrintJob(&print_job)
 	if err != nil {
 		panic(errors.PrintError(err.Error()))
 	}

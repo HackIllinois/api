@@ -36,11 +36,11 @@ func PublishPrintJob(job models.PrintJob) (*sns.PublishOutput, error) {
 	request, resp := client.PublishRequest(&sns.PublishInput {
 		MessageStructure: aws.String("json"),
 		TopicArn: aws.String(config.PRINT_TOPIC),
-		Subject: aws.String(job.Location),
+		Subject: aws.String(string(job.Location)),
 		Message: aws.String(payload),
 	})
 
-	err := request.Send()
+	err = request.Send()
 	if err != nil {
 		return nil, err
 	}

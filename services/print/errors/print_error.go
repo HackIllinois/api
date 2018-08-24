@@ -1,7 +1,7 @@
 package errors
 
-import(
-  "github.com/HackIllinois/api/common/errors"
+import (
+	"github.com/HackIllinois/api/common/errors"
 )
 
 func PrintError(message string) errors.APIError {

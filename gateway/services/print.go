@@ -9,6 +9,7 @@ import (
 )
 
 var PrintURI = config.PRINT_SERVICE
+
 const PrintFormat string = "JSON"
 
 var PrintRoutes = arbor.RouteCollection{

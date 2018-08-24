@@ -2,11 +2,11 @@ package service
 
 import (
 	"fmt"
+	"github.com/HackIllinois/api/services/print/config"
+	"github.com/HackIllinois/api/services/print/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
-	"github.com/HackIllinois/api/services/print/config"
-	"github.com/HackIllinois/api/services/print/models"
 )
 
 var sess *session.Session
@@ -29,15 +29,15 @@ func PublishPrintJob(job *models.PrintJob) (*sns.PublishOutput, error) {
 		return nil, err
 	}
 	if !config.IS_PRODUCTION {
-		return &sns.PublishOutput { MessageId : aws.String("printjob-uuid") }, nil
+		return &sns.PublishOutput{MessageId: aws.String("printjob-uuid")}, nil
 	}
 
 	payload := fmt.Sprintf(QR_PREFIX, job.ID, identifier)
-	request, resp := client.PublishRequest(&sns.PublishInput {
+	request, resp := client.PublishRequest(&sns.PublishInput{
 		MessageStructure: aws.String("json"),
-		TopicArn: aws.String(config.PRINT_TOPIC),
-		Subject: aws.String(string(job.Location)),
-		Message: aws.String(payload),
+		TopicArn:         aws.String(config.PRINT_TOPIC),
+		Subject:          aws.String(string(job.Location)),
+		Message:          aws.String(payload),
 	})
 
 	err = request.Send()

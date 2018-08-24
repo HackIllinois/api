@@ -28,6 +28,6 @@ func CreatePrintJob(w http.ResponseWriter, r *http.Request) {
 		panic(errors.PrintError(err.Error()))
 	}
 
-  // TODO log stuff when extensive logging is implemented
+	// TODO log stuff when extensive logging is implemented
 	w.WriteHeader(http.StatusOK)
 }

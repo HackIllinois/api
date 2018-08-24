@@ -29,7 +29,7 @@ func PublishPrintJob(job PrintJob) (*sns.PublishOutput, error) {
 		return nil, err
 	}
 	if !config.IS_PRODUCTION {
-		return &sns.PublishOutput { MessageId : aws.String("printjob-uuid"), nil
+		return &sns.PublishOutput { MessageId : aws.String("printjob-uuid") }, nil
 	}
 
 	payload := fmt.Sprintf(QR_PREFIX, job.ID, identifier)
@@ -37,7 +37,7 @@ func PublishPrintJob(job PrintJob) (*sns.PublishOutput, error) {
 		MessageStructure: aws.String("json"),
 		TopicARN: aws.String(config.PRINT_TOPIC),
 		Subject: aws.String(job.Location),
-		Message: aws.String(payload)
+		Message: aws.String(payload),
 	})
 
 	_, err := request.Send()

@@ -62,7 +62,7 @@ function rsvp {
 	export AUTH_SERVICE=http://localhost:8002
 	export DECISION_SERVICE=http://localhost:8005
 	export MAIL_SERVICE=http://localhost:8009
-	
+
 	hackillinois-api-rsvp &
 }
 
@@ -111,6 +111,10 @@ function stat {
 	hackillinois-api-stat &
 }
 
+function print {
+	export PRINT_PORT=:8012
+}
+
 function gateway {
 	export GATEWAY_PORT=8000
 	export TOKEN_SECRET=secret_string
@@ -141,6 +145,7 @@ upload
 mail
 event
 stat
+print
 gateway
 
 sleep infinity

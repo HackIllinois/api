@@ -21,6 +21,7 @@ var UPLOAD_SERVICE = os.Getenv("UPLOAD_SERVICE")
 var MAIL_SERVICE = os.Getenv("MAIL_SERVICE")
 var EVENT_SERVICE = os.Getenv("EVENT_SERVICE")
 var STAT_SERVICE = os.Getenv("STAT_SERVICE")
+var PRINT_SERVICE = os.Getenv("PRINT_SERVICE")
 
 func init() {
 	port, err := strconv.ParseUint(os.Getenv("GATEWAY_PORT"), 10, 16)

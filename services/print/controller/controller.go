@@ -29,5 +29,5 @@ func CreatePrintJob(w http.ResponseWriter, r *http.Request) {
 	}
 
   // TODO log stuff when extensive logging is implemented
-	json.NewEncoder(w).Encode()
+	w.WriteHeader(http.StatusOK)
 }

@@ -11,7 +11,7 @@ import (
 )
 
 func TestPrintValidUser(t *testing.T) {
-	service.GetUserInfo := func(id string) (*models.UserInfo, error) {
+	service.GetUserInfo = func(id string) (*models.UserInfo, error) {
 		return &models.UserInfo {
 			ID:       "testid",
 			Username: "testusername",
@@ -27,7 +27,7 @@ func TestPrintValidUser(t *testing.T) {
 }
 
 func TestPrintInvalidUser(t *testing.T) {
-	service.GetUserInfo := func(id string) (*models.UserInfo, error) {
+	service.GetUserInfo = func(id string) (*models.UserInfo, error) {
 		return nil, errors.New("User service failed to return information")
 	}
 	_, err := service.PublishPrintJob(&models.PrintJob {ID: "1", Location: models.DCL, })

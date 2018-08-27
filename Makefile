@@ -47,4 +47,5 @@ release: all
 .PHONY: setup
 setup: all
 	@echo 'Generating API admin token'
+	hackillinois-utility-accountgen
 	hackillinois-utility-tokengen

@@ -1,0 +1,64 @@
+/user:
+    get:
+        summary: Returns a user with the id in the given JWT.
+        responses:
+            '200':
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/user'
+    post:
+        summary: Creates a user with the id in the request body, and returns the user as it is recorded in the database.
+        requestBody:
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/user'
+        responses:
+            '200':
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/user'
+
+/user/{userid}:
+    get:
+        summary: Returns a user by id.
+        responses:
+            '200':
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/user'
+
+/user/filter:
+    get:
+        summary: Returns a list of users who match the given key-value pairs.
+        responses:
+            '200':
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            type: array
+                            items:
+                                $ref: '#/components/schemas/user'
+
+components:
+    schemas:
+        user:
+            type: object
+            properties:
+                id:
+                    type: string
+                username:
+                    type: string
+                firstName:
+                    type: string
+                lastName:
+                    type: string
+                email:
+                    type: string

@@ -1,0 +1,9 @@
+description: 'An API providing multiple services to support a hackathon, such as managing authentication, users, registration, admission decisions, RSVP, check-in, mail, events, and statistics.'
+version: 0.1.0
+title: 'HackIllinois API'
+termsOfService: 'http://hackillinois.org'
+contact:
+    email: systems@hackillinois.org
+license:
+    name: 'University of Illinois / NCSA Open Source License'
+    url: 'https://opensource.org/licenses/NCSA'

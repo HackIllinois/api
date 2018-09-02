@@ -1,0 +1,8 @@
+-
+    url: 'https://api.hackillinois.org:{port}'
+    description: 'Production server'
+    variables:
+        port:
+            enum:
+                - '8000'
+            default: '8000'

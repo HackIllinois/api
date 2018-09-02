@@ -1,0 +1,53 @@
+securitySchemes:
+    Authorization:
+        type: http
+        scheme: bearer
+        description: 'The JWT for the API, received after authenticating with one of our supported OAuth providers. For local development configurations, it is generated once the API is built. Note that this is invalid for use in production.'
+        bearerFormat: JWT
+parameters:
+    userId:
+        name: userId
+        in: path
+        description: 'The user ID of the user that should be returned.'
+        allowEmptyValue: false
+        required: true
+        schema:
+            type: string
+responses:
+    UnprocessibleError:
+        description: 'The request resource could not be found, an update did not occur, or a struct with the given information already exists in the database.'
+        content:
+            application/json:
+                schema:
+                    $ref: '#/components/schemas/UnprocessibleError'
+    AuthorizationError:
+        description: 'Authorization header is missing, or contains an invalid JWT. If roles have changed, make sure you hit the /auth/token/refresh/ endpoint to update the JWT.'
+        content:
+            application/json:
+                schema:
+                    $ref: '#/components/schemas/AuthorizationError'
+schemas:
+    UserInfo:
+        type: object
+        properties:
+            id:
+                type: string
+            username:
+                type: string
+            firstName:
+                type: string
+            lastName:
+                type: string
+            email:
+                type: string
+    AuthorizationError:
+        type: object
+    UnprocessibleError:
+        type: object
+        properties:
+            status:
+                type: string
+            title:
+                type: string
+            message:
+                type: string

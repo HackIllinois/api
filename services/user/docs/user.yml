@@ -1,64 +1,93 @@
-/user:
-    get:
-        summary: Returns a user with the id in the given JWT.
-        responses:
-            '200':
-                description: OK
+    /user/:
+        get:
+            tags:
+                - User
+            summary: 'Gets current user''s information'
+            description: 'Returns the info for current user (the user whose ID is encoded in the JWT).'
+            security:
+                -
+                    Authorization:
+                        - User
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: 'components/schemas/UserInfo'
+                '400':
+                    $ref: 'components/responses/UnprocessibleError'
+                '403':
+                    $ref: 'components/responses/AuthorizationError'
+        post:
+            tags:
+                - User
+            summary: 'Creates a user'
+            description: 'Creates a user with the id in the request body, and returns the user as it is recorded in the database.'
+            security:
+                -
+                    Authorization:
+                        - Admin
+            requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/user'
-    post:
-        summary: Creates a user with the id in the request body, and returns the user as it is recorded in the database.
-        requestBody:
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/user'
-        responses:
-            '200':
-                description: OK
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/user'
-
-/user/{userid}:
-    get:
-        summary: Returns a user by id.
-        responses:
-            '200':
-                description: OK
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/user'
-
-/user/filter:
-    get:
-        summary: Returns a list of users who match the given key-value pairs.
-        responses:
-            '200':
-                description: OK
-                content:
-                    application/json:
-                        schema:
-                            type: array
-                            items:
-                                $ref: '#/components/schemas/user'
-
-components:
-    schemas:
-        user:
-            type: object
-            properties:
-                id:
-                    type: string
-                username:
-                    type: string
-                firstName:
-                    type: string
-                lastName:
-                    type: string
-                email:
-                    type: string
+                            $ref: 'components/schemas/UserInfo'
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: 'components/schemas/UserInfo'
+                '400':
+                    $ref: 'components/responses/UnprocessibleError'
+                '403':
+                    $ref: 'components/responses/AuthorizationError'
+    '/user/{userId}/':
+        parameters:
+            -
+                $ref: 'components/parameters/userId'
+        get:
+            tags:
+                - User
+            description: 'Returns a user by id.'
+            summary: 'Returns a user by id.'
+            security:
+                -
+                    Authorization:
+                        - User
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: 'components/schemas/UserInfo'
+                '400':
+                    $ref: 'components/responses/UnprocessibleError'
+                '403':
+                    $ref: 'components/responses/AuthorizationError'
+    /user/filter/:
+        get:
+            tags:
+                - User
+            description: 'Get a filtered list of users'
+            summary: 'Returns a list of users who match the given key-value pairs.'
+            security:
+                -
+                    Authorization:
+                        - User
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: 'components/schemas/UserInfo'
+                '400':
+                    $ref: 'components/responses/UnprocessibleError'
+                '403':
+                    $ref: 'components/responses/AuthorizationError'

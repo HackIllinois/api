@@ -1,0 +1,11 @@
+openapi: 3.0.1
+info:
+    $ref: info.yml
+servers:
+    $ref: servers.yml
+tags:
+    $ref: tags.yml
+paths:
+    $ref: paths.yml
+components:
+    $ref: components.yml

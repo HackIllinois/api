@@ -1,6 +1,6 @@
 BASE_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 SUBDIRS := $(wildcard $(BASE_DIR)/*/.)
-SUBDIRS := $(BASE_DIR)/services/. $(BASE_DIR)/gateway/. $(BASE_DIR)/common/.
+SUBDIRS := $(BASE_DIR)/services/. $(BASE_DIR)/gateway/. $(BASE_DIR)/common/. $(BASE_DIR)/utilities/.
 
 TARGETS := all test
 SUBDIRS_TARGETS := $(foreach target,$(TARGETS),$(addsuffix $(target),$(SUBDIRS)))
@@ -43,3 +43,9 @@ release: all
 	docker save -o $(BASE_DIR)/release/hackillinois-api-image.tar hackillinois-api:release
 	docker image rm -f hackillinois-api:release
 	$(foreach target,$(DEPLOY_TARGETS),rm $(BASE_DIR)/release/hackillinois-api-$(target);)
+
+.PHONY: setup
+setup: all
+	@echo 'Generating API admin token'
+	hackillinois-utility-accountgen
+	hackillinois-utility-tokengen

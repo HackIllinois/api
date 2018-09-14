@@ -194,7 +194,7 @@ func ConstructSafeURL(scheme string, host string, path string, queryParams map[s
 	counter := 0
 	for _, val := range queryParams {
 		counter++
-		if strings.Contains(val, "#") && counter != len(queryParams) {
+		if strings.Contains(val, "#") && counter < len(queryParams) {
 			valid = false
 			break
 		}

@@ -2,7 +2,7 @@ package service
 
 import (
 	"errors"
-	"github.com/pattyjogal/api/services/auth/config"
+	"github.com/HackIllinois/api/services/auth/config"
 	"net/url"
 	"strings"
 )

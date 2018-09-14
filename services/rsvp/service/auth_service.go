@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/pattyjogal/api/services/rsvp/config"
-	"github.com/pattyjogal/api/services/rsvp/models"
+	"github.com/HackIllinois/api/services/rsvp/config"
+	"github.com/HackIllinois/api/services/rsvp/models"
 	"net/http"
 )
 

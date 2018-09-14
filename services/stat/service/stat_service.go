@@ -3,9 +3,9 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	"github.com/pattyjogal/api/common/database"
-	"github.com/pattyjogal/api/services/stat/config"
-	"github.com/pattyjogal/api/services/stat/models"
+	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/services/stat/config"
+	"github.com/HackIllinois/api/services/stat/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"net/http"

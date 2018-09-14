@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/pattyjogal/api/common/errors"
-	"github.com/pattyjogal/api/services/decision/models"
-	"github.com/pattyjogal/api/services/decision/service"
+	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/services/decision/models"
+	"github.com/HackIllinois/api/services/decision/service"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 )

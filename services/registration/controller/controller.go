@@ -2,9 +2,9 @@ package controller
 
 import (
 	"encoding/json"
-	"github.com/pattyjogal/api/common/errors"
-	"github.com/pattyjogal/api/services/registration/models"
-	"github.com/pattyjogal/api/services/registration/service"
+	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/services/registration/models"
+	"github.com/HackIllinois/api/services/registration/service"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"net/http"

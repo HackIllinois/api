@@ -3,8 +3,8 @@ package service
 import (
 	"bytes"
 	"errors"
-	"github.com/pattyjogal/api/services/upload/config"
-	"github.com/pattyjogal/api/services/upload/models"
+	"github.com/HackIllinois/api/services/upload/config"
+	"github.com/HackIllinois/api/services/upload/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"

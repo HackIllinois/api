@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"github.com/pattyjogal/api/services/auth/config"
 	"net/url"
 	"strings"
@@ -32,9 +31,20 @@ func GetAuthorizeRedirect(provider string, redirect_uri string) (string, error) 
 
 		return redirURL.String(), nil
 	case "linkedin":
+		redirURL := &url.URL{
+			Scheme: "https",
+			Host:   "www.linkedin.com",
+			Path:   "oauth/v2/authorization",
+		}
 
-		return fmt.Sprintf("https://www.linkedin.com/oauth/v2/authorization?response_type=%v&client_id=%v&redirect_uri=%v&scope=%v",
-			"code", config.LINKEDIN_CLIENT_ID, redirect_uri, "r_basicprofile%20r_emailaddress"), nil
+		constructURLQuery(redirURL, map[string]string{
+			"client_id":     config.LINKEDIN_CLIENT_ID,
+			"scope":         "r_basicprofile r_emailaddress",
+			"response_type": "code",
+			"redirect_uri":  redirect_uri,
+		})
+
+		return redirURL.String(), nil
 	default:
 		return "", errors.New("Invalid provider")
 	}

@@ -1,10 +1,10 @@
 package tests
 
 import (
-	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/stat/config"
-	"github.com/HackIllinois/api/services/stat/models"
-	"github.com/HackIllinois/api/services/stat/service"
+	"github.com/pattyjogal/api/common/database"
+	"github.com/pattyjogal/api/services/stat/config"
+	"github.com/pattyjogal/api/services/stat/models"
+	"github.com/pattyjogal/api/services/stat/service"
 	"reflect"
 	"testing"
 )

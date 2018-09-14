@@ -3,8 +3,8 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	"github.com/HackIllinois/api/services/checkin/config"
-	"github.com/HackIllinois/api/services/checkin/models"
+	"github.com/pattyjogal/api/services/checkin/config"
+	"github.com/pattyjogal/api/services/checkin/models"
 	"net/http"
 )
 

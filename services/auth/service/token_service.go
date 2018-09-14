@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/HackIllinois/api/services/auth/config"
+	"github.com/pattyjogal/api/services/auth/config"
 	jwt "github.com/dgrijalva/jwt-go"
 	"time"
 )

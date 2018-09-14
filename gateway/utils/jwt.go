@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"github.com/HackIllinois/api/gateway/config"
+	"github.com/pattyjogal/api/gateway/config"
 	jwt "github.com/dgrijalva/jwt-go"
 	"time"
 )

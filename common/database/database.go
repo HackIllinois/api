@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/HackIllinois/api/common/config"
+	"github.com/pattyjogal/api/common/config"
 	"gopkg.in/mgo.v2"
 )
 

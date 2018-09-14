@@ -3,7 +3,7 @@ package middleware
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/HackIllinois/api/common/errors"
+	"github.com/pattyjogal/api/common/errors"
 	"net/http"
 )
 

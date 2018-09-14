@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/HackIllinois/api/gateway/config"
-	"github.com/HackIllinois/api/gateway/middleware"
+	"github.com/pattyjogal/api/gateway/config"
+	"github.com/pattyjogal/api/gateway/middleware"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
 	"net/http"

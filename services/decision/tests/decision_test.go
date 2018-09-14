@@ -4,10 +4,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/decision/config"
-	"github.com/HackIllinois/api/services/decision/models"
-	"github.com/HackIllinois/api/services/decision/service"
+	"github.com/pattyjogal/api/common/database"
+	"github.com/pattyjogal/api/services/decision/config"
+	"github.com/pattyjogal/api/services/decision/models"
+	"github.com/pattyjogal/api/services/decision/service"
 )
 
 var db database.MongoDatabase

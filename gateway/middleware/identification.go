@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/HackIllinois/api/gateway/utils"
+	"github.com/pattyjogal/api/gateway/utils"
 )
 
 func IdentificationMiddleware(next http.Handler) http.Handler {

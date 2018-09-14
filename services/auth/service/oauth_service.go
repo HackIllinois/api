@@ -16,7 +16,6 @@ func GetAuthorizeRedirect(provider string, redirect_uri string) (string, error) 
 	case "github":
 		return "https://github.com/login/oauth/authorize?client_id=" + config.GITHUB_CLIENT_ID + "&redirect_uri=" + redirect_uri, nil
 	case "google":
-		return "https://accounts.google.com/o/oauth2/v2/auth?client_id=ABCDEFG&redirect_uri=https://hackillinois.org/auth/&scope=profile%20email&response_type=code"
 		redirURL := &url.URL{
 			Scheme: "https",
 			Host:   "accounts.google.com",
@@ -24,14 +23,12 @@ func GetAuthorizeRedirect(provider string, redirect_uri string) (string, error) 
 		}
 
 		// Assign the query parameters
-		/*
-			constructURLQuery(redirURL, map[string]string{
-				"client_id":     config.GOOGLE_CLIENT_ID,
-				"scope":         "profile email",
-				"response_type": "code",
-				"redirect_uri":  redirect_uri,
-			})
-		*/
+		constructURLQuery(redirURL, map[string]string{
+			"client_id":     config.GOOGLE_CLIENT_ID,
+			"scope":         "profile email",
+			"response_type": "code",
+			"redirect_uri":  redirect_uri,
+		})
 
 		return redirURL.String(), nil
 	case "linkedin":

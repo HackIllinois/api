@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/HackIllinois/api/services/auth/config"
+	"net/url"
 	"strings"
 )
 
@@ -15,8 +16,26 @@ func GetAuthorizeRedirect(provider string, redirect_uri string) (string, error) 
 	case "github":
 		return "https://github.com/login/oauth/authorize?client_id=" + config.GITHUB_CLIENT_ID + "&redirect_uri=" + redirect_uri, nil
 	case "google":
-		return "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + config.GOOGLE_CLIENT_ID + "&redirect_uri=" + redirect_uri + "&scope=profile%20email&response_type=code", nil
+		return "https://accounts.google.com/o/oauth2/v2/auth?client_id=ABCDEFG&redirect_uri=https://hackillinois.org/auth/&scope=profile%20email&response_type=code"
+		redirURL := &url.URL{
+			Scheme: "https",
+			Host:   "accounts.google.com",
+			Path:   "o/oauth2/v2/auth",
+		}
+
+		// Assign the query parameters
+		/*
+			constructURLQuery(redirURL, map[string]string{
+				"client_id":     config.GOOGLE_CLIENT_ID,
+				"scope":         "profile email",
+				"response_type": "code",
+				"redirect_uri":  redirect_uri,
+			})
+		*/
+
+		return redirURL.String(), nil
 	case "linkedin":
+
 		return fmt.Sprintf("https://www.linkedin.com/oauth/v2/authorization?response_type=%v&client_id=%v&redirect_uri=%v&scope=%v",
 			"code", config.LINKEDIN_CLIENT_ID, redirect_uri, "r_basicprofile%20r_emailaddress"), nil
 	default:
@@ -145,4 +164,18 @@ func GetLastName(oauth_token string, provider string) (string, error) {
 	default:
 		return "", errors.New("Invalid provider")
 	}
+}
+
+/*
+	A function that takes a URL pointer and a map of query params->values, and modifies the URL's
+	RawQuery property with the supplied query params.
+*/
+func constructURLQuery(u *url.URL, params map[string]string) {
+	q := u.Query()
+
+	for param, value := range params {
+		q.Set(param, value)
+	}
+
+	u.RawQuery = q.Encode()
 }

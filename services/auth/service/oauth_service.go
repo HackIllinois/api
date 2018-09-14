@@ -13,38 +13,27 @@ import (
 func GetAuthorizeRedirect(provider string, redirect_uri string) (string, error) {
 	switch provider {
 	case "github":
-		return "https://github.com/login/oauth/authorize?client_id=" + config.GITHUB_CLIENT_ID + "&redirect_uri=" + redirect_uri, nil
+		return ConstructSafeURL("https", "github.com", "login/oauth/authorize",
+			map[string]string{
+				"client_id":    config.GITHUB_CLIENT_ID,
+				"redirect_uri": redirect_uri,
+			})
 	case "google":
-		redirURL := &url.URL{
-			Scheme: "https",
-			Host:   "accounts.google.com",
-			Path:   "o/oauth2/v2/auth",
-		}
-
-		// Assign the query parameters
-		constructURLQuery(redirURL, map[string]string{
-			"client_id":     config.GOOGLE_CLIENT_ID,
-			"scope":         "profile email",
-			"response_type": "code",
-			"redirect_uri":  redirect_uri,
-		})
-
-		return redirURL.String(), nil
+		return ConstructSafeURL("https", "accounts.google.com", "o/oauth2/v2/auth",
+			map[string]string{
+				"client_id":     config.GOOGLE_CLIENT_ID,
+				"scope":         "profile email",
+				"response_type": "code",
+				"redirect_uri":  redirect_uri,
+			})
 	case "linkedin":
-		redirURL := &url.URL{
-			Scheme: "https",
-			Host:   "www.linkedin.com",
-			Path:   "oauth/v2/authorization",
-		}
-
-		constructURLQuery(redirURL, map[string]string{
-			"client_id":     config.LINKEDIN_CLIENT_ID,
-			"scope":         "r_basicprofile r_emailaddress",
-			"response_type": "code",
-			"redirect_uri":  redirect_uri,
-		})
-
-		return redirURL.String(), nil
+		return ConstructSafeURL("https", "www.linkedin.com", "oauth2/v2/authorization",
+			map[string]string{
+				"client_id":     config.LINKEDIN_CLIENT_ID,
+				"scope":         "r_basicprofile r_emailaddress",
+				"response_type": "code",
+				"redirect_uri":  redirect_uri,
+			})
 	default:
 		return "", errors.New("Invalid provider")
 	}
@@ -174,7 +163,7 @@ func GetLastName(oauth_token string, provider string) (string, error) {
 }
 
 /*
-	A function that takes a URL pointer and a map of query params->values, and modifies the URL's
+	A helper function that takes a URL pointer and a map of query params->values, and modifies the URL's
 	RawQuery property with the supplied query params.
 */
 func constructURLQuery(u *url.URL, params map[string]string) {
@@ -185,4 +174,37 @@ func constructURLQuery(u *url.URL, params map[string]string) {
 	}
 
 	u.RawQuery = q.Encode()
+}
+
+/*
+	This function takes in the ingredients to a URl and outputs a string of them all together.
+	It also checks for the apperance of "#" anywhere before the last query parameter, and returns an error if so.
+*/
+func ConstructSafeURL(scheme string, host string, path string, queryParams map[string]string) (string, error) {
+	url := url.URL{
+		Scheme: scheme,
+		Host:   host,
+		Path:   path,
+	}
+
+	// Do some param validation to ensure that the # character doesn't appear in any values except the last
+	// This is because # nullifies the rest of the URL
+
+	valid := true
+	counter := 0
+	for _, val := range queryParams {
+		counter++
+		if strings.Contains(val, "#") && counter != len(queryParams) {
+			valid = false
+			break
+		}
+	}
+
+	constructURLQuery(&url, queryParams)
+
+	if valid {
+		return url.String(), nil
+	}
+
+	return url.String(), errors.New("the `#` character cannot appear anywhere except at the last query parameter")
 }

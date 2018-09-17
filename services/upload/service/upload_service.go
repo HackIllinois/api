@@ -59,9 +59,10 @@ func UpdateUserResume(id string, file_buffer []byte) error {
 	}
 
 	_, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String(config.S3_BUCKET),
-		Key:    aws.String("resumes/" + id + ".pdf"),
-		Body:   bytes.NewReader(file_buffer),
+		Bucket: 	 aws.String(config.S3_BUCKET),
+		Key:    	 aws.String("resumes/" + id + ".pdf"),
+		Body:   	 bytes.  NewReader(file_buffer),
+		ContentType: &content_type,
 	})
 
 	return err

@@ -11,6 +11,7 @@ import (
 var UploadURL = config.UPLOAD_SERVICE
 
 const UploadFormat string = "JSON"
+const RawFormat string = "RAW"
 
 var UploadRoutes = arbor.RouteCollection{
 	arbor.Route{
@@ -38,7 +39,7 @@ func GetCurrentUploadInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateCurrentUploadInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.PUT(w, UploadURL+r.URL.String(), UploadFormat, "", r)
+	arbor.PUT(w, UploadURL+r.URL.String(), RawFormat, "", r)
 }
 
 func GetUploadInfo(w http.ResponseWriter, r *http.Request) {

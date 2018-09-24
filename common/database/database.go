@@ -35,7 +35,7 @@ type MongoDatabase struct {
 /*
 	Initialize connection to mongo database
 */
-func InitMongoDatabase(host string, db_name string) (MongoDatabase, error) {
+func Connect(host string, db_name string) (MongoDatabase, error) {
 	dial_info, err := mgo.ParseURL(host)
 
 	if err != nil {

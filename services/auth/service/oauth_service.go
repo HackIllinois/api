@@ -177,8 +177,8 @@ func constructURLQuery(u *url.URL, params map[string]string) {
 }
 
 /*
-	This function takes in the ingredients to a URl and outputs a string of them all together.
-	It also checks for the apperance of "#" anywhere before the last query parameter, and returns an error if so.
+	This function takes in the ingredients to a URL and outputs a string of them all together.
+	It also checks for the apperance of "#" anywhere in the query params and throws an error if it is there.
 */
 func ConstructSafeURL(scheme string, host string, path string, queryParams map[string]string) (string, error) {
 	url := url.URL{

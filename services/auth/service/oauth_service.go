@@ -188,18 +188,18 @@ func ConstructSafeURL(scheme string, host string, path string, queryParams map[s
 		Path:   path,
 	}
 
-    // Per the OAuth 2.0 RFC 6749, we need to disallow the `#` fragment character in the URL
+	// Per the OAuth 2.0 RFC 6749, we need to disallow the `#` fragment character in the URL
 	valid := true
-    if queryParams != nil {
-        for _, val := range queryParams {
-            if strings.Contains(val, "#") {
-                valid = false
-                break
-            }
-        }
+	if queryParams != nil {
+		for _, val := range queryParams {
+			if strings.Contains(val, "#") {
+				valid = false
+				break
+			}
+		}
 
-        constructURLQuery(&url, queryParams)
-    }
+		constructURLQuery(&url, queryParams)
+	}
 
 	if valid {
 		return url.String(), nil

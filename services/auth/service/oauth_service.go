@@ -178,7 +178,8 @@ func constructURLQuery(u *url.URL, params map[string]string) {
 
 /*
 	This function takes in the ingredients to a URL and outputs a string of them all together.
-	It also checks for the apperance of "#" anywhere in the query params and throws an error if it is there.
+	It also checks for the appearance of "#" anywhere in the query params and throws an error if it is there.
+    queryParams is an optional param. nil can be passed in if the url needs no query params.
 */
 func ConstructSafeURL(scheme string, host string, path string, queryParams map[string]string) (string, error) {
 	url := url.URL{
@@ -189,14 +190,16 @@ func ConstructSafeURL(scheme string, host string, path string, queryParams map[s
 
     // Per the OAuth 2.0 RFC 6749, we need to disallow the `#` fragment character in the URL
 	valid := true
-	for _, val := range queryParams {
-		if strings.Contains(val, "#") {
-			valid = false
-			break
-		}
-	}
+    if queryParams != nil {
+        for _, val := range queryParams {
+            if strings.Contains(val, "#") {
+                valid = false
+                break
+            }
+        }
 
-	constructURLQuery(&url, queryParams)
+        constructURLQuery(&url, queryParams)
+    }
 
 	if valid {
 		return url.String(), nil

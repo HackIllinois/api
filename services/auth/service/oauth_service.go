@@ -187,14 +187,10 @@ func ConstructSafeURL(scheme string, host string, path string, queryParams map[s
 		Path:   path,
 	}
 
-	// Do some param validation to ensure that the # character doesn't appear in any values except the last
-	// This is because # nullifies the rest of the URL
-
+    // Per the OAuth 2.0 RFC 6749, we need to disallow the `#` fragment character in the URL
 	valid := true
-	counter := 0
 	for _, val := range queryParams {
-		counter++
-		if strings.Contains(val, "#") && counter < len(queryParams) {
+		if strings.Contains(val, "#") {
 			valid = false
 			break
 		}
@@ -206,5 +202,5 @@ func ConstructSafeURL(scheme string, host string, path string, queryParams map[s
 		return url.String(), nil
 	}
 
-	return url.String(), errors.New("the `#` character cannot appear anywhere except at the last query parameter")
+	return url.String(), errors.New("`#` is an invalid character")
 }

@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+var HASHTAG_INVALID_ERR = errors.New("`#` is an invalid character")
+
 /*
 	Return the oauth authorization url for the given provider
 */
@@ -166,7 +168,7 @@ func GetLastName(oauth_token string, provider string) (string, error) {
 	A helper function that takes a URL pointer and a map of query params->values, and modifies the URL's
 	RawQuery property with the supplied query params.
 */
-func constructURLQuery(u *url.URL, params map[string]string) {
+func ConstructURLQuery(u *url.URL, params map[string]string) {
 	q := u.Query()
 
 	for param, value := range params {
@@ -198,12 +200,12 @@ func ConstructSafeURL(scheme string, host string, path string, queryParams map[s
 			}
 		}
 
-		constructURLQuery(&url, queryParams)
+		ConstructURLQuery(&url, queryParams)
 	}
 
 	if valid {
 		return url.String(), nil
 	}
 
-	return url.String(), errors.New("`#` is an invalid character")
+	return url.String(), HASHTAG_INVALID_ERR
 }

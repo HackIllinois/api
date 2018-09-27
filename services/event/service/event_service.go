@@ -46,7 +46,7 @@ func CanCheckInEvent(name string) (bool, error) {
 	startTime := event.StartTime
 	t := time.Now().Unix()
 
-	if int(math.Abs(startTime - t)) > startCheckInTime {
+	if int(math.Abs(float64(startTime - t))) > startCheckInTime {
 		return false, nil
 	}
 

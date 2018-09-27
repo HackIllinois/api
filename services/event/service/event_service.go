@@ -43,7 +43,7 @@ func CanCheckInEvent(name string) (bool, error) {
 		return false, err
 	}
 
-	startTime := time.Unix(event.StartTime, 0)
+	startTime := event.StartTime
 	t := time.Now().Unix()
 
 	if int(math.Abs(startTime - t)) > startCheckInTime {

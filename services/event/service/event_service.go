@@ -9,7 +9,11 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"time"
+	"math"
 )
+
+var startCheckInTime = 600 // Start check in 600 seconds before and go till 600 seconds after Event StartTime
 
 var validate *validator.Validate
 
@@ -27,6 +31,26 @@ func init() {
 	}
 
 	db = db_connection
+}
+
+/*
+	Returns true is |Current Time - Event StartTime| <= 600 (assuming check in begins 10 minutes prior to the event)
+*/
+func CanCheckInEvent(name string) (bool, error) {
+	event, err := GetEvent(name)
+
+	if err != nil {
+		return false, err
+	}
+
+	var startTime = event.StartTime
+	t := time.Now()
+
+	if math.Abs(startTime - int64(t)) > startCheckInTime {
+		return false, nil
+	}
+
+	return true, nil
 }
 
 /*
@@ -237,6 +261,7 @@ func IsUserAttendingEvent(event_name string, user_id string) (bool, error) {
 */
 func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 	is_attending, err := IsUserAttendingEvent(event_name, user_id)
+	event_started, err := CanCheckInEvent(event_name)
 
 	if err != nil {
 		return err
@@ -274,7 +299,7 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 
 	err = db.Update("usertrackers", user_selector, &user_modifier)
 
-	if err == mgo.ErrNotFound {
+	if err == mgo.ErrNotFound && event_started {
 		user_tracker := models.UserTracker{
 			UserID: user_id,
 			Events: []string{event_name},

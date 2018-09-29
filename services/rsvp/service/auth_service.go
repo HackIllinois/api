@@ -26,7 +26,7 @@ func AddAttendeeRole(id string) error {
 	var user_roles models.UserRoles
 	json.NewDecoder(resp.Body).Decode(&user_roles)
 
-	user_roles.Roles = append(user_roles.Roles, "Attendee")
+	user_roles.Roles = append(user_roles.Roles, models.Attendee)
 
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&user_roles)
@@ -71,7 +71,7 @@ func RemoveAttendeeRole(id string) error {
 	json.NewDecoder(resp.Body).Decode(&user_roles)
 
 	for index, role := range user_roles.Roles {
-		if role == "Attendee" {
+		if role == models.Attendee {
 			user_roles.Roles = append(user_roles.Roles[:index], user_roles.Roles[index+1:]...)
 		}
 	}

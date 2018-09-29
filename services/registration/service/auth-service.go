@@ -13,20 +13,20 @@ import (
 	Add applicant role to user with auth service
 */
 func AddApplicantRole(id string) error {
-	return AddRole(id, "Applicant")
+	return AddRole(id, models.Applicant)
 }
 
 /*
 	Add mentor role to user with auth service
 */
 func AddMentorRole(id string) error {
-	return AddRole(id, "Mentor")
+	return AddRole(id, models.Mentor)
 }
 
 /*
 	Add role to user with auth service
 */
-func AddRole(id string, role string) error {
+func AddRole(id string, role models.Role) error {
 	resp, err := http.Get(config.AUTH_SERVICE + "/auth/roles/" + id + "/")
 
 	if err != nil {

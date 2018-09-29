@@ -55,7 +55,7 @@ func CleanupTestDB(t *testing.T) {
 func TestGetRolesService(t *testing.T) {
 	SetupTestDB(t)
 
-	expected_roles := []models.Role{User}
+	expected_roles := []models.Role{models.User}
 	roles, err := service.GetUserRoles("testid", false)
 
 	if err != nil {
@@ -85,7 +85,7 @@ func TestGetRolesService(t *testing.T) {
 func TestPutRolesService(t *testing.T) {
 	SetupTestDB(t)
 
-	updated_roles := []models.Role{User, Admin}
+	updated_roles := []models.Role{models.User, models.Admin}
 	err := service.SetUserRoles("testid", updated_roles)
 
 	if err != nil {

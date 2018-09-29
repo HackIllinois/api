@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/ethan-lord/api/services/auth/config"
+	"github.com/ethan-lord/api/services/auth/models"
 	jwt "github.com/dgrijalva/jwt-go"
 	"time"
 )
@@ -9,7 +10,7 @@ import (
 /*
 	Generates a signed oauth token with the user's id, email, and roles embedded in the claims
 */
-func MakeToken(id string, email string, roles []string) (string, error) {
+func MakeToken(id string, email string, roles []models.Role) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"exp":   time.Now().Add(time.Hour * 72).Unix(),
 		"id":    id,

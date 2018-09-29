@@ -25,7 +25,7 @@ func init() {
 	If the user has no roles and create_user is true they will be assigned the role User
 	This generally occurs the first time the user logs into the service
 */
-func GetUserRoles(id string, create_user bool) ([]string, error) {
+func GetUserRoles(id string, create_user bool) ([]models.Role, error) {
 	query := bson.M{
 		"id": id,
 	}
@@ -37,7 +37,7 @@ func GetUserRoles(id string, create_user bool) ([]string, error) {
 		if err == mgo.ErrNotFound && create_user {
 			db.Insert("roles", &models.UserRoles{
 				ID:    id,
-				Roles: []models.Role{User},
+				Roles: []models.Role{models.User},
 			})
 
 			err := db.FindOne("roles", query, &roles)
@@ -56,7 +56,7 @@ func GetUserRoles(id string, create_user bool) ([]string, error) {
 /*
 	Sets the roles for the user with the specified id
 */
-func SetUserRoles(id string, roles []Role) error {
+func SetUserRoles(id string, roles []models.Role) error {
 	selector := bson.M{
 		"id": id,
 	}

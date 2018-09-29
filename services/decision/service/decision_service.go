@@ -3,9 +3,9 @@ package service
 import (
 	"errors"
 
-	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/decision/config"
-	"github.com/HackIllinois/api/services/decision/models"
+	"github.com/ethan-lord/api/common/database"
+	"github.com/ethan-lord/api/services/decision/config"
+	"github.com/ethan-lord/api/services/decision/models"
 	"gopkg.in/go-playground/validator.v9"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"

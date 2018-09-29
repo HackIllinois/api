@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/HackIllinois/api/common/middleware"
-	"github.com/HackIllinois/api/services/decision/config"
-	"github.com/HackIllinois/api/services/decision/controller"
+	"github.com/ethan-lord/api/common/middleware"
+	"github.com/ethan-lord/api/services/decision/config"
+	"github.com/ethan-lord/api/services/decision/controller"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"

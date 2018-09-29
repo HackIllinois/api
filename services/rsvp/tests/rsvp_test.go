@@ -1,10 +1,10 @@
 package tests
 
 import (
-	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/rsvp/config"
-	"github.com/HackIllinois/api/services/rsvp/models"
-	"github.com/HackIllinois/api/services/rsvp/service"
+	"github.com/ethan-lord/api/common/database"
+	"github.com/ethan-lord/api/services/rsvp/config"
+	"github.com/ethan-lord/api/services/rsvp/models"
+	"github.com/ethan-lord/api/services/rsvp/service"
 	"reflect"
 	"testing"
 )

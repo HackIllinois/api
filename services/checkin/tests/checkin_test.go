@@ -1,10 +1,10 @@
 package tests
 
 import (
-	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/checkin/config"
-	"github.com/HackIllinois/api/services/checkin/models"
-	"github.com/HackIllinois/api/services/checkin/service"
+	"github.com/ethan-lord/api/common/database"
+	"github.com/ethan-lord/api/services/checkin/config"
+	"github.com/ethan-lord/api/services/checkin/models"
+	"github.com/ethan-lord/api/services/checkin/service"
 	"net/url"
 	"reflect"
 	"testing"

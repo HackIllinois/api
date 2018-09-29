@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/HackIllinois/api/services/checkin/config"
+	"github.com/ethan-lord/api/services/checkin/config"
 )
 
 /*

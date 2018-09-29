@@ -10,7 +10,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
-	"math"
+	//"math"
 )
 
 var startCheckInTime = 600 // Start check in 600 seconds before and go till 600 seconds after Event StartTime
@@ -38,15 +38,13 @@ func init() {
 */
 func CanCheckInEvent(name string) (bool, error) {
 	event, err := GetEvent(name)
-
 	if err != nil {
 		return false, err
 	}
-
 	startTime := event.StartTime
 	t := time.Now().Unix()
 
-	if int(math.Abs(float64(startTime - t))) > startCheckInTime {
+	if int(t)  < (int(startTime) - startCheckInTime) {
 		return false, nil
 	}
 

@@ -27,7 +27,7 @@ func init() {
 func SetupTestDB(t *testing.T) {
 	err := db.Insert("roles", &models.UserRoles{
 		ID:    "testid",
-		Roles: []string{"User"},
+		Roles: []models.Role{models.User},
 	})
 
 	if err != nil {
@@ -55,7 +55,7 @@ func CleanupTestDB(t *testing.T) {
 func TestGetRolesService(t *testing.T) {
 	SetupTestDB(t)
 
-	expected_roles := []string{"User"}
+	expected_roles := []models.Role{User}
 	roles, err := service.GetUserRoles("testid", false)
 
 	if err != nil {
@@ -85,7 +85,7 @@ func TestGetRolesService(t *testing.T) {
 func TestPutRolesService(t *testing.T) {
 	SetupTestDB(t)
 
-	updated_roles := []string{"User", "Admin"}
+	updated_roles := []models.Role{User, Admin}
 	err := service.SetUserRoles("testid", updated_roles)
 
 	if err != nil {

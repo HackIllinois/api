@@ -37,7 +37,7 @@ func GetUserRoles(id string, create_user bool) ([]string, error) {
 		if err == mgo.ErrNotFound && create_user {
 			db.Insert("roles", &models.UserRoles{
 				ID:    id,
-				Roles: []string{"User"},
+				Roles: []models.Role{User},
 			})
 
 			err := db.FindOne("roles", query, &roles)
@@ -56,7 +56,7 @@ func GetUserRoles(id string, create_user bool) ([]string, error) {
 /*
 	Sets the roles for the user with the specified id
 */
-func SetUserRoles(id string, roles []string) error {
+func SetUserRoles(id string, roles []Role) error {
 	selector := bson.M{
 		"id": id,
 	}

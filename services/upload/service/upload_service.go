@@ -9,9 +9,10 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"net/http"
-	"time"
 	"io/ioutil"
+	"net/http"
+	"os"
+	"time"
 )
 
 var sess *session.Session
@@ -46,7 +47,7 @@ func GetUserResumeLink(id string) (*models.UserResume, error) {
 			return nil, err
 		}
 	} else {
-		signed_url = "/tmp/" + id + ".pdf"
+		signed_url = "/tmp/uploads" + id + ".pdf"
 	}
 
 	resume := models.UserResume{
@@ -67,16 +68,17 @@ func UpdateUserResume(id string, file_buffer []byte) error {
 		return errors.New("Resume upload must be a pdf")
 	}
 
-	var err error;
+	var err error
 	if config.IS_PRODUCTION {
 		_, err = uploader.Upload(&s3manager.UploadInput{
-			Bucket: aws.String(config.S3_BUCKET),
-			Key:    aws.String("resumes/" + id + ".pdf"),
-			Body:   bytes.NewReader(file_buffer),
+			Bucket:      aws.String(config.S3_BUCKET),
+			Key:         aws.String("resumes/" + id + ".pdf"),
+			Body:        bytes.NewReader(file_buffer),
 			ContentType: &content_type,
 		})
 	} else {
-		err = ioutil.WriteFile("/tmp/" + id + ".pdf", file_buffer, 0644)
+		os.Mkdir("/tmp/uploads", os.ModePerm)
+		err = ioutil.WriteFile("/tmp/uploads/"+id+".pdf", file_buffer, 0644)
 	}
 
 	return err

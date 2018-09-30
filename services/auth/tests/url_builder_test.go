@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+    "reflect"
 )
 
 const URL_SCHEME = "http"
@@ -21,7 +22,7 @@ var QUERY_PARAMS = map[string]string{
 	"graduating_year": "2021",
 }
 
-const EXPECTED_QUERY_STRING = "?graduating_year=2021&major=CS"
+var EXPECTED_QUERY_VALUES, _ = url.ParseQuery("?graduating_year=2021&major=CS")
 
 var QUERY_PARAMS_HASHTAG = map[string]string{
 	"major":      "CS",
@@ -29,7 +30,11 @@ var QUERY_PARAMS_HASHTAG = map[string]string{
 	"dead_param": "true",
 }
 
-const EXPECTED_QUERY_STRING_HASHTAG = "?major=CS&twitter=#hackillinois&dead_param=true"
+var SINGLE_PARAM = map[string]string {
+    "major": "CS",
+}
+
+const SINGLE_PARAM_QUERY_STRING = "?major=CS"
 
 /*
    Test that a simple URL with no query params can be generated
@@ -66,37 +71,45 @@ func TestConstructComplexURL(t *testing.T) {
    Test that building a simple query into a URL works.
 */
 func TestQueryStringBuilder(t *testing.T) {
-	url := url.URL{
+	generatedURL := url.URL{
 		Scheme: URL_SCHEME,
 		Host:   URL_HOST,
 		Path:   URL_PATH,
 	}
 
-	service.ConstructURLQuery(&url, QUERY_PARAMS)
+	service.ConstructURLQuery(&generatedURL, QUERY_PARAMS)
 
 	// If the query string separator is not in the URL, the test fails.
-	if !strings.Contains(url.String(), "?") {
-		t.Errorf("The `?` character was not present in a URL that has a query string")
+	if !strings.Contains(generatedURL.String(), "?") {
+		t.Error("The `?` character was not present in a URL that has a query string")
 	}
 
-	queryString := "?" + strings.Split(url.String(), "?")[1]
+	queryString := "?" + strings.Split(generatedURL.String(), "?")[1]
 
-	if queryString != EXPECTED_QUERY_STRING {
-		t.Errorf("Query string not correctly constructed. Expected \"%v\", got \"%v\"", EXPECTED_QUERY_STRING, queryString)
+    // We can't guarantee the order of the query string, so we reparse it to
+    // later check for equality.
+    reparsedQueryValues, err := url.ParseQuery(queryString)
+
+    if err != nil {
+		t.Fatal(err)
+    }
+
+	if !reflect.DeepEqual(reparsedQueryValues, EXPECTED_QUERY_VALUES) {
+		t.Error("Query string not correctly constructed.")
 	}
 }
 
 /*
-   Test that a URL with a scheme, host, path, and query params is correctly constructed.
+   Test that a URL with a scheme, host, path, and a query param is correctly constructed.
 */
 func TestConstructFullURL(t *testing.T) {
-	result, err := service.ConstructSafeURL(URL_SCHEME, URL_HOST, URL_PATH, QUERY_PARAMS)
+	result, err := service.ConstructSafeURL(URL_SCHEME, URL_HOST, URL_PATH, SINGLE_PARAM)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expectedURL := CONSTRUCTED_BASIC_URL + EXPECTED_QUERY_STRING
+	expectedURL := CONSTRUCTED_BASIC_URL + SINGLE_PARAM_QUERY_STRING
 	if result != expectedURL {
 		t.Errorf("URL not correctly constructed. Expected \"%v\", got \"%v\"", expectedURL, result)
 	}

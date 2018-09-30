@@ -194,12 +194,12 @@ func ConstructSafeURL(scheme string, host string, path string, queryParams map[s
 	if queryParams != nil {
 		for _, val := range queryParams {
 			if strings.Contains(val, "#") {
-                return url.String(), HASHTAG_INVALID_ERR
+				return url.String(), HASHTAG_INVALID_ERR
 			}
 		}
 
 		ConstructURLQuery(&url, queryParams)
 	}
 
-    return url.String(), nil
+	return url.String(), nil
 }

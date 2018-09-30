@@ -3,9 +3,9 @@ package tests
 import (
 	"github.com/HackIllinois/api/services/auth/service"
 	"net/url"
+	"reflect"
 	"strings"
 	"testing"
-    "reflect"
 )
 
 const URL_SCHEME = "http"
@@ -30,8 +30,8 @@ var QUERY_PARAMS_HASHTAG = map[string]string{
 	"dead_param": "true",
 }
 
-var SINGLE_PARAM = map[string]string {
-    "major": "CS",
+var SINGLE_PARAM = map[string]string{
+	"major": "CS",
 }
 
 const SINGLE_PARAM_QUERY_STRING = "?major=CS"
@@ -86,13 +86,13 @@ func TestQueryStringBuilder(t *testing.T) {
 
 	queryString := "?" + strings.Split(generatedURL.String(), "?")[1]
 
-    // We can't guarantee the order of the query string, so we reparse it to
-    // later check for equality.
-    reparsedQueryValues, err := url.ParseQuery(queryString)
+	// We can't guarantee the order of the query string, so we reparse it to
+	// later check for equality.
+	reparsedQueryValues, err := url.ParseQuery(queryString)
 
-    if err != nil {
+	if err != nil {
 		t.Fatal(err)
-    }
+	}
 
 	if !reflect.DeepEqual(reparsedQueryValues, EXPECTED_QUERY_VALUES) {
 		t.Error("Query string not correctly constructed.")

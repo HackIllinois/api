@@ -144,6 +144,14 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
+	//add a user to mail list
+	err = service.AddUserToMailList(id, updated_decision)
+
+	//panic error if user can't be added to mail list
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error))
+	}
+
 	json.NewEncoder(w).Encode(updated_registration)
 }
 
@@ -200,6 +208,14 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	//add a user to mail list
+	err = service.AddUserToMailList(id, updated_decision)
+
+	//panic error if user can't be added to mail list
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error))
 	}
 
 	json.NewEncoder(w).Encode(updated_registration)

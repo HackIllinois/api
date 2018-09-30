@@ -37,12 +37,12 @@ const EXPECTED_QUERY_STRING_HASHTAG = "?major=CS&twitter=#hackillinois&dead_para
 func TestConstructSimpleURL(t *testing.T) {
 	result, err := service.ConstructSafeURL(URL_SCHEME, URL_HOST, URL_PATH, nil)
 
-	if result != CONSTRUCTED_BASIC_URL {
-		t.Errorf("URL not correctly constructed. Expected \"%v\", got \"%v\"", CONSTRUCTED_BASIC_URL, result)
-	}
-
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if result != CONSTRUCTED_BASIC_URL {
+		t.Errorf("URL not correctly constructed. Expected \"%v\", got \"%v\"", CONSTRUCTED_BASIC_URL, result)
 	}
 }
 
@@ -53,12 +53,12 @@ func TestConstructSimpleURL(t *testing.T) {
 func TestConstructComplexURL(t *testing.T) {
 	result, err := service.ConstructSafeURL(DIFFERENT_SCHEME, HOST_WITH_PORT, URL_PATH, nil)
 
-	if result != CONSTRUCTED_COMPLEX_URL {
-		t.Errorf("URL not correctly constructed. Expected \"%v\", got \"%v\"", CONSTRUCTED_COMPLEX_URL, result)
-	}
-
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if result != CONSTRUCTED_COMPLEX_URL {
+		t.Errorf("URL not correctly constructed. Expected \"%v\", got \"%v\"", CONSTRUCTED_COMPLEX_URL, result)
 	}
 }
 
@@ -74,6 +74,11 @@ func TestQueryStringBuilder(t *testing.T) {
 
 	service.ConstructURLQuery(&url, QUERY_PARAMS)
 
+    // If the query string separator is not in the URL, the test fails.
+    if !strings.Contains(queryString, "?") {
+        t.Errorf("The `?` character was not present in a URL that has a query string")
+    }
+
 	queryString := "?" + strings.Split(url.String(), "?")[1]
 
 	if queryString != EXPECTED_QUERY_STRING {
@@ -87,13 +92,13 @@ func TestQueryStringBuilder(t *testing.T) {
 func TestConstructFullURL(t *testing.T) {
 	result, err := service.ConstructSafeURL(URL_SCHEME, URL_HOST, URL_PATH, QUERY_PARAMS)
 
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	expectedURL := CONSTRUCTED_BASIC_URL + EXPECTED_QUERY_STRING
 	if result != expectedURL {
 		t.Errorf("URL not correctly constructed. Expected \"%v\", got \"%v\"", expectedURL, result)
-	}
-
-	if err != nil {
-		t.Fatal(err)
 	}
 }
 

@@ -47,7 +47,7 @@ func GetUserResumeLink(id string) (*models.UserResume, error) {
 			return nil, err
 		}
 	} else {
-		signed_url = "/tmp/uploads" + id + ".pdf"
+		signed_url = "/tmp/uploads/" + id + ".pdf"
 	}
 
 	resume := models.UserResume{

@@ -75,7 +75,7 @@ func TestQueryStringBuilder(t *testing.T) {
 	service.ConstructURLQuery(&url, QUERY_PARAMS)
 
 	// If the query string separator is not in the URL, the test fails.
-	if !strings.Contains(queryString, "?") {
+	if !strings.Contains(url.String(), "?") {
 		t.Errorf("The `?` character was not present in a URL that has a query string")
 	}
 

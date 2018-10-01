@@ -26,7 +26,7 @@ func init() {
 	user_db = user_db_connection
 }
 
-func CreateAccount(id string, roles []string, username string, firstName string, lastName string, email string) error {
+func CreateAccount(id string, roles []models.Role, username string, firstName string, lastName string, email string) error {
 	err := PopulateAuthInfo(id, roles)
 
 	if err != nil {
@@ -38,7 +38,7 @@ func CreateAccount(id string, roles []string, username string, firstName string,
 	return err
 }
 
-func PopulateAuthInfo(id string, roles []string) error {
+func PopulateAuthInfo(id string, roles []models.Role) error {
 	user_roles := models.UserRoles{
 		ID:    id,
 		Roles: roles,

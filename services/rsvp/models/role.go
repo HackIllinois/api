@@ -1,11 +1,11 @@
 package models
 
-type Role int
+type Role string
 
 const (
-	User Role = iota
-	Applicant
-	Attendee
-	Mentor
-	Admin
+	User Role = "User"
+	Applicant Role = "Applicant"
+	Attendee Role = "Attendee"
+	Mentor Role = "Mentor"
+	Admin Role = "Admin"
 )

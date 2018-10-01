@@ -1,23 +1,24 @@
 package main
 
 import (
+	"github.com/ethan-lord/api/utilities/accountgen/models"
 	"flag"
 	"fmt"
 	"os"
 )
 
-type Roles []string
+type Roles []models.Role
 
 func (roles *Roles) String() string {
 	formatted_roles := ""
 	for _, role := range *roles {
-		formatted_roles = formatted_roles + role
+		formatted_roles = formatted_roles + string(role)
 	}
 	return formatted_roles
 }
 
 func (roles *Roles) Set(role string) error {
-	*roles = append(*roles, role)
+	*roles = append(*roles, models.Role(role))
 	return nil
 }
 
@@ -43,7 +44,7 @@ func main() {
 	flag.Parse()
 
 	if len(roles) == 0 {
-		roles = []string{"Admin", "User"}
+		roles = []models.Role{models.Admin, models.User}
 	}
 
 	err := CreateAccount(id, roles, username, firstName, lastName, email)

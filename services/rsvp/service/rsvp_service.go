@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
-	"github.com/ethan-lord/api/common/database"
-	"github.com/ethan-lord/api/services/rsvp/config"
-	"github.com/ethan-lord/api/services/rsvp/models"
+	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/services/rsvp/config"
+	"github.com/HackIllinois/api/services/rsvp/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

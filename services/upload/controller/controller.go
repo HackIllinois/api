@@ -2,8 +2,8 @@ package controller
 
 import (
 	"encoding/json"
-	"github.com/ethan-lord/api/common/errors"
-	"github.com/ethan-lord/api/services/upload/service"
+	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/services/upload/service"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"io/ioutil"

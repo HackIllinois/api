@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/ethan-lord/api/gateway/utils"
+	"github.com/HackIllinois/api/gateway/utils"
 	"github.com/justinas/alice"
 	"net/http"
 )

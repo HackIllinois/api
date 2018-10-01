@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ethan-lord/api/utilities/tokengen/models"
+	"github.com/HackIllinois/api/utilities/tokengen/models"
 	jwt "github.com/dgrijalva/jwt-go"
 )
 

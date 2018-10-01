@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/ethan-lord/api/common/middleware"
-	"github.com/ethan-lord/api/services/mail/config"
-	"github.com/ethan-lord/api/services/mail/controller"
+	"github.com/HackIllinois/api/common/middleware"
+	"github.com/HackIllinois/api/services/mail/config"
+	"github.com/HackIllinois/api/services/mail/controller"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/ethan-lord/api/common/database"
-	"github.com/ethan-lord/api/utilities/accountgen/models"
+	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/utilities/accountgen/models"
 	"gopkg.in/mgo.v2/bson"
 )
 

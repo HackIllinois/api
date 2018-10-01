@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/ethan-lord/api/gateway/config"
-	"github.com/ethan-lord/api/gateway/services"
+	"github.com/HackIllinois/api/gateway/config"
+	"github.com/HackIllinois/api/gateway/services"
 	"github.com/arbor-dev/arbor"
 )
 

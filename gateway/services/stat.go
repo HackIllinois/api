@@ -3,8 +3,8 @@ package services
 import (
 	"net/http"
 
-	"github.com/ethan-lord/api/gateway/config"
-	"github.com/ethan-lord/api/gateway/middleware"
+	"github.com/HackIllinois/api/gateway/config"
+	"github.com/HackIllinois/api/gateway/middleware"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
 )

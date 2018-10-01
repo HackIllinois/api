@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ethan-lord/api/utilities/accountgen/models"
+	"github.com/HackIllinois/api/utilities/accountgen/models"
 	"flag"
 	"fmt"
 	"os"

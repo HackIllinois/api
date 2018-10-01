@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/HackIllinois/api/utilities/tokengen/models"
 	"flag"
 	"fmt"
+	"github.com/HackIllinois/api/utilities/tokengen/models"
 	"os"
 )
 

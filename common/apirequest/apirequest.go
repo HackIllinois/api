@@ -11,6 +11,8 @@ const (
 	Timeout int64 = 10
 )
 
+var Identity = ""
+
 /*
 	Executes an API request and populates the data with the response
 */
@@ -73,9 +75,19 @@ func doRequest(method string, url string, payload *interface{}, data *interface{
 
 	req, err := http.NewRequest(method, url, body)
 
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("HackIllinois-Identity", Identity)
+
 	if err != nil {
 		return -1, err
 	}
 
 	return Do(req, data)
+}
+
+/*
+	Set the identity to place into HackIllinois-Identity when making requests
+*/
+func SetIdentity(identity string) {
+	Identity = identity
 }

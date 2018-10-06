@@ -86,3 +86,31 @@ Response format:
 	]
 }
 ```
+
+GET /user/qr/
+----------
+
+Get the string to be embedded in the current user's QR code. 
+The QR code string will contain information stored in the form of a URI.
+
+Response format:
+```
+{
+	"id": "github0000001",
+	"qrInfo": "hackillinois://user?userid=github0000001"
+}
+```
+
+GET /user/qr/{id}/
+----------
+
+Get the string to be embedded in the specified user's QR code. 
+The QR code string will contain information stored in the form of a URI.
+
+Response format:
+```
+{
+	"id": "github0000001",
+	"qrInfo": "hackillinois://user?userid=github0000001"
+}
+```

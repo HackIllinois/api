@@ -2,8 +2,6 @@ package service
 
 import (
 	"errors"
-	"net/url"
-	"strconv"
 
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/checkin/config"
@@ -71,39 +69,6 @@ func UpdateUserCheckin(id string, user_checkin models.UserCheckin) error {
 	err := db.Update("checkins", selector, &user_checkin)
 
 	return err
-}
-
-/*
-	Generates a QR string for a user with the provided ID, as a URI
-*/
-func GetQrInfo(id string) (string, error) {
-
-	// Retrieve all the info that needs to be embedded
-
-	checkin_status, err := GetUserCheckin(id)
-
-	if err != nil {
-		return "", err
-	}
-
-	// Construct the URI
-
-	uri, err := url.Parse("hackillinois://info")
-
-	if err != nil {
-		return "", err
-	}
-
-	// All the fields that will be embedded in the QR code URI
-	parameters := url.Values{
-		"userId":          []string{id},
-		"hasCheckedIn":    []string{strconv.FormatBool(checkin_status.HasCheckedIn)},
-		"hasPickedUpSwag": []string{strconv.FormatBool(checkin_status.HasPickedUpSwag)},
-	}
-
-	uri.RawQuery = parameters.Encode()
-
-	return uri.String(), nil
 }
 
 /*

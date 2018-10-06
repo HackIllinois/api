@@ -5,6 +5,7 @@ import (
 	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
 	"github.com/HackIllinois/api/services/user/service"
+	"net/url"
 	"reflect"
 	"testing"
 )
@@ -153,6 +154,41 @@ func TestGetFilteredUserInfoService(t *testing.T) {
 
 	if !reflect.DeepEqual(filtered_info, expected_info) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, filtered_info)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for generating QR code URI
+*/
+func TestGetQrInfo(t *testing.T) {
+	SetupTestDB(t)
+
+	actual_uri, err := service.GetQrInfo("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	parsed_uri, err := url.Parse(actual_uri)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	actual_query_params, err := url.ParseQuery(parsed_uri.RawQuery)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_query_params := url.Values{
+		"userId": []string{"testid"},
+	}
+
+	if !reflect.DeepEqual(expected_query_params, actual_query_params) {
+		t.Errorf("Wrong QR code URI. Expected %v, got %v", expected_query_params, actual_query_params)
 	}
 
 	CleanupTestDB(t)

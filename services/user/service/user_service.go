@@ -7,6 +7,7 @@ import (
 	"github.com/HackIllinois/api/services/user/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"net/url"
 	"strings"
 )
 
@@ -80,4 +81,27 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 	}
 
 	return &filtered_users, nil
+}
+
+/*
+	Generates a QR string for a user with the provided ID, as a URI
+*/
+func GetQrInfo(id string) (string, error) {
+
+	// Construct the URI
+
+	uri, err := url.Parse("hackillinois://user")
+
+	if err != nil {
+		return "", err
+	}
+
+	// All the fields that will be embedded in the QR code URI
+	parameters := url.Values{
+		"userId": []string{id},
+	}
+
+	uri.RawQuery = parameters.Encode()
+
+	return uri.String(), nil
 }

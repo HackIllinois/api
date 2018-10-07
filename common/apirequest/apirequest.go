@@ -29,7 +29,9 @@ func Do(req *http.Request, data *interface{}) (int, error) {
 
 	defer resp.Body.Close()
 
-	json.NewDecoder(resp.Body).Decode(data)
+	if data != nil {
+		json.NewDecoder(resp.Body).Decode(data)
+	}
 
 	return resp.StatusCode, nil
 }

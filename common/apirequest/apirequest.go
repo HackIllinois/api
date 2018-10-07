@@ -68,21 +68,25 @@ func Delete(url string, data interface{}) (int, error) {
 	Builds a request, executes it, and then decodes the response into data
 */
 func doRequest(method string, url string, payload interface{}, data interface{}) (int, error) {
-	var body *bytes.Buffer
+	var req *http.Request
+	var err error
 
 	if payload != nil {
-		body = &bytes.Buffer{}
-		json.NewEncoder(body).Encode(payload)
+		var body bytes.Buffer
+		json.NewEncoder(&body).Encode(payload)
+
+		req, err = http.NewRequest(method, url, &body)
+	} else {
+		req, err = http.NewRequest(method, url, nil)
 	}
-
-	req, err := http.NewRequest(method, url, body)
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("HackIllinois-Identity", Identity)
 
 	if err != nil {
 		return -1, err
 	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("HackIllinois-Identity", Identity)
+
 
 	return Do(req, data)
 }

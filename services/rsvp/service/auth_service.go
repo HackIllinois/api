@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/HackIllinois/api/services/rsvp/config"
 	"github.com/HackIllinois/api/services/rsvp/models"
+	"github.com/HackIllinois/api/common/apirequest"
 	"net/http"
 )
 
@@ -13,40 +14,29 @@ import (
 	Add Attendee role to user with auth service
 */
 func AddAttendeeRole(id string) error {
-	resp, err := http.Get(config.AUTH_SERVICE + "/auth/roles/" + id + "/")
+	var user_roles models.UserRoles
+	status, err := apirequest.Get(config.AUTH_SERVICE + "/auth/roles/" + id + "/", &user_roles)
 
 	if err != nil {
 		return err
 	}
 
-	if resp.StatusCode != http.StatusOK {
+	if status != http.StatusOK {
 		return errors.New("Auth service failed to update roles")
 	}
-
-	var user_roles models.UserRoles
-	json.NewDecoder(resp.Body).Decode(&user_roles)
 
 	user_roles.Roles = append(user_roles.Roles, "Attendee")
 
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&user_roles)
 
-	client := http.Client{}
-	req, err := http.NewRequest("PUT", config.AUTH_SERVICE+"/auth/roles/", &body)
+	status, err = apirequest.Put(config.AUTH_SERVICE + "/auth/roles/", &body, nil)
 
 	if err != nil {
 		return err
 	}
 
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err = client.Do(req)
-
-	if err != nil {
-		return err
-	}
-
-	if resp.StatusCode != http.StatusOK {
+	if status != http.StatusOK {
 		return errors.New("Auth service failed to update roles")
 	}
 
@@ -57,18 +47,16 @@ func AddAttendeeRole(id string) error {
 	Remove Attendee role from user with auth service
 */
 func RemoveAttendeeRole(id string) error {
-	resp, err := http.Get(config.AUTH_SERVICE + "/auth/roles/" + id + "/")
+	var user_roles models.UserRoles
+	status, err := apirequest.Get(config.AUTH_SERVICE + "/auth/roles/" + id + "/", &user_roles)
 
 	if err != nil {
 		return err
 	}
 
-	if resp.StatusCode != http.StatusOK {
+	if status != http.StatusOK {
 		return errors.New("Auth service failed to update roles")
 	}
-
-	var user_roles models.UserRoles
-	json.NewDecoder(resp.Body).Decode(&user_roles)
 
 	for index, role := range user_roles.Roles {
 		if role == "Attendee" {
@@ -79,22 +67,13 @@ func RemoveAttendeeRole(id string) error {
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&user_roles)
 
-	client := http.Client{}
-	req, err := http.NewRequest("PUT", config.AUTH_SERVICE+"/auth/roles/", &body)
+	status, err = apirequest.Put(config.AUTH_SERVICE + "/auth/roles/", &body, nil)
 
 	if err != nil {
 		return err
 	}
 
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err = client.Do(req)
-
-	if err != nil {
-		return err
-	}
-
-	if resp.StatusCode != http.StatusOK {
+	if status != http.StatusOK {
 		return errors.New("Auth service failed to update roles")
 	}
 

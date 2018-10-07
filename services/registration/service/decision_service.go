@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
+	"github.com/HackIllinois/api/common/apirequest"
 	"net/http"
 )
 
@@ -21,23 +22,13 @@ func AddInitialDecision(id string) error {
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&decision)
 
-	client := http.Client{}
-	req, err := http.NewRequest("POST", config.DECISION_SERVICE+"/decision/", &body)
+	status, err := apirequest.Post(config.DECISION_SERVICE + "/decision/", &body, nil)
 
 	if err != nil {
 		return err
 	}
 
-	req.Header.Set("HackIllinois-Identity", "registrationservice")
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := client.Do(req)
-
-	if err != nil {
-		return err
-	}
-
-	if resp.StatusCode != http.StatusOK {
+	if status != http.StatusOK {
 		return errors.New("Decision service failed to create decision")
 	}
 

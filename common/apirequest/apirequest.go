@@ -87,7 +87,6 @@ func doRequest(method string, url string, payload interface{}, data interface{})
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("HackIllinois-Identity", Identity)
 
-
 	return Do(req, data)
 }
 

@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/apirequest"
+	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/mail/config"
 	"github.com/HackIllinois/api/services/mail/models"
 	"gopkg.in/mgo.v2"
@@ -88,7 +88,7 @@ func SendMail(mail_info models.MailInfo) (*models.MailStatus, error) {
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&mail_info)
 
-	req, err := http.NewRequest("POST", config.SPARKPOST_API + "/transmissions/", &body)
+	req, err := http.NewRequest("POST", config.SPARKPOST_API+"/transmissions/", &body)
 
 	if err != nil {
 		return nil, err

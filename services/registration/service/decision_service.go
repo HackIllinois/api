@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
-	"github.com/HackIllinois/api/common/apirequest"
 	"net/http"
 )
 
@@ -22,7 +22,7 @@ func AddInitialDecision(id string) error {
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&decision)
 
-	status, err := apirequest.Post(config.DECISION_SERVICE + "/decision/", &body, nil)
+	status, err := apirequest.Post(config.DECISION_SERVICE+"/decision/", &body, nil)
 
 	if err != nil {
 		return err

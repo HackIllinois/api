@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/rsvp/config"
 	"github.com/HackIllinois/api/services/rsvp/models"
-	"github.com/HackIllinois/api/common/apirequest"
 )
 
 /*
@@ -21,7 +21,7 @@ func SendUserMail(id string, template string) error {
 	request_body := bytes.Buffer{}
 	json.NewEncoder(&request_body).Encode(&mail_order)
 
-	_, err := apirequest.Post(config.MAIL_SERVICE + "/mail/send/", &request_body, nil)
+	_, err := apirequest.Post(config.MAIL_SERVICE+"/mail/send/", &request_body, nil)
 
 	return err
 }

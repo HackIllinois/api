@@ -6,9 +6,9 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
-	"github.com/HackIllinois/api/common/apirequest"
 )
 
 /*
@@ -26,7 +26,7 @@ func SendUserInfo(id string, username string, first_name string, last_name strin
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&user_info)
 
-	status, err := apirequest.Post(config.USER_SERVICE + "/user/", &body, nil)
+	status, err := apirequest.Post(config.USER_SERVICE+"/user/", &body, nil)
 
 	if err != nil {
 		return err
@@ -44,7 +44,7 @@ func SendUserInfo(id string, username string, first_name string, last_name strin
 */
 func GetUserInfo(id string) (*models.UserInfo, error) {
 	var user_info models.UserInfo
-	status, err := apirequest.Get(config.USER_SERVICE + "/user/" + id + "/", &user_info)
+	status, err := apirequest.Get(config.USER_SERVICE+"/user/"+id+"/", &user_info)
 
 	if err != nil {
 		return nil, err

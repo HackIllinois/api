@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/rsvp/config"
 	"github.com/HackIllinois/api/services/rsvp/models"
-	"github.com/HackIllinois/api/common/apirequest"
 	"net/http"
 )
 
@@ -15,7 +15,7 @@ import (
 */
 func AddAttendeeRole(id string) error {
 	var user_roles models.UserRoles
-	status, err := apirequest.Get(config.AUTH_SERVICE + "/auth/roles/" + id + "/", &user_roles)
+	status, err := apirequest.Get(config.AUTH_SERVICE+"/auth/roles/"+id+"/", &user_roles)
 
 	if err != nil {
 		return err
@@ -30,7 +30,7 @@ func AddAttendeeRole(id string) error {
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&user_roles)
 
-	status, err = apirequest.Put(config.AUTH_SERVICE + "/auth/roles/", &body, nil)
+	status, err = apirequest.Put(config.AUTH_SERVICE+"/auth/roles/", &body, nil)
 
 	if err != nil {
 		return err
@@ -48,7 +48,7 @@ func AddAttendeeRole(id string) error {
 */
 func RemoveAttendeeRole(id string) error {
 	var user_roles models.UserRoles
-	status, err := apirequest.Get(config.AUTH_SERVICE + "/auth/roles/" + id + "/", &user_roles)
+	status, err := apirequest.Get(config.AUTH_SERVICE+"/auth/roles/"+id+"/", &user_roles)
 
 	if err != nil {
 		return err
@@ -67,7 +67,7 @@ func RemoveAttendeeRole(id string) error {
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&user_roles)
 
-	status, err = apirequest.Put(config.AUTH_SERVICE + "/auth/roles/", &body, nil)
+	status, err = apirequest.Put(config.AUTH_SERVICE+"/auth/roles/", &body, nil)
 
 	if err != nil {
 		return err

@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/checkin/config"
 	"github.com/HackIllinois/api/services/checkin/models"
-	"github.com/HackIllinois/api/common/apirequest"
 	"net/http"
 )
 
@@ -13,7 +13,7 @@ import (
 */
 func IsAttendeeRsvped(id string) (bool, error) {
 	var rsvp models.UserRsvp
-	status, err := apirequest.Get(config.RSVP_SERVICE + "/rsvp/" + id + "/", &rsvp)
+	status, err := apirequest.Get(config.RSVP_SERVICE+"/rsvp/"+id+"/", &rsvp)
 
 	if err != nil {
 		return false, err

@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/mail/config"
 	"github.com/HackIllinois/api/services/mail/models"
-	"github.com/HackIllinois/api/common/apirequest"
 	"net/http"
 )
 
@@ -13,7 +13,7 @@ import (
 */
 func GetUserInfo(id string) (*models.UserInfo, error) {
 	var user_info models.UserInfo
-	status, err := apirequest.Get(config.USER_SERVICE + "/user/" + id + "/", &user_info)
+	status, err := apirequest.Get(config.USER_SERVICE+"/user/"+id+"/", &user_info)
 
 	if err != nil {
 		return nil, err

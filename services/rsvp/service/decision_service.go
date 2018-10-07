@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/rsvp/config"
 	"github.com/HackIllinois/api/services/rsvp/models"
-	"github.com/HackIllinois/api/common/apirequest"
 	"net/http"
 )
 
@@ -13,7 +13,7 @@ import (
 */
 func IsApplicantAccepted(id string) (bool, error) {
 	var decision models.UserDecision
-	status, err := apirequest.Get(config.DECISION_SERVICE + "/decision/" + id + "/", &decision)
+	status, err := apirequest.Get(config.DECISION_SERVICE+"/decision/"+id+"/", &decision)
 
 	if err != nil {
 		return false, err

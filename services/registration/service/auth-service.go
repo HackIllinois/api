@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
-	"github.com/HackIllinois/api/common/apirequest"
 	"net/http"
 )
 
@@ -29,7 +29,7 @@ func AddMentorRole(id string) error {
 */
 func AddRole(id string, role string) error {
 	var user_roles models.UserRoles
-	status, err := apirequest.Get(config.AUTH_SERVICE + "/auth/roles/" + id + "/", &user_roles)
+	status, err := apirequest.Get(config.AUTH_SERVICE+"/auth/roles/"+id+"/", &user_roles)
 
 	if err != nil {
 		return err
@@ -44,7 +44,7 @@ func AddRole(id string, role string) error {
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&user_roles)
 
-	status, err = apirequest.Put(config.AUTH_SERVICE + "/auth/roles/", &body, nil)
+	status, err = apirequest.Put(config.AUTH_SERVICE+"/auth/roles/", &body, nil)
 
 	if err != nil {
 		return err

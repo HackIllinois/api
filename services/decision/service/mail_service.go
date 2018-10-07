@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/decision/config"
 	"github.com/HackIllinois/api/services/decision/models"
-	"github.com/HackIllinois/api/common/apirequest"
 )
 
 /*
@@ -38,7 +38,7 @@ func AddUserToMailList(id string, decision *models.DecisionHistory) error {
 	request_body := bytes.Buffer{}
 	json.NewEncoder(&request_body).Encode(&mail_list)
 
-	status, err_update := apirequest.Post(config.MAIL_SERVICE + "/mail/list/add/", &request_body, nil)
+	status, err_update := apirequest.Post(config.MAIL_SERVICE+"/mail/list/add/", &request_body, nil)
 
 	if err_update == nil && status != http.StatusOK {
 		// The mail list with given id does not exist.
@@ -47,7 +47,7 @@ func AddUserToMailList(id string, decision *models.DecisionHistory) error {
 		// Since the buffer gets consumed after the preceding POST request
 		json.NewEncoder(&request_body).Encode(&mail_list)
 
-		status, err_create := apirequest.Post(config.MAIL_SERVICE + "/mail/list/create/", &request_body, nil)
+		status, err_create := apirequest.Post(config.MAIL_SERVICE+"/mail/list/create/", &request_body, nil)
 
 		if err_create == nil && status != http.StatusOK {
 

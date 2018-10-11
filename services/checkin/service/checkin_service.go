@@ -132,3 +132,21 @@ func CanUserCheckin(id string, user_has_override bool) (bool, error) {
 
 	return is_user_rsvped, nil
 }
+
+/*
+	Returns the checkin associated with the given user id
+*/
+func GetAllCheckedInUsers() (*[]string, error) {
+	query := bson.M{
+		"hasCheckedIn": true,
+	}
+
+	var checked_in_users []string
+	err := db.FindAll("checkins", query, &checked_in_users)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &checked_in_users, nil
+}

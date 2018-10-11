@@ -32,6 +32,12 @@ var CheckinRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(UpdateCurrentCheckinInfo).ServeHTTP,
 	},
 	arbor.Route{
+		"GetAllCheckedInUsers",
+		"GET",
+		"/checkin/list/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetAllCheckedInUsers).ServeHTTP,
+	},
+	arbor.Route{
 		"GetCurrentQrCodeInfo",
 		"GET",
 		"/checkin/qr/",
@@ -72,5 +78,9 @@ func GetCurrentQrCodeInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, CheckinURL+r.URL.String(), CheckinFormat, "", r)
+}
+
+func GetAllCheckedInUsers(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, CheckinURL+r.URL.String(), CheckinFormat, "", r)
 }

@@ -17,7 +17,7 @@ import (
 
 // Unix file permissions - R/W for owner, R for group, R for other
 // (corresponds to umask of 022)
-const FILE_PERMISSIONS_RW = 0644;
+const FILE_PERMISSIONS_RW = 0644
 
 var sess *session.Session
 var uploader *s3manager.Uploader
@@ -82,7 +82,7 @@ func UpdateUserResume(id string, file_buffer []byte) error {
 		})
 	} else {
 		os.Mkdir("/tmp/uploads", os.ModePerm)
-		err = ioutil.WriteFile("/tmp/uploads/" + id + ".pdf", file_buffer, FILE_PERMISSIONS_RW)
+		err = ioutil.WriteFile("/tmp/uploads/"+id+".pdf", file_buffer, FILE_PERMISSIONS_RW)
 	}
 
 	return err

@@ -52,7 +52,7 @@ Response format:
 GET /mail/list/
 ---------------------
 
-Returns a list of all events.
+Returns a list of all created mailing lists.
 
 Response format:
 ```

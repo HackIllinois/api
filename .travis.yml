@@ -6,6 +6,7 @@ services:
 install:
     - go get -t ./...
 script:
+    - cd $GOPATH/src/github.com/arbor-dev/arbor && git fetch origin dev/v0.3 && git checkout dev/v0.3 && cd -
     - "[ $(gofmt -l . | wc -l) == 0 ]"
     - make all
     - make test

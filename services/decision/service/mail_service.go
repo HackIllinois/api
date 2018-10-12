@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/decision/config"
 	"github.com/HackIllinois/api/services/decision/models"
 )
@@ -37,24 +38,18 @@ func AddUserToMailList(id string, decision *models.DecisionHistory) error {
 	request_body := bytes.Buffer{}
 	json.NewEncoder(&request_body).Encode(&mail_list)
 
-	// URL to update the MailList with new IDs
-	api_mail_update_url := fmt.Sprintf("%s/mail/list/add/", config.MAIL_SERVICE)
+	status, err_update := apirequest.Post(config.MAIL_SERVICE+"/mail/list/add/", &request_body, nil)
 
-	content_type := "application/json"
-
-	resp, err_update := http.Post(api_mail_update_url, content_type, &request_body)
-
-	if err_update == nil && resp.StatusCode != http.StatusOK {
+	if err_update == nil && status != http.StatusOK {
 		// The mail list with given id does not exist.
 		// A new one will be created with the current user in it.
-		api_mail_create_url := fmt.Sprintf("%s/mail/list/create/", config.MAIL_SERVICE)
 
 		// Since the buffer gets consumed after the preceding POST request
 		json.NewEncoder(&request_body).Encode(&mail_list)
 
-		resp, err_create := http.Post(api_mail_create_url, content_type, &request_body)
+		status, err_create := apirequest.Post(config.MAIL_SERVICE+"/mail/list/create/", &request_body, nil)
 
-		if err_create == nil && resp.StatusCode != http.StatusOK {
+		if err_create == nil && status != http.StatusOK {
 
 			return errors.New(fmt.Sprintf("Failed to create new MailList with id %s.", mail_list_name))
 

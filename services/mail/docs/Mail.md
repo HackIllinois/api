@@ -49,6 +49,32 @@ Response format:
 }
 ```
 
+GET /mail/list/
+---------------------
+
+Returns a list of all created mailing lists.
+
+Response format:
+```
+{
+	"mailLists": [
+		{
+			"id": "test",
+			"userIds": [
+				"testuser1"
+			]
+		},
+		{
+			"id": "test2",
+			"userIds": [
+				"testuser2",
+				"testuser3"
+			]
+		}
+	]
+}
+```
+
 POST /mail/list/create/
 ------------------
 

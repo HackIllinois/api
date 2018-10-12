@@ -26,6 +26,12 @@ var MailRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(SendMailList).ServeHTTP,
 	},
 	arbor.Route{
+		"GetAllMailLists",
+		"GET",
+		"/mail/list/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetAllMailLists).ServeHTTP,
+	},
+	arbor.Route{
 		"CreateMailList",
 		"POST",
 		"/mail/list/create/",
@@ -72,5 +78,9 @@ func RemoveFromMailList(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetMailList(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, MailURL+r.URL.String(), MailFormat, "", r)
+}
+
+func GetAllMailLists(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, MailURL+r.URL.String(), MailFormat, "", r)
 }

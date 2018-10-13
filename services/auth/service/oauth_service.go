@@ -2,10 +2,12 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"github.com/HackIllinois/api/services/auth/config"
+	"net/url"
 	"strings"
 )
+
+var HASHTAG_INVALID_ERR = errors.New("`#` is an invalid character")
 
 /*
 	Return the oauth authorization url for the given provider
@@ -13,12 +15,27 @@ import (
 func GetAuthorizeRedirect(provider string, redirect_uri string) (string, error) {
 	switch provider {
 	case "github":
-		return "https://github.com/login/oauth/authorize?client_id=" + config.GITHUB_CLIENT_ID + "&redirect_uri=" + redirect_uri, nil
+		return ConstructSafeURL("https", "github.com", "login/oauth/authorize",
+			map[string]string{
+				"client_id":    config.GITHUB_CLIENT_ID,
+				"redirect_uri": redirect_uri,
+			})
 	case "google":
-		return "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + config.GOOGLE_CLIENT_ID + "&redirect_uri=" + redirect_uri + "&scope=profile%20email&response_type=code", nil
+		return ConstructSafeURL("https", "accounts.google.com", "o/oauth2/v2/auth",
+			map[string]string{
+				"client_id":     config.GOOGLE_CLIENT_ID,
+				"scope":         "profile email",
+				"response_type": "code",
+				"redirect_uri":  redirect_uri,
+			})
 	case "linkedin":
-		return fmt.Sprintf("https://www.linkedin.com/oauth/v2/authorization?response_type=%v&client_id=%v&redirect_uri=%v&scope=%v",
-			"code", config.LINKEDIN_CLIENT_ID, redirect_uri, "r_basicprofile%20r_emailaddress"), nil
+		return ConstructSafeURL("https", "www.linkedin.com", "oauth2/v2/authorization",
+			map[string]string{
+				"client_id":     config.LINKEDIN_CLIENT_ID,
+				"scope":         "r_basicprofile r_emailaddress",
+				"response_type": "code",
+				"redirect_uri":  redirect_uri,
+			})
 	default:
 		return "", errors.New("Invalid provider")
 	}
@@ -145,4 +162,44 @@ func GetLastName(oauth_token string, provider string) (string, error) {
 	default:
 		return "", errors.New("Invalid provider")
 	}
+}
+
+/*
+	A helper function that takes a URL pointer and a map of query params->values, and modifies the URL's
+	RawQuery property with the supplied query params.
+*/
+func ConstructURLQuery(u *url.URL, params map[string]string) {
+	q := u.Query()
+
+	for param, value := range params {
+		q.Set(param, value)
+	}
+
+	u.RawQuery = q.Encode()
+}
+
+/*
+	This function takes in the ingredients to a URL and outputs a string of them all together.
+	It also checks for the appearance of "#" anywhere in the query params and throws an error if it is there.
+    queryParams is an optional param. nil can be passed in if the url needs no query params.
+*/
+func ConstructSafeURL(scheme string, host string, path string, queryParams map[string]string) (string, error) {
+	url := url.URL{
+		Scheme: scheme,
+		Host:   host,
+		Path:   path,
+	}
+
+	// Per the OAuth 2.0 RFC 6749, we need to disallow the `#` fragment character in the URL
+	if queryParams != nil {
+		for _, val := range queryParams {
+			if strings.Contains(val, "#") {
+				return url.String(), HASHTAG_INVALID_ERR
+			}
+		}
+
+		ConstructURLQuery(&url, queryParams)
+	}
+
+	return url.String(), nil
 }

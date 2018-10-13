@@ -70,6 +70,10 @@ func DeleteEvent(name string) (*models.Event, error) {
 
 	err = db.RemoveOne("events", query)
 
+	if err != nil {
+		return nil, err
+	}
+
 	// Remove from event trackers database
 
 	event_selector := bson.M{

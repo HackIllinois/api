@@ -1,4 +1,5 @@
 # HackIllinois API
+[![Build Status](https://travis-ci.com/HackIllinois/api.svg?branch=master)](https://travis-ci.com/HackIllinois/api)
 [![Go Report Card](https://goreportcard.com/badge/github.com/HackIllinois/api)](https://goreportcard.com/report/github.com/HackIllinois/api)
 
 This repository contains the code which runs the backend services supporting HackIllinois.

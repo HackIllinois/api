@@ -51,10 +51,6 @@ var UserRoutes = arbor.RouteCollection{
 	},
 }
 
-func GetCurrentUserInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, UserURL+r.URL.String(), UserFormat, "", r)
-}
-
 func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, UserURL+r.URL.String(), UserFormat, "", r)
 }

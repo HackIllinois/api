@@ -1,4 +1,6 @@
 # HackIllinois API
+[![Build Status](https://travis-ci.com/HackIllinois/api.svg?branch=master)](https://travis-ci.com/HackIllinois/api)
+
 This repository contains the code which runs the backend services supporting HackIllinois.
 
 1. [Developer Environment Setup](#developer-environment-setup)

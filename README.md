@@ -1,4 +1,6 @@
 # HackIllinois API
+[![Go Report Card](https://goreportcard.com/badge/github.com/HackIllinois/api)](https://goreportcard.com/report/github.com/HackIllinois/api)
+
 This repository contains the code which runs the backend services supporting HackIllinois.
 
 1. [Developer Environment Setup](#developer-environment-setup)

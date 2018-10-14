@@ -39,7 +39,7 @@ func InitMongoDatabase(host string, db_name string) (MongoDatabase, error) {
 	dial_info, err := mgo.ParseURL(host)
 
 	if err != nil {
-		return MongoDatabase{}, err
+		return MongoDatabase{}, ErrConnection
 	}
 
 	if config.IS_PRODUCTION {
@@ -53,12 +53,16 @@ func InitMongoDatabase(host string, db_name string) (MongoDatabase, error) {
 
 	session, err := mgo.DialWithInfo(dial_info)
 
+	if err != nil {
+		return MongoDatabase{}, ErrConnection
+	}
+
 	db := MongoDatabase{
 		global_session: session,
 		name:           db_name,
 	}
 
-	return db, err
+	return db, nil
 }
 
 /*
@@ -79,7 +83,7 @@ func (db MongoDatabase) FindOne(collection_name string, query interface{}, resul
 
 	err := collection.Find(query).One(result)
 
-	return err
+	return convertMgoError(err)
 }
 
 /*
@@ -93,7 +97,7 @@ func (db MongoDatabase) FindAll(collection_name string, query interface{}, resul
 
 	err := collection.Find(query).All(result)
 
-	return err
+	return convertMgoError(err)
 }
 
 /*
@@ -107,7 +111,7 @@ func (db MongoDatabase) RemoveOne(collection_name string, query interface{}) err
 
 	err := collection.Remove(query)
 
-	return err
+	return convertMgoError(err)
 }
 
 /*
@@ -121,7 +125,7 @@ func (db MongoDatabase) RemoveAll(collection_name string, query interface{}) (*m
 
 	change_info, err := collection.RemoveAll(query)
 
-	return change_info, err
+	return change_info, convertMgoError(err)
 }
 
 /*
@@ -135,7 +139,7 @@ func (db MongoDatabase) Insert(collection_name string, item interface{}) error {
 
 	err := collection.Insert(item)
 
-	return err
+	return convertMgoError(err)
 }
 
 /*
@@ -150,7 +154,7 @@ func (db MongoDatabase) Upsert(collection_name string, selector interface{}, upd
 
 	change_info, err := collection.Upsert(selector, update)
 
-	return change_info, err
+	return change_info, convertMgoError(err)
 }
 
 /*
@@ -164,7 +168,7 @@ func (db MongoDatabase) Update(collection_name string, selector interface{}, upd
 
 	err := collection.Update(selector, update)
 
-	return err
+	return convertMgoError(err)
 }
 
 /*
@@ -178,5 +182,5 @@ func (db MongoDatabase) UpdateAll(collection_name string, selector interface{}, 
 
 	change_info, err := collection.UpdateAll(selector, update)
 
-	return change_info, err
+	return change_info, convertMgoError(err)
 }

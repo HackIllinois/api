@@ -1,0 +1,29 @@
+site_name: HackIllinois API Documentation
+summary: Documentation for API created to support HackIllinois, a premier inter-collegiate hackathon.
+
+nav:
+- Home: 'index.md'
+- About:
+    - 'License': 'about/License.md'
+- Getting Started:
+    - 'Developer Guide': 'getting-started/developer-guide.md'
+- Reference: 
+    - Introduction: "reference/Introduction.md"
+    - Services:
+      - 'Authorization': 'reference/services/Authorization.md'
+      - 'Check-In': 'reference/services/Check-In.md'
+      - 'Decision': 'reference/services/Decision.md'
+      - 'Event': 'reference/services/Event.md'
+      - 'Mail': 'reference/services/Mail.md'
+      - 'RSVP': 'reference/services/RSVP.md'
+      - 'Registration': 'reference/services/Registration.md'
+      - 'Statistics': 'reference/services/Statistics.md'
+      - 'Upload': 'reference/services/Upload.md'
+      - 'User': 'reference/services/User.md'
+    - Gateway:
+      - 'Middleware': 'reference/gateway/middleware.md'
+      - 'Routes': 'reference/gateway/routes.md'
+  
+
+theme:
+  name: 'material'

@@ -73,14 +73,14 @@ func InitMongoDatabase(host string, db_name string) (MongoDatabase, error) {
 /*
 	Returns a copy of the global session for use by a connection
 */
-func (db MongoDatabase) GetSession() *mgo.Session {
+func (db *MongoDatabase) GetSession() *mgo.Session {
 	return db.global_session.Copy()
 }
 
 /*
 	Find one element matching the given query parameters
 */
-func (db MongoDatabase) FindOne(collection_name string, query interface{}, result interface{}) error {
+func (db *MongoDatabase) FindOne(collection_name string, query interface{}, result interface{}) error {
 	current_session := db.GetSession()
 	defer current_session.Close()
 
@@ -94,7 +94,7 @@ func (db MongoDatabase) FindOne(collection_name string, query interface{}, resul
 /*
 	Find all elements matching the given query parameters
 */
-func (db MongoDatabase) FindAll(collection_name string, query interface{}, result interface{}) error {
+func (db *MongoDatabase) FindAll(collection_name string, query interface{}, result interface{}) error {
 	current_session := db.GetSession()
 	defer current_session.Close()
 
@@ -108,7 +108,7 @@ func (db MongoDatabase) FindAll(collection_name string, query interface{}, resul
 /*
 	Remove one element matching the given query parameters
 */
-func (db MongoDatabase) RemoveOne(collection_name string, query interface{}) error {
+func (db *MongoDatabase) RemoveOne(collection_name string, query interface{}) error {
 	current_session := db.GetSession()
 	defer current_session.Close()
 
@@ -122,7 +122,7 @@ func (db MongoDatabase) RemoveOne(collection_name string, query interface{}) err
 /*
 	Remove all elements matching the given query parameters
 */
-func (db MongoDatabase) RemoveAll(collection_name string, query interface{}) (*mgo.ChangeInfo, error) {
+func (db *MongoDatabase) RemoveAll(collection_name string, query interface{}) (*mgo.ChangeInfo, error) {
 	current_session := db.GetSession()
 	defer current_session.Close()
 
@@ -136,7 +136,7 @@ func (db MongoDatabase) RemoveAll(collection_name string, query interface{}) (*m
 /*
 	Insert the given item into the collection
 */
-func (db MongoDatabase) Insert(collection_name string, item interface{}) error {
+func (db *MongoDatabase) Insert(collection_name string, item interface{}) error {
 	current_session := db.GetSession()
 	defer current_session.Close()
 
@@ -151,7 +151,7 @@ func (db MongoDatabase) Insert(collection_name string, item interface{}) error {
 	Upsert the given item into the collection i.e.,
 	if the item exists, it is updated with the given values, else a new item with those values is created.
 */
-func (db MongoDatabase) Upsert(collection_name string, selector interface{}, update interface{}) (*mgo.ChangeInfo, error) {
+func (db *MongoDatabase) Upsert(collection_name string, selector interface{}, update interface{}) (*mgo.ChangeInfo, error) {
 	current_session := db.GetSession()
 	defer current_session.Close()
 
@@ -165,7 +165,7 @@ func (db MongoDatabase) Upsert(collection_name string, selector interface{}, upd
 /*
 	Finds an item based on the given selector and updates it with the data in update
 */
-func (db MongoDatabase) Update(collection_name string, selector interface{}, update interface{}) error {
+func (db *MongoDatabase) Update(collection_name string, selector interface{}, update interface{}) error {
 	current_session := db.GetSession()
 	defer current_session.Close()
 
@@ -179,7 +179,7 @@ func (db MongoDatabase) Update(collection_name string, selector interface{}, upd
 /*
 	Finds all items based on the given selector and updates them with the data in update
 */
-func (db MongoDatabase) UpdateAll(collection_name string, selector interface{}, update interface{}) (*mgo.ChangeInfo, error) {
+func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{}, update interface{}) (*mgo.ChangeInfo, error) {
 	current_session := db.GetSession()
 	defer current_session.Close()
 

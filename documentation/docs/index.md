@@ -6,6 +6,6 @@
 
 Welcome to the HackIllinois API documentation.
 
-If you would like to contribute, please see the [Getting Started](getting-started/developer-guide) guide.
+If you would like to contribute, please see the [Getting Started](getting-started/developer-guide.md) guide.
 
-For our endpoints, please visit our [technical reference](services/introduction.md).
+For our endpoints, please visit our [technical reference](reference/introduction.md).

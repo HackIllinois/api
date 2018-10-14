@@ -1,5 +1,9 @@
 site_name: HackIllinois API Documentation
-summary: Documentation for API created to support HackIllinois, a premier inter-collegiate hackathon.
+site_author: HackIllinois Systems Staff
+
+repo_url: https://github.com/HackIllinois/api/
+# repo_name: GitHub
+
 
 nav:
 - Home: 'index.md'
@@ -8,7 +12,7 @@ nav:
 - Getting Started:
     - 'Developer Guide': 'getting-started/developer-guide.md'
 - Reference: 
-    - Introduction: "reference/Introduction.md"
+    - Introduction: "reference/introduction.md"
     - Services:
       - 'Authorization': 'reference/services/Authorization.md'
       - 'Check-In': 'reference/services/Check-In.md'

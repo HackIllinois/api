@@ -7,7 +7,6 @@ import (
 	"github.com/HackIllinois/api/services/decision/config"
 	"github.com/HackIllinois/api/services/decision/models"
 	"gopkg.in/go-playground/validator.v9"
-	"gopkg.in/mgo.v2/bson"
 
 	"strconv"
 	"strings"
@@ -35,7 +34,7 @@ func init() {
 	Returns the decision associated with the given user id
 */
 func GetDecision(id string) (*models.DecisionHistory, error) {
-	query := bson.M{"id": id}
+	query := database.QuerySelector{"id": id}
 
 	var decision models.DecisionHistory
 	err := db.FindOne("decision", query, &decision)
@@ -83,7 +82,7 @@ func UpdateDecision(id string, decision models.Decision) error {
 	decision_history.Reviewer = decision.Reviewer
 	decision_history.Timestamp = decision.Timestamp
 
-	selector := bson.M{"id": id}
+	selector := database.QuerySelector{"id": id}
 
 	err = db.Update("decision", selector, &decision_history)
 
@@ -148,7 +147,7 @@ func GetFilteredDecisions(parameters map[string][]string) (*models.FilteredDecis
 				return nil, err
 			}
 		}
-		query[key] = bson.M{"$in": correctly_typed_value_list}
+		query[key] = database.QuerySelector{"$in": correctly_typed_value_list}
 	}
 
 	var filtered_decisions models.FilteredDecisions

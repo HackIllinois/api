@@ -7,7 +7,6 @@ import (
 	"github.com/HackIllinois/api/services/event/config"
 	"github.com/HackIllinois/api/services/event/models"
 	"gopkg.in/go-playground/validator.v9"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var validate *validator.Validate
@@ -32,7 +31,7 @@ func init() {
 	Returns the event with the given name
 */
 func GetEvent(name string) (*models.Event, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"name": name,
 	}
 
@@ -61,7 +60,7 @@ func DeleteEvent(name string) (*models.Event, error) {
 		return nil, err
 	}
 
-	query := bson.M{
+	query := database.QuerySelector{
 		"name": name,
 	}
 
@@ -71,7 +70,7 @@ func DeleteEvent(name string) (*models.Event, error) {
 
 	// Remove from event trackers database
 
-	event_selector := bson.M{
+	event_selector := database.QuerySelector{
 		"eventname": name,
 	}
 
@@ -84,8 +83,8 @@ func DeleteEvent(name string) (*models.Event, error) {
 	// Find all elements, and remove `name` from the Events slice
 	// All the updates are individually atomic
 
-	update_expression := bson.M{
-		"$pull": bson.M{
+	update_expression := database.QuerySelector{
+		"$pull": database.QuerySelector{
 			"events": name,
 		},
 	}
@@ -159,7 +158,7 @@ func UpdateEvent(name string, event models.Event) error {
 		return err
 	}
 
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"name": name,
 	}
 
@@ -172,7 +171,7 @@ func UpdateEvent(name string, event models.Event) error {
 	Returns the event tracker for the specified event
 */
 func GetEventTracker(event_name string) (*models.EventTracker, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"eventname": event_name,
 	}
 
@@ -190,7 +189,7 @@ func GetEventTracker(event_name string) (*models.EventTracker, error) {
 	Returns the user tracker for the specified user
 */
 func GetUserTracker(user_id string) (*models.UserTracker, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"userid": user_id,
 	}
 
@@ -245,12 +244,12 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 		return errors.New("User has already been marked as attending")
 	}
 
-	event_selector := bson.M{
+	event_selector := database.QuerySelector{
 		"eventname": event_name,
 	}
 
-	event_modifier := bson.M{
-		"$addToSet": bson.M{
+	event_modifier := database.QuerySelector{
+		"$addToSet": database.QuerySelector{
 			"users": user_id,
 		},
 	}
@@ -261,12 +260,12 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 		return err
 	}
 
-	user_selector := bson.M{
+	user_selector := database.QuerySelector{
 		"userid": user_id,
 	}
 
-	user_modifier := bson.M{
-		"$addToSet": bson.M{
+	user_modifier := database.QuerySelector{
+		"$addToSet": database.QuerySelector{
 			"events": event_name,
 		},
 	}

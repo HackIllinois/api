@@ -5,7 +5,6 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/rsvp/config"
 	"github.com/HackIllinois/api/services/rsvp/models"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var db database.MongoDatabase
@@ -24,7 +23,7 @@ func init() {
 	Returns the rsvp associated with the given user id
 */
 func GetUserRsvp(id string) (*models.UserRsvp, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"id": id,
 	}
 
@@ -60,7 +59,7 @@ func CreateUserRsvp(id string, rsvp models.UserRsvp) error {
 	Updates the rsvp associated with the given user id
 */
 func UpdateUserRsvp(id string, rsvp models.UserRsvp) error {
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": id,
 	}
 

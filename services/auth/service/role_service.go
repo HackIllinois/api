@@ -4,7 +4,6 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var db database.MongoDatabase
@@ -25,7 +24,7 @@ func init() {
 	This generally occurs the first time the user logs into the service
 */
 func GetUserRoles(id string, create_user bool) ([]string, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"id": id,
 	}
 
@@ -56,7 +55,7 @@ func GetUserRoles(id string, create_user bool) ([]string, error) {
 	Sets the roles for the user with the specified id
 */
 func SetUserRoles(id string, roles []string) error {
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": id,
 	}
 

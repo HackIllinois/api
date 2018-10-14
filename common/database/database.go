@@ -25,6 +25,11 @@ type Database interface {
 }
 
 /*
+	An alias of a string -> interface{} map used for database queries and selectors
+*/
+type QuerySelector map[string]interface{}
+
+/*
 	MongoDatabase struct which implements the Database interface for a mongo database
 */
 type MongoDatabase struct {

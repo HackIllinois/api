@@ -8,7 +8,6 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/mail/config"
 	"github.com/HackIllinois/api/services/mail/models"
-	"gopkg.in/mgo.v2/bson"
 	"net/http"
 )
 
@@ -150,13 +149,13 @@ func CreateMailList(mail_list models.MailList) error {
 	Adds the given users to the specified mailing list
 */
 func AddToMailList(mail_list models.MailList) error {
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": mail_list.ID,
 	}
 
-	modifier := bson.M{
-		"$addToSet": bson.M{
-			"userids": bson.M{
+	modifier := database.QuerySelector{
+		"$addToSet": database.QuerySelector{
+			"userids": database.QuerySelector{
 				"$each": mail_list.UserIDs,
 			},
 		},
@@ -169,13 +168,13 @@ func AddToMailList(mail_list models.MailList) error {
 	Removes the given users from the specified mailing list
 */
 func RemoveFromMailList(mail_list models.MailList) error {
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": mail_list.ID,
 	}
 
-	modifier := bson.M{
-		"$pull": bson.M{
-			"userids": bson.M{
+	modifier := database.QuerySelector{
+		"$pull": database.QuerySelector{
+			"userids": database.QuerySelector{
 				"$in": mail_list.UserIDs,
 			},
 		},
@@ -188,7 +187,7 @@ func RemoveFromMailList(mail_list models.MailList) error {
 	Gets the mail list with the given id
 */
 func GetMailList(id string) (*models.MailList, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"id": id,
 	}
 

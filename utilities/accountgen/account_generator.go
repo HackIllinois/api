@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/utilities/accountgen/models"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var auth_db database.MongoDatabase
@@ -44,7 +43,7 @@ func PopulateAuthInfo(id string, roles []string) error {
 		Roles: roles,
 	}
 
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": id,
 	}
 
@@ -62,7 +61,7 @@ func PopulateUserInfo(id string, username string, firstName string, lastName str
 		Email:     email,
 	}
 
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": id,
 	}
 

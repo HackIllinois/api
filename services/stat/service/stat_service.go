@@ -6,7 +6,6 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/stat/config"
 	"github.com/HackIllinois/api/services/stat/models"
-	"gopkg.in/mgo.v2/bson"
 	"net/http"
 )
 
@@ -26,7 +25,7 @@ func init() {
 	Returns the service with the given name
 */
 func GetService(name string) (*models.Service, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"name": name,
 	}
 
@@ -57,7 +56,7 @@ func RegisterService(name string, service models.Service) error {
 		return err
 	}
 
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"name": name,
 	}
 
@@ -71,7 +70,7 @@ func RegisterService(name string, service models.Service) error {
 */
 func GetAllServices() ([]models.Service, error) {
 	var services []models.Service
-	err := db.FindAll("services", bson.M{}, &services)
+	err := db.FindAll("services", database.QuerySelector{}, &services)
 
 	if err != nil {
 		return nil, err

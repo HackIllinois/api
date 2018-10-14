@@ -5,7 +5,6 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
-	"gopkg.in/mgo.v2/bson"
 	"strings"
 )
 
@@ -25,7 +24,7 @@ func init() {
 	Returns the info associated with the given user id
 */
 func GetUserInfo(id string) (*models.UserInfo, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"id": id,
 	}
 
@@ -44,7 +43,7 @@ func GetUserInfo(id string) (*models.UserInfo, error) {
 	The record will be created if it does not already exist
 */
 func SetUserInfo(id string, user_info models.UserInfo) error {
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": id,
 	}
 
@@ -69,7 +68,7 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 		}
 
 		key = strings.ToLower(key)
-		query[key] = bson.M{"$in": strings.Split(values[0], ",")}
+		query[key] = database.QuerySelector{"$in": strings.Split(values[0], ",")}
 	}
 
 	var filtered_users models.FilteredUsers

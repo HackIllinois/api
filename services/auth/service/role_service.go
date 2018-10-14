@@ -4,7 +4,6 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -34,7 +33,7 @@ func GetUserRoles(id string, create_user bool) ([]string, error) {
 	err := db.FindOne("roles", query, &roles)
 
 	if err != nil {
-		if err == mgo.ErrNotFound && create_user {
+		if err == database.ErrNotFound && create_user {
 			db.Insert("roles", &models.UserRoles{
 				ID:    id,
 				Roles: []string{"User"},

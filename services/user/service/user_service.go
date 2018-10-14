@@ -5,7 +5,6 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"strings"
 )
@@ -51,7 +50,7 @@ func SetUserInfo(id string, user_info models.UserInfo) error {
 
 	err := db.Update("info", selector, &user_info)
 
-	if err == mgo.ErrNotFound {
+	if err == database.ErrNotFound {
 		err = db.Insert("info", &user_info)
 	}
 

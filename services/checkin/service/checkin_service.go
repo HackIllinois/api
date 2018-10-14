@@ -8,7 +8,6 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/checkin/config"
 	"github.com/HackIllinois/api/services/checkin/models"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -48,7 +47,7 @@ func GetUserCheckin(id string) (*models.UserCheckin, error) {
 func CreateUserCheckin(id string, user_checkin models.UserCheckin) error {
 	_, err := GetUserCheckin(id)
 
-	if err != mgo.ErrNotFound {
+	if err != database.ErrNotFound {
 		if err != nil {
 			return err
 		}

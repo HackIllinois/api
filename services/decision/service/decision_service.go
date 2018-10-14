@@ -7,7 +7,6 @@ import (
 	"github.com/HackIllinois/api/services/decision/config"
 	"github.com/HackIllinois/api/services/decision/models"
 	"gopkg.in/go-playground/validator.v9"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
 	"strconv"
@@ -68,7 +67,7 @@ func UpdateDecision(id string, decision models.Decision) error {
 	decision_history, err := GetDecision(id)
 
 	if err != nil {
-		if err == mgo.ErrNotFound {
+		if err == database.ErrNotFound {
 			decision_history = &models.DecisionHistory{
 				ID: id,
 			}
@@ -88,7 +87,7 @@ func UpdateDecision(id string, decision models.Decision) error {
 
 	err = db.Update("decision", selector, &decision_history)
 
-	if err == mgo.ErrNotFound {
+	if err == database.ErrNotFound {
 		err = db.Insert("decision", &decision_history)
 	}
 
@@ -103,7 +102,7 @@ func HasDecision(id string) (bool, error) {
 
 	if err == nil {
 		return true, nil
-	} else if err == mgo.ErrNotFound {
+	} else if err == database.ErrNotFound {
 		return false, nil
 	} else {
 		return false, err

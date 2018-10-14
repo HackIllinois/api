@@ -19,5 +19,5 @@ func convertMgoError(err error) error {
 		return ErrNotFound
 	}
 
-	return ErrUnkown
+	return ErrUnknown
 }

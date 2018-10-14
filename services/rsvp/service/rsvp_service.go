@@ -5,7 +5,6 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/rsvp/config"
 	"github.com/HackIllinois/api/services/rsvp/models"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -45,7 +44,7 @@ func GetUserRsvp(id string) (*models.UserRsvp, error) {
 func CreateUserRsvp(id string, rsvp models.UserRsvp) error {
 	_, err := GetUserRsvp(id)
 
-	if err != mgo.ErrNotFound {
+	if err != database.ErrNotFound {
 		if err != nil {
 			return err
 		}

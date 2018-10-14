@@ -6,7 +6,6 @@ import (
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 	"gopkg.in/go-playground/validator.v9"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"strconv"
 	"strings"
@@ -58,7 +57,7 @@ func CreateUserRegistration(id string, user_registration models.UserRegistration
 
 	_, err = GetUserRegistration(id)
 
-	if err != mgo.ErrNotFound {
+	if err != database.ErrNotFound {
 		if err != nil {
 			return err
 		}
@@ -172,7 +171,7 @@ func CreateMentorRegistration(id string, mentor_registration models.MentorRegist
 
 	_, err = GetMentorRegistration(id)
 
-	if err != mgo.ErrNotFound {
+	if err != database.ErrNotFound {
 		if err != nil {
 			return err
 		}

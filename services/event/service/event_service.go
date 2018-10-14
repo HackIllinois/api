@@ -7,7 +7,6 @@ import (
 	"github.com/HackIllinois/api/services/event/config"
 	"github.com/HackIllinois/api/services/event/models"
 	"gopkg.in/go-playground/validator.v9"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -127,7 +126,7 @@ func CreateEvent(name string, event models.Event) error {
 
 	_, err = GetEvent(name)
 
-	if err != mgo.ErrNotFound {
+	if err != database.ErrNotFound {
 		if err != nil {
 			return err
 		}
@@ -199,7 +198,7 @@ func GetUserTracker(user_id string) (*models.UserTracker, error) {
 	err := db.FindOne("usertrackers", query, &tracker)
 
 	if err != nil {
-		if err == mgo.ErrNotFound {
+		if err == database.ErrNotFound {
 			return &models.UserTracker{
 				UserID: user_id,
 				Events: []string{},
@@ -274,7 +273,7 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 
 	err = db.Update("usertrackers", user_selector, &user_modifier)
 
-	if err == mgo.ErrNotFound {
+	if err == database.ErrNotFound {
 		user_tracker := models.UserTracker{
 			UserID: user_id,
 			Events: []string{event_name},

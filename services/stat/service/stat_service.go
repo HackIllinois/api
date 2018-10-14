@@ -6,7 +6,6 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/stat/config"
 	"github.com/HackIllinois/api/services/stat/models"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
 )
@@ -48,7 +47,7 @@ func GetService(name string) (*models.Service, error) {
 func RegisterService(name string, service models.Service) error {
 	_, err := GetService(name)
 
-	if err == mgo.ErrNotFound {
+	if err == database.ErrNotFound {
 		err = db.Insert("services", &service)
 
 		return err

@@ -8,7 +8,6 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/mail/config"
 	"github.com/HackIllinois/api/services/mail/models"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
 )
@@ -138,7 +137,7 @@ func CreateMailList(mail_list models.MailList) error {
 
 	_, err := GetMailList(mail_list.ID)
 
-	if err == mgo.ErrNotFound {
+	if err == database.ErrNotFound {
 		return db.Insert("lists", &mail_list)
 	} else if err != nil {
 		return err

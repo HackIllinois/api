@@ -134,19 +134,24 @@ func CanUserCheckin(id string, user_has_override bool) (bool, error) {
 }
 
 /*
-	Returns the checkin associated with the given user id
+	Returns a list of all checked in user IDs
 */
-func GetAllCheckedInUsers() (*[]string, error) {
+func GetAllCheckedInUsers() (*models.CheckinList, error) {
 	query := bson.M{
-		"hasCheckedIn": true,
+		"hascheckedin": true,
 	}
 
-	var checked_in_users []string
-	err := db.FindAll("checkins", query, &checked_in_users)
+	var check_ins []models.UserCheckin
+	err := db.FindAll("checkins", query, &check_ins)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &checked_in_users, nil
+	var checkin_list models.CheckinList
+	for _, check_in := range check_ins {
+		checkin_list.CheckedInUsers = append(checkin_list.CheckedInUsers, check_in.ID)
+	}
+
+	return &checkin_list, nil
 }

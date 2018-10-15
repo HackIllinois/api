@@ -147,7 +147,7 @@ func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Endpoint to get a specified user's checkin
+	Endpoint to get all checked in user IDs
 */
 func GetAllCheckedInUsers(w http.ResponseWriter, r *http.Request) {
 	checked_in_users, err := service.GetAllCheckedInUsers()

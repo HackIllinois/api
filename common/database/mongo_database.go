@@ -115,7 +115,7 @@ func (db *MongoDatabase) RemoveOne(collection_name string, query interface{}) er
 /*
 	Remove all elements matching the given query parameters
 */
-func (db *MongoDatabase) RemoveAll(collection_name string, query interface{}) (*mgo.ChangeInfo, error) {
+func (db *MongoDatabase) RemoveAll(collection_name string, query interface{}) (*ChangeResults, error) {
 	current_session := db.GetSession()
 	defer current_session.Close()
 
@@ -123,7 +123,12 @@ func (db *MongoDatabase) RemoveAll(collection_name string, query interface{}) (*
 
 	change_info, err := collection.RemoveAll(query)
 
-	return change_info, convertMgoError(err)
+	change_results := ChangeResults{
+		Updated: change_info.Updated,
+		Deleted: change_info.Removed,
+	}
+
+	return &change_results, convertMgoError(err)
 }
 
 /*
@@ -144,7 +149,7 @@ func (db *MongoDatabase) Insert(collection_name string, item interface{}) error 
 	Upsert the given item into the collection i.e.,
 	if the item exists, it is updated with the given values, else a new item with those values is created.
 */
-func (db *MongoDatabase) Upsert(collection_name string, selector interface{}, update interface{}) (*mgo.ChangeInfo, error) {
+func (db *MongoDatabase) Upsert(collection_name string, selector interface{}, update interface{}) (*ChangeResults, error) {
 	current_session := db.GetSession()
 	defer current_session.Close()
 
@@ -152,7 +157,12 @@ func (db *MongoDatabase) Upsert(collection_name string, selector interface{}, up
 
 	change_info, err := collection.Upsert(selector, update)
 
-	return change_info, convertMgoError(err)
+	change_results := ChangeResults{
+		Updated: change_info.Updated,
+		Deleted: change_info.Removed,
+	}
+
+	return &change_results, convertMgoError(err)
 }
 
 /*
@@ -172,7 +182,7 @@ func (db *MongoDatabase) Update(collection_name string, selector interface{}, up
 /*
 	Finds all items based on the given selector and updates them with the data in update
 */
-func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{}, update interface{}) (*mgo.ChangeInfo, error) {
+func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{}, update interface{}) (*ChangeResults, error) {
 	current_session := db.GetSession()
 	defer current_session.Close()
 
@@ -180,7 +190,12 @@ func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{},
 
 	change_info, err := collection.UpdateAll(selector, update)
 
-	return change_info, convertMgoError(err)
+	change_results := ChangeResults{
+		Updated: change_info.Updated,
+		Deleted: change_info.Removed,
+	}
+
+	return &change_results, convertMgoError(err)
 }
 
 func (db *MongoDatabase) DropDatabase() error {

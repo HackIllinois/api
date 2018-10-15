@@ -18,10 +18,10 @@ func init() {
 	validate = validator.New()
 }
 
-var db *database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.DECISION_DB_HOST, config.DECISION_DB_NAME)
+	db_connection, err := database.InitDatabase(config.DECISION_DB_HOST, config.DECISION_DB_NAME)
 
 	if err != nil {
 		panic(err)

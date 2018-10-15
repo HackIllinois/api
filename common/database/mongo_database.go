@@ -182,3 +182,12 @@ func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{},
 
 	return change_info, convertMgoError(err)
 }
+
+func (db *MongoDatabase) DropDatabase() error {
+	current_session := db.GetSession()
+	defer current_session.Close()
+
+	err := current_session.DB(db.name).DropDatabase()
+
+	return convertMgoError(err)
+}

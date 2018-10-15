@@ -6,10 +6,10 @@ import (
 	"github.com/HackIllinois/api/services/auth/models"
 )
 
-var db *database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.AUTH_DB_HOST, config.AUTH_DB_NAME)
+	db_connection, err := database.InitDatabase(config.AUTH_DB_HOST, config.AUTH_DB_NAME)
 
 	if err != nil {
 		panic(err)

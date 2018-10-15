@@ -17,6 +17,7 @@ type Database interface {
 	Upsert(collection_name string, selector interface{}, update interface{}) (*mgo.ChangeInfo, error)
 	Update(collection_name string, selector interface{}, update interface{}) error
 	UpdateAll(collection_name string, selector interface{}, update interface{}) (*mgo.ChangeInfo, error)
+	DropDatabase() error
 }
 
 /*

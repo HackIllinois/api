@@ -20,17 +20,17 @@ type MongoDatabase struct {
 /*
 	Initialize connection to mongo database
 */
-func InitMongoDatabase(host string, db_name string) (MongoDatabase, error) {
+func InitMongoDatabase(host string, db_name string) (*MongoDatabase, error) {
 	db := MongoDatabase{}
 	err := db.Connect(host)
 
 	if err != nil {
-		return db, err
+		return &db, err
 	}
 
 	db.name = db_name
 
-	return db, nil
+	return &db, nil
 }
 
 /*

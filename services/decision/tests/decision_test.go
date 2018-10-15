@@ -10,7 +10,7 @@ import (
 	"github.com/HackIllinois/api/services/decision/service"
 )
 
-var db database.MongoDatabase
+var db *database.MongoDatabase
 
 func init() {
 	db_connection, err := database.InitMongoDatabase(config.DECISION_DB_HOST, config.DECISION_DB_NAME)

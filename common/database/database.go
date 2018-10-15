@@ -23,3 +23,15 @@ type Database interface {
 	An alias of a string -> interface{} map used for database queries and selectors
 */
 type QuerySelector map[string]interface{}
+
+/*
+	Initialize a connection to the given database
+
+	This function wraps a database specific initializion function
+	This makes it simple to change the database used without rewriting
+	code in the microservices
+*/
+func InitDatabase(host string, db_name string) (Database, error) {
+	db, err := InitMongoDatabase(host, db_name)
+	return db, err
+}

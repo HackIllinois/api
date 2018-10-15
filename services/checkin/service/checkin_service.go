@@ -10,7 +10,7 @@ import (
 	"github.com/HackIllinois/api/services/checkin/models"
 )
 
-var db database.MongoDatabase
+var db *database.MongoDatabase
 
 func init() {
 	db_connection, err := database.InitMongoDatabase(config.CHECKIN_DB_HOST, config.CHECKIN_DB_NAME)

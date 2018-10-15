@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-var db database.MongoDatabase
+var db *database.MongoDatabase
 
 func init() {
 	db_connection, err := database.InitMongoDatabase(config.REGISTRATION_DB_HOST, config.REGISTRATION_DB_NAME)

@@ -5,8 +5,8 @@ import (
 	"github.com/HackIllinois/api/utilities/accountgen/models"
 )
 
-var auth_db database.MongoDatabase
-var user_db database.MongoDatabase
+var auth_db *database.MongoDatabase
+var user_db *database.MongoDatabase
 
 func init() {
 	auth_db_connection, err := database.InitMongoDatabase("localhost", "auth")

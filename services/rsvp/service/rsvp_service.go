@@ -7,7 +7,7 @@ import (
 	"github.com/HackIllinois/api/services/rsvp/models"
 )
 
-var db database.MongoDatabase
+var db *database.MongoDatabase
 
 func init() {
 	db_connection, err := database.InitMongoDatabase(config.RSVP_DB_HOST, config.RSVP_DB_NAME)

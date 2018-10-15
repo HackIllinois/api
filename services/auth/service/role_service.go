@@ -6,7 +6,7 @@ import (
 	"github.com/HackIllinois/api/services/auth/models"
 )
 
-var db database.MongoDatabase
+var db *database.MongoDatabase
 
 func init() {
 	db_connection, err := database.InitMongoDatabase(config.AUTH_DB_HOST, config.AUTH_DB_NAME)

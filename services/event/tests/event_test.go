@@ -89,6 +89,10 @@ func TestGetAllEventsService(t *testing.T) {
 
 	err := db.Insert("events", &event)
 
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	actual_event_list, err := service.GetAllEvents()
 
 	if err != nil {

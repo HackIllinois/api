@@ -82,7 +82,7 @@ func GetAllServices() ([]models.Service, error) {
 }
 
 /*
-	Retreive stats from a specified registered service
+	Retrieve stats from a specified registered service
 */
 func GetAggregatedStats(name string) (*models.Stat, error) {
 	service, err := GetService(name)

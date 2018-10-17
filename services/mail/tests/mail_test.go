@@ -172,3 +172,46 @@ func TestRemoveFromMailList(t *testing.T) {
 
 	CleanupTestDB(t)
 }
+
+/*
+	Tests getting a list of all mailing lists
+*/
+func TestGetAllMailLists(t *testing.T) {
+	SetupTestDB(t)
+
+	mail_list := models.MailList{
+		ID:      "testlist2",
+		UserIDs: []string{"userid1", "userid2"},
+	}
+
+	err := service.CreateMailList(mail_list)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	mail_lists, err := service.GetAllMailLists()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := &models.MailListList{
+		MailLists: []models.MailList{
+			models.MailList{
+				ID:      "testlist",
+				UserIDs: []string{"userid1", "userid2"},
+			},
+			models.MailList{
+				ID:      "testlist2",
+				UserIDs: []string{"userid1", "userid2"},
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(mail_lists, expected) {
+		t.Errorf("Wrong set of mailing lists. Expected %v, got %v", expected, mail_lists)
+	}
+
+	CleanupTestDB(t)
+}

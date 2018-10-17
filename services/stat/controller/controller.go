@@ -63,7 +63,7 @@ func RegisterService(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Endpoint to retreive stats for a specified service
+	Endpoint to retrieve stats for a specified service
 */
 func GetStat(w http.ResponseWriter, r *http.Request) {
 	name := mux.Vars(r)["name"]
@@ -78,7 +78,7 @@ func GetStat(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Endpoint to retreive stats for all services
+	Endpoint to retrieve stats for all services
 */
 func GetAllStat(w http.ResponseWriter, r *http.Request) {
 	all_stat, err := service.GetAllAggregatedStats()

@@ -30,3 +30,24 @@ func SendUserMail(id string, template string) error {
 
 	return err
 }
+
+/*
+	Add user with given id, to the specified mailing list.
+*/
+func AddUserToMailList(user_id string, mail_list_id string) error {
+	add_to_mail_list_url := fmt.Sprintf("%s/mail/list/add/", config.MAIL_SERVICE)
+
+	mail_list := models.MailList{
+		ID:      mail_list_id,
+		UserIDs: []string{user_id},
+	}
+
+	request_body := bytes.Buffer{}
+	json.NewEncoder(&request_body).Encode(&mail_list)
+
+	content_type := "application/json"
+
+	_, err := http.Post(add_to_mail_list_url, content_type, &request_body)
+
+	return err
+}

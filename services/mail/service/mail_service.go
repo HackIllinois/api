@@ -202,3 +202,23 @@ func GetMailList(id string) (*models.MailList, error) {
 
 	return &mail_list, nil
 }
+
+/*
+	Gets all created mailing lists
+*/
+func GetAllMailLists() (*models.MailListList, error) {
+	var mail_lists []models.MailList
+
+	// nil in this case means that we return everything in the lists collection
+	err := db.FindAll("lists", nil, &mail_lists)
+
+	if err != nil {
+		return nil, err
+	}
+
+	mail_list_list := models.MailListList{
+		MailLists: mail_lists,
+	}
+
+	return &mail_list_list, nil
+}

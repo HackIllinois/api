@@ -1,4 +1,7 @@
 # HackIllinois API
+[![Build Status](https://travis-ci.com/HackIllinois/api.svg?branch=master)](https://travis-ci.com/HackIllinois/api)
+[![Go Report Card](https://goreportcard.com/badge/github.com/HackIllinois/api)](https://goreportcard.com/report/github.com/HackIllinois/api)
+
 This repository contains the code which runs the backend services supporting HackIllinois.
 
 1. [Developer Environment Setup](#developer-environment-setup)
@@ -17,7 +20,7 @@ We highly reccommend that you use Ubuntu 16.04 or Ubuntu 18.04 when working on A
 Both `make` and `git` can be installed from the default ubuntu package repositories. Run the following commands to install both tools. You may need to run the commands under `sudo`.
 ```
 apt-get update
-apt-get install build-essentials git
+apt-get install build-essential git
 ```
 
 #### Installing Go

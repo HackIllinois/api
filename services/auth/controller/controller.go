@@ -18,7 +18,8 @@ func SetupController(route *mux.Route) {
 	router.Handle("/{provider}/", alice.New().ThenFunc(Authorize)).Methods("GET")
 	router.Handle("/code/{provider}/", alice.New().ThenFunc(Login)).Methods("POST")
 	router.Handle("/roles/{id}/", alice.New().ThenFunc(GetRoles)).Methods("GET")
-	router.Handle("/roles/", alice.New().ThenFunc(SetRoles)).Methods("PUT")
+	router.Handle("/roles/add/", alice.New().ThenFunc(AddRole)).Methods("PUT")
+	router.Handle("/roles/remove/", alice.New().ThenFunc(RemoveRole)).Methods("PUT")
 	router.Handle("/token/refresh/", alice.New().ThenFunc(RefreshToken)).Methods("GET")
 }
 
@@ -145,30 +146,61 @@ func GetRoles(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Updates the roles for the user with the given id.
+	Adds a role to the user with the given id.
 */
-func SetRoles(w http.ResponseWriter, r *http.Request) {
-	var user_roles models.UserRoles
-	json.NewDecoder(r.Body).Decode(&user_roles)
+func AddRole(w http.ResponseWriter, r *http.Request) {
+	var role_modification models.UserRoleModification
+	json.NewDecoder(r.Body).Decode(&role_modification)
 
-	if user_roles.ID == "" {
+	if role_modification.ID == "" {
 		panic(errors.UnprocessableError("Must provide id parameter"))
 	}
 
-	err := service.SetUserRoles(user_roles.ID, user_roles.Roles)
+	err := service.AddUserRole(role_modification.ID, role_modification.Role)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	roles, err := service.GetUserRoles(user_roles.ID, false)
+	roles, err := service.GetUserRoles(role_modification.ID, false)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
 	updated_roles := models.UserRoles{
-		ID:    user_roles.ID,
+		ID:    role_modification.ID,
+		Roles: roles,
+	}
+
+	json.NewEncoder(w).Encode(updated_roles)
+}
+
+/*
+	Removes a role for the user with the given id.
+*/
+func RemoveRole(w http.ResponseWriter, r *http.Request) {
+	var role_modification models.UserRoleModification
+	json.NewDecoder(r.Body).Decode(&role_modification)
+
+	if role_modification.ID == "" {
+		panic(errors.UnprocessableError("Must provide id parameter"))
+	}
+
+	err := service.RemoveUserRole(role_modification.ID, role_modification.Role)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	roles, err := service.GetUserRoles(role_modification.ID, false)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	updated_roles := models.UserRoles{
+		ID:    role_modification.ID,
 		Roles: roles,
 	}
 

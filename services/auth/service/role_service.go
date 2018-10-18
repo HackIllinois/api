@@ -54,14 +54,43 @@ func GetUserRoles(id string, create_user bool) ([]string, error) {
 }
 
 /*
-	Sets the roles for the user with the specified id
+	Adds a role to the user with the specified id
 */
-func SetUserRoles(id string, roles []string) error {
+func AddUserRole(id string, role string) error {
 	selector := bson.M{
 		"id": id,
 	}
 
-	err := db.Update("roles", selector, &models.UserRoles{
+	roles, err := GetUserRoles(id, false)
+
+	if err != nil {
+		return err
+	}
+
+	roles = append(roles, role)
+
+	err = db.Update("roles", selector, &models.UserRoles{
+		ID:    id,
+		Roles: roles,
+	})
+
+	return err
+}
+
+func RemoveUserRole(id string, role string) error {
+	selector := bson.M{
+		"id": id,
+	}
+
+	roles, err := GetUserRoles(id, false)
+
+	if err != nil {
+		return err
+	}
+
+	roles = append(roles, role)
+
+	err = db.Update("roles", selector, &models.UserRoles{
 		ID:    id,
 		Roles: roles,
 	})

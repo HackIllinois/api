@@ -33,6 +33,7 @@ func SendUserMail(id string, template string) error {
 
 /*
 	Add user with given id, to the specified mailing list.
+	If the mailing list does not exist, it creates a new list with the user.
 */
 func AddUserToMailList(user_id string, mail_list_id string) error {
 	add_to_mail_list_url := fmt.Sprintf("%s/mail/list/add/", config.MAIL_SERVICE)
@@ -42,12 +43,24 @@ func AddUserToMailList(user_id string, mail_list_id string) error {
 		UserIDs: []string{user_id},
 	}
 
-	request_body := bytes.Buffer{}
-	json.NewEncoder(&request_body).Encode(&mail_list)
+	update_request_body := bytes.Buffer{}
+	json.NewEncoder(&update_request_body).Encode(&mail_list)
 
 	content_type := "application/json"
 
-	_, err := http.Post(add_to_mail_list_url, content_type, &request_body)
+	_, err := http.Post(add_to_mail_list_url, content_type, &update_request_body)
+
+	if err != nil {
+		// The mailing list didn't exist
+		create_mail_list_url := fmt.Sprintf("%s/mail/list/create/", config.MAIL_SERVICE)
+
+		create_request_body := bytes.Buffer{}
+		json.NewEncoder(&create_request_body).Encode(&mail_list)
+
+		_, err := http.Post(create_mail_list_url, content_type, &create_request_body)
+
+		return err
+	}
 
 	return err
 }

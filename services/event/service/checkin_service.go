@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/event/config"
 	"net/http"
 )
@@ -9,11 +10,11 @@ import (
 	Checks if the user has been checked in with the checkin service
 */
 func IsUserCheckedIn(id string) (bool, error) {
-	resp, err := http.Get(config.CHECKIN_SERVICE + "/checkin/" + id + "/")
+	status, err := apirequest.Get(config.CHECKIN_SERVICE+"/checkin/"+id+"/", nil)
 
 	if err != nil {
 		return false, err
 	}
 
-	return resp.StatusCode == http.StatusOK, nil
+	return status == http.StatusOK, nil
 }

@@ -7,14 +7,12 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 )
 
-var db database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.AUTH_DB_HOST, config.AUTH_DB_NAME)
+	db_connection, err := database.InitDatabase(config.AUTH_DB_HOST, config.AUTH_DB_NAME)
 
 	if err != nil {
 		panic(err)
@@ -29,7 +27,7 @@ func init() {
 	This generally occurs the first time the user logs into the service
 */
 func GetUserRoles(id string, create_user bool) ([]string, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"id": id,
 	}
 
@@ -37,7 +35,7 @@ func GetUserRoles(id string, create_user bool) ([]string, error) {
 	err := db.FindOne("roles", query, &roles)
 
 	if err != nil {
-		if err == mgo.ErrNotFound && create_user {
+		if err == database.ErrNotFound && create_user {
 			db.Insert("roles", &models.UserRoles{
 				ID:    id,
 				Roles: []string{"User"},

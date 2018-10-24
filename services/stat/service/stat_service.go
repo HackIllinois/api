@@ -1,20 +1,18 @@
 package service
 
 import (
-	"encoding/json"
 	"errors"
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/stat/config"
 	"github.com/HackIllinois/api/services/stat/models"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 	"net/http"
 )
 
-var db database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.STAT_DB_HOST, config.STAT_DB_NAME)
+	db_connection, err := database.InitDatabase(config.STAT_DB_HOST, config.STAT_DB_NAME)
 
 	if err != nil {
 		panic(err)
@@ -27,7 +25,7 @@ func init() {
 	Returns the service with the given name
 */
 func GetService(name string) (*models.Service, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"name": name,
 	}
 
@@ -48,7 +46,7 @@ func GetService(name string) (*models.Service, error) {
 func RegisterService(name string, service models.Service) error {
 	_, err := GetService(name)
 
-	if err == mgo.ErrNotFound {
+	if err == database.ErrNotFound {
 		err = db.Insert("services", &service)
 
 		return err
@@ -58,7 +56,7 @@ func RegisterService(name string, service models.Service) error {
 		return err
 	}
 
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"name": name,
 	}
 
@@ -72,7 +70,7 @@ func RegisterService(name string, service models.Service) error {
 */
 func GetAllServices() ([]models.Service, error) {
 	var services []models.Service
-	err := db.FindAll("services", bson.M{}, &services)
+	err := db.FindAll("services", database.QuerySelector{}, &services)
 
 	if err != nil {
 		return nil, err
@@ -91,21 +89,18 @@ func GetAggregatedStats(name string) (*models.Stat, error) {
 		return nil, err
 	}
 
-	resp, err := http.Get(service.URL)
+	var stat models.Stat
+	status, err := apirequest.Get(service.URL, &stat)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("Could not retrieve stats from registered service")
+	if status != http.StatusOK {
+		return nil, errors.New("Could not retreive stats from registed service")
 	}
 
-	var stat models.Stat
-	json.NewDecoder(resp.Body).Decode(&stat)
-
 	return &stat, nil
-
 }
 
 /*

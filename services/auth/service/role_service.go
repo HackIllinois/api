@@ -60,7 +60,7 @@ func GetUserRoles(id string, create_user bool) ([]string, error) {
 	Adds a role to the user with the specified id
 */
 func AddUserRole(id string, role string) error {
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": id,
 	}
 
@@ -86,7 +86,7 @@ func AddUserRole(id string, role string) error {
 	Removes a role from the user with the specified id
 */
 func RemoveUserRole(id string, role string) error {
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": id,
 	}
 

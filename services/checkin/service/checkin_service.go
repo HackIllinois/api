@@ -8,14 +8,12 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/checkin/config"
 	"github.com/HackIllinois/api/services/checkin/models"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 )
 
-var db database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.CHECKIN_DB_HOST, config.CHECKIN_DB_NAME)
+	db_connection, err := database.InitDatabase(config.CHECKIN_DB_HOST, config.CHECKIN_DB_NAME)
 
 	if err != nil {
 		panic(err)
@@ -28,7 +26,7 @@ func init() {
 	Returns the checkin associated with the given user id
 */
 func GetUserCheckin(id string) (*models.UserCheckin, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"id": id,
 	}
 
@@ -48,7 +46,7 @@ func GetUserCheckin(id string) (*models.UserCheckin, error) {
 func CreateUserCheckin(id string, user_checkin models.UserCheckin) error {
 	_, err := GetUserCheckin(id)
 
-	if err != mgo.ErrNotFound {
+	if err != database.ErrNotFound {
 		if err != nil {
 			return err
 		}
@@ -64,7 +62,7 @@ func CreateUserCheckin(id string, user_checkin models.UserCheckin) error {
 	Update the checkin associated with the given user id
 */
 func UpdateUserCheckin(id string, user_checkin models.UserCheckin) error {
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": id,
 	}
 

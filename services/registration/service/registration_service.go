@@ -6,8 +6,6 @@ import (
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 	"gopkg.in/go-playground/validator.v9"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 	"strconv"
 	"strings"
 )
@@ -18,10 +16,10 @@ func init() {
 	validate = validator.New()
 }
 
-var db database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.REGISTRATION_DB_HOST, config.REGISTRATION_DB_NAME)
+	db_connection, err := database.InitDatabase(config.REGISTRATION_DB_HOST, config.REGISTRATION_DB_NAME)
 
 	if err != nil {
 		panic(err)
@@ -34,7 +32,7 @@ func init() {
 	Returns the registration associated with the given user id
 */
 func GetUserRegistration(id string) (*models.UserRegistration, error) {
-	query := bson.M{"id": id}
+	query := database.QuerySelector{"id": id}
 
 	var user_registration models.UserRegistration
 	err := db.FindOne("attendees", query, &user_registration)
@@ -58,7 +56,7 @@ func CreateUserRegistration(id string, user_registration models.UserRegistration
 
 	_, err = GetUserRegistration(id)
 
-	if err != mgo.ErrNotFound {
+	if err != database.ErrNotFound {
 		if err != nil {
 			return err
 		}
@@ -80,7 +78,7 @@ func UpdateUserRegistration(id string, user_registration models.UserRegistration
 		return err
 	}
 
-	selector := bson.M{"id": id}
+	selector := database.QuerySelector{"id": id}
 
 	err = db.Update("attendees", selector, &user_registration)
 
@@ -106,7 +104,7 @@ func GetFilteredUserRegistrations(parameters map[string][]string) (*models.Filte
 					return nil, err
 				}
 			}
-			query[key] = bson.M{"$in": correctly_typed_value_list}
+			query[key] = database.QuerySelector{"$in": correctly_typed_value_list}
 		} else {
 			return nil, errors.New("Multiple usage of key " + key)
 		}
@@ -148,7 +146,7 @@ func Contains(slice []string, str string) bool {
 	Returns the registration associated with the given mentor id
 */
 func GetMentorRegistration(id string) (*models.MentorRegistration, error) {
-	query := bson.M{"id": id}
+	query := database.QuerySelector{"id": id}
 
 	var mentor_registration models.MentorRegistration
 	err := db.FindOne("mentors", query, &mentor_registration)
@@ -172,7 +170,7 @@ func CreateMentorRegistration(id string, mentor_registration models.MentorRegist
 
 	_, err = GetMentorRegistration(id)
 
-	if err != mgo.ErrNotFound {
+	if err != database.ErrNotFound {
 		if err != nil {
 			return err
 		}
@@ -194,7 +192,7 @@ func UpdateMentorRegistration(id string, mentor_registration models.MentorRegist
 		return err
 	}
 
-	selector := bson.M{"id": id}
+	selector := database.QuerySelector{"id": id}
 
 	err = db.Update("mentors", selector, &mentor_registration)
 

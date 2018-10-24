@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
 )
@@ -26,13 +26,13 @@ func SendUserInfo(id string, username string, first_name string, last_name strin
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&user_info)
 
-	resp, err := http.Post(config.USER_SERVICE+"/user/", "application/json", &body)
+	status, err := apirequest.Post(config.USER_SERVICE+"/user/", &body, nil)
 
 	if err != nil {
 		return err
 	}
 
-	if resp.StatusCode != http.StatusOK {
+	if status != http.StatusOK {
 		return errors.New("User service failed to update")
 	}
 
@@ -43,28 +43,16 @@ func SendUserInfo(id string, username string, first_name string, last_name strin
 	Given a user ID, fetch the user info corresponding to the ID.
 */
 func GetUserInfo(id string) (*models.UserInfo, error) {
-	api_user_url := fmt.Sprintf("%s/user/%s/", config.USER_SERVICE, id)
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", api_user_url, nil)
-
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	resp, err := client.Do(req)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New(fmt.Sprintf("GET request to api-user(%s) resulted in a response with a non-200 status code.", api_user_url))
-	}
-
-	defer resp.Body.Close()
-
 	var user_info models.UserInfo
-	json.NewDecoder(resp.Body).Decode(&user_info)
+	status, err := apirequest.Get(config.USER_SERVICE+"/user/"+id+"/", &user_info)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if status != http.StatusOK {
+		return nil, errors.New("Failed to retrieve info from user service")
+	}
+
 	return &user_info, err
 }

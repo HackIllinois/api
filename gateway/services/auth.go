@@ -33,10 +33,16 @@ var AuthRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetUserRoles).ServeHTTP,
 	},
 	arbor.Route{
-		"SetUserRoles",
+		"AddUserRole",
 		"PUT",
-		"/auth/roles/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(SetUserRoles).ServeHTTP,
+		"/auth/roles/add/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(AddUserRole).ServeHTTP,
+	},
+	arbor.Route{
+		"RemoveUserRole",
+		"PUT",
+		"/auth/roles/remove/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(RemoveUserRole).ServeHTTP,
 	},
 	arbor.Route{
 		"RefreshToken",
@@ -58,7 +64,11 @@ func GetUserRoles(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, AuthURL+r.URL.String(), AuthFormat, "", r)
 }
 
-func SetUserRoles(w http.ResponseWriter, r *http.Request) {
+func AddUserRole(w http.ResponseWriter, r *http.Request) {
+	arbor.PUT(w, AuthURL+r.URL.String(), AuthFormat, "", r)
+}
+
+func RemoveUserRole(w http.ResponseWriter, r *http.Request) {
 	arbor.PUT(w, AuthURL+r.URL.String(), AuthFormat, "", r)
 }
 

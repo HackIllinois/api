@@ -14,23 +14,12 @@ import (
 	Add Attendee role to user with auth service
 */
 func AddAttendeeRole(id string) error {
-	var user_roles models.UserRoles
-	status, err := apirequest.Get(config.AUTH_SERVICE+"/auth/roles/"+id+"/", &user_roles)
-
-	if err != nil {
-		return err
-	}
-
-	if status != http.StatusOK {
-		return errors.New("Auth service failed to update roles")
-	}
-
-	user_roles.Roles = append(user_roles.Roles, "Attendee")
+	user_role_modification := models.UserRoleModification{ID: id, Role: "Attendee"}
 
 	body := bytes.Buffer{}
-	json.NewEncoder(&body).Encode(&user_roles)
+	json.NewEncoder(&body).Encode(&user_role_modification)
 
-	status, err = apirequest.Put(config.AUTH_SERVICE+"/auth/roles/", &body, nil)
+	status, err := apirequest.Put(config.AUTH_SERVICE+"/auth/roles/add/", &body, nil)
 
 	if err != nil {
 		return err
@@ -47,27 +36,12 @@ func AddAttendeeRole(id string) error {
 	Remove Attendee role from user with auth service
 */
 func RemoveAttendeeRole(id string) error {
-	var user_roles models.UserRoles
-	status, err := apirequest.Get(config.AUTH_SERVICE+"/auth/roles/"+id+"/", &user_roles)
-
-	if err != nil {
-		return err
-	}
-
-	if status != http.StatusOK {
-		return errors.New("Auth service failed to update roles")
-	}
-
-	for index, role := range user_roles.Roles {
-		if role == "Attendee" {
-			user_roles.Roles = append(user_roles.Roles[:index], user_roles.Roles[index+1:]...)
-		}
-	}
+	user_role_modification := models.UserRoleModification{ID: id, Role: "Attendee"}
 
 	body := bytes.Buffer{}
-	json.NewEncoder(&body).Encode(&user_roles)
+	json.NewEncoder(&body).Encode(&user_role_modification)
 
-	status, err = apirequest.Put(config.AUTH_SERVICE+"/auth/roles/", &body, nil)
+	status, err := apirequest.Put(config.AUTH_SERVICE+"/auth/roles/remove/", &body, nil)
 
 	if err != nil {
 		return err

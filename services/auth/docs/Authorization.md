@@ -49,12 +49,21 @@ Response format:
 }
 ```
 
-PUT /auth/roles/
------------------
+PUT /auth/roles/add/
 
-Sets the roles of the user with the given `id` to `roles`. The updated user's roles will be returned.
+Adds the given `role` to the user with the given `id`. The updated user's roles will be returned.
 
 Request format:
+
+```
+{
+	"id": "github6892396",
+	"role": "User"
+}
+```
+
+Response format:
+
 ```
 {
 	"id": "github6892396",
@@ -64,20 +73,32 @@ Request format:
 }
 ```
 
-Response format:
+PUT /auth/roles/remove/
+
+Removes the given `role` from the user with the given `id`. The updated user's roles will be returned.
+
+Request format:
+
 ```
 {
 	"id": "github6892396",
-	"roles": [
-		"User"
-	]
+	"role": "User"
+}
+```
+
+Response format:
+
+```
+{
+	"id": "github6892396",
+	"roles": []
 }
 ```
 
 GET /auth/token/refresh/
 -----------------
 
-Creates a new JWT for the current user. This is useful when the user's roles change, and the updated roles need to be encoded into a new JWT, such as during registration. 
+Creates a new JWT for the current user. This is useful when the user's roles change, and the updated roles need to be encoded into a new JWT, such as during registration.
 
 Response format:
 ```

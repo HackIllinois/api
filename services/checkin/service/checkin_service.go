@@ -135,7 +135,7 @@ func CanUserCheckin(id string, user_has_override bool) (bool, error) {
 	Returns a list of all checked in user IDs
 */
 func GetAllCheckedInUsers() (*models.CheckinList, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"hascheckedin": true,
 	}
 

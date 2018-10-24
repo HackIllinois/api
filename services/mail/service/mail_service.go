@@ -9,15 +9,13 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/mail/config"
 	"github.com/HackIllinois/api/services/mail/models"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 	"net/http"
 )
 
-var db database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.MAIL_DB_HOST, config.MAIL_DB_NAME)
+	db_connection, err := database.InitDatabase(config.MAIL_DB_HOST, config.MAIL_DB_NAME)
 
 	if err != nil {
 		panic(err)
@@ -136,7 +134,7 @@ func CreateMailList(mail_list models.MailList) error {
 
 	_, err := GetMailList(mail_list.ID)
 
-	if err == mgo.ErrNotFound {
+	if err == database.ErrNotFound {
 		return db.Insert("lists", &mail_list)
 	} else if err != nil {
 		return err
@@ -149,13 +147,13 @@ func CreateMailList(mail_list models.MailList) error {
 	Adds the given users to the specified mailing list
 */
 func AddToMailList(mail_list models.MailList) error {
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": mail_list.ID,
 	}
 
-	modifier := bson.M{
-		"$addToSet": bson.M{
-			"userids": bson.M{
+	modifier := database.QuerySelector{
+		"$addToSet": database.QuerySelector{
+			"userids": database.QuerySelector{
 				"$each": mail_list.UserIDs,
 			},
 		},
@@ -168,13 +166,13 @@ func AddToMailList(mail_list models.MailList) error {
 	Removes the given users from the specified mailing list
 */
 func RemoveFromMailList(mail_list models.MailList) error {
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": mail_list.ID,
 	}
 
-	modifier := bson.M{
-		"$pull": bson.M{
-			"userids": bson.M{
+	modifier := database.QuerySelector{
+		"$pull": database.QuerySelector{
+			"userids": database.QuerySelector{
 				"$in": mail_list.UserIDs,
 			},
 		},
@@ -187,7 +185,7 @@ func RemoveFromMailList(mail_list models.MailList) error {
 	Gets the mail list with the given id
 */
 func GetMailList(id string) (*models.MailList, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"id": id,
 	}
 

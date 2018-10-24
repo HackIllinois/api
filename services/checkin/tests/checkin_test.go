@@ -10,10 +10,10 @@ import (
 	"testing"
 )
 
-var db database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.CHECKIN_DB_HOST, config.CHECKIN_DB_NAME)
+	db_connection, err := database.InitDatabase(config.CHECKIN_DB_HOST, config.CHECKIN_DB_NAME)
 
 	if err != nil {
 		panic(err)
@@ -43,10 +43,7 @@ func SetupTestDB(t *testing.T) {
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	session := db.GetSession()
-	defer session.Close()
-
-	err := session.DB(config.CHECKIN_DB_NAME).DropDatabase()
+	err := db.DropDatabase()
 
 	if err != nil {
 		t.Fatal(err)
@@ -147,6 +144,49 @@ func TestUpdateUserCheckinService(t *testing.T) {
 
 	if !reflect.DeepEqual(updated_checkin, &expected_checkin) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_checkin, updated_checkin)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for getting list of all checked in users
+*/
+func TestGetAllCheckedInUsersService(t *testing.T) {
+	SetupTestDB(t)
+
+	new_checkin := models.UserCheckin{
+		ID:              "testid2",
+		HasCheckedIn:    false,
+		HasPickedUpSwag: false,
+	}
+
+	err := service.CreateUserCheckin("testid2", new_checkin)
+
+	new_checkin = models.UserCheckin{
+		ID:              "testid3",
+		HasCheckedIn:    true,
+		HasPickedUpSwag: false,
+	}
+
+	err = service.CreateUserCheckin("testid3", new_checkin)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	checkin_list, err := service.GetAllCheckedInUsers()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_checkin_list := models.CheckinList{
+		CheckedInUsers: []string{"testid", "testid3"},
+	}
+
+	if !reflect.DeepEqual(checkin_list, &expected_checkin_list) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_checkin_list, checkin_list)
 	}
 
 	CleanupTestDB(t)

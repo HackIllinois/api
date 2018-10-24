@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 	"net/http"
@@ -32,22 +33,13 @@ func AddRole(id string, role string) error {
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&user_role_modification)
 
-	client := http.Client{}
-	req, err := http.NewRequest("PUT", config.AUTH_SERVICE+"/auth/roles/add/", &body)
+	status, err := apirequest.Put(config.AUTH_SERVICE+"/auth/roles/add/", &body, nil)
 
 	if err != nil {
 		return err
 	}
 
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := client.Do(req)
-
-	if err != nil {
-		return err
-	}
-
-	if resp.StatusCode != http.StatusOK {
+	if status != http.StatusOK {
 		return errors.New("Auth service failed to update roles")
 	}
 

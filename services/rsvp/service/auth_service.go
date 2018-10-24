@@ -13,26 +13,13 @@ import (
 	Add Attendee role to user with auth service
 */
 func AddAttendeeRole(id string) error {
-	resp, err := http.Get(config.AUTH_SERVICE + "/auth/roles/" + id + "/")
-
-	if err != nil {
-		return err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return errors.New("Auth service failed to update roles")
-	}
-
-	var user_roles models.UserRoles
-	json.NewDecoder(resp.Body).Decode(&user_roles)
-
-	user_roles.Roles = append(user_roles.Roles, "Attendee")
+	user_role_modification := models.UserRoleModification{ID: id, Role: "Attendee"}
 
 	body := bytes.Buffer{}
-	json.NewEncoder(&body).Encode(&user_roles)
+	json.NewEncoder(&body).Encode(&user_role_modification)
 
 	client := http.Client{}
-	req, err := http.NewRequest("PUT", config.AUTH_SERVICE+"/auth/roles/", &body)
+	req, err := http.NewRequest("PUT", config.AUTH_SERVICE+"/auth/roles/add/", &body)
 
 	if err != nil {
 		return err
@@ -40,7 +27,7 @@ func AddAttendeeRole(id string) error {
 
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err = client.Do(req)
+	resp, err := client.Do(req)
 
 	if err != nil {
 		return err
@@ -57,30 +44,13 @@ func AddAttendeeRole(id string) error {
 	Remove Attendee role from user with auth service
 */
 func RemoveAttendeeRole(id string) error {
-	resp, err := http.Get(config.AUTH_SERVICE + "/auth/roles/" + id + "/")
-
-	if err != nil {
-		return err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return errors.New("Auth service failed to update roles")
-	}
-
-	var user_roles models.UserRoles
-	json.NewDecoder(resp.Body).Decode(&user_roles)
-
-	for index, role := range user_roles.Roles {
-		if role == "Attendee" {
-			user_roles.Roles = append(user_roles.Roles[:index], user_roles.Roles[index+1:]...)
-		}
-	}
+	user_role_modification := models.UserRoleModification{ID: id, Role: "Attendee"}
 
 	body := bytes.Buffer{}
-	json.NewEncoder(&body).Encode(&user_roles)
+	json.NewEncoder(&body).Encode(&user_role_modification)
 
 	client := http.Client{}
-	req, err := http.NewRequest("PUT", config.AUTH_SERVICE+"/auth/roles/", &body)
+	req, err := http.NewRequest("PUT", config.AUTH_SERVICE+"/auth/roles/remove/", &body)
 
 	if err != nil {
 		return err
@@ -88,7 +58,7 @@ func RemoveAttendeeRole(id string) error {
 
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err = client.Do(req)
+	resp, err := client.Do(req)
 
 	if err != nil {
 		return err

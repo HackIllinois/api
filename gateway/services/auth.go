@@ -35,13 +35,13 @@ var AuthRoutes = arbor.RouteCollection{
 	arbor.Route{
 		"AddUserRole",
 		"PUT",
-		"/auth/roles/remove/",
+		"/auth/roles/add/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(AddUserRole).ServeHTTP,
 	},
 	arbor.Route{
 		"RemoveUserRole",
 		"PUT",
-		"/auth/roles/add/",
+		"/auth/roles/remove/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(RemoveUserRole).ServeHTTP,
 	},
 	arbor.Route{

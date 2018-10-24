@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/mail/config"
 	"github.com/HackIllinois/api/services/mail/models"
@@ -87,7 +88,6 @@ func SendMail(mail_info models.MailInfo) (*models.MailStatus, error) {
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&mail_info)
 
-	client := http.Client{}
 	req, err := http.NewRequest("POST", config.SPARKPOST_API+"/transmissions/", &body)
 
 	if err != nil {
@@ -97,18 +97,16 @@ func SendMail(mail_info models.MailInfo) (*models.MailStatus, error) {
 	req.Header.Set("Authorization", config.SPARKPOST_APIKEY)
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := client.Do(req)
+	var mail_status models.MailStatus
+	status, err := apirequest.Do(req, &mail_status)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if resp.StatusCode != http.StatusOK {
+	if status != http.StatusOK {
 		return nil, errors.New("Failed to send mail")
 	}
-
-	var mail_status models.MailStatus
-	json.NewDecoder(resp.Body).Decode(&mail_status)
 
 	return &mail_status, nil
 }

@@ -1,8 +1,8 @@
 package service
 
 import (
-	"encoding/json"
 	"errors"
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/stat/config"
 	"github.com/HackIllinois/api/services/stat/models"
@@ -91,21 +91,18 @@ func GetAggregatedStats(name string) (*models.Stat, error) {
 		return nil, err
 	}
 
-	resp, err := http.Get(service.URL)
+	var stat models.Stat
+	status, err := apirequest.Get(service.URL, &stat)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("Could not retrieve stats from registered service")
+	if status != http.StatusOK {
+		return nil, errors.New("Could not retreive stats from registed service")
 	}
 
-	var stat models.Stat
-	json.NewDecoder(resp.Body).Decode(&stat)
-
 	return &stat, nil
-
 }
 
 /*

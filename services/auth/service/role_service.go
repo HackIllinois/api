@@ -1,6 +1,9 @@
 package service
 
 import (
+	"errors"
+	"github.com/HackIllinois/api/common/utils"
+
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
@@ -67,7 +70,9 @@ func AddUserRole(id string, role string) error {
 		return err
 	}
 
-	roles = append(roles, role)
+	if !slice_utils.ContainsString(roles, role) {
+		roles = append(roles, role)
+	}
 
 	err = db.Update("roles", selector, &models.UserRoles{
 		ID:    id,
@@ -77,6 +82,9 @@ func AddUserRole(id string, role string) error {
 	return err
 }
 
+/*
+	Removes a role from the user with the specified id
+*/
 func RemoveUserRole(id string, role string) error {
 	selector := bson.M{
 		"id": id,
@@ -88,7 +96,11 @@ func RemoveUserRole(id string, role string) error {
 		return err
 	}
 
-	roles = append(roles, role)
+	roles, err = slice_utils.RemoveString(roles, role)
+
+	if err != nil {
+		return errors.New("User does not have specified role")
+	}
 
 	err = db.Update("roles", selector, &models.UserRoles{
 		ID:    id,

@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/decision/config"
 	"github.com/HackIllinois/api/services/decision/models"
 	"gopkg.in/go-playground/validator.v9"
@@ -110,18 +111,9 @@ func HasDecision(id string) (bool, error) {
 	}
 }
 
-func Contains(slice []string, str string) bool {
-	for _, value := range slice {
-		if value == str {
-			return true
-		}
-	}
-	return false
-}
-
 func AssignValueType(key, value string) (interface{}, error) {
 	int_keys := []string{"wave", "timestamp"}
-	if Contains(int_keys, key) {
+	if slice_utils.ContainsString(int_keys, key) {
 		return strconv.Atoi(value)
 	}
 	return value, nil

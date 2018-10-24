@@ -150,6 +150,49 @@ func TestUpdateUserCheckinService(t *testing.T) {
 }
 
 /*
+	Service level test for getting list of all checked in users
+*/
+func TestGetAllCheckedInUsersService(t *testing.T) {
+	SetupTestDB(t)
+
+	new_checkin := models.UserCheckin{
+		ID:              "testid2",
+		HasCheckedIn:    false,
+		HasPickedUpSwag: false,
+	}
+
+	err := service.CreateUserCheckin("testid2", new_checkin)
+
+	new_checkin = models.UserCheckin{
+		ID:              "testid3",
+		HasCheckedIn:    true,
+		HasPickedUpSwag: false,
+	}
+
+	err = service.CreateUserCheckin("testid3", new_checkin)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	checkin_list, err := service.GetAllCheckedInUsers()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_checkin_list := models.CheckinList{
+		CheckedInUsers: []string{"testid", "testid3"},
+	}
+
+	if !reflect.DeepEqual(checkin_list, &expected_checkin_list) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_checkin_list, checkin_list)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
 	Service level test for generating QR code URI
 */
 func TestGetQrInfo(t *testing.T) {

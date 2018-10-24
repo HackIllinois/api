@@ -130,3 +130,26 @@ func CanUserCheckin(id string, user_has_override bool) (bool, error) {
 
 	return is_user_rsvped, nil
 }
+
+/*
+	Returns a list of all checked in user IDs
+*/
+func GetAllCheckedInUsers() (*models.CheckinList, error) {
+	query := database.QuerySelector{
+		"hascheckedin": true,
+	}
+
+	var check_ins []models.UserCheckin
+	err := db.FindAll("checkins", query, &check_ins)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var checkin_list models.CheckinList
+	for _, check_in := range check_ins {
+		checkin_list.CheckedInUsers = append(checkin_list.CheckedInUsers, check_in.ID)
+	}
+
+	return &checkin_list, nil
+}

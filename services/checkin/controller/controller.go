@@ -80,6 +80,14 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
+	if updated_checkin.Override {
+		err = service.AddAttendeeRole(updated_checkin.ID)
+
+		if err != nil {
+			panic(errors.UnprocessableError(err.Error()))
+		}
+	}
+
 	json.NewEncoder(w).Encode(updated_checkin)
 }
 
@@ -100,6 +108,14 @@ func UpdateUserCheckin(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	if updated_checkin.Override {
+		err = service.AddAttendeeRole(updated_checkin.ID)
+
+		if err != nil {
+			panic(errors.UnprocessableError(err.Error()))
+		}
 	}
 
 	json.NewEncoder(w).Encode(updated_checkin)

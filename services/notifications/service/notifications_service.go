@@ -1,8 +1,8 @@
 package service
 
 import (
-	"fmt"
 	"github.com/HackIllinois/api/services/notifications/config"
+    "github.com/HackIllinois/api/services/notifications/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
@@ -21,17 +21,17 @@ func init() {
 /*
 	Returns a list of available SNS Topics
 */
-func GetAllTopics() ([]string, error) {
+func GetAllTopics() (*models.TopicList, error) {
 	out, err := client.ListTopics(&sns.ListTopicsInput{})
 
 	if err != nil {
 		return nil, err
 	}
 
-	var topic_names []string
+	var topic_list models.TopicList
 	for _, topic := range out.Topics {
-		topic_names = append(topic_names, *topic.TopicArn)
+		topic_list.Topics = append(topic_list.Topics, *topic.TopicArn)
 	}
 
-	return topic_names, nil
+	return &topic_list, nil
 }

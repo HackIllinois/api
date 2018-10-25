@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/HackIllinois/api/commons/apirequest"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 )
@@ -48,16 +49,16 @@ func AddUserToMailList(user_id string, mail_list_id string) error {
 
 	content_type := "application/json"
 
-	_, err := http.Post(add_to_mail_list_url, content_type, &update_request_body)
+	status, err := apirequest.Post(add_to_mail_list_url, &update_request_body, nil)
 
-	if err != nil {
+	if err != nil || status != http.StatusOK {
 		// The mailing list didn't exist
 		create_mail_list_url := fmt.Sprintf("%s/mail/list/create/", config.MAIL_SERVICE)
 
 		create_request_body := bytes.Buffer{}
 		json.NewEncoder(&create_request_body).Encode(&mail_list)
 
-		_, err := http.Post(create_mail_list_url, content_type, &create_request_body)
+		_, err := apirequest.Post(create_mail_list_url, &create_request_body, nil)
 
 		return err
 	}

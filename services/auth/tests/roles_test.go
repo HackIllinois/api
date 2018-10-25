@@ -9,10 +9,10 @@ import (
 	"testing"
 )
 
-var db database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.AUTH_DB_HOST, config.AUTH_DB_NAME)
+	db_connection, err := database.InitDatabase(config.AUTH_DB_HOST, config.AUTH_DB_NAME)
 
 	if err != nil {
 		panic(err)
@@ -39,10 +39,7 @@ func SetupTestDB(t *testing.T) {
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	session := db.GetSession()
-	defer session.Close()
-
-	err := session.DB(config.AUTH_DB_NAME).DropDatabase()
+	err := db.DropDatabase()
 
 	if err != nil {
 		t.Fatal(err)
@@ -80,13 +77,13 @@ func TestGetRolesService(t *testing.T) {
 }
 
 /*
-	Service level test for setting a user's roles in the db
+	Service level test for adding a role to a user in the DB
 */
-func TestPutRolesService(t *testing.T) {
+func TestAddRoleService(t *testing.T) {
 	SetupTestDB(t)
 
-	updated_roles := []string{"User", "Admin"}
-	err := service.SetUserRoles("testid", updated_roles)
+	expected_roles := []string{"User", "Admin"}
+	err := service.AddUserRole("testid", "Admin")
 
 	if err != nil {
 		t.Fatal(err)
@@ -98,8 +95,58 @@ func TestPutRolesService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !reflect.DeepEqual(roles, updated_roles) {
-		t.Errorf("Wrong user roles. Expected %v, got %v", updated_roles, roles)
+	if !reflect.DeepEqual(roles, expected_roles) {
+		t.Errorf("Wrong user roles. Expected %v, got %v", expected_roles, roles)
+	}
+
+	// Test adding duplicate role
+	err = service.AddUserRole("testid", "Admin")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	roles, err = service.GetUserRoles("testid", false)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(roles, expected_roles) {
+		t.Errorf("Wrong user roles. Expected %v, got %v", expected_roles, roles)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for removing a role from a user in the DB
+*/
+func TestRemoveRoleService(t *testing.T) {
+	SetupTestDB(t)
+
+	expected_roles := []string{}
+	err := service.RemoveUserRole("testid", "User")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	roles, err := service.GetUserRoles("testid", false)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(roles, expected_roles) {
+		t.Errorf("Wrong user roles. Expected %v, got %v", expected_roles, roles)
+	}
+
+	// Ensure removing a user's role fails if they do not have that role
+	err = service.RemoveUserRole("testid", "User")
+
+	if err == nil {
+		t.Errorf("Able to remove role \"User\" from a user that does not have the \"User\" role")
 	}
 
 	CleanupTestDB(t)

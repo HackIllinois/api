@@ -16,6 +16,7 @@ func SetupController(route *mux.Route) {
 	router.Handle("/", alice.New().ThenFunc(CreateUserCheckin)).Methods("POST")
 	router.Handle("/", alice.New().ThenFunc(UpdateUserCheckin)).Methods("PUT")
 	router.Handle("/", alice.New().ThenFunc(GetCurrentUserCheckin)).Methods("GET")
+	router.Handle("/list/", alice.New().ThenFunc(GetAllCheckedInUsers)).Methods("GET")
 	router.Handle("/qr/", alice.New().ThenFunc(GetCurrentQrCodeInfo)).Methods("GET")
 	router.Handle("/{id}/", alice.New().ThenFunc(GetUserCheckin)).Methods("GET")
 	router.Handle("/qr/{id}/", alice.New().ThenFunc(GetQrCodeInfo)).Methods("GET")
@@ -80,6 +81,14 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
+	if updated_checkin.Override {
+		err = service.AddAttendeeRole(updated_checkin.ID)
+
+		if err != nil {
+			panic(errors.UnprocessableError(err.Error()))
+		}
+	}
+
 	json.NewEncoder(w).Encode(updated_checkin)
 }
 
@@ -100,6 +109,14 @@ func UpdateUserCheckin(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	if updated_checkin.Override {
+		err = service.AddAttendeeRole(updated_checkin.ID)
+
+		if err != nil {
+			panic(errors.UnprocessableError(err.Error()))
+		}
 	}
 
 	json.NewEncoder(w).Encode(updated_checkin)
@@ -143,4 +160,17 @@ func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(qr_info_container)
+}
+
+/*
+	Endpoint to get all checked in user IDs
+*/
+func GetAllCheckedInUsers(w http.ResponseWriter, r *http.Request) {
+	checked_in_users, err := service.GetAllCheckedInUsers()
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(checked_in_users)
 }

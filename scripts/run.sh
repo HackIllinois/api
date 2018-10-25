@@ -62,7 +62,7 @@ function rsvp {
 	export AUTH_SERVICE=http://localhost:8002
 	export DECISION_SERVICE=http://localhost:8005
 	export MAIL_SERVICE=http://localhost:8009
-	
+
 	hackillinois-api-rsvp &
 }
 
@@ -111,6 +111,15 @@ function stat {
 	hackillinois-api-stat &
 }
 
+function notifications {
+	export NOTIFICATIONS_DB_HOST=localhost
+	export NOTIFICATIONS_DB_NAME=notifications
+	export NOTIFICATIONS_PORT=:8012
+	export SNS_REGION=us-east-2
+
+	hackillinois-api-notifications &
+}
+
 function gateway {
 	export GATEWAY_PORT=8000
 	export TOKEN_SECRET=secret_string
@@ -124,6 +133,7 @@ function gateway {
 	export MAIL_SERVICE=http://localhost:8009
 	export EVENT_SERVICE=http://localhost:8010
 	export STAT_SERVICE=http://localhost:8011
+	export NOTIFICATIONS_SERVICE=http://localhost:8012
 
 	mkdir log/
 	touch log/access.log
@@ -141,6 +151,7 @@ upload
 mail
 event
 stat
+notifications
 gateway
 
 sleep infinity

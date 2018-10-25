@@ -5,7 +5,7 @@ SUBDIRS := $(BASE_DIR)/services/. $(BASE_DIR)/gateway/. $(BASE_DIR)/common/. $(B
 TARGETS := all test
 SUBDIRS_TARGETS := $(foreach target,$(TARGETS),$(addsuffix $(target),$(SUBDIRS)))
 DEPLOY_GATEWAY_TARGETS := gateway
-DEPLOY_SERVICE_TARGETS := auth user registration decision rsvp checkin upload mail event stat
+DEPLOY_SERVICE_TARGETS := auth user registration decision rsvp checkin upload mail event stat notifications
 DEPLOY_TARGETS := $(DEPLOY_GATEWAY_TARGETS) $(DEPLOY_SERVICE_TARGETS)
 
 .PHONY: $(TARGETS) $(SUBDIRS_TARGETS)

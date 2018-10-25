@@ -3,6 +3,8 @@ package service
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"net/http"
 
 	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/registration/config"
@@ -40,8 +42,6 @@ func AddUserToMailList(user_id string, mail_list_id string) error {
 
 	update_request_body := bytes.Buffer{}
 	json.NewEncoder(&update_request_body).Encode(&mail_list)
-
-	content_type := "application/json"
 
 	status, err := apirequest.Post(add_to_mail_list_url, &update_request_body, nil)
 

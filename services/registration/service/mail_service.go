@@ -3,6 +3,8 @@ package service
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"net/http"
 
 	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/registration/config"
@@ -22,7 +24,6 @@ func SendUserMail(id string, template string) error {
 	json.NewEncoder(&request_body).Encode(&mail_order)
 
 	_, err := apirequest.Post(config.MAIL_SERVICE+"/mail/send/", &request_body, nil)
-
 
 	return err
 }

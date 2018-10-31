@@ -17,25 +17,25 @@ var UserRoutes = arbor.RouteCollection{
 		"GetCurrentUserInfo",
 		"GET",
 		"/user/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetUserInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"User"}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"SetUserInfo",
 		"POST",
 		"/user/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(SetUserInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(SetUserInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetFilteredUserInfo",
 		"GET",
 		"/user/filter/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetUserInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUserInfo",
 		"GET",
 		"/user/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetUserInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
 	},
 }
 

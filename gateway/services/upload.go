@@ -18,19 +18,19 @@ var UploadRoutes = arbor.RouteCollection{
 		"GetCurrentUploadInfo",
 		"GET",
 		"/upload/resume/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetCurrentUploadInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"User"}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentUploadInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentUploadInfo",
 		"PUT",
 		"/upload/resume/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(UpdateCurrentUploadInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"User"}), middleware.IdentificationMiddleware).ThenFunc(UpdateCurrentUploadInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUploadInfo",
 		"GET",
 		"/upload/resume/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetUploadInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetUploadInfo).ServeHTTP,
 	},
 }
 

@@ -9,10 +9,10 @@ import (
 	"testing"
 )
 
-var db database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.MAIL_DB_HOST, config.MAIL_DB_NAME)
+	db_connection, err := database.InitDatabase(config.MAIL_DB_HOST, config.MAIL_DB_NAME)
 
 	if err != nil {
 		panic(err)
@@ -39,10 +39,7 @@ func SetupTestDB(t *testing.T) {
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	session := db.GetSession()
-	defer session.Close()
-
-	err := session.DB(config.MAIL_DB_NAME).DropDatabase()
+	err := db.DropDatabase()
 
 	if err != nil {
 		t.Fatal(err)
@@ -168,6 +165,49 @@ func TestRemoveFromMailList(t *testing.T) {
 
 	if !reflect.DeepEqual(retreived_list, expected) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected, retreived_list)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests getting a list of all mailing lists
+*/
+func TestGetAllMailLists(t *testing.T) {
+	SetupTestDB(t)
+
+	mail_list := models.MailList{
+		ID:      "testlist2",
+		UserIDs: []string{"userid1", "userid2"},
+	}
+
+	err := service.CreateMailList(mail_list)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	mail_lists, err := service.GetAllMailLists()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := &models.MailListList{
+		MailLists: []models.MailList{
+			models.MailList{
+				ID:      "testlist",
+				UserIDs: []string{"userid1", "userid2"},
+			},
+			models.MailList{
+				ID:      "testlist2",
+				UserIDs: []string{"userid1", "userid2"},
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(mail_lists, expected) {
+		t.Errorf("Wrong set of mailing lists. Expected %v, got %v", expected, mail_lists)
 	}
 
 	CleanupTestDB(t)

@@ -5,18 +5,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/mail/config"
 	"github.com/HackIllinois/api/services/mail/models"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 	"net/http"
 )
 
-var db database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.MAIL_DB_HOST, config.MAIL_DB_NAME)
+	db_connection, err := database.InitDatabase(config.MAIL_DB_HOST, config.MAIL_DB_NAME)
 
 	if err != nil {
 		panic(err)
@@ -87,7 +86,6 @@ func SendMail(mail_info models.MailInfo) (*models.MailStatus, error) {
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&mail_info)
 
-	client := http.Client{}
 	req, err := http.NewRequest("POST", config.SPARKPOST_API+"/transmissions/", &body)
 
 	if err != nil {
@@ -97,18 +95,16 @@ func SendMail(mail_info models.MailInfo) (*models.MailStatus, error) {
 	req.Header.Set("Authorization", config.SPARKPOST_APIKEY)
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := client.Do(req)
+	var mail_status models.MailStatus
+	status, err := apirequest.Do(req, &mail_status)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if resp.StatusCode != http.StatusOK {
+	if status != http.StatusOK {
 		return nil, errors.New("Failed to send mail")
 	}
-
-	var mail_status models.MailStatus
-	json.NewDecoder(resp.Body).Decode(&mail_status)
 
 	return &mail_status, nil
 }
@@ -138,7 +134,7 @@ func CreateMailList(mail_list models.MailList) error {
 
 	_, err := GetMailList(mail_list.ID)
 
-	if err == mgo.ErrNotFound {
+	if err == database.ErrNotFound {
 		return db.Insert("lists", &mail_list)
 	} else if err != nil {
 		return err
@@ -151,13 +147,13 @@ func CreateMailList(mail_list models.MailList) error {
 	Adds the given users to the specified mailing list
 */
 func AddToMailList(mail_list models.MailList) error {
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": mail_list.ID,
 	}
 
-	modifier := bson.M{
-		"$addToSet": bson.M{
-			"userids": bson.M{
+	modifier := database.QuerySelector{
+		"$addToSet": database.QuerySelector{
+			"userids": database.QuerySelector{
 				"$each": mail_list.UserIDs,
 			},
 		},
@@ -170,13 +166,13 @@ func AddToMailList(mail_list models.MailList) error {
 	Removes the given users from the specified mailing list
 */
 func RemoveFromMailList(mail_list models.MailList) error {
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": mail_list.ID,
 	}
 
-	modifier := bson.M{
-		"$pull": bson.M{
-			"userids": bson.M{
+	modifier := database.QuerySelector{
+		"$pull": database.QuerySelector{
+			"userids": database.QuerySelector{
 				"$in": mail_list.UserIDs,
 			},
 		},
@@ -189,7 +185,7 @@ func RemoveFromMailList(mail_list models.MailList) error {
 	Gets the mail list with the given id
 */
 func GetMailList(id string) (*models.MailList, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"id": id,
 	}
 
@@ -201,4 +197,24 @@ func GetMailList(id string) (*models.MailList, error) {
 	}
 
 	return &mail_list, nil
+}
+
+/*
+	Gets all created mailing lists
+*/
+func GetAllMailLists() (*models.MailListList, error) {
+	var mail_lists []models.MailList
+
+	// nil in this case means that we return everything in the lists collection
+	err := db.FindAll("lists", nil, &mail_lists)
+
+	if err != nil {
+		return nil, err
+	}
+
+	mail_list_list := models.MailListList{
+		MailLists: mail_lists,
+	}
+
+	return &mail_list_list, nil
 }

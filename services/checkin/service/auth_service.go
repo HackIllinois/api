@@ -31,25 +31,3 @@ func AddAttendeeRole(id string) error {
 
 	return nil
 }
-
-/*
-	Remove Attendee role from user with auth service
-*/
-func RemoveAttendeeRole(id string) error {
-	user_role_modification := models.UserRoleModification{ID: id, Role: "Attendee"}
-
-	body := bytes.Buffer{}
-	json.NewEncoder(&body).Encode(&user_role_modification)
-
-	status, err := apirequest.Put(config.AUTH_SERVICE+"/auth/roles/remove/", &body, nil)
-
-	if err != nil {
-		return err
-	}
-
-	if status != http.StatusOK {
-		return errors.New("Auth service failed to update roles")
-	}
-
-	return nil
-}

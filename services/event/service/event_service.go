@@ -7,8 +7,6 @@ import (
 	"github.com/HackIllinois/api/services/event/config"
 	"github.com/HackIllinois/api/services/event/models"
 	"gopkg.in/go-playground/validator.v9"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var validate *validator.Validate
@@ -17,10 +15,10 @@ func init() {
 	validate = validator.New()
 }
 
-var db database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.EVENT_DB_HOST, config.EVENT_DB_NAME)
+	db_connection, err := database.InitDatabase(config.EVENT_DB_HOST, config.EVENT_DB_NAME)
 
 	if err != nil {
 		panic(err)
@@ -33,7 +31,7 @@ func init() {
 	Returns the event with the given name
 */
 func GetEvent(name string) (*models.Event, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"name": name,
 	}
 
@@ -62,7 +60,7 @@ func DeleteEvent(name string) (*models.Event, error) {
 		return nil, err
 	}
 
-	query := bson.M{
+	query := database.QuerySelector{
 		"name": name,
 	}
 
@@ -70,9 +68,13 @@ func DeleteEvent(name string) (*models.Event, error) {
 
 	err = db.RemoveOne("events", query)
 
+	if err != nil {
+		return nil, err
+	}
+
 	// Remove from event trackers database
 
-	event_selector := bson.M{
+	event_selector := database.QuerySelector{
 		"eventname": name,
 	}
 
@@ -85,8 +87,8 @@ func DeleteEvent(name string) (*models.Event, error) {
 	// Find all elements, and remove `name` from the Events slice
 	// All the updates are individually atomic
 
-	update_expression := bson.M{
-		"$pull": bson.M{
+	update_expression := database.QuerySelector{
+		"$pull": database.QuerySelector{
 			"events": name,
 		},
 	}
@@ -127,7 +129,7 @@ func CreateEvent(name string, event models.Event) error {
 
 	_, err = GetEvent(name)
 
-	if err != mgo.ErrNotFound {
+	if err != database.ErrNotFound {
 		if err != nil {
 			return err
 		}
@@ -160,7 +162,7 @@ func UpdateEvent(name string, event models.Event) error {
 		return err
 	}
 
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"name": name,
 	}
 
@@ -173,7 +175,7 @@ func UpdateEvent(name string, event models.Event) error {
 	Returns the event tracker for the specified event
 */
 func GetEventTracker(event_name string) (*models.EventTracker, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"eventname": event_name,
 	}
 
@@ -191,7 +193,7 @@ func GetEventTracker(event_name string) (*models.EventTracker, error) {
 	Returns the user tracker for the specified user
 */
 func GetUserTracker(user_id string) (*models.UserTracker, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"userid": user_id,
 	}
 
@@ -199,7 +201,7 @@ func GetUserTracker(user_id string) (*models.UserTracker, error) {
 	err := db.FindOne("usertrackers", query, &tracker)
 
 	if err != nil {
-		if err == mgo.ErrNotFound {
+		if err == database.ErrNotFound {
 			return &models.UserTracker{
 				UserID: user_id,
 				Events: []string{},
@@ -246,12 +248,12 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 		return errors.New("User has already been marked as attending")
 	}
 
-	event_selector := bson.M{
+	event_selector := database.QuerySelector{
 		"eventname": event_name,
 	}
 
-	event_modifier := bson.M{
-		"$addToSet": bson.M{
+	event_modifier := database.QuerySelector{
+		"$addToSet": database.QuerySelector{
 			"users": user_id,
 		},
 	}
@@ -262,19 +264,19 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 		return err
 	}
 
-	user_selector := bson.M{
+	user_selector := database.QuerySelector{
 		"userid": user_id,
 	}
 
-	user_modifier := bson.M{
-		"$addToSet": bson.M{
+	user_modifier := database.QuerySelector{
+		"$addToSet": database.QuerySelector{
 			"events": event_name,
 		},
 	}
 
 	err = db.Update("usertrackers", user_selector, &user_modifier)
 
-	if err == mgo.ErrNotFound {
+	if err == database.ErrNotFound {
 		user_tracker := models.UserTracker{
 			UserID: user_id,
 			Events: []string{event_name},

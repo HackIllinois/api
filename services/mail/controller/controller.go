@@ -15,6 +15,7 @@ func SetupController(route *mux.Route) {
 
 	router.Handle("/send/", alice.New().ThenFunc(SendMail)).Methods("POST")
 	router.Handle("/send/list/", alice.New().ThenFunc(SendMailList)).Methods("POST")
+	router.Handle("/list/", alice.New().ThenFunc(GetAllMailLists)).Methods("GET")
 	router.Handle("/list/create/", alice.New().ThenFunc(CreateMailList)).Methods("POST")
 	router.Handle("/list/add/", alice.New().ThenFunc(AddToMailList)).Methods("POST")
 	router.Handle("/list/remove/", alice.New().ThenFunc(RemoveFromMailList)).Methods("POST")
@@ -134,4 +135,17 @@ func GetMailList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(mail_list)
+}
+
+/*
+	Endpoint to get all mailing lists
+*/
+func GetAllMailLists(w http.ResponseWriter, r *http.Request) {
+	mail_lists, err := service.GetAllMailLists()
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(mail_lists)
 }

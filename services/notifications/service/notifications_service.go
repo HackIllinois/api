@@ -1,61 +1,123 @@
 package service
 
 import (
+	"errors"
+	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/notifications/config"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
+	"time"
 )
 
 var sess *session.Session
 var client *sns.SNS
+var db database.Database
 
 func init() {
 	sess = session.Must(session.NewSession(&aws.Config{
 		Region: aws.String(config.SNS_REGION),
 	}))
 	client = sns.New(sess)
+
+	db_connection, err := database.InitDatabase(config.NOTIFICATIONS_DB_HOST, config.NOTIFICATIONS_DB_NAME)
+
+	if err != nil {
+		panic(err)
+	}
+
+	db = db_connection
 }
 
 /*
 	Returns a list of available SNS Topics
 */
 func GetAllTopics() (*models.TopicList, error) {
-	out, err := client.ListTopics(&sns.ListTopicsInput{})
+	var topic_list models.TopicList
+
+	err := db.FindAll("topics", nil, &topic_list)
 
 	if err != nil {
 		return nil, err
-	}
-
-	var topic_list models.TopicList
-	for _, topic := range out.Topics {
-		topic_list.Topics = append(topic_list.Topics, *topic.TopicArn)
 	}
 
 	return &topic_list, nil
 }
 
 /*
+	Returns a list of available SNS Topics
+*/
+func GetAllNotifications() (*models.NotificationList, error) {
+	var notifications []models.PastNotification
+
+	err := db.FindAll("notifications", nil, &notifications)
+
+	if err != nil {
+		return nil, err
+	}
+
+	notifications_list := models.NotificationList{
+		Notifications: notifications,
+	}
+
+	return &notifications_list, nil
+}
+
+/*
 	Creates an SNS Topic
 */
-func CreateTopic(name string) (*models.TopicArn, error) {
+func CreateTopic(name string) (*models.Topic, error) {
 	out, err := client.CreateTopic(&sns.CreateTopicInput{Name: &name})
 
 	if err != nil {
 		return nil, err
 	}
 
-	topic_arn := models.TopicArn{Arn: *out.TopicArn}
+	arn := *out.TopicArn
 
-	return &topic_arn, nil
+	_, err = GetTopicInfo(name)
+
+	if err != database.ErrNotFound {
+		if err != nil {
+			return nil, err
+		}
+		return nil, errors.New("Topic already exists")
+	}
+
+	topic := models.Topic{Arn: arn, Name: name}
+
+	err = db.Insert("topics", &topic)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &topic, nil
 }
 
 /*
 	Deletes an SNS Topic
 */
-func DeleteTopic(arn string) error {
-	_, err := client.DeleteTopic(&sns.DeleteTopicInput{TopicArn: &arn})
+func DeleteTopic(name string) error {
+
+	topic, err := GetTopicInfo(name)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = client.DeleteTopic(&sns.DeleteTopicInput{TopicArn: &topic.Arn})
+
+	if err != nil {
+		return err
+	}
+
+	topic_selector := database.QuerySelector{
+		"name": name,
+	}
+
+	err = db.RemoveOne("topics", topic_selector)
 
 	if err != nil {
 		return err
@@ -64,12 +126,37 @@ func DeleteTopic(arn string) error {
 	return nil
 }
 
+func GetTopicInfo(name string) (*models.Topic, error) {
+	topic_selector := database.QuerySelector{
+		"name": name,
+	}
+
+	var topic models.Topic
+
+	err := db.FindOne("topics", topic_selector, &topic)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &topic, nil
+}
+
 /*
 	Dispatches a notification to a given SNS Topic
 */
-func PublishNotification(notification models.Notification) (*models.MessageId, error) {
-	out, err := client.Publish(&sns.PublishInput{
-		TopicArn: &notification.Arn,
+func PublishNotification(topic_name string, notification models.Notification) (*models.PastNotification, error) {
+
+	topic, err := GetTopicInfo(topic_name)
+
+	if err != nil {
+		return nil, err
+	}
+
+	arn := topic.Arn
+
+	_, err = client.Publish(&sns.PublishInput{
+		TopicArn: &arn,
 		Message:  &notification.Message,
 	})
 
@@ -77,7 +164,30 @@ func PublishNotification(notification models.Notification) (*models.MessageId, e
 		return nil, err
 	}
 
-	message_id := models.MessageId{MessageId: *out.MessageId}
+	current_time := time.Now().Unix()
 
-	return &message_id, nil
+	past_notification := models.PastNotification{TopicName: topic_name, Message: notification.Message, Time: current_time}
+	err = db.Insert("notifications", &past_notification)
+
+	return &past_notification, nil
+}
+
+func GetNotificationsForTopic(topic_name string) (*models.NotificationList, error) {
+	topic_name_selector := database.QuerySelector{
+		"topicname": topic_name,
+	}
+
+	var notifications []models.PastNotification
+
+	err := db.FindAll("notifications", topic_name_selector, &notifications)
+
+	if err != nil {
+		return nil, err
+	}
+
+	notifications_list := models.NotificationList{
+		Notifications: notifications,
+	}
+
+	return &notifications_list, nil
 }

@@ -16,26 +16,44 @@ var NotificationsRoutes = arbor.RouteCollection{
 	arbor.Route{
 		"GetAllTopics",
 		"GET",
-		"/notifications/topics/",
+		"/notifications/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetAllTopics).ServeHTTP,
+	},
+	arbor.Route{
+		"GetAllNotifications",
+		"GET",
+		"/notifications/all/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetAllNotifications).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateTopic",
 		"POST",
-		"/notifications/topics/create/",
+		"/notifications/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(CreateTopic).ServeHTTP,
 	},
 	arbor.Route{
+		"GetNotificationsForTopic",
+		"GET",
+		"/notifications/{id}/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetNotificationsForTopic).ServeHTTP,
+	},
+	arbor.Route{
 		"DeleteTopic",
-		"POST",
-		"/notifications/topics/delete/",
+		"DELETE",
+		"/notifications/{id}/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(DeleteTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"PublishNotification",
 		"POST",
-		"/notifications/publish/",
+		"/notifications/{id}/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(PublishNotification).ServeHTTP,
+	},
+	arbor.Route{
+		"GetTopicInfo",
+		"GET",
+		"/notifications/{id}/info/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetTopicInfo).ServeHTTP,
 	},
 }
 
@@ -43,14 +61,26 @@ func GetAllTopics(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
 }
 
+func GetAllNotifications(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+}
+
 func CreateTopic(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
 }
 
+func GetTopicInfo(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+}
+
 func DeleteTopic(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+	arbor.DELETE(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
 }
 
 func PublishNotification(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+}
+
+func GetNotificationsForTopic(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
 }

@@ -17,25 +17,25 @@ var RsvpRoutes = arbor.RouteCollection{
 		"GetCurrentRsvpInfo",
 		"GET",
 		"/rsvp/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Applicant"})).ThenFunc(GetCurrentRsvpInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Applicant"}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentRsvpInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateCurrentRsvpInfo",
 		"POST",
 		"/rsvp/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Applicant"})).ThenFunc(CreateCurrentRsvpInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Applicant"}), middleware.IdentificationMiddleware).ThenFunc(CreateCurrentRsvpInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentRsvpInfo",
 		"PUT",
 		"/rsvp/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Applicant"})).ThenFunc(UpdateCurrentRsvpInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Applicant"}), middleware.IdentificationMiddleware).ThenFunc(UpdateCurrentRsvpInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetRsvpInfo",
 		"GET",
 		"/rsvp/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetRsvpInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetRsvpInfo).ServeHTTP,
 	},
 }
 

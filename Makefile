@@ -49,3 +49,7 @@ setup: all
 	@echo 'Generating API admin token'
 	hackillinois-utility-accountgen
 	hackillinois-utility-tokengen
+
+.PHONY: docs
+docs:
+	cd $(BASE_DIR)/documentation && make build && cd -

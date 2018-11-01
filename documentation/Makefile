@@ -5,8 +5,12 @@ SOURCES = mkdocs.yml $(wildcard */*.md)
 install-deps:
 	pip3 install mkdocs mkdocs-material
 	
-serve: $(SOURCES)
+serve: $(SOURCES) install-deps
 	mkdocs serve
 
-build: $(SOURCES)
-	mkdocs build 
+build: $(SOURCES) install-deps
+	cp -f ../README.md docs/getting-started/developer-guide.md
+	cat docs/getting-started/docs_addendum.md >> docs/getting-started/developer-guide.md
+
+	# Propagates contents of repository-level README.MD to developer guide
+	mkdocs build

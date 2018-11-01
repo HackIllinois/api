@@ -5,7 +5,6 @@ import (
 	"github.com/HackIllinois/api/services/checkin/config"
 	"github.com/HackIllinois/api/services/checkin/models"
 	"github.com/HackIllinois/api/services/checkin/service"
-	"net/url"
 	"reflect"
 	"testing"
 )
@@ -187,43 +186,6 @@ func TestGetAllCheckedInUsersService(t *testing.T) {
 
 	if !reflect.DeepEqual(checkin_list, &expected_checkin_list) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_checkin_list, checkin_list)
-	}
-
-	CleanupTestDB(t)
-}
-
-/*
-	Service level test for generating QR code URI
-*/
-func TestGetQrInfo(t *testing.T) {
-	SetupTestDB(t)
-
-	actual_uri, err := service.GetQrInfo("testid")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	parsed_uri, err := url.Parse(actual_uri)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	actual_query_params, err := url.ParseQuery(parsed_uri.RawQuery)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected_query_params := url.Values{
-		"userId":          []string{"testid"},
-		"hasCheckedIn":    []string{"true"},
-		"hasPickedUpSwag": []string{"true"},
-	}
-
-	if !reflect.DeepEqual(expected_query_params, actual_query_params) {
-		t.Errorf("Wrong QR code URI. Expected %v, got %v", expected_query_params, actual_query_params)
 	}
 
 	CleanupTestDB(t)

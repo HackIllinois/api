@@ -29,7 +29,7 @@ var UserRoutes = arbor.RouteCollection{
 		"GetCurrentQrCodeInfo",
 		"GET",
 		"/user/qr/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Attendee"})).ThenFunc(GetCurrentQrCodeInfo).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetCurrentQrCodeInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetQrCodeInfo",
@@ -60,9 +60,9 @@ func SetUserInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCurrentQrCodeInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, CheckinURL+r.URL.String(), CheckinFormat, "", r)
+	arbor.GET(w, UserURL+r.URL.String(), UserFormat, "", r)
 }
 
 func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, CheckinURL+r.URL.String(), CheckinFormat, "", r)
+	arbor.GET(w, UserURL+r.URL.String(), UserFormat, "", r)
 }

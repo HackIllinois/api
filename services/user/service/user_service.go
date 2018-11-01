@@ -5,16 +5,14 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
-	"net/url"
 	"strings"
+	"net/url"
 )
 
-var db database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.USER_DB_HOST, config.USER_DB_NAME)
+	db_connection, err := database.InitDatabase(config.USER_DB_HOST, config.USER_DB_NAME)
 
 	if err != nil {
 		panic(err)
@@ -27,7 +25,7 @@ func init() {
 	Returns the info associated with the given user id
 */
 func GetUserInfo(id string) (*models.UserInfo, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"id": id,
 	}
 
@@ -46,13 +44,13 @@ func GetUserInfo(id string) (*models.UserInfo, error) {
 	The record will be created if it does not already exist
 */
 func SetUserInfo(id string, user_info models.UserInfo) error {
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": id,
 	}
 
 	err := db.Update("info", selector, &user_info)
 
-	if err == mgo.ErrNotFound {
+	if err == database.ErrNotFound {
 		err = db.Insert("info", &user_info)
 	}
 
@@ -71,7 +69,7 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 		}
 
 		key = strings.ToLower(key)
-		query[key] = bson.M{"$in": strings.Split(values[0], ",")}
+		query[key] = database.QuerySelector{"$in": strings.Split(values[0], ",")}
 	}
 
 	var filtered_users models.FilteredUsers

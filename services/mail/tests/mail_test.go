@@ -9,10 +9,10 @@ import (
 	"testing"
 )
 
-var db database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.MAIL_DB_HOST, config.MAIL_DB_NAME)
+	db_connection, err := database.InitDatabase(config.MAIL_DB_HOST, config.MAIL_DB_NAME)
 
 	if err != nil {
 		panic(err)
@@ -39,10 +39,7 @@ func SetupTestDB(t *testing.T) {
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	session := db.GetSession()
-	defer session.Close()
-
-	err := session.DB(config.MAIL_DB_NAME).DropDatabase()
+	err := db.DropDatabase()
 
 	if err != nil {
 		t.Fatal(err)

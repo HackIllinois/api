@@ -6,14 +6,12 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/checkin/config"
 	"github.com/HackIllinois/api/services/checkin/models"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 )
 
-var db database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.CHECKIN_DB_HOST, config.CHECKIN_DB_NAME)
+	db_connection, err := database.InitDatabase(config.CHECKIN_DB_HOST, config.CHECKIN_DB_NAME)
 
 	if err != nil {
 		panic(err)
@@ -26,7 +24,7 @@ func init() {
 	Returns the checkin associated with the given user id
 */
 func GetUserCheckin(id string) (*models.UserCheckin, error) {
-	query := bson.M{
+	query := database.QuerySelector{
 		"id": id,
 	}
 
@@ -46,7 +44,7 @@ func GetUserCheckin(id string) (*models.UserCheckin, error) {
 func CreateUserCheckin(id string, user_checkin models.UserCheckin) error {
 	_, err := GetUserCheckin(id)
 
-	if err != mgo.ErrNotFound {
+	if err != database.ErrNotFound {
 		if err != nil {
 			return err
 		}
@@ -62,7 +60,7 @@ func CreateUserCheckin(id string, user_checkin models.UserCheckin) error {
 	Update the checkin associated with the given user id
 */
 func UpdateUserCheckin(id string, user_checkin models.UserCheckin) error {
-	selector := bson.M{
+	selector := database.QuerySelector{
 		"id": id,
 	}
 
@@ -96,4 +94,27 @@ func CanUserCheckin(id string, user_has_override bool) (bool, error) {
 	}
 
 	return is_user_rsvped, nil
+}
+
+/*
+	Returns a list of all checked in user IDs
+*/
+func GetAllCheckedInUsers() (*models.CheckinList, error) {
+	query := database.QuerySelector{
+		"hascheckedin": true,
+	}
+
+	var check_ins []models.UserCheckin
+	err := db.FindAll("checkins", query, &check_ins)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var checkin_list models.CheckinList
+	for _, check_in := range check_ins {
+		checkin_list.CheckedInUsers = append(checkin_list.CheckedInUsers, check_in.ID)
+	}
+
+	return &checkin_list, nil
 }

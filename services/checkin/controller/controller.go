@@ -102,3 +102,16 @@ func UpdateUserCheckin(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(updated_checkin)
 }
+
+/*
+	Endpoint to get all checked in user IDs
+*/
+func GetAllCheckedInUsers(w http.ResponseWriter, r *http.Request) {
+	checked_in_users, err := service.GetAllCheckedInUsers()
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(checked_in_users)
+}

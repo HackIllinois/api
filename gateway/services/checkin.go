@@ -23,25 +23,25 @@ var CheckinRoutes = arbor.RouteCollection{
 		"CreateCurrentCheckinInfo",
 		"POST",
 		"/checkin/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(CreateCurrentCheckinInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Staff"}), middleware.IdentificationMiddleware).ThenFunc(CreateCurrentCheckinInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentCheckinInfo",
 		"PUT",
 		"/checkin/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(UpdateCurrentCheckinInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Staff"}), middleware.IdentificationMiddleware).ThenFunc(UpdateCurrentCheckinInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetAllCheckedInUsers",
 		"GET",
 		"/checkin/list/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetAllCheckedInUsers).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Staff"}), middleware.IdentificationMiddleware).ThenFunc(GetAllCheckedInUsers).ServeHTTP,
 	},
 	arbor.Route{
 		"GetCheckinInfo",
 		"GET",
 		"/checkin/{id}/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetCheckinInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Staff"}), middleware.IdentificationMiddleware).ThenFunc(GetCheckinInfo).ServeHTTP,
 	},
 }
 

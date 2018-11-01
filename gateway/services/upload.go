@@ -30,7 +30,7 @@ var UploadRoutes = arbor.RouteCollection{
 		"GetUploadInfo",
 		"GET",
 		"/upload/resume/{id}/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetUploadInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Staff"}), middleware.IdentificationMiddleware).ThenFunc(GetUploadInfo).ServeHTTP,
 	},
 }
 

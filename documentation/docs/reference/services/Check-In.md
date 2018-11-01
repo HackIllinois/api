@@ -1,4 +1,4 @@
-Check In
+Checkin
 =======
 
 GET /checkin/USERID/
@@ -77,10 +77,25 @@ Response format:
 }
 ```
 
+GET /checkin/list/
+----------
+
+Returns a list of all user IDs for users who have checked in
+
+Response format:
+```
+{
+	"checkedInUsers": [
+		"github0000001",
+		"github0000005"
+	]
+}
+```
+
 GET /checkin/qr/
 ----------
 
-Get the string to be embedded in the current user's QR code. 
+Get the string to be embedded in the current user's QR code.
 The QR code string will contain information stored in the form of a URI.
 
 Response format:
@@ -94,7 +109,7 @@ Response format:
 GET /checkin/qr/{id}/
 ----------
 
-Get the string to be embedded in the specified user's QR code. 
+Get the string to be embedded in the specified user's QR code.
 The QR code string will contain information stored in the form of a URI.
 
 Response format:

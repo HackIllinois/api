@@ -17,6 +17,7 @@ func SetupController(route *mux.Route) {
 	router.Handle("/", alice.New().ThenFunc(UpdateUserCheckin)).Methods("PUT")
 	router.Handle("/", alice.New().ThenFunc(GetCurrentUserCheckin)).Methods("GET")
 	router.Handle("/{id}/", alice.New().ThenFunc(GetUserCheckin)).Methods("GET")
+	router.Handle("/list/", alice.New().ThenFunc(GetAllCheckedInUsers)).Methods("GET")
 }
 
 /*

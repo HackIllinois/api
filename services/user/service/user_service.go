@@ -5,8 +5,8 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
-	"strings"
 	"net/url"
+	"strings"
 )
 
 var db database.Database

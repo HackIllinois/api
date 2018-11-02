@@ -1,16 +1,18 @@
 SOURCES = mkdocs.yml $(wildcard */*.md) 
 
-.PHONY: install-deps serve build
+.PHONY: install-deps serve build copy-docs-addendum
 
 install-deps:
 	pip3 install mkdocs mkdocs-material
-	
-serve: $(SOURCES) install-deps
+
+# Starts a live-reloading server that serves the API docs
+serve: $(SOURCES) install-deps copy-docs-addendum
 	mkdocs serve
 
-build: $(SOURCES) install-deps
-	cp -f ../README.md docs/getting-started/developer-guide.md
-	cat docs/getting-started/docs_addendum.md >> docs/getting-started/developer-guide.md
-
-	# Propagates contents of repository-level README.MD to developer guide
+# Generates the static website
+build: $(SOURCES) install-deps copy-docs-addendum
 	mkdocs build
+
+# Propagates contents of repository-level README.MD to developer guide
+copy-docs-addendum: $(DOCS_ADDENDUM)
+	cp -f ../README.md docs/getting-started/developer-guide.md

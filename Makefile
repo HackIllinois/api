@@ -52,4 +52,4 @@ setup: all
 
 .PHONY: docs
 docs:
-	cd $(BASE_DIR)/documentation && make build && cd -
+	cd $(BASE_DIR)/documentation && $(MAKE) -C build && cd -

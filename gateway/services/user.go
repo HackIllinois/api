@@ -17,25 +17,37 @@ var UserRoutes = arbor.RouteCollection{
 		"GetCurrentUserInfo",
 		"GET",
 		"/user/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetUserInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"User"}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"SetUserInfo",
 		"POST",
 		"/user/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(SetUserInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(SetUserInfo).ServeHTTP,
+	},
+	arbor.Route{
+		"GetCurrentQrCodeInfo",
+		"GET",
+		"/user/qr/",
+		alice.New(middleware.AuthMiddleware([]string{"User"}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentQrCodeInfo).ServeHTTP,
+	},
+	arbor.Route{
+		"GetQrCodeInfo",
+		"GET",
+		"/user/qr/{id}/",
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetQrCodeInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetFilteredUserInfo",
 		"GET",
 		"/user/filter/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetUserInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUserInfo",
 		"GET",
 		"/user/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetUserInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
 	},
 }
 
@@ -45,4 +57,12 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 
 func SetUserInfo(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, UserURL+r.URL.String(), UserFormat, "", r)
+}
+
+func GetCurrentQrCodeInfo(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, UserURL+r.URL.String(), UserFormat, "", r)
+}
+
+func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, UserURL+r.URL.String(), UserFormat, "", r)
 }

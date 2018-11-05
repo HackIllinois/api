@@ -82,7 +82,7 @@ func GetAllServices() ([]models.Service, error) {
 }
 
 /*
-	Retreive stats from a specified registered service
+	Retrieve stats from a specified registered service
 */
 func GetAggregatedStats(name string) (*models.Stat, error) {
 	service, err := GetService(name)
@@ -98,7 +98,7 @@ func GetAggregatedStats(name string) (*models.Stat, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("Could not retreive stats from registed service")
+		return nil, errors.New("Could not retrieve stats from registered service")
 	}
 
 	var stat models.Stat

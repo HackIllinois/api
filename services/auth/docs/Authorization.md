@@ -19,6 +19,8 @@ Valid `PROVIDER` strings: `github`, `google` and `linkedin`.
 
 `AUTHREDIRECTURI` can be specified to override the default OAuth redirect URI. This is the URI to which the application is redirected after the token request is completed.
 
+*Important note:* For Google OAuth requests, the provided `redirect_uri` needs to be the same as the one provided in the GET request above. If the two `redirect_uri`s differ, Google will reject the OAuth token request.
+
 Request format:
 ```
 {

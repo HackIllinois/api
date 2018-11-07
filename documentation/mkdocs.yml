@@ -28,7 +28,7 @@ nav:
       - 'Middleware': 'reference/gateway/middleware.md'
       - 'Routes': 'reference/gateway/routes.md'
     - For API Writers:
-      - 'Documentation System': 'reference/api-writers/documentation-system'
+      - 'Documentation System': 'reference/api-writers/documentation-system.md'
 
 theme:
   name: 'material'

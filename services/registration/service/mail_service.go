@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -45,14 +46,26 @@ func AddUserToMailList(user_id string, mail_list_id string) error {
 
 	status, err := apirequest.Post(add_to_mail_list_url, &update_request_body, nil)
 
-	if err != nil || status != http.StatusOK {
+	if err != nil {
+		return err
+	}
+
+	if status != http.StatusOK {
 		// The mailing list didn't exist
 		create_mail_list_url := fmt.Sprintf("%s/mail/list/create/", config.MAIL_SERVICE)
 
 		create_request_body := bytes.Buffer{}
 		json.NewEncoder(&create_request_body).Encode(&mail_list)
 
-		_, err := apirequest.Post(create_mail_list_url, &create_request_body, nil)
+		status, err = apirequest.Post(create_mail_list_url, &create_request_body, nil)
+
+		if err != nil {
+			return err
+		}
+
+		if status != http.StatusOK {
+			return errors.New("Mailing list does not exist, furthermore, creation of mailing list failed.")
+		}
 
 		return err
 	}

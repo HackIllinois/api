@@ -1,11 +1,184 @@
 package tests
 
 import (
+	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/services/notifications/config"
+	"github.com/HackIllinois/api/services/notifications/models"
+	"github.com/HackIllinois/api/services/notifications/service"
+	"reflect"
 	"testing"
 )
 
+var db database.Database
+
+func init() {
+	db_connection, err := database.InitDatabase(config.NOTIFICATIONS_DB_HOST, config.NOTIFICATIONS_DB_NAME)
+
+	if err != nil {
+		panic(err)
+	}
+
+	db = db_connection
+}
+
 /*
-	Placeholder test for travis build
+	Initialize db with a test topic and notification
 */
-func TestPlaceholder(t *testing.T) {
+func SetupTestDB(t *testing.T) {
+	topic := models.Topic{
+		Name: "test_topic",
+		Arn:  "arn:test",
+	}
+
+	err := db.Insert("topics", &topic)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	notification := models.PastNotification{
+		Message:   "test message",
+		TopicName: "test_topic",
+		Time:      2000,
+	}
+
+	err = db.Insert("notifications", &notification)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+/*
+	Drop test db
+*/
+func CleanupTestDB(t *testing.T) {
+	err := db.DropDatabase()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+/*
+	Service level test for getting all topics from db
+*/
+func TestGetAllTopicsSerice(t *testing.T) {
+	SetupTestDB(t)
+
+	topic := models.Topic{
+		Name: "test_topic_2",
+		Arn:  "arn:test2",
+	}
+
+	err := db.Insert("topics", &topic)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	actual_topic_list, err := service.GetAllTopics()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_topic_list := models.TopicList{
+		Topics: []models.Topic{
+			models.Topic{
+				Name: "test_topic",
+				Arn:  "arn:test",
+			},
+			models.Topic{
+				Name: "test_topic_2",
+				Arn:  "arn:test2",
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(actual_topic_list, &expected_topic_list) {
+		t.Errorf("Wrong topic list. Expected %v, got %v", expected_topic_list, actual_topic_list)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for creating a notification topic
+*/
+func TestCreateTopicService(t *testing.T) {
+	SetupTestDB(t)
+
+	topic_details, err := service.CreateTopic("test_topic_2")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	actual_topic_list, err := service.GetAllTopics()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_topic_list := models.TopicList{
+		Topics: []models.Topic{
+			models.Topic{
+				Name: "test_topic",
+				Arn:  "arn:test",
+			},
+			models.Topic{
+				Name: "test_topic_2",
+				Arn:  topic_details.Arn,
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(actual_topic_list, &expected_topic_list) {
+		t.Errorf("Wrong topic list. Expected %v, got %v", expected_topic_list, actual_topic_list)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for getting all notifications from db
+*/
+func TestGetAllNotificationsService(t *testing.T) {
+	SetupTestDB(t)
+
+	notification := models.PastNotification{
+		Message:   "test message_2",
+		TopicName: "test_topic_2",
+		Time:      3000,
+	}
+
+	err := db.Insert("notifications", &notification)
+
+	actual_notification_list, err := service.GetAllNotifications()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_notification_list := models.NotificationList{
+		Notifications: []models.PastNotification{
+			models.PastNotification{
+				Message:   "test message",
+				TopicName: "test_topic",
+				Time:      2000,
+			},
+			models.PastNotification{
+				Message:   "test message_2",
+				TopicName: "test_topic_2",
+				Time:      3000,
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(actual_notification_list, &expected_notification_list) {
+		t.Errorf("Wrong notification list. Expected %v, got %v", expected_notification_list, actual_notification_list)
+	}
+
+	CleanupTestDB(t)
 }

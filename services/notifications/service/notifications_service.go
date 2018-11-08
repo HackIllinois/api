@@ -68,15 +68,19 @@ func GetAllNotifications() (*models.NotificationList, error) {
 	Creates an SNS Topic
 */
 func CreateTopic(name string) (*models.Topic, error) {
-	out, err := client.CreateTopic(&sns.CreateTopicInput{Name: &name})
+	var arn string
 
-	if err != nil {
-		return nil, err
+	if config.IS_PRODUCTION {
+		out, err := client.CreateTopic(&sns.CreateTopicInput{Name: &name})
+
+		if err != nil {
+			return nil, err
+		}
+
+		arn = *out.TopicArn
 	}
 
-	arn := *out.TopicArn
-
-	_, err = GetTopicInfo(name)
+	_, err := GetTopicInfo(name)
 
 	if err != database.ErrNotFound {
 		if err != nil {
@@ -107,10 +111,12 @@ func DeleteTopic(name string) error {
 		return err
 	}
 
-	_, err = client.DeleteTopic(&sns.DeleteTopicInput{TopicArn: &topic.Arn})
+	if config.IS_PRODUCTION {
+		_, err = client.DeleteTopic(&sns.DeleteTopicInput{TopicArn: &topic.Arn})
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
 	}
 
 	topic_selector := database.QuerySelector{
@@ -155,13 +161,15 @@ func PublishNotification(topic_name string, notification models.Notification) (*
 
 	arn := topic.Arn
 
-	_, err = client.Publish(&sns.PublishInput{
-		TopicArn: &arn,
-		Message:  &notification.Message,
-	})
+	if config.IS_PRODUCTION {
+		_, err = client.Publish(&sns.PublishInput{
+			TopicArn: &arn,
+			Message:  &notification.Message,
+		})
 
-	if err != nil {
-		return nil, err
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	current_time := time.Now().Unix()

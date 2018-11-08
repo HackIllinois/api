@@ -11,11 +11,11 @@ Response format:
 {
     "topics": [
         {
-            "arn": "arn:aws:sns:us-east-2:256758753660:hi_mentor",
+            "arn": "arn:aws:sns:us-east-2:256758753660:Mentor",
             "name": "Mentors"
         },
         {
-            "arn": "arn:aws:sns:us-east-2:256758753660:hi_attendee",
+            "arn": "arn:aws:sns:us-east-2:256758753660:Attendee",
             "name": "Attendees"
         }
     ]
@@ -55,17 +55,17 @@ Response format:
         {
             "message": "This is a notification!",
             "time": 1541037801,
-            "topicName": "hi_attendee"
+            "topicName": "Attendee"
         },
 		{
             "message": "This is another notification!",
             "time": 1541069201,
-            "topicName": "hi_attendee"
+            "topicName": "Attendee"
         },
 		{
             "message": "This is another notification, for another topic!",
             "time": 1541169201,
-            "topicName": "hi_mentor"
+            "topicName": "Mentor"
         }
     ]
 }
@@ -83,12 +83,12 @@ Response format:
         {
             "message": "This is a notification!",
             "time": 1541037801,
-            "topicName": "hi_attendee"
+            "topicName": "Attendee"
         },
 		{
             "message": "This is another notification!",
             "time": 1541069201,
-            "topicName": "hi_attendee"
+            "topicName": "Attendee"
         }
     ]
 }
@@ -104,11 +104,11 @@ Response format:
 {
     "topics": [
         {
-            "arn": "arn:aws:sns:us-east-2:256758753660:hi_mentor",
+            "arn": "arn:aws:sns:us-east-2:256758753660:Mentor",
             "name": "Mentors"
         },
         {
-            "arn": "arn:aws:sns:us-east-2:256758753660:hi_attendee",
+            "arn": "arn:aws:sns:us-east-2:256758753660:Attendee",
             "name": "Attendees"
         }
     ]
@@ -132,7 +132,7 @@ Response format:
 {
 	"message": "Message to send to users",
 	"time": 1541644690,
-	"topicName": "hi_attendee"
+	"topicName": "Attendee"
 }
 ```
 

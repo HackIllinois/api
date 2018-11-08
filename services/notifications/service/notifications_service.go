@@ -36,7 +36,7 @@ func init() {
 func GetAllTopics() (*models.TopicList, error) {
 	var topic_list models.TopicList
 
-	err := db.FindAll("topics", nil, &topic_list)
+	err := db.FindAll("topics", nil, &topic_list.Topics)
 
 	if err != nil {
 		return nil, err

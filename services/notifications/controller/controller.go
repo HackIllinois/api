@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/HackIllinois/api/services/notifications/service"
@@ -53,7 +52,6 @@ func GetAllNotifications(w http.ResponseWriter, r *http.Request) {
 	Endpoint to create a new SNS topic
 */
 func CreateTopic(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Test")
 	var topic_name models.TopicName
 	json.NewDecoder(r.Body).Decode(&topic_name)
 

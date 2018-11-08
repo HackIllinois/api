@@ -1,14 +1,19 @@
 SOURCES = mkdocs.yml $(wildcard */*.md) 
 DOCS_ADDENDUM = ../README.md
+REQUIREMENTS = requirements.txt
 
-.PHONY: serve build copy-docs-addendum
+.PHONY: install-deps serve build copy-docs-addendum
+
+# Install dependencies
+install-deps: $(REQUIREMENTS)
+	pip install -r $(REQUIREMENTS)
 
 # Starts a live-reloading server that serves the API docs
-serve: $(SOURCES) copy-docs-addendum
+serve: $(SOURCES) install-deps copy-docs-addendum
 	mkdocs serve
 
 # Generates the static website
-build: $(SOURCES) copy-docs-addendum
+build: $(SOURCES) install-deps copy-docs-addendum
 	mkdocs build
 
 # Propagates contents of repository-level README.MD to developer guide

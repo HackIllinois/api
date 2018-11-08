@@ -1,13 +1,11 @@
 language: go
 go:
     - "1.10.x"
-python:
-    - "3.7"
 services:
     mongodb
 install:
     - go get -t ./...
-    - pip install -r documentation/requirements.txt
+    - sudo apt-get install python3 pip3
 script:
     - cd $GOPATH/src/github.com/arbor-dev/arbor && git fetch origin dev/v0.3 && git checkout dev/v0.3 && cd -
     - "[ $(gofmt -l . | wc -l) == 0 ]"
@@ -25,11 +23,11 @@ deploy:
         local_dir: deploy
         on:
             branch: master
-    # - provider: s3
-    #     access_key_id: $HACKILLINOIS_ACCESS_KEY
-    #     secret_access_key: $HACKILLINOIS_SECRET_KEY
-    #     bucket: hackillinois-api-docs
-    #     skip-cleanup: true
-    #     local_dir: deploy_docs
-    #     on:
-    #         branch: master
+    - provider: s3
+        access_key_id: $HACKILLINOIS_ACCESS_KEY
+        secret_access_key: $HACKILLINOIS_SECRET_KEY
+        bucket: hackillinois-api-docs
+        skip-cleanup: true
+        local_dir: documentation/site
+        on:
+            branch: master

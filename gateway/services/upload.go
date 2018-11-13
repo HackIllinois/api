@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/HackIllinois/api/gateway/config"
+	"github.com/HackIllinois/api/gateway/models"
 	"github.com/HackIllinois/api/gateway/middleware"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
@@ -18,19 +19,19 @@ var UploadRoutes = arbor.RouteCollection{
 		"GetCurrentUploadInfo",
 		"GET",
 		"/upload/resume/",
-		alice.New(middleware.AuthMiddleware([]string{"User"}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentUploadInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentUploadInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentUploadInfo",
 		"PUT",
 		"/upload/resume/",
-		alice.New(middleware.AuthMiddleware([]string{"User"}), middleware.IdentificationMiddleware).ThenFunc(UpdateCurrentUploadInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateCurrentUploadInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUploadInfo",
 		"GET",
 		"/upload/resume/{id}/",
-		alice.New(middleware.AuthMiddleware([]string{"Staff"}), middleware.IdentificationMiddleware).ThenFunc(GetUploadInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUploadInfo).ServeHTTP,
 	},
 }
 

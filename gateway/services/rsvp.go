@@ -36,7 +36,7 @@ var RsvpRoutes = arbor.RouteCollection{
 		"GetRsvpInfo",
 		"GET",
 		"/rsvp/{id}/",
-		alice.New(middleware.AuthMiddleware([]string{models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetRsvpInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetRsvpInfo).ServeHTTP,
 	},
 }
 

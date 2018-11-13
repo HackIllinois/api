@@ -25,13 +25,13 @@ var DecisionRoutes = arbor.RouteCollection{
 		"UpdateDecision",
 		"POST",
 		"/decision/",
-		alice.New(middleware.AuthMiddleware([]string{models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateDecision).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateDecision).ServeHTTP,
 	},
 	arbor.Route{
 		"GetFilteredDecisions",
 		"GET",
 		"/decision/filter/",
-		alice.New(middleware.AuthMiddleware([]string{models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetFilteredDecisions).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetFilteredDecisions).ServeHTTP,
 	},
 	arbor.Route{
 		"FinalizeDecision",
@@ -43,7 +43,7 @@ var DecisionRoutes = arbor.RouteCollection{
 		"GetDecision",
 		"GET",
 		"/decision/{id}/",
-		alice.New(middleware.AuthMiddleware([]string{models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetDecision).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetDecision).ServeHTTP,
 	},
 }
 

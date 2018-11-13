@@ -19,19 +19,19 @@ var EventRoutes = arbor.RouteCollection{
 		"MarkUserAsAttendingEvent",
 		"POST",
 		"/event/track/",
-		alice.New(middleware.AuthMiddleware([]string{models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(MarkUserAsAttendingEvent).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(MarkUserAsAttendingEvent).ServeHTTP,
 	},
 	arbor.Route{
 		"GetEventTrackingInfo",
 		"GET",
 		"/event/track/event/{name}/",
-		alice.New(middleware.AuthMiddleware([]string{models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetEventTrackingInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetEventTrackingInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUserTrackingInfo",
 		"GET",
 		"/event/track/user/{id}/",
-		alice.New(middleware.AuthMiddleware([]string{models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserTrackingInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserTrackingInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetEvent",

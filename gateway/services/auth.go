@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/HackIllinois/api/gateway/config"
-	"github.com/HackIllinois/api/gateway/models"
 	"github.com/HackIllinois/api/gateway/middleware"
+	"github.com/HackIllinois/api/gateway/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
 )

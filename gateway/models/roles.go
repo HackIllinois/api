@@ -1,6 +1,6 @@
 package models
 
-type Role string
+type Role = string
 
 const (
 	AdminRole     = "Admin"

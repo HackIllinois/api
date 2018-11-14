@@ -19,25 +19,25 @@ var StatRoutes = arbor.RouteCollection{
 		"RegisterService",
 		"POST",
 		"/stat/service/",
-		alice.New(middleware.AuthMiddleware([]string{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(RegisterService).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(RegisterService).ServeHTTP,
 	},
 	arbor.Route{
 		"GetService",
 		"GET",
 		"/stat/service/{name}/",
-		alice.New(middleware.AuthMiddleware([]string{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetService).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetService).ServeHTTP,
 	},
 	arbor.Route{
 		"GetStat",
 		"GET",
 		"/stat/{name}/",
-		alice.New(middleware.AuthMiddleware([]string{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetStat).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetStat).ServeHTTP,
 	},
 	arbor.Route{
 		"GetAllStats",
 		"GET",
 		"/stat/",
-		alice.New(middleware.AuthMiddleware([]string{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetAllStats).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetAllStats).ServeHTTP,
 	},
 }
 

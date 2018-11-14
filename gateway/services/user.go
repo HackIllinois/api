@@ -18,37 +18,37 @@ var UserRoutes = arbor.RouteCollection{
 		"GetCurrentUserInfo",
 		"GET",
 		"/user/",
-		alice.New(middleware.AuthMiddleware([]string{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"SetUserInfo",
 		"POST",
 		"/user/",
-		alice.New(middleware.AuthMiddleware([]string{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(SetUserInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(SetUserInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetCurrentQrCodeInfo",
 		"GET",
 		"/user/qr/",
-		alice.New(middleware.AuthMiddleware([]string{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentQrCodeInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentQrCodeInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetQrCodeInfo",
 		"GET",
 		"/user/qr/{id}/",
-		alice.New(middleware.AuthMiddleware([]string{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetQrCodeInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetQrCodeInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetFilteredUserInfo",
 		"GET",
 		"/user/filter/",
-		alice.New(middleware.AuthMiddleware([]string{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUserInfo",
 		"GET",
 		"/user/{id}/",
-		alice.New(middleware.AuthMiddleware([]string{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
 	},
 }
 

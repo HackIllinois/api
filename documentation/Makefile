@@ -6,7 +6,7 @@ REQUIREMENTS = requirements.txt
 
 # Install dependencies
 install-deps: $(REQUIREMENTS)
-	pip install -r $(REQUIREMENTS)
+	pip3 install -r $(REQUIREMENTS)
 
 # Starts a live-reloading server that serves the API docs
 serve: $(SOURCES) install-deps copy-docs-addendum

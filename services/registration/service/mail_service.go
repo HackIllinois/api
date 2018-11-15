@@ -67,8 +67,8 @@ func AddUserToMailList(user_id string, mail_list_id string) error {
 			return errors.New("Mailing list does not exist, furthermore, creation of mailing list failed.")
 		}
 
-		return err
+		return nil
 	}
 
-	return err
+	return nil
 }

@@ -18,25 +18,25 @@ var StatRoutes = arbor.RouteCollection{
 		"RegisterService",
 		"POST",
 		"/stat/service/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(RegisterService).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(RegisterService).ServeHTTP,
 	},
 	arbor.Route{
 		"GetService",
 		"GET",
 		"/stat/service/{name}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetService).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetService).ServeHTTP,
 	},
 	arbor.Route{
 		"GetStat",
 		"GET",
 		"/stat/{name}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetStat).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetStat).ServeHTTP,
 	},
 	arbor.Route{
 		"GetAllStats",
 		"GET",
 		"/stat/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetAllStats).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetAllStats).ServeHTTP,
 	},
 }
 

@@ -5,15 +5,14 @@ import (
 	"github.com/HackIllinois/api/services/checkin/config"
 	"github.com/HackIllinois/api/services/checkin/models"
 	"github.com/HackIllinois/api/services/checkin/service"
-	"net/url"
 	"reflect"
 	"testing"
 )
 
-var db database.MongoDatabase
+var db database.Database
 
 func init() {
-	db_connection, err := database.InitMongoDatabase(config.CHECKIN_DB_HOST, config.CHECKIN_DB_NAME)
+	db_connection, err := database.InitDatabase(config.CHECKIN_DB_HOST, config.CHECKIN_DB_NAME)
 
 	if err != nil {
 		panic(err)
@@ -43,10 +42,7 @@ func SetupTestDB(t *testing.T) {
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	session := db.GetSession()
-	defer session.Close()
-
-	err := session.DB(config.CHECKIN_DB_NAME).DropDatabase()
+	err := db.DropDatabase()
 
 	if err != nil {
 		t.Fatal(err)
@@ -153,37 +149,43 @@ func TestUpdateUserCheckinService(t *testing.T) {
 }
 
 /*
-	Service level test for generating QR code URI
+	Service level test for getting list of all checked in users
 */
-func TestGetQrInfo(t *testing.T) {
+func TestGetAllCheckedInUsersService(t *testing.T) {
 	SetupTestDB(t)
 
-	actual_uri, err := service.GetQrInfo("testid")
+	new_checkin := models.UserCheckin{
+		ID:              "testid2",
+		HasCheckedIn:    false,
+		HasPickedUpSwag: false,
+	}
+
+	err := service.CreateUserCheckin("testid2", new_checkin)
+
+	new_checkin = models.UserCheckin{
+		ID:              "testid3",
+		HasCheckedIn:    true,
+		HasPickedUpSwag: false,
+	}
+
+	err = service.CreateUserCheckin("testid3", new_checkin)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	parsed_uri, err := url.Parse(actual_uri)
+	checkin_list, err := service.GetAllCheckedInUsers()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	actual_query_params, err := url.ParseQuery(parsed_uri.RawQuery)
-
-	if err != nil {
-		t.Fatal(err)
+	expected_checkin_list := models.CheckinList{
+		CheckedInUsers: []string{"testid", "testid3"},
 	}
 
-	expected_query_params := url.Values{
-		"userId":          []string{"testid"},
-		"hasCheckedIn":    []string{"true"},
-		"hasPickedUpSwag": []string{"true"},
-	}
-
-	if !reflect.DeepEqual(expected_query_params, actual_query_params) {
-		t.Errorf("Wrong QR code URI. Expected %v, got %v", expected_query_params, actual_query_params)
+	if !reflect.DeepEqual(checkin_list, &expected_checkin_list) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_checkin_list, checkin_list)
 	}
 
 	CleanupTestDB(t)

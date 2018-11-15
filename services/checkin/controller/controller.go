@@ -16,9 +16,8 @@ func SetupController(route *mux.Route) {
 	router.Handle("/", alice.New().ThenFunc(CreateUserCheckin)).Methods("POST")
 	router.Handle("/", alice.New().ThenFunc(UpdateUserCheckin)).Methods("PUT")
 	router.Handle("/", alice.New().ThenFunc(GetCurrentUserCheckin)).Methods("GET")
-	router.Handle("/qr/", alice.New().ThenFunc(GetCurrentQrCodeInfo)).Methods("GET")
+	router.Handle("/list/", alice.New().ThenFunc(GetAllCheckedInUsers)).Methods("GET")
 	router.Handle("/{id}/", alice.New().ThenFunc(GetUserCheckin)).Methods("GET")
-	router.Handle("/qr/{id}/", alice.New().ThenFunc(GetQrCodeInfo)).Methods("GET")
 }
 
 /*
@@ -80,6 +79,14 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
+	if updated_checkin.Override {
+		err = service.AddAttendeeRole(updated_checkin.ID)
+
+		if err != nil {
+			panic(errors.UnprocessableError(err.Error()))
+		}
+	}
+
 	json.NewEncoder(w).Encode(updated_checkin)
 }
 
@@ -102,45 +109,26 @@ func UpdateUserCheckin(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
+	if updated_checkin.Override {
+		err = service.AddAttendeeRole(updated_checkin.ID)
+
+		if err != nil {
+			panic(errors.UnprocessableError(err.Error()))
+		}
+	}
+
 	json.NewEncoder(w).Encode(updated_checkin)
 }
 
 /*
-	Endpoint to get the string to be embedded into the current user's QR code
+	Endpoint to get all checked in user IDs
 */
-func GetCurrentQrCodeInfo(w http.ResponseWriter, r *http.Request) {
-	id := r.Header.Get("HackIllinois-Identity")
-
-	uri, err := service.GetQrInfo(id)
+func GetAllCheckedInUsers(w http.ResponseWriter, r *http.Request) {
+	checked_in_users, err := service.GetAllCheckedInUsers()
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	qr_info_container := models.QrInfoContainer{
-		ID:     id,
-		QrInfo: uri,
-	}
-
-	json.NewEncoder(w).Encode(qr_info_container)
-}
-
-/*
-	Endpoint to get the string to be embedded into the specified user's QR code
-*/
-func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-
-	uri, err := service.GetQrInfo(id)
-
-	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
-	}
-
-	qr_info_container := models.QrInfoContainer{
-		ID:     id,
-		QrInfo: uri,
-	}
-
-	json.NewEncoder(w).Encode(qr_info_container)
+	json.NewEncoder(w).Encode(checked_in_users)
 }

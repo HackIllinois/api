@@ -1,0 +1,34 @@
+site_name: HackIllinois API Documentation
+site_author: HackIllinois Systems Staff
+
+repo_url: https://github.com/HackIllinois/api/
+# repo_name: GitHub
+
+
+nav:
+- Home: 'index.md'
+- About:
+    - 'License': 'about/License.md'
+- Getting Started:
+    - 'Developer Guide': 'getting-started/developer-guide.md'
+- Reference: 
+    - Introduction: 'reference/introduction.md'
+    - Services:
+      - 'Authorization': 'reference/services/Authorization.md'
+      - 'Check-In': 'reference/services/Check-In.md'
+      - 'Decision': 'reference/services/Decision.md'
+      - 'Event': 'reference/services/Event.md'
+      - 'Mail': 'reference/services/Mail.md'
+      - 'RSVP': 'reference/services/RSVP.md'
+      - 'Registration': 'reference/services/Registration.md'
+      - 'Statistics': 'reference/services/Statistics.md'
+      - 'Upload': 'reference/services/Upload.md'
+      - 'User': 'reference/services/User.md'
+    - Gateway:
+      - 'Middleware': 'reference/gateway/middleware.md'
+      - 'Routes': 'reference/gateway/routes.md'
+    - For API Writers:
+      - 'Documentation System': 'reference/api-writers/documentation-system.md'
+
+theme:
+  name: 'material'

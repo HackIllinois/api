@@ -18,31 +18,31 @@ var DecisionRoutes = arbor.RouteCollection{
 		"GetCurrentDecision",
 		"GET",
 		"/decision/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Applicant"})).ThenFunc(GetCurrentDecision).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Applicant"}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentDecision).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateDecision",
 		"POST",
 		"/decision/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(UpdateDecision).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(UpdateDecision).ServeHTTP,
 	},
 	arbor.Route{
 		"GetFilteredDecisions",
 		"GET",
 		"/decision/filter/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetFilteredDecisions).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetFilteredDecisions).ServeHTTP,
 	},
 	arbor.Route{
 		"FinalizeDecision",
 		"POST",
 		"/decision/finalize/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(FinalizeDecision).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(FinalizeDecision).ServeHTTP,
 	},
 	arbor.Route{
 		"GetDecision",
 		"GET",
 		"/decision/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetDecision).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetDecision).ServeHTTP,
 	},
 }
 

@@ -78,4 +78,4 @@ For release deployment see the `README.md` file in `release/`.
 For contributing guidelines see the `CONTRIBUTING.md` file in the repository root.
 
 ## Documentation
-Documentation will be available soon.
+We use [MkDocs](https://www.mkdocs.org/) for our documentation, and host at [HackIllinois Docs](https://docs.api.hackillinois.org).

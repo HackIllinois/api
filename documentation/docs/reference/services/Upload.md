@@ -27,15 +27,10 @@ Response format:
 }
 ```
 
-PUT /upload/resume/
--------------------
+GET /upload/resume/upload/
+--------------------------
 
-Updated the checkin for the user with the `id` stored in the given JWT in the Authorization header.
-
-Request format:
-```
-The request body should contain the raw bytes of the resume pdf
-```
+Returns the S3 link for resume uploading for the user with the `id` stored in the given JWT in the Authorization header. The user's resume can be `PUT` to this link.
 
 Response format:
 ```

@@ -1,16 +1,16 @@
 package configloader
 
 import (
-	"os"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
-	"net/http"
-	"net/url"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"os"
 )
 
 var ErrNotSet = errors.New("The value for the given key was not set")
@@ -21,7 +21,7 @@ var ErrLoadFailed = errors.New("Unable to load config")
 	Used to load a key value configuration
 */
 type ConfigLoader struct {
-	configPath string
+	configPath   string
 	parsedConfig map[string]*json.RawMessage
 }
 
@@ -53,7 +53,7 @@ func Load(configPath string) (*ConfigLoader, error) {
 		return nil, ErrLoadFailed
 	}
 
-	loader := ConfigLoader {
+	loader := ConfigLoader{
 		configPath: configPath,
 	}
 
@@ -138,7 +138,7 @@ func loadFromS3(configPath string) ([]byte, error) {
 
 	_, err = downloader.Download(buf, &s3.GetObjectInput{
 		Bucket: aws.String(uri.Host),
-		Key: aws.String(uri.Path[1 : ]),
+		Key:    aws.String(uri.Path[1:]),
 	})
 
 	return buf.Bytes(), err
@@ -163,7 +163,7 @@ func loadFromFile(configPath string) ([]byte, error) {
 func loadFromHttps(configPath string) ([]byte, error) {
 	resp, err := http.Get(configPath)
 
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 

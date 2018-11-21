@@ -83,13 +83,13 @@ func (loader *ConfigLoader) Get(key string) (string, error) {
 		return "", ErrNotSet
 	}
 
-	bytes, err := json.Marshal(rawValue)
+	err := json.Unmarshal(*rawValue, &value)
 
 	if err != nil {
 		return "", ErrDecodeFailed
 	}
 
-	return string(bytes), nil
+	return value, nil
 }
 
 /*

@@ -1,11 +1,11 @@
 package tests
 
 import (
-	"testing"
-	"io/ioutil"
-	"os"
 	"encoding/json"
 	"github.com/HackIllinois/api/common/configloader"
+	"io/ioutil"
+	"os"
+	"testing"
 )
 
 func Setup(t *testing.T) {

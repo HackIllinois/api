@@ -28,6 +28,7 @@
 	"DECISION_DB_HOST": "localhost",
 	"RSVP_DB_HOST": "localhost",
 	"CHECKIN_DB_HOST": "localhost",
+	"UPLOAD_DB_HOST": "localhost",
 	"MAIL_DB_HOST": "localhost",
 	"EVENT_DB_HOST": "localhost",
 	"STAT_DB_HOST": "localhost",
@@ -38,6 +39,7 @@
 	"DECISION_DB_NAME": "decision",
 	"RSVP_DB_NAME": "rsvp",
 	"CHECKIN_DB_NAME": "checkin",
+	"UPLOAD_DB_NAME": "upload",
 	"MAIL_DB_NAME": "mail",
 	"EVENT_DB_NAME": "event",
 	"STAT_DB_NAME": "stat",
@@ -54,5 +56,9 @@
 	"GOOGLE_CLIENT_ID": "",
 	"GOOGLE_CLIENT_SECRET": "",
 	"LINKEDIN_CLIENT_ID": "",
-	"LINKEDIN_CLIENT_SECRET": ""
+	"LINKEDIN_CLIENT_SECRET": "",
+
+	"SPARKPOST_APIKEY": "",
+
+	"IS_PRODUCTION": "false"
 }

@@ -2,6 +2,23 @@ package config
 
 import (
 	"os"
+	"github.com/HackIllinois/api/common/configloader"
 )
 
-var IS_PRODUCTION = (os.Getenv("IS_PRODUCTION") == "true")
+var IS_PRODUCTION bool
+
+func init() {
+	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
+
+	if err != nil {
+		panic(err)
+	}
+
+	production, err := cfg_loader.Get("IS_PRODUCTION")
+
+	if err != nil {
+		panic(err)
+	}
+
+	IS_PRODUCTION = (production == "true")
+}

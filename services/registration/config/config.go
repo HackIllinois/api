@@ -2,14 +2,65 @@ package config
 
 import (
 	"os"
+	"github.com/HackIllinois/api/common/configloader"
 )
 
-var REGISTRATION_DB_HOST = os.Getenv("REGISTRATION_DB_HOST")
-var REGISTRATION_DB_NAME = os.Getenv("REGISTRATION_DB_NAME")
+var REGISTRATION_DB_HOST string
+var REGISTRATION_DB_NAME string
 
-var REGISTRATION_PORT = os.Getenv("REGISTRATION_PORT")
+var REGISTRATION_PORT string
 
-var USER_SERVICE = os.Getenv("USER_SERVICE")
-var AUTH_SERVICE = os.Getenv("AUTH_SERVICE")
-var DECISION_SERVICE = os.Getenv("DECISION_SERVICE")
-var MAIL_SERVICE = os.Getenv("MAIL_SERVICE")
+var USER_SERVICE string
+var AUTH_SERVICE string
+var DECISION_SERVICE string
+var MAIL_SERVICE string
+
+func init() {
+	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
+
+	if err != nil {
+		panic(err)
+	}
+
+	REGISTRATION_DB_HOST, err = cfg_loader.Get("REGISTRATION_DB_HOST")
+
+	if err != nil {
+		panic(err)
+	}
+
+	REGISTRATION_DB_NAME, err = cfg_loader.Get("REGISTRATION_DB_NAME")
+
+	if err != nil {
+		panic(err)
+	}
+
+	REGISTRATION_PORT, err = cfg_loader.Get("REGISTRATION_PORT")
+
+	if err != nil {
+		panic(err)
+	}
+
+	USER_SERVICE, err = cfg_loader.Get("USER_SERVICE")
+
+	if err != nil {
+		panic(err)
+	}
+
+	AUTH_SERVICE, err = cfg_loader.Get("AUTH_SERVICE")
+
+	if err != nil {
+		panic(err)
+	}
+
+	DECISION_SERVICE, err = cfg_loader.Get("DECISION_SERVICE")
+
+	if err != nil {
+		panic(err)
+	}
+
+	MAIL_SERVICE, err = cfg_loader.Get("MAIL_SERVICE")
+
+	if err != nil {
+		panic(err)
+	}
+}

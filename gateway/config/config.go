@@ -1,11 +1,11 @@
 package config
 
 import (
+	"github.com/HackIllinois/api/common/configloader"
 	"github.com/arbor-dev/arbor/proxy"
 	"github.com/arbor-dev/arbor/security"
 	"os"
 	"strconv"
-	"github.com/HackIllinois/api/common/configloader"
 )
 
 var GATEWAY_PORT uint16

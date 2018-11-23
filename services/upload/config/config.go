@@ -1,8 +1,8 @@
 package config
 
 import (
-	"os"
 	"github.com/HackIllinois/api/common/configloader"
+	"os"
 )
 
 var UPLOAD_DB_HOST string

@@ -131,6 +131,8 @@ function gateway {
 	hackillinois-api-gateway -u &
 }
 
+export HI_CONFIG=file://${GOPATH}/src/github.com/HackIllinois/api/config/dev_config.json
+
 auth
 user
 registration

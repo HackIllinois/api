@@ -15,7 +15,7 @@ all:
 
 .PHONY: test
 test:
-	export HI_CONFIG=file://${GOPATH}/src/github.com/HackIllinois/api/config/dev_config.json; \
+	export HI_CONFIG=file://${GOPATH}/src/github.com/HackIllinois/api/config/test_config.json; \
 	go test $(BUILD_PACKAGE)/tests
 
 .PHONY: fmt

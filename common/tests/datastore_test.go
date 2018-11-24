@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-var jsonData string = `
+var smallJsonData string = `
 {
 	"intKey": 100,
 	"stringKey": "value",
@@ -26,7 +26,7 @@ var jsonData string = `
 }
 `
 
-var jsonDefinition string = `
+var smallJsonDefinition string = `
 {
 	"name": "topLevel",
 	"type": "object",
@@ -80,9 +80,283 @@ var jsonDefinition string = `
 }
 `
 
-func TestDatastore(t *testing.T) {
+var largeJsonData = `
+{
+    "id": "google000000000000000000001",
+    "firstName": "test",
+    "lastName": "user",
+    "email": "testemail@gmail.com",
+    "shirtSize": "M",
+    "diet": "NONE",
+    "age": 19,
+    "graduationYear": 2020,
+    "transportation": "NONE",
+    "school": "University of Illinois at Urbana-Champaign",
+    "major": "Computer Science",
+    "gender": "MALE",
+    "professionalInterest": "INTERNSHIP",
+    "github": "test gihubusername",
+    "linkedin": "some-account",
+    "interests": "Software",
+    "isNovice": false,
+    "isPrivate": false,
+    "phoneNumber": "555-555-5555",
+    "longforms": [
+        {
+            "response": "This is a longform."
+        }
+    ],
+    "extraInfos": [
+        {
+            "response": "This is an extra info."
+        }
+    ],
+    "osContributors": [
+        {
+            "contactInfo": "person@gmail.com",
+            "name": "Person"
+        }
+    ],
+    "collaborators": [
+        {
+            "github": "persongithub"
+        }
+    ],
+    "createdAt": 1536178263,
+    "updatedAt": 1543011468
+}
+`
+
+var largeJsonDefiniton = `
+{
+    "name": "user_registration",
+    "type": "object",
+    "validations": "required",
+    "fields": [
+        {
+            "name": "id",
+            "type": "string",
+            "validations": "required",
+            "fields": []
+        },
+        {
+            "name": "firstName",
+            "type": "string",
+            "validations": "required",
+            "fields": []
+        },
+        {
+            "name": "lastName",
+            "type": "string",
+            "validations": "required",
+            "fields": []
+        },
+        {
+            "name": "email",
+            "type": "string",
+            "validations": "required,email",
+            "fields": []
+        },
+        {
+            "name": "shirtSize",
+            "type": "string",
+            "validations": "required,oneof=S M L XL",
+            "fields": []
+        },
+        {
+            "name": "diet",
+            "type": "string",
+            "validations": "required,oneof=NONE VEGAN VEGETARIAN",
+            "fields": []
+        },
+        {
+            "name": "age",
+            "type": "int",
+            "validations": "required",
+            "fields": []
+        },
+        {
+            "name": "graduationYear",
+            "type": "int",
+            "validations": "required",
+            "fields": []
+        },
+        {
+            "name": "transportation",
+            "type": "string",
+            "validations": "required,oneof=NONE BUS",
+            "fields": []
+        },
+        {
+            "name": "school",
+            "type": "string",
+            "validations": "required",
+            "fields": []
+        },
+        {
+            "name": "major",
+            "type": "string",
+            "validations": "required",
+            "fields": []
+        },
+        {
+            "name": "gender",
+            "type": "string",
+            "validations": "required,oneof=MALE FEMALE NONBINARY OTHER",
+            "fields": []
+        },
+        {
+            "name": "professionalInterest",
+            "type": "string",
+            "validations": "required,oneof=INTERNSHIP FULLTIME BOTH NONE",
+            "fields": []
+        },
+        {
+            "name": "github",
+            "type": "string",
+            "validations": "required",
+            "fields": []
+        },
+        {
+            "name": "linkedin",
+            "type": "string",
+            "validations": "required",
+            "fields": []
+        },
+        {
+            "name": "interests",
+            "type": "string",
+            "validations": "required",
+            "fields": []
+        },
+        {
+            "name": "isNovice",
+            "type": "boolean",
+            "validations": "required|isdefault",
+            "fields": []
+        },
+        {
+            "name": "isPrivate",
+            "type": "boolean",
+            "validations": "required|isdefault",
+            "fields": []
+        },
+        {
+            "name": "phoneNumber",
+            "type": "string",
+            "validations": "required",
+            "fields": []
+        },
+        {
+            "name": "longforms",
+            "type": "[]object",
+            "validations": "required",
+            "fields": [
+                {
+                    "name": "response",
+                    "type": "string",
+                    "validations": "required",
+                    "fields": []
+                }
+            ]
+        },
+        {
+            "name": "extraInfos",
+            "type": "[]object",
+            "validations": "required",
+            "fields": [
+                {
+                    "name": "response",
+                    "type": "string",
+                    "validations": "required",
+                    "fields": []
+                }
+            ]
+        },
+        {
+            "name": "osContributors",
+            "type": "[]object",
+            "validations": "required",
+            "fields": [
+                {
+                    "name": "contactInfo",
+                    "type": "string",
+                    "validations": "required",
+                    "fields": []
+                },
+                {
+                    "name": "name",
+                    "type": "string",
+                    "validations": "required",
+                    "fields": []
+                }
+            ]
+        },
+        {
+            "name": "collaborators",
+            "type": "[]object",
+            "validations": "required",
+            "fields": [
+                {
+                    "name": "github",
+                    "type": "string",
+                    "validations": "required",
+                    "fields": []
+                }
+            ]
+        },
+        {
+            "name": "createdAt",
+            "type": "int",
+            "validations": "required",
+            "fields": []
+        },
+        {
+            "name": "updatedAt",
+            "type": "int",
+            "validations": "required",
+            "fields": []
+        }
+    ]
+}
+`
+
+// func TestDatastoreBasic(t *testing.T) {
+// 	var definiton datastore.DataStoreDefinition
+// 	err := json.Unmarshal([]byte(smallJsonDefinition), &definiton)
+
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+
+// 	store := datastore.NewDataStore(definiton)
+
+// 	err = json.Unmarshal([]byte(smallJsonData), &store)
+
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+
+// 	fmt.Printf("%v\n", store)
+
+// 	marshalledData, err := json.Marshal(&store)
+
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+
+// 	fmt.Printf("%v\n", string(marshalledData))
+
+// 	err = store.Validate()
+
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// }
+
+func TestDatastoreComplex(t *testing.T) {
 	var definiton datastore.DataStoreDefinition
-	err := json.Unmarshal([]byte(jsonDefinition), &definiton)
+	err := json.Unmarshal([]byte(largeJsonDefiniton), &definiton)
 
 	if err != nil {
 		t.Fatal(err)
@@ -90,7 +364,7 @@ func TestDatastore(t *testing.T) {
 
 	store := datastore.NewDataStore(definiton)
 
-	err = json.Unmarshal([]byte(jsonData), &store)
+	err = json.Unmarshal([]byte(largeJsonData), &store)
 
 	if err != nil {
 		t.Fatal(err)

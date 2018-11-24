@@ -3,7 +3,6 @@ package datastore
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -34,9 +33,6 @@ func (datastore *DataStore) Validate() error {
 }
 
 func validateField(data interface{}, definition DataStoreDefinition, validate *validator.Validate) error {
-
-	fmt.Printf("%T: %v\n\n", data, data)
-
 	err := validate.Var(data, definition.Validations)
 
 	if err != nil {

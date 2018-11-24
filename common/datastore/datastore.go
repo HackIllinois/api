@@ -9,7 +9,6 @@ import (
 type DataStoreDefinition struct {
 	Name        string                `json:"name"`
 	Type        string                `json:"type"`
-	IsArray     bool                  `json:"IsArray"`
 	Validations string                `json:"validations"`
 	Fields      []DataStoreDefinition `json:"fields"`
 }

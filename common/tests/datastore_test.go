@@ -2,7 +2,6 @@ package tests
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/HackIllinois/api/common/datastore"
 	"testing"
 )
@@ -319,38 +318,34 @@ var largeJsonDefiniton = `
 }
 `
 
-// func TestDatastoreBasic(t *testing.T) {
-// 	var definiton datastore.DataStoreDefinition
-// 	err := json.Unmarshal([]byte(smallJsonDefinition), &definiton)
+func TestDatastoreBasic(t *testing.T) {
+	var definiton datastore.DataStoreDefinition
+	err := json.Unmarshal([]byte(smallJsonDefinition), &definiton)
 
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	store := datastore.NewDataStore(definiton)
+	store := datastore.NewDataStore(definiton)
 
-// 	err = json.Unmarshal([]byte(smallJsonData), &store)
+	err = json.Unmarshal([]byte(smallJsonData), &store)
 
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	fmt.Printf("%v\n", store)
+	_, err = json.Marshal(&store)
 
-// 	marshalledData, err := json.Marshal(&store)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
+	err = store.Validate()
 
-// 	fmt.Printf("%v\n", string(marshalledData))
-
-// 	err = store.Validate()
-
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
-// }
+	if err != nil {
+		t.Fatal(err)
+	}
+}
 
 func TestDatastoreComplex(t *testing.T) {
 	var definiton datastore.DataStoreDefinition
@@ -368,7 +363,17 @@ func TestDatastoreComplex(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fmt.Printf("%v\n", store)
+	if store.Data["firstName"] != "test" {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", "test", store.Data["firstName"])
+	}
+
+	if store.Data["age"] != int64(19) {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", int64(19), store.Data["age"])
+	}
+
+	if store.Data["isNovice"] != false {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", false, store.Data["isNovice"])
+	}
 
 	marshalledData, err := json.Marshal(&store)
 
@@ -376,7 +381,24 @@ func TestDatastoreComplex(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	fmt.Printf("%v\n", string(marshalledData))
+	var rawData map[string]interface{}
+	err = json.Unmarshal(marshalledData, &rawData)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if rawData["firstName"] != "test" {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", "test", rawData["firstName"])
+	}
+
+	if rawData["age"] != float64(19) {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", float64(19), rawData["age"])
+	}
+
+	if rawData["isNovice"] != false {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", false, rawData["isNovice"])
+	}
 
 	store.Data["createdAt"] = 1536178263
 	store.Data["updatedAt"] = 1543011468

@@ -121,9 +121,7 @@ var largeJsonData = `
         {
             "github": "persongithub"
         }
-    ],
-    "createdAt": 1536178263,
-    "updatedAt": 1543011468
+    ]
 }
 `
 
@@ -379,6 +377,9 @@ func TestDatastoreComplex(t *testing.T) {
 	}
 
 	fmt.Printf("%v\n", string(marshalledData))
+
+	store.Data["createdAt"] = 1536178263
+	store.Data["updatedAt"] = 1543011468
 
 	err = store.Validate()
 

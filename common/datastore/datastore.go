@@ -149,15 +149,15 @@ func buildDataFromDefinition(rawData interface{}, definition DataStoreDefinition
 		for _, field := range definition.Fields {
 			unfilteredField, exists := unfilteredData[field.Name]
 
-			if !exists {
-				return nil, errors.New("Missing field in data")
-			}
+			if exists {
+				var err error
+				data[field.Name], err = buildDataFromDefinition(unfilteredField, field)
 
-			var err error
-			data[field.Name], err = buildDataFromDefinition(unfilteredField, field)
-
-			if err != nil {
-				return nil, err
+				if err != nil {
+					return nil, err
+				}
+			} else {
+				data[field.Name] = defaultValueForType(field.Type)
 			}
 		}
 
@@ -263,15 +263,15 @@ func buildDataFromDefinition(rawData interface{}, definition DataStoreDefinition
 
 				unfilteredField, exists := unfilteredDataElement[field.Name]
 
-				if !exists {
-					return nil, errors.New("Missing field in data")
-				}
+				if exists {
+					var err error
+					element[field.Name], err = buildDataFromDefinition(unfilteredField, field)
 
-				var err error
-				element[field.Name], err = buildDataFromDefinition(unfilteredField, field)
-
-				if err != nil {
-					return nil, err
+					if err != nil {
+						return nil, err
+					}
+				} else {
+					element[field.Name] = defaultValueForType(field.Type)
 				}
 			}
 
@@ -281,5 +281,32 @@ func buildDataFromDefinition(rawData interface{}, definition DataStoreDefinition
 		return data, nil
 	default:
 		return nil, errors.New("Invalid type in definition")
+	}
+}
+
+func defaultValueForType(tpe string) interface{} {
+	switch tpe {
+	case "string":
+		return ""
+	case "int":
+		return 0
+	case "float":
+		return 0.0
+	case "boolean":
+		return false
+	case "object":
+		return nil
+	case "[]string":
+		return nil
+	case "[]int":
+		return nil
+	case "[]float":
+		return nil
+	case "[]boolean":
+		return nil
+	case "[]object":
+		return nil
+	default:
+		return nil
 	}
 }

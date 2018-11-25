@@ -3,8 +3,8 @@ package tests
 import (
 	"encoding/json"
 	"github.com/HackIllinois/api/common/datastore"
-	"testing"
 	"gopkg.in/mgo.v2/bson"
+	"testing"
 )
 
 var small_json_data string = `

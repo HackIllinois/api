@@ -16,7 +16,6 @@ type DataStoreDefinition struct {
 
 type DataStore struct {
 	Definition DataStoreDefinition
-	raw_data    map[string]interface{}
 	Data       map[string]interface{}
 }
 
@@ -81,13 +80,14 @@ func (datastore *DataStore) MarshalJSON() ([]byte, error) {
 }
 
 func (datastore *DataStore) UnmarshalJSON(b []byte) error {
-	err := json.Unmarshal(b, &datastore.raw_data)
+	var raw_data map[string]interface{}
+	err := json.Unmarshal(b, &raw_data)
 
 	if err != nil {
 		return err
 	}
 
-	data, err := buildDataFromDefinition(datastore.raw_data, datastore.Definition)
+	data, err := buildDataFromDefinition(raw_data, datastore.Definition)
 
 	if err != nil {
 		return err

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"gopkg.in/go-playground/validator.v9"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type DataStoreDefinition struct {
@@ -308,4 +309,12 @@ func defaultValueForType(tpe string) interface{} {
 	default:
 		return nil
 	}
+}
+
+func (datastore *DataStore) GetBSON() (interface{}, error) {
+	return datastore.Data, nil
+}
+
+func (datastore *DataStore) SetBSON(raw bson.Raw) error {
+	return raw.Unmarshal(&datastore.Data)
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/HackIllinois/api/common/datastore"
 	"testing"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var smallJsonData string = `
@@ -407,5 +408,47 @@ func TestDatastoreComplex(t *testing.T) {
 
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestBSONConversions(t *testing.T) {
+	var definiton datastore.DataStoreDefinition
+	err := json.Unmarshal([]byte(largeJsonDefiniton), &definiton)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	store := datastore.NewDataStore(definiton)
+
+	err = json.Unmarshal([]byte(largeJsonData), &store)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bsonMarshalled, err := bson.Marshal(&store)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var unmarshalledStore datastore.DataStore
+	err = bson.Unmarshal(bsonMarshalled, &unmarshalledStore)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if unmarshalledStore.Data["firstName"] != store.Data["firstName"] {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", store.Data["firstName"], unmarshalledStore.Data["firstName"])
+	}
+
+	if unmarshalledStore.Data["age"] != store.Data["age"] {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", store.Data["age"], unmarshalledStore.Data["age"])
+	}
+
+	if unmarshalledStore.Data["isNovice"] != store.Data["isNovice"] {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", store.Data["isNovice"], unmarshalledStore.Data["isNovice"])
 	}
 }

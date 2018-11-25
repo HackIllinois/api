@@ -16,7 +16,7 @@ type DataStoreDefinition struct {
 
 type DataStore struct {
 	Definition DataStoreDefinition
-	rawData    map[string]interface{}
+	raw_data    map[string]interface{}
 	Data       map[string]interface{}
 }
 
@@ -42,28 +42,28 @@ func validateField(data interface{}, definition DataStoreDefinition, validate *v
 	switch definition.Type {
 	case "object":
 		for _, field := range definition.Fields {
-			mappedData, ok := data.(map[string]interface{})
+			mapped_data, ok := data.(map[string]interface{})
 
 			if !ok {
 				return errors.New("Definition contains field for non-mappable data")
 			}
 
-			err = validateField(mappedData[field.Name], field, validate)
+			err = validateField(mapped_data[field.Name], field, validate)
 
 			if err != nil {
 				return err
 			}
 		}
 	case "[]object":
-		dataArray, ok := data.([]map[string]interface{})
+		data_array, ok := data.([]map[string]interface{})
 
 		if !ok {
 			return errors.New("Data format does not match definition")
 		}
 
-		for _, mappedData := range dataArray {
+		for _, mapped_data := range data_array {
 			for _, field := range definition.Fields {
-				err = validateField(mappedData[field.Name], field, validate)
+				err = validateField(mapped_data[field.Name], field, validate)
 
 				if err != nil {
 					return err
@@ -81,13 +81,13 @@ func (datastore *DataStore) MarshalJSON() ([]byte, error) {
 }
 
 func (datastore *DataStore) UnmarshalJSON(b []byte) error {
-	err := json.Unmarshal(b, &datastore.rawData)
+	err := json.Unmarshal(b, &datastore.raw_data)
 
 	if err != nil {
 		return err
 	}
 
-	data, err := buildDataFromDefinition(datastore.rawData, datastore.Definition)
+	data, err := buildDataFromDefinition(datastore.raw_data, datastore.Definition)
 
 	if err != nil {
 		return err
@@ -103,10 +103,10 @@ func (datastore *DataStore) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func buildDataFromDefinition(rawData interface{}, definition DataStoreDefinition) (interface{}, error) {
+func buildDataFromDefinition(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
 	switch definition.Type {
 	case "int":
-		data, ok := rawData.(float64)
+		data, ok := raw_data.(float64)
 
 		if !ok {
 			return nil, errors.New("Type mismatch in data and definition")
@@ -114,7 +114,7 @@ func buildDataFromDefinition(rawData interface{}, definition DataStoreDefinition
 
 		return int64(data), nil
 	case "float":
-		data, ok := rawData.(float64)
+		data, ok := raw_data.(float64)
 
 		if !ok {
 			return nil, errors.New("Type mismatch in data and definition")
@@ -122,7 +122,7 @@ func buildDataFromDefinition(rawData interface{}, definition DataStoreDefinition
 
 		return data, nil
 	case "string":
-		data, ok := rawData.(string)
+		data, ok := raw_data.(string)
 
 		if !ok {
 			return nil, errors.New("Type mismatch in data and definition")
@@ -130,7 +130,7 @@ func buildDataFromDefinition(rawData interface{}, definition DataStoreDefinition
 
 		return data, nil
 	case "boolean":
-		data, ok := rawData.(bool)
+		data, ok := raw_data.(bool)
 
 		if !ok {
 			return nil, errors.New("Type mismatch in data and definition")
@@ -138,7 +138,7 @@ func buildDataFromDefinition(rawData interface{}, definition DataStoreDefinition
 
 		return data, nil
 	case "object":
-		unfilteredData, ok := rawData.(map[string]interface{})
+		unfiltered_data, ok := raw_data.(map[string]interface{})
 
 		if !ok {
 			return nil, errors.New("Type mismatch in data and definition")
@@ -147,11 +147,11 @@ func buildDataFromDefinition(rawData interface{}, definition DataStoreDefinition
 		data := make(map[string]interface{})
 
 		for _, field := range definition.Fields {
-			unfilteredField, exists := unfilteredData[field.Name]
+			unfiltered_fields, exists := unfiltered_data[field.Name]
 
 			if exists {
 				var err error
-				data[field.Name], err = buildDataFromDefinition(unfilteredField, field)
+				data[field.Name], err = buildDataFromDefinition(unfiltered_fields, field)
 
 				if err != nil {
 					return nil, err
@@ -163,13 +163,13 @@ func buildDataFromDefinition(rawData interface{}, definition DataStoreDefinition
 
 		return data, nil
 	case "[]int":
-		data, ok := rawData.([]interface{})
+		data, ok := raw_data.([]interface{})
 
 		if !ok {
 			return nil, errors.New("Type mismatch in data and definition")
 		}
 
-		intData := make([]int64, len(data))
+		int_data := make([]int64, len(data))
 
 		for i := 0; i < len(data); i++ {
 			element, ok := data[i].(float64)
@@ -178,18 +178,18 @@ func buildDataFromDefinition(rawData interface{}, definition DataStoreDefinition
 				return nil, errors.New("Type mismatch in data and definition")
 			}
 
-			intData[i] = int64(element)
+			int_data[i] = int64(element)
 		}
 
-		return intData, nil
+		return int_data, nil
 	case "[]float":
-		data, ok := rawData.([]interface{})
+		data, ok := raw_data.([]interface{})
 
 		if !ok {
 			return nil, errors.New("Type mismatch in data and definition")
 		}
 
-		floatData := make([]float64, len(data))
+		float_data := make([]float64, len(data))
 
 		for i := 0; i < len(data); i++ {
 			element, ok := data[i].(float64)
@@ -198,18 +198,18 @@ func buildDataFromDefinition(rawData interface{}, definition DataStoreDefinition
 				return nil, errors.New("Type mismatch in data and definition")
 			}
 
-			floatData[i] = element
+			float_data[i] = element
 		}
 
-		return floatData, nil
+		return float_data, nil
 	case "[]string":
-		data, ok := rawData.([]interface{})
+		data, ok := raw_data.([]interface{})
 
 		if !ok {
 			return nil, errors.New("Type mismatch in data and definition")
 		}
 
-		stringData := make([]string, len(data))
+		string_data := make([]string, len(data))
 
 		for i := 0; i < len(data); i++ {
 			element, ok := data[i].(string)
@@ -218,18 +218,18 @@ func buildDataFromDefinition(rawData interface{}, definition DataStoreDefinition
 				return nil, errors.New("Type mismatch in data and definition")
 			}
 
-			stringData[i] = element
+			string_data[i] = element
 		}
 
-		return stringData, nil
+		return string_data, nil
 	case "[]boolean":
-		data, ok := rawData.([]interface{})
+		data, ok := raw_data.([]interface{})
 
 		if !ok {
 			return nil, errors.New("Type mismatch in data and definition")
 		}
 
-		boolData := make([]bool, len(data))
+		bool_data := make([]bool, len(data))
 
 		for i := 0; i < len(data); i++ {
 			element, ok := data[i].(bool)
@@ -238,34 +238,34 @@ func buildDataFromDefinition(rawData interface{}, definition DataStoreDefinition
 				return nil, errors.New("Type mismatch in data and definition")
 			}
 
-			boolData[i] = element
+			bool_data[i] = element
 		}
 
-		return boolData, nil
+		return bool_data, nil
 	case "[]object":
-		unfilteredData, ok := rawData.([]interface{})
+		unfiltered_data, ok := raw_data.([]interface{})
 
 		if !ok {
 			return nil, errors.New("Type mismatch in data and definition")
 		}
 
-		data := make([]map[string]interface{}, len(unfilteredData))
+		data := make([]map[string]interface{}, len(unfiltered_data))
 
-		for i := 0; i < len(unfilteredData); i++ {
+		for i := 0; i < len(unfiltered_data); i++ {
 			element := make(map[string]interface{})
 
 			for _, field := range definition.Fields {
-				unfilteredDataElement, ok := unfilteredData[i].(map[string]interface{})
+				unfiltered_data_element, ok := unfiltered_data[i].(map[string]interface{})
 
 				if !ok {
 					return nil, errors.New("Type mismatch in data and definition")
 				}
 
-				unfilteredField, exists := unfilteredDataElement[field.Name]
+				unfiltered_fields, exists := unfiltered_data_element[field.Name]
 
 				if exists {
 					var err error
-					element[field.Name], err = buildDataFromDefinition(unfilteredField, field)
+					element[field.Name], err = buildDataFromDefinition(unfiltered_fields, field)
 
 					if err != nil {
 						return nil, err

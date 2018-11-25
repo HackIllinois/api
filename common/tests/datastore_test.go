@@ -7,7 +7,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-var smallJsonData string = `
+var small_json_data string = `
 {
 	"intKey": 100,
 	"stringKey": "value",
@@ -26,7 +26,7 @@ var smallJsonData string = `
 }
 `
 
-var smallJsonDefinition string = `
+var small_json_definition string = `
 {
 	"name": "topLevel",
 	"type": "object",
@@ -80,7 +80,7 @@ var smallJsonDefinition string = `
 }
 `
 
-var largeJsonData = `
+var large_json_data = `
 {
     "id": "google000000000000000000001",
     "firstName": "test",
@@ -125,7 +125,7 @@ var largeJsonData = `
 }
 `
 
-var largeJsonDefiniton = `
+var large_json_definition = `
 {
     "name": "user_registration",
     "type": "object",
@@ -320,16 +320,16 @@ var largeJsonDefiniton = `
 `
 
 func TestDatastoreBasic(t *testing.T) {
-	var definiton datastore.DataStoreDefinition
-	err := json.Unmarshal([]byte(smallJsonDefinition), &definiton)
+	var definition datastore.DataStoreDefinition
+	err := json.Unmarshal([]byte(small_json_definition), &definition)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	store := datastore.NewDataStore(definiton)
+	store := datastore.NewDataStore(definition)
 
-	err = json.Unmarshal([]byte(smallJsonData), &store)
+	err = json.Unmarshal([]byte(small_json_data), &store)
 
 	if err != nil {
 		t.Fatal(err)
@@ -349,16 +349,16 @@ func TestDatastoreBasic(t *testing.T) {
 }
 
 func TestDatastoreComplex(t *testing.T) {
-	var definiton datastore.DataStoreDefinition
-	err := json.Unmarshal([]byte(largeJsonDefiniton), &definiton)
+	var definition datastore.DataStoreDefinition
+	err := json.Unmarshal([]byte(large_json_definition), &definition)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	store := datastore.NewDataStore(definiton)
+	store := datastore.NewDataStore(definition)
 
-	err = json.Unmarshal([]byte(largeJsonData), &store)
+	err = json.Unmarshal([]byte(large_json_data), &store)
 
 	if err != nil {
 		t.Fatal(err)
@@ -376,29 +376,29 @@ func TestDatastoreComplex(t *testing.T) {
 		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", false, store.Data["isNovice"])
 	}
 
-	marshalledData, err := json.Marshal(&store)
+	marshalled_data, err := json.Marshal(&store)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	var rawData map[string]interface{}
-	err = json.Unmarshal(marshalledData, &rawData)
+	var raw_data map[string]interface{}
+	err = json.Unmarshal(marshalled_data, &raw_data)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if rawData["firstName"] != "test" {
-		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", "test", rawData["firstName"])
+	if raw_data["firstName"] != "test" {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", "test", raw_data["firstName"])
 	}
 
-	if rawData["age"] != float64(19) {
-		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", float64(19), rawData["age"])
+	if raw_data["age"] != float64(19) {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", float64(19), raw_data["age"])
 	}
 
-	if rawData["isNovice"] != false {
-		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", false, rawData["isNovice"])
+	if raw_data["isNovice"] != false {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", false, raw_data["isNovice"])
 	}
 
 	store.Data["createdAt"] = 1536178263
@@ -412,43 +412,43 @@ func TestDatastoreComplex(t *testing.T) {
 }
 
 func TestBSONConversions(t *testing.T) {
-	var definiton datastore.DataStoreDefinition
-	err := json.Unmarshal([]byte(largeJsonDefiniton), &definiton)
+	var definition datastore.DataStoreDefinition
+	err := json.Unmarshal([]byte(large_json_definition), &definition)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	store := datastore.NewDataStore(definiton)
+	store := datastore.NewDataStore(definition)
 
-	err = json.Unmarshal([]byte(largeJsonData), &store)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	bsonMarshalled, err := bson.Marshal(&store)
+	err = json.Unmarshal([]byte(large_json_data), &store)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	var unmarshalledStore datastore.DataStore
-	err = bson.Unmarshal(bsonMarshalled, &unmarshalledStore)
+	bson_marshalled, err := bson.Marshal(&store)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if unmarshalledStore.Data["firstName"] != store.Data["firstName"] {
-		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", store.Data["firstName"], unmarshalledStore.Data["firstName"])
+	var unmarshalled_store datastore.DataStore
+	err = bson.Unmarshal(bson_marshalled, &unmarshalled_store)
+
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	if unmarshalledStore.Data["age"] != store.Data["age"] {
-		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", store.Data["age"], unmarshalledStore.Data["age"])
+	if unmarshalled_store.Data["firstName"] != store.Data["firstName"] {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", store.Data["firstName"], unmarshalled_store.Data["firstName"])
 	}
 
-	if unmarshalledStore.Data["isNovice"] != store.Data["isNovice"] {
-		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", store.Data["isNovice"], unmarshalledStore.Data["isNovice"])
+	if unmarshalled_store.Data["age"] != store.Data["age"] {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", store.Data["age"], unmarshalled_store.Data["age"])
+	}
+
+	if unmarshalled_store.Data["isNovice"] != store.Data["isNovice"] {
+		t.Errorf("Wrong info.\nExpected %v\ngot %v\n", store.Data["isNovice"], unmarshalled_store.Data["isNovice"])
 	}
 }

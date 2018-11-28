@@ -77,13 +77,13 @@ func (loader *ConfigLoader) Get(key string) (string, error) {
 		return value, nil
 	}
 
-	rawValue, exists := loader.parsedConfig[key]
+	raw_value, exists := loader.parsedConfig[key]
 
 	if !exists {
 		return "", ErrNotSet
 	}
 
-	err := json.Unmarshal(*rawValue, &value)
+	err := json.Unmarshal(*raw_value, &value)
 
 	if err != nil {
 		return "", ErrDecodeFailed
@@ -103,13 +103,13 @@ func (loader *ConfigLoader) ParseInto(key string, out interface{}) error {
 		return json.Unmarshal([]byte(value), out)
 	}
 
-	rawValue, exists := loader.parsedConfig[key]
+	raw_value, exists := loader.parsedConfig[key]
 
 	if !exists {
 		return ErrNotSet
 	}
 
-	return json.Unmarshal(*rawValue, out)
+	return json.Unmarshal(*raw_value, out)
 }
 
 /*

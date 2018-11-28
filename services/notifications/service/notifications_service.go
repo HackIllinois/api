@@ -34,12 +34,16 @@ func init() {
 	Returns a list of available SNS Topics
 */
 func GetAllTopics() (*models.TopicList, error) {
-	var topic_list models.TopicList
-
-	err := db.FindAll("topics", nil, &topic_list.Topics)
+	var topics []models.Topic
+	err := db.FindAll("topics", nil, &topics)
 
 	if err != nil {
 		return nil, err
+	}
+
+	var topic_list models.TopicList
+	for _, topic := range topics {
+		topic_list.Topics = append(topic_list.Topics, topic.Name)
 	}
 
 	return &topic_list, nil
@@ -67,14 +71,14 @@ func GetAllNotifications() (*models.NotificationList, error) {
 /*
 	Creates an SNS Topic
 */
-func CreateTopic(name string) (*models.Topic, error) {
+func CreateTopic(name string) error {
 	var arn string
 
 	if config.IS_PRODUCTION {
 		out, err := client.CreateTopic(&sns.CreateTopicInput{Name: &name})
 
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		arn = *out.TopicArn
@@ -84,9 +88,9 @@ func CreateTopic(name string) (*models.Topic, error) {
 
 	if err != database.ErrNotFound {
 		if err != nil {
-			return nil, err
+			return err
 		}
-		return nil, errors.New("Topic already exists")
+		return errors.New("Topic already exists")
 	}
 
 	topic := models.Topic{Arn: arn, Name: name}
@@ -94,10 +98,10 @@ func CreateTopic(name string) (*models.Topic, error) {
 	err = db.Insert("topics", &topic)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &topic, nil
+	return nil
 }
 
 /*

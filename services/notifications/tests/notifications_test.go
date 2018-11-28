@@ -84,15 +84,9 @@ func TestGetAllTopicsSerice(t *testing.T) {
 	}
 
 	expected_topic_list := models.TopicList{
-		Topics: []models.Topic{
-			models.Topic{
-				Name: "test_topic",
-				Arn:  "arn:test",
-			},
-			models.Topic{
-				Name: "test_topic_2",
-				Arn:  "arn:test2",
-			},
+		Topics: []string{
+			"test_topic",
+			"test_topic_2",
 		},
 	}
 
@@ -109,7 +103,7 @@ func TestGetAllTopicsSerice(t *testing.T) {
 func TestCreateTopicService(t *testing.T) {
 	SetupTestDB(t)
 
-	topic_details, err := service.CreateTopic("test_topic_2")
+	err := service.CreateTopic("test_topic_2")
 
 	if err != nil {
 		t.Fatal(err)
@@ -122,15 +116,9 @@ func TestCreateTopicService(t *testing.T) {
 	}
 
 	expected_topic_list := models.TopicList{
-		Topics: []models.Topic{
-			models.Topic{
-				Name: "test_topic",
-				Arn:  "arn:test",
-			},
-			models.Topic{
-				Name: "test_topic_2",
-				Arn:  topic_details.Arn,
-			},
+		Topics: []string{
+			"test_topic",
+			"test_topic_2",
 		},
 	}
 
@@ -275,11 +263,8 @@ func TestDeleteTopicService(t *testing.T) {
 	}
 
 	expected_topic_list := models.TopicList{
-		Topics: []models.Topic{
-			models.Topic{
-				Name: "test_topic",
-				Arn:  "arn:test",
-			},
+		Topics: []string{
+			"test_topic",
 		},
 	}
 

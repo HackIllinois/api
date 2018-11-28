@@ -55,13 +55,13 @@ func CreateTopic(w http.ResponseWriter, r *http.Request) {
 	var topic_name models.TopicName
 	json.NewDecoder(r.Body).Decode(&topic_name)
 
-	topic_arn, err := service.CreateTopic(topic_name.Name)
+	err := service.CreateTopic(topic_name.Name)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	json.NewEncoder(w).Encode(topic_arn)
+	json.NewEncoder(w).Encode(topic_name)
 }
 
 /*

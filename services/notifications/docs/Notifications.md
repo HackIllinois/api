@@ -1,34 +1,26 @@
-Notifications
-======
+# Notifications
 
-GET /notifications/
----------------------
+## GET /notifications/
 
 Returns a list of all notification topics.
 
 Response format:
+
 ```
 {
     "topics": [
-        {
-            "arn": "arn:aws:sns:us-east-2:256758753660:Mentor",
-            "name": "Mentors"
-        },
-        {
-            "arn": "arn:aws:sns:us-east-2:256758753660:Attendee",
-            "name": "Attendees"
-        }
+        "Mentors",
+        "Attendees"
     ]
 }
 ```
 
-POST /notifications/
------------
+## POST /notifications/
 
-Creates a new topic with the requested name. Returns the created topic's name
-and Amazon Resource Name (ARN).
+Creates a new topic with the requested name. Returns the created topic.
 
 Request format:
+
 ```
 {
 	"name": "Mentors"
@@ -36,19 +28,19 @@ Request format:
 ```
 
 Response format:
+
 ```
 {
-	"arn": "arn:aws:sns:us-east-2:256758753660:Mentors",
 	"name": "Mentors"
 }
 ```
 
-GET /notifications/all/
----------------------
+## GET /notifications/all/
 
 Returns a list of all past notifications.
 
 Response format:
+
 ```
 {
     "notifications": [
@@ -71,12 +63,12 @@ Response format:
 }
 ```
 
-GET /notifications/TOPICNAME/
----------------------
+## GET /notifications/TOPICNAME/
 
 Returns a list of all past notifications for a given topic `TOPICNAME`.
 
 Response format:
+
 ```
 {
     "notifications": [
@@ -94,33 +86,27 @@ Response format:
 }
 ```
 
-DELETE /notifications/TOPICNAME/
----------------------
+## DELETE /notifications/TOPICNAME/
 
 Delete a topic with name `TOPICNAME`. Returns a list of all remaining topics.
 
 Response format:
+
 ```
 {
     "topics": [
-        {
-            "arn": "arn:aws:sns:us-east-2:256758753660:Mentor",
-            "name": "Mentors"
-        },
-        {
-            "arn": "arn:aws:sns:us-east-2:256758753660:Attendee",
-            "name": "Attendees"
-        }
+        "Mentors",
+        "Attendees"
     ]
 }
 ```
 
-POST /notifications/TOPICNAME/
----------------------
+## POST /notifications/TOPICNAME/
 
 Publishes and distributes a notification to all users subscribed to the topic `TOPICNAME`. Returns the created notification.
 
 Request format:
+
 ```
 {
 	"message": "Message to send to users"
@@ -128,6 +114,7 @@ Request format:
 ```
 
 Response format:
+
 ```
 {
 	"message": "Message to send to users",
@@ -136,12 +123,12 @@ Response format:
 }
 ```
 
-GET /notifications/TOPICNAME/info/
----------------------
+## GET /notifications/TOPICNAME/info/
 
 Gets information associated by the topic `TOPICNAME`, including its ARN.
 
 Response format:
+
 ```
 {
 	"arn": "arn:aws:sns:us-east-2:256758753660:Mentors",

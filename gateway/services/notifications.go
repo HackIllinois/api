@@ -23,7 +23,7 @@ var NotificationsRoutes = arbor.RouteCollection{
 		"GetAllNotifications",
 		"GET",
 		"/notifications/all/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetAllNotifications).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetAllNotifications).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateTopic",
@@ -35,7 +35,7 @@ var NotificationsRoutes = arbor.RouteCollection{
 		"GetNotificationsForTopic",
 		"GET",
 		"/notifications/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetNotificationsForTopic).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetNotificationsForTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"DeleteTopic",

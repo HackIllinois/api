@@ -2,8 +2,8 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/notifications/config"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/aws/aws-sdk-go/aws"
@@ -223,37 +223,35 @@ func AddUsersToTopic(topic_name string, userid_list models.UserIDList) error {
 		},
 	}
 
-	if config.IS_PRODUCTION || true {
-		topic_selector := database.QuerySelector{
-			"name": topic_name,
+	topic_selector := database.QuerySelector{
+		"name": topic_name,
+	}
+
+	var topic models.Topic
+	err := db.FindOne("topics", topic_selector, &topic)
+
+	if err != nil {
+		return err
+	}
+
+	// Subscribe each of the specified users' devices to this topic
+	for _, user_id := range userid_list.UserIDs {
+		query := database.QuerySelector{
+			"userid": user_id,
 		}
 
-		var topic models.Topic
-		err := db.FindOne("topics", topic_selector, &topic)
+		var devices []models.Device
+		err := db.FindAll("devices", query, &devices)
 
 		if err != nil {
 			return err
 		}
 
-		for _, user_id := range userid_list.UserIDs {
-			query := database.QuerySelector{
-				"userid": user_id,
-			}
-
-			var devices []models.Device
-			err := db.FindAll("devices", query, &devices)
+		for _, device := range devices {
+			err := SubscribeDeviceToTopic(topic, device)
 
 			if err != nil {
 				return err
-			}
-
-			for _, device := range devices {
-				app_protocol := APPLICATION_PROTOCOL
-				_, err = client.Subscribe(&sns.SubscribeInput{Protocol: &app_protocol, TopicArn: &topic.Arn, Endpoint: &device.DeviceArn})
-
-				if err != nil {
-					return err
-				}
 			}
 		}
 	}
@@ -277,6 +275,39 @@ func RemoveUsersFromTopic(topic_name string, userid_list models.UserIDList) erro
 		},
 	}
 
+	topic_selector := database.QuerySelector{
+		"name": topic_name,
+	}
+
+	var topic models.Topic
+	err := db.FindOne("topics", topic_selector, &topic)
+
+	if err != nil {
+		return err
+	}
+
+	// Unsubscribe each of the specificed users' devices from this topic
+	for _, user_id := range userid_list.UserIDs {
+		query := database.QuerySelector{
+			"userid": user_id,
+		}
+
+		var devices []models.Device
+		err = db.FindAll("devices", query, &devices)
+
+		if err != nil {
+			return err
+		}
+
+		for _, device := range devices {
+			err = UnsubscribeDeviceFromTopic(topic, device)
+
+			if err != nil {
+				return err
+			}
+		}
+	}
+
 	return db.Update("topics", selector, &modifier)
 }
 
@@ -285,9 +316,18 @@ func RemoveUsersFromTopic(topic_name string, userid_list models.UserIDList) erro
 */
 func RegisterDeviceToUser(user_id string, device_reg models.DeviceRegistration) error {
 	var device_arn string
+	var platform_arn string
+
+	// Map platform (android, ios etc) to its ARN
+	switch device_reg.Platform {
+	case "android":
+		platform_arn = config.ANDROID_PLATFORM_ARN
+	default:
+		return errors.New("Invalid platform")
+	}
 
 	if config.IS_PRODUCTION || true {
-		out, err := client.CreatePlatformEndpoint(&sns.CreatePlatformEndpointInput{CustomUserData: &user_id, Token: &device_reg.DeviceToken, PlatformApplicationArn: &device_reg.Platform})
+		out, err := client.CreatePlatformEndpoint(&sns.CreatePlatformEndpointInput{CustomUserData: &user_id, Token: &device_reg.DeviceToken, PlatformApplicationArn: &platform_arn})
 
 		if err != nil {
 			return err
@@ -297,27 +337,7 @@ func RegisterDeviceToUser(user_id string, device_reg models.DeviceRegistration) 
 	}
 
 	subs := make(map[string]string)
-	device := &models.Device{DeviceArn: device_arn, DeviceToken: device_reg.DeviceToken, Platform: device_reg.Platform, UserID: user_id, Subscriptions: subs}
-
-	// Subscribe
-	if config.IS_PRODUCTION || true {
-		var topics []models.Topic
-		err := db.FindAll("topics", nil, &topics)
-
-		if err != nil {
-			return err
-		}
-
-		for _, topic := range topics {
-			if slice_utils.ContainsString(topic.UserIDs, user_id) {
-				device, err = SubscribeDeviceToTopic(topic, device)
-
-				if err != nil {
-					return err
-				}
-			}
-		}
-	}
+	device := models.Device{DeviceArn: device_arn, DeviceToken: device_reg.DeviceToken, Platform: device_reg.Platform, UserID: user_id, Subscriptions: subs}
 
 	err := db.Insert("devices", device)
 
@@ -325,19 +345,100 @@ func RegisterDeviceToUser(user_id string, device_reg models.DeviceRegistration) 
 		return err
 	}
 
+	// Subscribe the device to all of a user's topics
+
+	topic_selector := database.QuerySelector{
+		"userids": database.QuerySelector{
+			"$all": [1]string{user_id},
+		},
+	}
+
+	var topics []models.Topic
+	err = db.FindAll("topics", topic_selector, &topics)
+
+	if err != nil {
+		return err
+	}
+
+	for _, topic := range topics {
+		err = SubscribeDeviceToTopic(topic, device)
+
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
-func SubscribeDeviceToTopic(topic models.Topic, device *models.Device) (*models.Device, error) {
+/*
+	Subscribes a given Device to a Topic, in the database and SNS
+*/
+func SubscribeDeviceToTopic(topic models.Topic, device models.Device) error {
 	app_protocol := APPLICATION_PROTOCOL
-	out, err := client.Subscribe(&sns.SubscribeInput{Protocol: &app_protocol, TopicArn: &topic.Arn, Endpoint: &device.DeviceArn})
 
-	if err != nil {
-		return nil, err
+	var sub_arn string
+
+	if config.IS_PRODUCTION || true {
+		out, err := client.Subscribe(&sns.SubscribeInput{Protocol: &app_protocol, TopicArn: &topic.Arn, Endpoint: &device.DeviceArn})
+
+		if err != nil {
+			return err
+		}
+
+		sub_arn = *out.SubscriptionArn
 	}
 
-	sub_arn := *out.SubscriptionArn
-	device.Subscriptions[topic.Name] = sub_arn
+	device_selector := database.QuerySelector{
+		"devicearn": device.DeviceArn,
+	}
 
-	return device, nil
+	set_query := fmt.Sprintf("subscriptions.%s", topic.Name)
+
+	// Keep track of subscription's ARN so we can unsubscribe later
+	device_modifier := database.QuerySelector{
+		"$set": database.QuerySelector{
+			set_query: sub_arn,
+		},
+	}
+
+	err := db.Update("devices", device_selector, &device_modifier)
+
+	return err
+}
+
+/*
+	Unsubscribes a given Device from a Topic, both in the database and SNS
+*/
+func UnsubscribeDeviceFromTopic(topic models.Topic, device models.Device) error {
+	sub_arn, ok := device.Subscriptions[topic.Name]
+	if ok {
+		if config.IS_PRODUCTION || true {
+			_, err := client.Unsubscribe(&sns.UnsubscribeInput{SubscriptionArn: &sub_arn})
+
+			if err != nil {
+				return err
+			}
+		}
+
+		device_selector := database.QuerySelector{
+			"devicearn": device.DeviceArn,
+		}
+
+		set_query := fmt.Sprintf("subscriptions.%s", topic.Name)
+
+		// Unset device's subscription ARN for this topic since it's no longer needed
+		device_modifier := database.QuerySelector{
+			"$unset": database.QuerySelector{
+				set_query: "",
+			},
+		}
+
+		err := db.Update("devices", device_selector, &device_modifier)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

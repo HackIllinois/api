@@ -116,6 +116,7 @@ function notifications {
 	export NOTIFICATIONS_DB_NAME=notifications
 	export NOTIFICATIONS_PORT=:8012
 	export SNS_REGION=us-east-1
+	export ANDROID_PLATFORM_ARN=arn:aws:sns:us-east-1:256758753660:app/GCM/android
 
 	hackillinois-api-notifications &
 }

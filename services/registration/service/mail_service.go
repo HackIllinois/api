@@ -14,6 +14,7 @@ import (
 
 /*
 	Send user with specified id a confirmation email, with template as specified.
+	If there is an error sending the confirmation email, the registration is failed.
 */
 func SendUserMail(id string, template string) error {
 	mail_order := models.MailOrder{
@@ -24,9 +25,17 @@ func SendUserMail(id string, template string) error {
 	request_body := bytes.Buffer{}
 	json.NewEncoder(&request_body).Encode(&mail_order)
 
-	_, err := apirequest.Post(config.MAIL_SERVICE+"/mail/send/", &request_body, nil)
+	status, err := apirequest.Post(config.MAIL_SERVICE+"/mail/send/", &request_body, nil)
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	if status == http.StatusOK {
+		return nil
+	}
+
+	return errors.New(fmt.Sprintf("Error sending confirmation email, therefore, registration was failed.\nStatus code returned: %v\n", status))
 }
 
 /*

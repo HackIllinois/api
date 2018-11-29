@@ -29,22 +29,22 @@ type ConfigLoader struct {
 	Loads the configuration at the given path into a ConfigLoader struct
 	Supported uri schemes are: s3, file, https
 */
-func Load(configPath string) (*ConfigLoader, error) {
-	uri, err := url.Parse(configPath)
+func Load(config_path string) (*ConfigLoader, error) {
+	uri, err := url.Parse(config_path)
 
 	if err != nil {
 		return nil, ErrLoadFailed
 	}
 
-	var configContents []byte
+	var config_contents []byte
 
 	switch uri.Scheme {
 	case "s3":
-		configContents, err = loadFromS3(configPath)
+		config_contents, err = loadFromS3(config_path)
 	case "file":
-		configContents, err = loadFromFile(configPath)
+		config_contents, err = loadFromFile(config_path)
 	case "https":
-		configContents, err = loadFromHttps(configPath)
+		config_contents, err = loadFromHttps(config_path)
 	default:
 		return nil, ErrLoadFailed
 	}
@@ -54,10 +54,10 @@ func Load(configPath string) (*ConfigLoader, error) {
 	}
 
 	loader := ConfigLoader{
-		configPath: configPath,
+		configPath: config_path,
 	}
 
-	err = json.Unmarshal(configContents, &loader.parsedConfig)
+	err = json.Unmarshal(config_contents, &loader.parsedConfig)
 
 	if err != nil {
 		return nil, ErrLoadFailed
@@ -115,8 +115,8 @@ func (loader *ConfigLoader) ParseInto(key string, out interface{}) error {
 /*
 	Loads the data at a given s3 uri into a byte array
 */
-func loadFromS3(configPath string) ([]byte, error) {
-	uri, err := url.Parse(configPath)
+func loadFromS3(config_path string) ([]byte, error) {
+	uri, err := url.Parse(config_path)
 
 	if err != nil {
 		return nil, err
@@ -147,8 +147,8 @@ func loadFromS3(configPath string) ([]byte, error) {
 /*
 	Loads the data at a given file uri into a byte array
 */
-func loadFromFile(configPath string) ([]byte, error) {
-	uri, err := url.Parse(configPath)
+func loadFromFile(config_path string) ([]byte, error) {
+	uri, err := url.Parse(config_path)
 
 	if err != nil {
 		return nil, err
@@ -160,8 +160,8 @@ func loadFromFile(configPath string) ([]byte, error) {
 /*
 	Loads the data at a given https uri into a byte array
 */
-func loadFromHttps(configPath string) ([]byte, error) {
-	resp, err := http.Get(configPath)
+func loadFromHttps(config_path string) ([]byte, error) {
+	resp, err := http.Get(config_path)
 
 	if err != nil {
 		return nil, err

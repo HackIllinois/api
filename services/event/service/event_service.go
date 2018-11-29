@@ -311,13 +311,13 @@ func IsEventActive(event_name string) (bool, error) {
 		return false, err
 	}
 
-	startTime := event.StartTime
-	endTime := event.EndTime
-	currentTime := time.Now().Unix()
+	start_time := event.StartTime
+	end_time := event.EndTime
+	current_time := time.Now().Unix()
 
-	if currentTime < startTime {
-		return startTime-currentTime <= PreEventCheckinIntervalInSeconds, nil
+	if current_time < start_time {
+		return start_time-current_time <= PreEventCheckinIntervalInSeconds, nil
 	} else {
-		return currentTime < endTime, nil
+		return current_time < end_time, nil
 	}
 }

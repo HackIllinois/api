@@ -22,8 +22,8 @@ var UploadRoutes = arbor.RouteCollection{
 	},
 	arbor.Route{
 		"UpdateCurrentUploadInfo",
-		"PUT",
-		"/upload/resume/",
+		"GET",
+		"/upload/resume/upload/",
 		alice.New(middleware.AuthMiddleware([]string{"User"}), middleware.IdentificationMiddleware).ThenFunc(UpdateCurrentUploadInfo).ServeHTTP,
 	},
 	arbor.Route{
@@ -39,7 +39,7 @@ func GetCurrentUploadInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateCurrentUploadInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.PUT(w, UploadURL+r.URL.String(), UploadFormat, "", r)
+	arbor.GET(w, UploadURL+r.URL.String(), UploadFormat, "", r)
 }
 
 func GetUploadInfo(w http.ResponseWriter, r *http.Request) {

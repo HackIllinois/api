@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/notifications/config"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/aws/aws-sdk-go/aws"
@@ -10,6 +11,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/sns"
 	"time"
 )
+
+const APPLICATION_PROTOCOL = "application"
 
 var sess *session.Session
 var client *sns.SNS
@@ -74,7 +77,7 @@ func GetAllNotifications() (*models.NotificationList, error) {
 func CreateTopic(name string) error {
 	var arn string
 
-	if config.IS_PRODUCTION {
+	if config.IS_PRODUCTION || true {
 		out, err := client.CreateTopic(&sns.CreateTopicInput{Name: &name})
 
 		if err != nil {
@@ -93,7 +96,7 @@ func CreateTopic(name string) error {
 		return errors.New("Topic already exists")
 	}
 
-	topic := models.Topic{Arn: arn, Name: name}
+	topic := models.Topic{Arn: arn, Name: name, UserIDs: nil}
 
 	err = db.Insert("topics", &topic)
 
@@ -115,7 +118,7 @@ func DeleteTopic(name string) error {
 		return err
 	}
 
-	if config.IS_PRODUCTION {
+	if config.IS_PRODUCTION || true {
 		_, err = client.DeleteTopic(&sns.DeleteTopicInput{TopicArn: &topic.Arn})
 
 		if err != nil {
@@ -165,7 +168,7 @@ func PublishNotification(topic_name string, notification models.Notification) (*
 
 	arn := topic.Arn
 
-	if config.IS_PRODUCTION {
+	if config.IS_PRODUCTION || true {
 		_, err = client.Publish(&sns.PublishInput{
 			TopicArn: &arn,
 			Message:  &notification.Message,
@@ -202,4 +205,139 @@ func GetNotificationsForTopic(topic_name string) (*models.NotificationList, erro
 	}
 
 	return &notifications_list, nil
+}
+
+/*
+	Adds the given userids to the specified topic
+*/
+func AddUsersToTopic(topic_name string, userid_list models.UserIDList) error {
+	selector := database.QuerySelector{
+		"name": topic_name,
+	}
+
+	modifier := database.QuerySelector{
+		"$addToSet": database.QuerySelector{
+			"userids": database.QuerySelector{
+				"$each": userid_list.UserIDs,
+			},
+		},
+	}
+
+	if config.IS_PRODUCTION || true {
+		topic_selector := database.QuerySelector{
+			"name": topic_name,
+		}
+
+		var topic models.Topic
+		err := db.FindOne("topics", topic_selector, &topic)
+
+		if err != nil {
+			return err
+		}
+
+		for _, user_id := range userid_list.UserIDs {
+			query := database.QuerySelector{
+				"userid": user_id,
+			}
+
+			var devices []models.Device
+			err := db.FindAll("devices", query, &devices)
+
+			if err != nil {
+				return err
+			}
+
+			for _, device := range devices {
+				app_protocol := APPLICATION_PROTOCOL
+				_, err = client.Subscribe(&sns.SubscribeInput{Protocol: &app_protocol, TopicArn: &topic.Arn, Endpoint: &device.DeviceArn})
+
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	return db.Update("topics", selector, &modifier)
+}
+
+/*
+	Removes the given userids from the specified topic
+*/
+func RemoveUsersFromTopic(topic_name string, userid_list models.UserIDList) error {
+	selector := database.QuerySelector{
+		"name": topic_name,
+	}
+
+	modifier := database.QuerySelector{
+		"$pull": database.QuerySelector{
+			"userids": database.QuerySelector{
+				"$in": userid_list.UserIDs,
+			},
+		},
+	}
+
+	return db.Update("topics", selector, &modifier)
+}
+
+/*
+	Links the given device token with a user
+*/
+func RegisterDeviceToUser(user_id string, device_reg models.DeviceRegistration) error {
+	var device_arn string
+
+	if config.IS_PRODUCTION || true {
+		out, err := client.CreatePlatformEndpoint(&sns.CreatePlatformEndpointInput{CustomUserData: &user_id, Token: &device_reg.DeviceToken, PlatformApplicationArn: &device_reg.Platform})
+
+		if err != nil {
+			return err
+		}
+
+		device_arn = *out.EndpointArn
+	}
+
+	subs := make(map[string]string)
+	device := &models.Device{DeviceArn: device_arn, DeviceToken: device_reg.DeviceToken, Platform: device_reg.Platform, UserID: user_id, Subscriptions: subs}
+
+	// Subscribe
+	if config.IS_PRODUCTION || true {
+		var topics []models.Topic
+		err := db.FindAll("topics", nil, &topics)
+
+		if err != nil {
+			return err
+		}
+
+		for _, topic := range topics {
+			if slice_utils.ContainsString(topic.UserIDs, user_id) {
+				device, err = SubscribeDeviceToTopic(topic, device)
+
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	err := db.Insert("devices", device)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func SubscribeDeviceToTopic(topic models.Topic, device *models.Device) (*models.Device, error) {
+	app_protocol := APPLICATION_PROTOCOL
+	out, err := client.Subscribe(&sns.SubscribeInput{Protocol: &app_protocol, TopicArn: &topic.Arn, Endpoint: &device.DeviceArn})
+
+	if err != nil {
+		return nil, err
+	}
+
+	sub_arn := *out.SubscriptionArn
+	device.Subscriptions[topic.Name] = sub_arn
+
+	return device, nil
 }

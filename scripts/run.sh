@@ -115,7 +115,7 @@ function notifications {
 	export NOTIFICATIONS_DB_HOST=localhost
 	export NOTIFICATIONS_DB_NAME=notifications
 	export NOTIFICATIONS_PORT=:8012
-	export SNS_REGION=us-east-2
+	export SNS_REGION=us-east-1
 
 	hackillinois-api-notifications &
 }

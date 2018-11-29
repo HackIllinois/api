@@ -16,9 +16,12 @@ func SetupController(route *mux.Route) {
 	router.Handle("/", alice.New().ThenFunc(GetAllTopics)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(CreateTopic)).Methods("POST")
 	router.Handle("/all/", alice.New().ThenFunc(GetAllNotifications)).Methods("GET")
+	router.Handle("/device/", alice.New().ThenFunc(RegisterDeviceToUser)).Methods("POST")
 	router.Handle("/{name}/", alice.New().ThenFunc(GetNotificationsForTopic)).Methods("GET")
 	router.Handle("/{name}/", alice.New().ThenFunc(DeleteTopic)).Methods("DELETE")
 	router.Handle("/{name}/", alice.New().ThenFunc(PublishNotification)).Methods("POST")
+	router.Handle("/{name}/add/", alice.New().ThenFunc(AddUsersToTopic)).Methods("POST")
+	router.Handle("/{name}/remove/", alice.New().ThenFunc(RemoveUsersFromTopic)).Methods("POST")
 	router.Handle("/{name}/info/", alice.New().ThenFunc(GetTopicInfo)).Methods("GET")
 }
 
@@ -130,4 +133,74 @@ func GetTopicInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(topic)
+}
+
+/*
+	Adds users with given userids to the specified topic
+*/
+func AddUsersToTopic(w http.ResponseWriter, r *http.Request) {
+	topic_name := mux.Vars(r)["name"]
+
+	var userid_list models.UserIDList
+	json.NewDecoder(r.Body).Decode(&userid_list)
+
+	err := service.AddUsersToTopic(topic_name, userid_list)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	topic, err := service.GetTopicInfo(topic_name)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(topic)
+}
+
+/*
+	Removes users with given userids from the specified topic
+*/
+func RemoveUsersFromTopic(w http.ResponseWriter, r *http.Request) {
+	topic_name := mux.Vars(r)["name"]
+
+	var userid_list models.UserIDList
+	json.NewDecoder(r.Body).Decode(&userid_list)
+
+	err := service.RemoveUsersFromTopic(topic_name, userid_list)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	topic, err := service.GetTopicInfo(topic_name)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(topic)
+}
+
+/*
+	Endpoint to register a device token to a given user
+*/
+func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	if id == "" {
+		panic(errors.UnprocessableError("Must provide userid"))
+	}
+
+	var device_registration models.DeviceRegistration
+	json.NewDecoder(r.Body).Decode(&device_registration)
+
+	err := service.RegisterDeviceToUser(id, device_registration)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(device_registration)
 }

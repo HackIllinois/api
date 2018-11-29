@@ -32,6 +32,12 @@ var NotificationsRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(CreateTopic).ServeHTTP,
 	},
 	arbor.Route{
+		"RegisterDeviceToUser",
+		"POST",
+		"/notifications/device/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(RegisterDeviceToUser).ServeHTTP,
+	},
+	arbor.Route{
 		"GetNotificationsForTopic",
 		"GET",
 		"/notifications/{id}/",
@@ -48,6 +54,18 @@ var NotificationsRoutes = arbor.RouteCollection{
 		"POST",
 		"/notifications/{id}/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(PublishNotification).ServeHTTP,
+	},
+	arbor.Route{
+		"AddUsersToTopic",
+		"POST",
+		"/notifications/{id}/add/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(AddUsersToTopic).ServeHTTP,
+	},
+	arbor.Route{
+		"RemoveUsersFromTopic",
+		"POST",
+		"/notifications/{id}/remove/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(RemoveUsersFromTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"GetTopicInfo",
@@ -83,4 +101,16 @@ func PublishNotification(w http.ResponseWriter, r *http.Request) {
 
 func GetNotificationsForTopic(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+}
+
+func AddUsersToTopic(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+}
+
+func RemoveUsersFromTopic(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+}
+
+func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
 }

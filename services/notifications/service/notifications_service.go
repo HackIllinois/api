@@ -235,24 +235,24 @@ func AddUsersToTopic(topic_name string, userid_list models.UserIDList) error {
 	}
 
 	// Subscribe each of the specified users' devices to this topic
-	for _, user_id := range userid_list.UserIDs {
-		query := database.QuerySelector{
-			"userid": user_id,
-		}
+	query := database.QuerySelector{
+		"userid": database.QuerySelector{
+			"$in": userid_list.UserIDs,
+		},
+	}
 
-		var devices []models.Device
-		err := db.FindAll("devices", query, &devices)
+	var devices []models.Device
+	err = db.FindAll("devices", query, &devices)
+
+	if err != nil {
+		return err
+	}
+
+	for _, device := range devices {
+		err := SubscribeDeviceToTopic(topic, device)
 
 		if err != nil {
 			return err
-		}
-
-		for _, device := range devices {
-			err := SubscribeDeviceToTopic(topic, device)
-
-			if err != nil {
-				return err
-			}
 		}
 	}
 
@@ -287,24 +287,24 @@ func RemoveUsersFromTopic(topic_name string, userid_list models.UserIDList) erro
 	}
 
 	// Unsubscribe each of the specificed users' devices from this topic
-	for _, user_id := range userid_list.UserIDs {
-		query := database.QuerySelector{
-			"userid": user_id,
-		}
+	query := database.QuerySelector{
+		"userid": database.QuerySelector{
+			"$in": userid_list.UserIDs,
+		},
+	}
 
-		var devices []models.Device
-		err = db.FindAll("devices", query, &devices)
+	var devices []models.Device
+	err = db.FindAll("devices", query, &devices)
+
+	if err != nil {
+		return err
+	}
+
+	for _, device := range devices {
+		err = UnsubscribeDeviceFromTopic(topic, device)
 
 		if err != nil {
 			return err
-		}
-
-		for _, device := range devices {
-			err = UnsubscribeDeviceFromTopic(topic, device)
-
-			if err != nil {
-				return err
-			}
 		}
 	}
 

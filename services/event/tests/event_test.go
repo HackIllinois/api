@@ -5,8 +5,10 @@ import (
 	"github.com/HackIllinois/api/services/event/config"
 	"github.com/HackIllinois/api/services/event/models"
 	"github.com/HackIllinois/api/services/event/service"
+	"math"
 	"reflect"
 	"testing"
+	"time"
 )
 
 var db database.Database
@@ -28,8 +30,8 @@ func SetupTestDB(t *testing.T) {
 	event := models.Event{
 		Name:                "testname",
 		Description:         "testdescription",
-		StartTime:           1000,
-		EndTime:             2000,
+		StartTime:           time.Now().Unix(),
+		EndTime:             time.Now().Unix() + 60000,
 		LocationDescription: "testlocationdescription",
 		Latitude:            123.456,
 		Longitude:           123.456,
@@ -75,8 +77,8 @@ func TestGetAllEventsService(t *testing.T) {
 	event := models.Event{
 		Name:                "testname2",
 		Description:         "testdescription2",
-		StartTime:           1000,
-		EndTime:             2000,
+		StartTime:           time.Now().Unix(),
+		EndTime:             time.Now().Unix() + 60000,
 		LocationDescription: "testlocationdescription",
 		Latitude:            123.456,
 		Longitude:           123.456,
@@ -101,8 +103,8 @@ func TestGetAllEventsService(t *testing.T) {
 			models.Event{
 				Name:                "testname",
 				Description:         "testdescription",
-				StartTime:           1000,
-				EndTime:             2000,
+				StartTime:           time.Now().Unix(),
+				EndTime:             time.Now().Unix() + 60000,
 				LocationDescription: "testlocationdescription",
 				Latitude:            123.456,
 				Longitude:           123.456,
@@ -112,8 +114,8 @@ func TestGetAllEventsService(t *testing.T) {
 			models.Event{
 				Name:                "testname2",
 				Description:         "testdescription2",
-				StartTime:           1000,
-				EndTime:             2000,
+				StartTime:           time.Now().Unix(),
+				EndTime:             time.Now().Unix() + 60000,
 				LocationDescription: "testlocationdescription",
 				Latitude:            123.456,
 				Longitude:           123.456,
@@ -146,8 +148,8 @@ func TestGetEventService(t *testing.T) {
 	expected_event := models.Event{
 		Name:                "testname",
 		Description:         "testdescription",
-		StartTime:           1000,
-		EndTime:             2000,
+		StartTime:           time.Now().Unix(),
+		EndTime:             time.Now().Unix() + 60000,
 		LocationDescription: "testlocationdescription",
 		Latitude:            123.456,
 		Longitude:           123.456,
@@ -171,8 +173,8 @@ func TestCreateEventService(t *testing.T) {
 	new_event := models.Event{
 		Name:                "testname2",
 		Description:         "testdescription2",
-		StartTime:           1000,
-		EndTime:             2000,
+		StartTime:           time.Now().Unix(),
+		EndTime:             time.Now().Unix() + 60000,
 		LocationDescription: "testlocationdescription",
 		Latitude:            123.456,
 		Longitude:           123.456,
@@ -195,8 +197,8 @@ func TestCreateEventService(t *testing.T) {
 	expected_event := models.Event{
 		Name:                "testname2",
 		Description:         "testdescription2",
-		StartTime:           1000,
-		EndTime:             2000,
+		StartTime:           time.Now().Unix(),
+		EndTime:             time.Now().Unix() + 60000,
 		LocationDescription: "testlocationdescription",
 		Latitude:            123.456,
 		Longitude:           123.456,
@@ -285,8 +287,8 @@ func TestUpdateEventService(t *testing.T) {
 	event := models.Event{
 		Name:                "testname",
 		Description:         "testdescription2",
-		StartTime:           1000,
-		EndTime:             2000,
+		StartTime:           time.Now().Unix(),
+		EndTime:             time.Now().Unix() + 60000,
 		LocationDescription: "testlocationdescription",
 		Latitude:            123.456,
 		Longitude:           123.456,
@@ -309,8 +311,8 @@ func TestUpdateEventService(t *testing.T) {
 	expected_event := models.Event{
 		Name:                "testname",
 		Description:         "testdescription2",
-		StartTime:           1000,
-		EndTime:             2000,
+		StartTime:           time.Now().Unix(),
+		EndTime:             time.Now().Unix() + 60000,
 		LocationDescription: "testlocationdescription",
 		Latitude:            123.456,
 		Longitude:           123.456,
@@ -417,6 +419,60 @@ func TestMarkUserAsAttendingEventErrorService(t *testing.T) {
 
 	if !reflect.DeepEqual(user_tracker, &expected_user_tracker) {
 		t.Errorf("Wrong tracker info. Expected %v, got %v", expected_user_tracker, user_tracker)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Adds an event with the current time, and checks if it is active.
+	Confirms if an event that is known to be inactive (time is in the past), is inactive.
+*/
+func TestIsEventActive(t *testing.T) {
+
+	// Creating a 30 minute long event that SHOULD NOT be active
+	const ONE_MINUTE_IN_SECONDS = 60
+	new_event := models.Event{
+		Name:                "testiseventactive",
+		Description:         "testdescription2",
+		StartTime:           time.Now().Unix() + ONE_MINUTE_IN_SECONDS*40,
+		EndTime:             time.Now().Unix() + ONE_MINUTE_IN_SECONDS*70,
+		LocationDescription: "testlocationdescription",
+		Latitude:            123.456,
+		Longitude:           123.456,
+		Sponsor:             "testsponsor",
+		EventType:           "WORKSHOP",
+	}
+
+	service.CreateEvent(new_event.Name, new_event)
+
+	is_active, err := service.IsEventActive("testiseventactive")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if is_active {
+		current_time := time.Now().Unix()
+		t.Errorf("Event was incorrectly deemed active. Current time: %v, event start time: %v, time difference: %v", current_time, new_event.StartTime, math.Abs((float64)(current_time-new_event.StartTime)))
+	}
+
+	// Creating a 20 minute long event that SHOULD be active
+	new_event.Name = "test2iseventactive"
+	new_event.StartTime = time.Now().Unix()
+	new_event.EndTime = time.Now().Unix() + ONE_MINUTE_IN_SECONDS*20
+
+	service.CreateEvent(new_event.Name, new_event)
+
+	is_active, err = service.IsEventActive("test2iseventactive")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !is_active {
+		current_time := time.Now().Unix()
+		t.Errorf("Event was incorrectly deemed inactive. Current time: %v, event start time: %v, time difference: %v", current_time, new_event.StartTime, math.Abs((float64)((current_time - new_event.StartTime))))
 	}
 
 	CleanupTestDB(t)

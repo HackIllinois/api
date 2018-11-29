@@ -14,7 +14,7 @@ import (
 	Add Attendee role to user with auth service
 */
 func AddAttendeeRole(id string) error {
-	user_role_modification := models.UserRoleModification{ID: id, Role: "Attendee"}
+	user_role_modification := models.UserRoleModification{ID: id, Role: models.AttendeeRole}
 
 	body := bytes.Buffer{}
 	json.NewEncoder(&body).Encode(&user_role_modification)

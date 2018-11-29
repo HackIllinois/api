@@ -1,12 +1,13 @@
 package middleware
 
 import (
+	"github.com/HackIllinois/api/gateway/models"
 	"github.com/HackIllinois/api/gateway/utils"
 	"github.com/justinas/alice"
 	"net/http"
 )
 
-func AuthMiddleware(authorized_roles []string) alice.Constructor {
+func AuthMiddleware(authorized_roles []models.Role) alice.Constructor {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token := r.Header.Get("Authorization")
@@ -20,7 +21,7 @@ func AuthMiddleware(authorized_roles []string) alice.Constructor {
 	}
 }
 
-func IsAuthorized(token string, authorized_roles []string) (bool, error) {
+func IsAuthorized(token string, authorized_roles []models.Role) (bool, error) {
 	for _, role := range authorized_roles {
 		is_authorized, err := utils.HasRole(token, role)
 

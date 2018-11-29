@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 
+	"github.com/HackIllinois/api/gateway/models"
 	"github.com/HackIllinois/api/gateway/utils"
 )
 
@@ -11,8 +12,8 @@ func IdentificationMiddleware(next http.Handler) http.Handler {
 		token := r.Header.Get("Authorization")
 		id, err := utils.ExtractFieldFromJWT(token, "id")
 		if err == nil {
-			//Check if the user has role "Admin"
-			is_admin, err := utils.HasRole(token, "Admin")
+			//Check if the user has the Admin role
+			is_admin, err := utils.HasRole(token, models.AdminRole)
 			if err == nil && is_admin {
 				impersonation_id := r.Header.Get("HackIllinois-Impersonation")
 				// Check if an impersonation ID is specified

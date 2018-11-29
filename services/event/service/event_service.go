@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"math"
 	"time"
 
 	"github.com/HackIllinois/api/common/database"
@@ -299,7 +298,7 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 	return err
 }
 
-const CheckInTimeIntervalInSeconds = 1200
+const PreEventCheckinIntervalInSeconds = 15 * 60
 
 /*
 	Check if an event is active, i.e., that check-ins are allowed for the event at the current time.
@@ -313,7 +312,12 @@ func IsEventActive(event_name string) (bool, error) {
 	}
 
 	startTime := event.StartTime
-	t := time.Now().Unix()
+	endTime := event.EndTime
+	currentTime := time.Now().Unix()
 
-	return math.Abs((float64)(t-startTime)) <= CheckInTimeIntervalInSeconds, nil
+	if currentTime < startTime {
+		return startTime-currentTime <= PreEventCheckinIntervalInSeconds, nil
+	} else {
+		return currentTime < endTime, nil
+	}
 }

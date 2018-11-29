@@ -31,11 +31,11 @@ func SendUserMail(id string, template string) error {
 		return err
 	}
 
-	if status == http.StatusOK {
-		return nil
+	if status != http.StatusOK {
+		return errors.New("Error sending confirmation email, therefore, registration was failed.")
 	}
 
-	return errors.New(fmt.Sprintf("Error sending confirmation email, therefore, registration was failed.\nStatus code returned: %v\n", status))
+	return nil
 }
 
 /*

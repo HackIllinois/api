@@ -22,31 +22,30 @@ func NewDataStore(definition DataStoreDefinition) DataStore {
 	}
 }
 
+var conversionFuncs map[string](func(interface{}, DataStoreDefinition) (interface{}, error))
+
+func init() {
+	conversionFuncs = make(map[string](func(interface{}, DataStoreDefinition) (interface{}, error)))
+	conversionFuncs["int"] = toInt
+	conversionFuncs["float"] = toFloat
+	conversionFuncs["string"] = toString
+	conversionFuncs["boolean"] = toBoolean
+	conversionFuncs["object"] = toObject
+	conversionFuncs["[]int"] = toIntArray
+	conversionFuncs["[]float"] = toFloatArray
+	conversionFuncs["[]string"] = toStringArray
+	conversionFuncs["[]boolean"] = toBooleanArray
+	conversionFuncs["[]object"] = toObjectArray
+}
+
 func buildDataFromDefinition(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
-	switch definition.Type {
-	case "int":
-		return toInt(raw_data)
-	case "float":
-		return toFloat(raw_data)
-	case "string":
-		return toString(raw_data)
-	case "boolean":
-		return toBoolean(raw_data)
-	case "object":
-		return toObject(raw_data, definition)
-	case "[]int":
-		return toIntArray(raw_data)
-	case "[]float":
-		return toFloatArray(raw_data)
-	case "[]string":
-		return toStringArray(raw_data)
-	case "[]boolean":
-		return toBooleanArray(raw_data)
-	case "[]object":
-		return toObjectArray(raw_data, definition)
-	default:
+	conversionFunc, exists := conversionFuncs[definition.Type]
+
+	if !exists {
 		return nil, errors.New("Invalid type in definition")
 	}
+
+	return conversionFunc(raw_data, definition)
 }
 
 func defaultValueForType(tpe string) interface{} {

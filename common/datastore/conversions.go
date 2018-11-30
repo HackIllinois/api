@@ -4,47 +4,47 @@ import (
 	"errors"
 )
 
-func toInt(raw_data interface{}) (int64, error) {
+func toInt(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
 	data, ok := raw_data.(float64)
 
 	if !ok {
-		return 0, errors.New("Type mismatch in data and definition")
+		return nil, errors.New("Type mismatch in data and definition")
 	}
 
 	return int64(data), nil
 }
 
-func toFloat(raw_data interface{}) (float64, error) {
+func toFloat(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
 	data, ok := raw_data.(float64)
 
 	if !ok {
-		return 0.0, errors.New("Type mismatch in data and definition")
+		return nil, errors.New("Type mismatch in data and definition")
 	}
 
 	return data, nil
 }
 
-func toString(raw_data interface{}) (string, error) {
+func toString(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
 	data, ok := raw_data.(string)
 
 	if !ok {
-		return "", errors.New("Type mismatch in data and definition")
+		return nil, errors.New("Type mismatch in data and definition")
 	}
 
 	return data, nil
 }
 
-func toBoolean(raw_data interface{}) (bool, error) {
+func toBoolean(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
 	data, ok := raw_data.(bool)
 
 	if !ok {
-		return false, errors.New("Type mismatch in data and definition")
+		return nil, errors.New("Type mismatch in data and definition")
 	}
 
 	return data, nil
 }
 
-func toObject(raw_data interface{}, definition DataStoreDefinition) (map[string]interface{}, error) {
+func toObject(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
 	unfiltered_data, ok := raw_data.(map[string]interface{})
 
 	if !ok {
@@ -71,7 +71,7 @@ func toObject(raw_data interface{}, definition DataStoreDefinition) (map[string]
 	return data, nil
 }
 
-func toIntArray(raw_data interface{}) ([]int64, error) {
+func toIntArray(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
 	data, ok := raw_data.([]interface{})
 
 	if !ok {
@@ -93,7 +93,7 @@ func toIntArray(raw_data interface{}) ([]int64, error) {
 	return int_data, nil
 }
 
-func toFloatArray(raw_data interface{}) ([]float64, error) {
+func toFloatArray(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
 	data, ok := raw_data.([]interface{})
 
 	if !ok {
@@ -115,7 +115,7 @@ func toFloatArray(raw_data interface{}) ([]float64, error) {
 	return float_data, nil
 }
 
-func toStringArray(raw_data interface{}) ([]string, error) {
+func toStringArray(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
 	data, ok := raw_data.([]interface{})
 
 	if !ok {
@@ -137,7 +137,7 @@ func toStringArray(raw_data interface{}) ([]string, error) {
 	return string_data, nil
 }
 
-func toBooleanArray(raw_data interface{}) ([]bool, error) {
+func toBooleanArray(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
 	data, ok := raw_data.([]interface{})
 
 	if !ok {
@@ -159,7 +159,7 @@ func toBooleanArray(raw_data interface{}) ([]bool, error) {
 	return bool_data, nil
 }
 
-func toObjectArray(raw_data interface{}, definition DataStoreDefinition) ([]map[string]interface{}, error) {
+func toObjectArray(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
 	unfiltered_data, ok := raw_data.([]interface{})
 
 	if !ok {

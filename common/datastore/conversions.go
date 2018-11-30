@@ -165,30 +165,13 @@ func toObjectArray(raw_data interface{}, definition DataStoreDefinition) (interf
 	data := make([]map[string]interface{}, len(unfiltered_data))
 
 	for i := 0; i < len(unfiltered_data); i++ {
-		element := make(map[string]interface{})
+		element, err := toObject(unfiltered_data[i], definition)
 
-		for _, field := range definition.Fields {
-			unfiltered_data_element, ok := unfiltered_data[i].(map[string]interface{})
-
-			if !ok {
-				return nil, ErrTypeMismatch
-			}
-
-			unfiltered_fields, exists := unfiltered_data_element[field.Name]
-
-			if exists {
-				var err error
-				element[field.Name], err = buildDataFromDefinition(unfiltered_fields, field)
-
-				if err != nil {
-					return nil, err
-				}
-			} else {
-				element[field.Name] = getDefaultValue(field.Type)
-			}
+		if err != nil {
+			return nil, err
 		}
 
-		data[i] = element
+		data[i] = element.(map[string]interface{})
 	}
 
 	return data, nil

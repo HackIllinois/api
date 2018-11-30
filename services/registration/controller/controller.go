@@ -85,7 +85,7 @@ func GetCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 
 /*
 	Endpoint to create the registration for the current user.
-+	On successful creation, sends the user a confirmation mail.
+	On successful creation, adds user to a "registered" mailing list, and sends the user a confirmation mail.
 */
 func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
@@ -137,6 +137,15 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
+	// Add user to mailing list
+	mail_list := "registered_users"
+	err = service.AddUserToMailList(id, mail_list)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	// Send confirmation mail
 	mail_template := "registration_confirmation"
 	err = service.SendUserMail(id, mail_template)
 
@@ -149,7 +158,7 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 
 /*
 	Endpoint to update the registration for the current user.
-+	On successful update, sends the user a confirmation mail.
+	On successful update, sends the user a confirmation mail.
 */
 func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")

@@ -1,8 +1,6 @@
 package service
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/rsvp/config"
@@ -14,12 +12,9 @@ import (
 	Add Attendee role to user with auth service
 */
 func AddAttendeeRole(id string) error {
-	user_role_modification := models.UserRoleModification{ID: id, Role: "Attendee"}
+	user_role_modification := models.UserRoleModification{ID: id, Role: models.AttendeeRole}
 
-	body := bytes.Buffer{}
-	json.NewEncoder(&body).Encode(&user_role_modification)
-
-	status, err := apirequest.Put(config.AUTH_SERVICE+"/auth/roles/add/", &body, nil)
+	status, err := apirequest.Put(config.AUTH_SERVICE+"/auth/roles/add/", &user_role_modification, nil)
 
 	if err != nil {
 		return err

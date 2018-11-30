@@ -1,8 +1,6 @@
 package service
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/registration/config"
@@ -30,10 +28,7 @@ func AddMentorRole(id string) error {
 func AddRole(id string, role string) error {
 	user_role_modification := models.UserRoleModification{ID: id, Role: role}
 
-	body := bytes.Buffer{}
-	json.NewEncoder(&body).Encode(&user_role_modification)
-
-	status, err := apirequest.Put(config.AUTH_SERVICE+"/auth/roles/add/", &body, nil)
+	status, err := apirequest.Put(config.AUTH_SERVICE+"/auth/roles/add/", &user_role_modification, nil)
 
 	if err != nil {
 		return err

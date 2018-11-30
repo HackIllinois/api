@@ -1,8 +1,6 @@
 package service
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"net/http"
 
@@ -23,10 +21,7 @@ func SendUserInfo(id string, username string, first_name string, last_name strin
 		Email:     email,
 	}
 
-	body := bytes.Buffer{}
-	json.NewEncoder(&body).Encode(&user_info)
-
-	status, err := apirequest.Post(config.USER_SERVICE+"/user/", &body, nil)
+	status, err := apirequest.Post(config.USER_SERVICE+"/user/", &user_info, nil)
 
 	if err != nil {
 		return err

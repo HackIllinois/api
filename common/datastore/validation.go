@@ -19,19 +19,13 @@ func validateField(data interface{}, definition DataStoreDefinition, validate *v
 
 	switch definition.Type {
 	case "object":
-		for _, field := range definition.Fields {
-			mapped_data, ok := data.(map[string]interface{})
+		mapped_data, ok := data.(map[string]interface{})
 
-			if !ok {
-				return ErrTypeMismatch
-			}
-
-			err = validateField(mapped_data[field.Name], field, validate)
-
-			if err != nil {
-				return err
-			}
+		if !ok {
+			return ErrTypeMismatch
 		}
+
+		return validateFieldArray(mapped_data, definition, validate)
 	case "[]object":
 		data_array, ok := data.([]map[string]interface{})
 
@@ -40,15 +34,26 @@ func validateField(data interface{}, definition DataStoreDefinition, validate *v
 		}
 
 		for _, mapped_data := range data_array {
-			for _, field := range definition.Fields {
-				err = validateField(mapped_data[field.Name], field, validate)
+			err = validateFieldArray(mapped_data, definition, validate)
 
-				if err != nil {
-					return err
-				}
+			if err != nil {
+				return err
 			}
 		}
+
+		return nil
 	default:
+		return nil
+	}
+}
+
+func validateFieldArray(data map[string]interface{}, definition DataStoreDefinition, validate *validator.Validate) error {
+	for _, field := range definition.Fields {
+		err := validateField(data[field.Name], field, validate)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

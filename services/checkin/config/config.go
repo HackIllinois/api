@@ -12,6 +12,7 @@ var CHECKIN_PORT string
 
 var RSVP_SERVICE string
 var REGISTRATION_SERVICE string
+var AUTH_SERVICE string
 
 func init() {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
@@ -45,6 +46,12 @@ func init() {
 	}
 
 	REGISTRATION_SERVICE, err = cfg_loader.Get("REGISTRATION_SERVICE")
+
+	if err != nil {
+		panic(err)
+	}
+
+	AUTH_SERVICE, err = cfg_loader.Get("AUTH_SERVICE")
 
 	if err != nil {
 		panic(err)

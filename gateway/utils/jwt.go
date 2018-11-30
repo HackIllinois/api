@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"github.com/HackIllinois/api/gateway/config"
+	"github.com/HackIllinois/api/gateway/models"
 	jwt "github.com/dgrijalva/jwt-go"
 	"time"
 )
@@ -45,7 +46,7 @@ func ExtractFieldFromJWT(token string, field string) ([]string, error) {
 	return nil, fmt.Errorf("Invalid token")
 }
 
-func HasRole(token string, required_role string) (bool, error) {
+func HasRole(token string, required_role models.Role) (bool, error) {
 	roles, err := ExtractFieldFromJWT(token, "roles")
 
 	if err != nil {

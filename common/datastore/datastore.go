@@ -1,9 +1,5 @@
 package datastore
 
-import (
-	"errors"
-)
-
 type DataStoreDefinition struct {
 	Name        string                `json:"name"`
 	Type        string                `json:"type"`
@@ -23,6 +19,7 @@ func NewDataStore(definition DataStoreDefinition) DataStore {
 }
 
 var conversionFuncs map[string](func(interface{}, DataStoreDefinition) (interface{}, error))
+var defaultValues map[string]interface{}
 
 func init() {
 	conversionFuncs = make(map[string](func(interface{}, DataStoreDefinition) (interface{}, error)))
@@ -36,41 +33,16 @@ func init() {
 	conversionFuncs["[]string"] = toStringArray
 	conversionFuncs["[]boolean"] = toBooleanArray
 	conversionFuncs["[]object"] = toObjectArray
-}
 
-func buildDataFromDefinition(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
-	conversionFunc, exists := conversionFuncs[definition.Type]
-
-	if !exists {
-		return nil, errors.New("Invalid type in definition")
-	}
-
-	return conversionFunc(raw_data, definition)
-}
-
-func defaultValueForType(tpe string) interface{} {
-	switch tpe {
-	case "string":
-		return ""
-	case "int":
-		return 0
-	case "float":
-		return 0.0
-	case "boolean":
-		return false
-	case "object":
-		return nil
-	case "[]string":
-		return nil
-	case "[]int":
-		return nil
-	case "[]float":
-		return nil
-	case "[]boolean":
-		return nil
-	case "[]object":
-		return nil
-	default:
-		return nil
-	}
+	defaultValues = make(map[string]interface{})
+	defaultValues["int"] = 0
+	defaultValues["float"] = 0.0
+	defaultValues["string"] = ""
+	defaultValues["boolean"] = false
+	defaultValues["object"] = nil
+	defaultValues["[]int"] = nil
+	defaultValues["[]float"] = nil
+	defaultValues["[]string"] = nil
+	defaultValues["[]boolean"] = nil
+	defaultValues["[]object"] = nil
 }

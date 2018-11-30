@@ -64,7 +64,7 @@ func toObject(raw_data interface{}, definition DataStoreDefinition) (interface{}
 				return nil, err
 			}
 		} else {
-			data[field.Name] = defaultValueForType(field.Type)
+			data[field.Name] = getDefaultValue(field.Type)
 		}
 	}
 
@@ -188,7 +188,7 @@ func toObjectArray(raw_data interface{}, definition DataStoreDefinition) (interf
 					return nil, err
 				}
 			} else {
-				element[field.Name] = defaultValueForType(field.Type)
+				element[field.Name] = getDefaultValue(field.Type)
 			}
 		}
 
@@ -196,4 +196,14 @@ func toObjectArray(raw_data interface{}, definition DataStoreDefinition) (interf
 	}
 
 	return data, nil
+}
+
+func getDefaultValue(t string) interface{} {
+	value, exists := defaultValues[t]
+
+	if !exists {
+		return nil
+	}
+
+	return value
 }

@@ -41,3 +41,13 @@ func (datastore *DataStore) GetBSON() (interface{}, error) {
 func (datastore *DataStore) SetBSON(raw bson.Raw) error {
 	return raw.Unmarshal(&datastore.Data)
 }
+
+func buildDataFromDefinition(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
+	conversionFunc, exists := conversionFuncs[definition.Type]
+
+	if !exists {
+		return nil, errors.New("Invalid type in definition")
+	}
+
+	return conversionFunc(raw_data, definition)
+}

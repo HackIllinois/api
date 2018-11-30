@@ -1,5 +1,9 @@
 package datastore
 
+import (
+	"errors"
+)
+
 type DataStoreDefinition struct {
 	Name        string                `json:"name"`
 	Type        string                `json:"type"`
@@ -17,6 +21,10 @@ func NewDataStore(definition DataStoreDefinition) DataStore {
 		Definition: definition,
 	}
 }
+
+var ErrInvalidDefinition = errors.New("DataStore definition is invalid")
+var ErrInvalidData = errors.New("Invalid data unmarshalled")
+var ErrTypeMismatch = errors.New("Type mismatch in data and definition")
 
 var conversionFuncs map[string](func(interface{}, DataStoreDefinition) (interface{}, error))
 var defaultValues map[string]interface{}

@@ -1,7 +1,6 @@
 package datastore
 
 import (
-	"errors"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -24,7 +23,7 @@ func validateField(data interface{}, definition DataStoreDefinition, validate *v
 			mapped_data, ok := data.(map[string]interface{})
 
 			if !ok {
-				return errors.New("Definition contains field for non-mappable data")
+				return ErrTypeMismatch
 			}
 
 			err = validateField(mapped_data[field.Name], field, validate)
@@ -37,7 +36,7 @@ func validateField(data interface{}, definition DataStoreDefinition, validate *v
 		data_array, ok := data.([]map[string]interface{})
 
 		if !ok {
-			return errors.New("Data format does not match definition")
+			return ErrTypeMismatch
 		}
 
 		for _, mapped_data := range data_array {

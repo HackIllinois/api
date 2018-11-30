@@ -1,14 +1,10 @@
 package datastore
 
-import (
-	"errors"
-)
-
 func toInt(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
 	data, ok := raw_data.(float64)
 
 	if !ok {
-		return nil, errors.New("Type mismatch in data and definition")
+		return nil, ErrTypeMismatch
 	}
 
 	return int64(data), nil
@@ -18,7 +14,7 @@ func toFloat(raw_data interface{}, definition DataStoreDefinition) (interface{},
 	data, ok := raw_data.(float64)
 
 	if !ok {
-		return nil, errors.New("Type mismatch in data and definition")
+		return nil, ErrTypeMismatch
 	}
 
 	return data, nil
@@ -28,7 +24,7 @@ func toString(raw_data interface{}, definition DataStoreDefinition) (interface{}
 	data, ok := raw_data.(string)
 
 	if !ok {
-		return nil, errors.New("Type mismatch in data and definition")
+		return nil, ErrTypeMismatch
 	}
 
 	return data, nil
@@ -38,7 +34,7 @@ func toBoolean(raw_data interface{}, definition DataStoreDefinition) (interface{
 	data, ok := raw_data.(bool)
 
 	if !ok {
-		return nil, errors.New("Type mismatch in data and definition")
+		return nil, ErrTypeMismatch
 	}
 
 	return data, nil
@@ -48,7 +44,7 @@ func toObject(raw_data interface{}, definition DataStoreDefinition) (interface{}
 	unfiltered_data, ok := raw_data.(map[string]interface{})
 
 	if !ok {
-		return nil, errors.New("Type mismatch in data and definition")
+		return nil, ErrTypeMismatch
 	}
 
 	data := make(map[string]interface{})
@@ -75,7 +71,7 @@ func toIntArray(raw_data interface{}, definition DataStoreDefinition) (interface
 	data, ok := raw_data.([]interface{})
 
 	if !ok {
-		return nil, errors.New("Type mismatch in data and definition")
+		return nil, ErrTypeMismatch
 	}
 
 	int_data := make([]int64, len(data))
@@ -84,7 +80,7 @@ func toIntArray(raw_data interface{}, definition DataStoreDefinition) (interface
 		element, ok := data[i].(float64)
 
 		if !ok {
-			return nil, errors.New("Type mismatch in data and definition")
+			return nil, ErrTypeMismatch
 		}
 
 		int_data[i] = int64(element)
@@ -97,7 +93,7 @@ func toFloatArray(raw_data interface{}, definition DataStoreDefinition) (interfa
 	data, ok := raw_data.([]interface{})
 
 	if !ok {
-		return nil, errors.New("Type mismatch in data and definition")
+		return nil, ErrTypeMismatch
 	}
 
 	float_data := make([]float64, len(data))
@@ -106,7 +102,7 @@ func toFloatArray(raw_data interface{}, definition DataStoreDefinition) (interfa
 		element, ok := data[i].(float64)
 
 		if !ok {
-			return nil, errors.New("Type mismatch in data and definition")
+			return nil, ErrTypeMismatch
 		}
 
 		float_data[i] = element
@@ -119,7 +115,7 @@ func toStringArray(raw_data interface{}, definition DataStoreDefinition) (interf
 	data, ok := raw_data.([]interface{})
 
 	if !ok {
-		return nil, errors.New("Type mismatch in data and definition")
+		return nil, ErrTypeMismatch
 	}
 
 	string_data := make([]string, len(data))
@@ -128,7 +124,7 @@ func toStringArray(raw_data interface{}, definition DataStoreDefinition) (interf
 		element, ok := data[i].(string)
 
 		if !ok {
-			return nil, errors.New("Type mismatch in data and definition")
+			return nil, ErrTypeMismatch
 		}
 
 		string_data[i] = element
@@ -141,7 +137,7 @@ func toBooleanArray(raw_data interface{}, definition DataStoreDefinition) (inter
 	data, ok := raw_data.([]interface{})
 
 	if !ok {
-		return nil, errors.New("Type mismatch in data and definition")
+		return nil, ErrTypeMismatch
 	}
 
 	bool_data := make([]bool, len(data))
@@ -150,7 +146,7 @@ func toBooleanArray(raw_data interface{}, definition DataStoreDefinition) (inter
 		element, ok := data[i].(bool)
 
 		if !ok {
-			return nil, errors.New("Type mismatch in data and definition")
+			return nil, ErrTypeMismatch
 		}
 
 		bool_data[i] = element
@@ -163,7 +159,7 @@ func toObjectArray(raw_data interface{}, definition DataStoreDefinition) (interf
 	unfiltered_data, ok := raw_data.([]interface{})
 
 	if !ok {
-		return nil, errors.New("Type mismatch in data and definition")
+		return nil, ErrTypeMismatch
 	}
 
 	data := make([]map[string]interface{}, len(unfiltered_data))
@@ -175,7 +171,7 @@ func toObjectArray(raw_data interface{}, definition DataStoreDefinition) (interf
 			unfiltered_data_element, ok := unfiltered_data[i].(map[string]interface{})
 
 			if !ok {
-				return nil, errors.New("Type mismatch in data and definition")
+				return nil, ErrTypeMismatch
 			}
 
 			unfiltered_fields, exists := unfiltered_data_element[field.Name]

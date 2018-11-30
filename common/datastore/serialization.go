@@ -2,7 +2,6 @@ package datastore
 
 import (
 	"encoding/json"
-	"errors"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -28,7 +27,7 @@ func (datastore *DataStore) UnmarshalJSON(b []byte) error {
 	datastore.Data, ok = data.(map[string]interface{})
 
 	if !ok {
-		return errors.New("Invalid data unmarshalled")
+		return ErrInvalidData
 	}
 
 	return nil
@@ -46,7 +45,7 @@ func buildDataFromDefinition(raw_data interface{}, definition DataStoreDefinitio
 	conversionFunc, exists := conversionFuncs[definition.Type]
 
 	if !exists {
-		return nil, errors.New("Invalid type in definition")
+		return nil, ErrInvalidDefinition
 	}
 
 	return conversionFunc(raw_data, definition)

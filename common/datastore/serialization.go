@@ -1,8 +1,8 @@
 package datastore
 
 import (
-	"errors"
 	"encoding/json"
+	"errors"
 	"gopkg.in/mgo.v2/bson"
 )
 

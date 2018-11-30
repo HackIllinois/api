@@ -1,10 +1,7 @@
 package datastore
 
 import (
-	"encoding/json"
 	"errors"
-	"gopkg.in/go-playground/validator.v9"
-	"gopkg.in/mgo.v2/bson"
 )
 
 type DataStoreDefinition struct {
@@ -23,84 +20,6 @@ func NewDataStore(definition DataStoreDefinition) DataStore {
 	return DataStore{
 		Definition: definition,
 	}
-}
-
-func (datastore *DataStore) Validate() error {
-	validate := validator.New()
-
-	return validateField(datastore.Data, datastore.Definition, validate)
-}
-
-func validateField(data interface{}, definition DataStoreDefinition, validate *validator.Validate) error {
-	err := validate.Var(data, definition.Validations)
-
-	if err != nil {
-		return err
-	}
-
-	switch definition.Type {
-	case "object":
-		for _, field := range definition.Fields {
-			mapped_data, ok := data.(map[string]interface{})
-
-			if !ok {
-				return errors.New("Definition contains field for non-mappable data")
-			}
-
-			err = validateField(mapped_data[field.Name], field, validate)
-
-			if err != nil {
-				return err
-			}
-		}
-	case "[]object":
-		data_array, ok := data.([]map[string]interface{})
-
-		if !ok {
-			return errors.New("Data format does not match definition")
-		}
-
-		for _, mapped_data := range data_array {
-			for _, field := range definition.Fields {
-				err = validateField(mapped_data[field.Name], field, validate)
-
-				if err != nil {
-					return err
-				}
-			}
-		}
-	default:
-	}
-
-	return nil
-}
-
-func (datastore *DataStore) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&datastore.Data)
-}
-
-func (datastore *DataStore) UnmarshalJSON(b []byte) error {
-	var raw_data map[string]interface{}
-	err := json.Unmarshal(b, &raw_data)
-
-	if err != nil {
-		return err
-	}
-
-	data, err := buildDataFromDefinition(raw_data, datastore.Definition)
-
-	if err != nil {
-		return err
-	}
-
-	var ok bool
-	datastore.Data, ok = data.(map[string]interface{})
-
-	if !ok {
-		return errors.New("Invalid data unmarshalled")
-	}
-
-	return nil
 }
 
 func buildDataFromDefinition(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
@@ -309,12 +228,4 @@ func defaultValueForType(tpe string) interface{} {
 	default:
 		return nil
 	}
-}
-
-func (datastore *DataStore) GetBSON() (interface{}, error) {
-	return datastore.Data, nil
-}
-
-func (datastore *DataStore) SetBSON(raw bson.Raw) error {
-	return raw.Unmarshal(&datastore.Data)
 }

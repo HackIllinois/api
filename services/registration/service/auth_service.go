@@ -12,20 +12,20 @@ import (
 	Add applicant role to user with auth service
 */
 func AddApplicantRole(id string) error {
-	return AddRole(id, "Applicant")
+	return AddRole(id, models.ApplicantRole)
 }
 
 /*
 	Add mentor role to user with auth service
 */
 func AddMentorRole(id string) error {
-	return AddRole(id, "Mentor")
+	return AddRole(id, models.MentorRole)
 }
 
 /*
 	Add role to user with auth service
 */
-func AddRole(id string, role string) error {
+func AddRole(id string, role models.Role) error {
 	user_role_modification := models.UserRoleModification{ID: id, Role: role}
 
 	status, err := apirequest.Put(config.AUTH_SERVICE+"/auth/roles/add/", &user_role_modification, nil)

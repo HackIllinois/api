@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
+	"github.com/HackIllinois/api/gateway/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
 	"net/http"
@@ -17,25 +18,25 @@ var RsvpRoutes = arbor.RouteCollection{
 		"GetCurrentRsvpInfo",
 		"GET",
 		"/rsvp/",
-		alice.New(middleware.AuthMiddleware([]string{"Applicant"}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentRsvpInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentRsvpInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateCurrentRsvpInfo",
 		"POST",
 		"/rsvp/",
-		alice.New(middleware.AuthMiddleware([]string{"Applicant"}), middleware.IdentificationMiddleware).ThenFunc(CreateCurrentRsvpInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(CreateCurrentRsvpInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentRsvpInfo",
 		"PUT",
 		"/rsvp/",
-		alice.New(middleware.AuthMiddleware([]string{"Applicant"}), middleware.IdentificationMiddleware).ThenFunc(UpdateCurrentRsvpInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateCurrentRsvpInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetRsvpInfo",
 		"GET",
 		"/rsvp/{id}/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetRsvpInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetRsvpInfo).ServeHTTP,
 	},
 }
 

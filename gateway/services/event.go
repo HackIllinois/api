@@ -5,6 +5,7 @@ import (
 
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
+	"github.com/HackIllinois/api/gateway/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
 )
@@ -18,19 +19,19 @@ var EventRoutes = arbor.RouteCollection{
 		"MarkUserAsAttendingEvent",
 		"POST",
 		"/event/track/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(MarkUserAsAttendingEvent).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(MarkUserAsAttendingEvent).ServeHTTP,
 	},
 	arbor.Route{
 		"GetEventTrackingInfo",
 		"GET",
 		"/event/track/event/{name}/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetEventTrackingInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetEventTrackingInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUserTrackingInfo",
 		"GET",
 		"/event/track/user/{id}/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(GetUserTrackingInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserTrackingInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetEvent",
@@ -42,7 +43,7 @@ var EventRoutes = arbor.RouteCollection{
 		"DeleteEvent",
 		"DELETE",
 		"/event/{name}/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(DeleteEvent).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(DeleteEvent).ServeHTTP,
 	},
 	arbor.Route{
 		"GetAllEvents",
@@ -54,13 +55,13 @@ var EventRoutes = arbor.RouteCollection{
 		"CreateEvent",
 		"POST",
 		"/event/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(CreateEvent).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(CreateEvent).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateEvent",
 		"PUT",
 		"/event/",
-		alice.New(middleware.AuthMiddleware([]string{"Admin"}), middleware.IdentificationMiddleware).ThenFunc(UpdateEvent).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateEvent).ServeHTTP,
 	},
 }
 

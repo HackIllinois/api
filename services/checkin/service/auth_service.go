@@ -12,7 +12,7 @@ import (
 	Add Attendee role to user with auth service
 */
 func AddAttendeeRole(id string) error {
-	user_role_modification := models.UserRoleModification{ID: id, Role: "Attendee"}
+	user_role_modification := models.UserRoleModification{ID: id, Role: models.AttendeeRole}
 
 	status, err := apirequest.Put(config.AUTH_SERVICE+"/auth/roles/add/", &user_role_modification, nil)
 

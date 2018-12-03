@@ -28,6 +28,7 @@ func SetupTestDB(t *testing.T) {
 	topic := models.Topic{
 		Name: "test_topic",
 		Arn:  "arn:test",
+		UserIDs: []string{"test_user"},
 	}
 
 	err := db.Insert("topics", &topic)
@@ -69,6 +70,7 @@ func TestGetAllTopicsSerice(t *testing.T) {
 	topic := models.Topic{
 		Name: "test_topic_2",
 		Arn:  "arn:test2",
+		UserIDs: []string{"test_user_2"},
 	}
 
 	err := db.Insert("topics", &topic)
@@ -91,7 +93,7 @@ func TestGetAllTopicsSerice(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(actual_topic_list, &expected_topic_list) {
-		t.Errorf("Wrong topic list. Expected %v, got %v", expected_topic_list, actual_topic_list)
+		t.Errorf("Wrong topic list. Expected %v, got %v", &expected_topic_list, actual_topic_list)
 	}
 
 	CleanupTestDB(t)
@@ -123,7 +125,7 @@ func TestCreateTopicService(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(actual_topic_list, &expected_topic_list) {
-		t.Errorf("Wrong topic list. Expected %v, got %v", expected_topic_list, actual_topic_list)
+		t.Errorf("Wrong topic list. Expected %v, got %v", &expected_topic_list, actual_topic_list)
 	}
 
 	CleanupTestDB(t)
@@ -169,7 +171,7 @@ func TestGetAllNotificationsService(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(actual_notification_list, &expected_notification_list) {
-		t.Errorf("Wrong notification list. Expected %v, got %v", expected_notification_list, actual_notification_list)
+		t.Errorf("Wrong notification list. Expected %v, got %v", &expected_notification_list, actual_notification_list)
 	}
 
 	CleanupTestDB(t)
@@ -227,7 +229,7 @@ func TestGetNotificationsForTopicService(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(actual_notification_list, &expected_notification_list) {
-		t.Errorf("Wrong notification list. Expected %v, got %v", expected_notification_list, actual_notification_list)
+		t.Errorf("Wrong notification list. Expected %v, got %v", &expected_notification_list, actual_notification_list)
 	}
 
 	CleanupTestDB(t)
@@ -269,7 +271,7 @@ func TestDeleteTopicService(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(actual_topic_list, &expected_topic_list) {
-		t.Errorf("Wrong topic list. Expected %v, got %v", expected_topic_list, actual_topic_list)
+		t.Errorf("Wrong topic list. Expected %v, got %v", &expected_topic_list, actual_topic_list)
 	}
 
 	CleanupTestDB(t)
@@ -313,7 +315,7 @@ func TestCreateNotificationService(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(actual_notification_list, &expected_notification_list) {
-		t.Errorf("Wrong notification list. Expected %v, got %v", expected_notification_list, actual_notification_list)
+		t.Errorf("Wrong notification list. Expected %v, got %v", &expected_notification_list, actual_notification_list)
 	}
 
 	CleanupTestDB(t)
@@ -334,10 +336,11 @@ func TestGetTopicInfoService(t *testing.T) {
 	expected_topic_info := models.Topic{
 		Name: "test_topic",
 		Arn:  "arn:test",
+		UserIDs: []string{"test_user"},
 	}
 
 	if !reflect.DeepEqual(actual_topic_info, &expected_topic_info) {
-		t.Errorf("Wrong topic info. Expected %v, got %v", expected_topic_info, actual_topic_info)
+		t.Errorf("Wrong topic info. Expected %v, got %v", &expected_topic_info, actual_topic_info)
 	}
 
 	CleanupTestDB(t)

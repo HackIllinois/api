@@ -77,7 +77,7 @@ func GetAllNotifications() (*models.NotificationList, error) {
 func CreateTopic(name string) error {
 	var arn string
 
-	if config.IS_PRODUCTION || true {
+	if config.IS_PRODUCTION {
 		out, err := client.CreateTopic(&sns.CreateTopicInput{Name: &name})
 
 		if err != nil {
@@ -118,7 +118,7 @@ func DeleteTopic(name string) error {
 		return err
 	}
 
-	if config.IS_PRODUCTION || true {
+	if config.IS_PRODUCTION {
 		_, err = client.DeleteTopic(&sns.DeleteTopicInput{TopicArn: &topic.Arn})
 
 		if err != nil {
@@ -168,7 +168,7 @@ func PublishNotification(topic_name string, notification models.Notification) (*
 
 	arn := topic.Arn
 
-	if config.IS_PRODUCTION || true {
+	if config.IS_PRODUCTION {
 		_, err = client.Publish(&sns.PublishInput{
 			TopicArn: &arn,
 			Message:  &notification.Message,
@@ -326,7 +326,7 @@ func RegisterDeviceToUser(user_id string, device_reg models.DeviceRegistration) 
 		return errors.New("Invalid platform")
 	}
 
-	if config.IS_PRODUCTION || true {
+	if config.IS_PRODUCTION {
 		out, err := client.CreatePlatformEndpoint(&sns.CreatePlatformEndpointInput{CustomUserData: &user_id, Token: &device_reg.DeviceToken, PlatformApplicationArn: &platform_arn})
 
 		if err != nil {
@@ -379,7 +379,7 @@ func SubscribeDeviceToTopic(topic models.Topic, device models.Device) error {
 
 	var sub_arn string
 
-	if config.IS_PRODUCTION || true {
+	if config.IS_PRODUCTION {
 		out, err := client.Subscribe(&sns.SubscribeInput{Protocol: &app_protocol, TopicArn: &topic.Arn, Endpoint: &device.DeviceArn})
 
 		if err != nil {
@@ -413,7 +413,7 @@ func SubscribeDeviceToTopic(topic models.Topic, device models.Device) error {
 func UnsubscribeDeviceFromTopic(topic models.Topic, device models.Device) error {
 	sub_arn, ok := device.Subscriptions[topic.Name]
 	if ok {
-		if config.IS_PRODUCTION || true {
+		if config.IS_PRODUCTION {
 			_, err := client.Unsubscribe(&sns.UnsubscribeInput{SubscriptionArn: &sub_arn})
 
 			if err != nil {

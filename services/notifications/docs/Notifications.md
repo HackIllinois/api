@@ -132,6 +132,83 @@ Response format:
 ```
 {
 	"arn": "arn:aws:sns:us-east-2:256758753660:Mentors",
-	"name": "Mentors"
+	"name": "Mentors",
+  "userIds": [
+    "testuser1"
+	]
+}
+```
+
+## POST /notifications/TOPICNAME/add/
+
+Modifies the topic `TOPICNAME`, subscribing the users in the list `userIds`.
+
+Request format:
+
+```
+{
+	"userIds": [
+    "testuser1",
+		"testuser2"
+	]
+}
+```
+
+Response format:
+
+```
+{
+	"name": "Mentors",
+  "userIds": [
+    "testuser1"
+	]
+}
+```
+
+## POST /notifications/TOPICNAME/remove/
+
+Modifies the topic `TOPICNAME`, unsubscribing the users in the list `userIds`.
+
+Request format:
+
+```
+{
+	"userIds": [
+    "testuser1",
+	]
+}
+```
+
+Response format:
+
+```
+{
+	"name": "Mentors",
+  "userIds": [
+    "testuser2"
+	]
+}
+```
+
+## POST /notifications/devices/
+
+Associates the device specified by the provided device token with the current user.
+Valid platforms are `android` and `ios`.
+
+Request format:
+
+```
+{
+	"deviceToken": "abcdef",
+  "platform": "android"
+}
+```
+
+Response format:
+
+```
+{
+	"deviceToken": "abcdef",
+  "platform": "android"
 }
 ```

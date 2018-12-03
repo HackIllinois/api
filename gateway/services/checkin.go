@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
+	"github.com/HackIllinois/api/gateway/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
 	"net/http"
@@ -17,43 +18,31 @@ var CheckinRoutes = arbor.RouteCollection{
 		"GetCurrentCheckinInfo",
 		"GET",
 		"/checkin/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Attendee"})).ThenFunc(GetCurrentCheckinInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AttendeeRole}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentCheckinInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateCurrentCheckinInfo",
 		"POST",
 		"/checkin/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(CreateCurrentCheckinInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(CreateCurrentCheckinInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentCheckinInfo",
 		"PUT",
 		"/checkin/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(UpdateCurrentCheckinInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateCurrentCheckinInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetAllCheckedInUsers",
 		"GET",
 		"/checkin/list/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetAllCheckedInUsers).ServeHTTP,
-	},
-	arbor.Route{
-		"GetCurrentQrCodeInfo",
-		"GET",
-		"/checkin/qr/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Attendee"})).ThenFunc(GetCurrentQrCodeInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetAllCheckedInUsers).ServeHTTP,
 	},
 	arbor.Route{
 		"GetCheckinInfo",
 		"GET",
 		"/checkin/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetCheckinInfo).ServeHTTP,
-	},
-	arbor.Route{
-		"GetQrCodeInfo",
-		"GET",
-		"/checkin/qr/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetQrCodeInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetCheckinInfo).ServeHTTP,
 	},
 }
 
@@ -70,14 +59,6 @@ func UpdateCurrentCheckinInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCheckinInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, CheckinURL+r.URL.String(), CheckinFormat, "", r)
-}
-
-func GetCurrentQrCodeInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, CheckinURL+r.URL.String(), CheckinFormat, "", r)
-}
-
-func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, CheckinURL+r.URL.String(), CheckinFormat, "", r)
 }
 

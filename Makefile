@@ -35,6 +35,7 @@ deploy:
 	mkdir -p $(BASE_DIR)/deploy/
 	$(foreach target,$(DEPLOY_TARGETS),mkdir -p $(BASE_DIR)/deploy/api-$(target)/;cd $(BASE_DIR)/build/$(target);zip -r $(BASE_DIR)/deploy/api-$(target)/api-$(target).zip *; cd $(CURDIR);)
 	rm -rf build/
+	cp $(BASE_DIR)/config/production_config.json $(BASE_DIR)/deploy/config.json
 
 .PHONY: release
 release: all
@@ -49,3 +50,7 @@ setup: all
 	@echo 'Generating API admin token'
 	hackillinois-utility-accountgen
 	hackillinois-utility-tokengen
+
+.PHONY: docs
+docs:
+	$(MAKE) -C $(BASE_DIR)/documentation build

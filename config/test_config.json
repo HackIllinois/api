@@ -1,0 +1,72 @@
+{
+  "AUTH_SERVICE": "http://localhost:8002",
+  "USER_SERVICE": "http://localhost:8003",
+  "REGISTRATION_SERVICE": "http://localhost:8004",
+  "DECISION_SERVICE": "http://localhost:8005",
+  "RSVP_SERVICE": "http://localhost:8006",
+  "CHECKIN_SERVICE": "http://localhost:8007",
+  "UPLOAD_SERVICE": "http://localhost:8008",
+  "MAIL_SERVICE": "http://localhost:8009",
+  "EVENT_SERVICE": "http://localhost:8010",
+  "STAT_SERVICE": "http://localhost:8011",
+
+  "GATEWAY_PORT": "8000",
+  "AUTH_PORT": ":8002",
+  "USER_PORT": ":8003",
+  "REGISTRATION_PORT": ":8004",
+  "DECISION_PORT": ":8005",
+  "RSVP_PORT": ":8006",
+  "CHECKIN_PORT": ":8007",
+  "UPLOAD_PORT": ":8008",
+  "MAIL_PORT": ":8009",
+  "EVENT_PORT": ":8010",
+  "STAT_PORT": ":8011",
+  "NOTIFICATIONS_PORT": ":8012",
+
+  "AUTH_DB_HOST": "localhost",
+  "USER_DB_HOST": "localhost",
+  "REGISTRATION_DB_HOST": "localhost",
+  "DECISION_DB_HOST": "localhost",
+  "RSVP_DB_HOST": "localhost",
+  "CHECKIN_DB_HOST": "localhost",
+  "UPLOAD_DB_HOST": "localhost",
+  "MAIL_DB_HOST": "localhost",
+  "EVENT_DB_HOST": "localhost",
+  "STAT_DB_HOST": "localhost",
+  "NOTIFICATIONS_DB_HOST": "localhost",
+
+  "AUTH_DB_NAME": "test-auth",
+  "USER_DB_NAME": "test-user",
+  "REGISTRATION_DB_NAME": "test-registration",
+  "DECISION_DB_NAME": "test-decision",
+  "RSVP_DB_NAME": "test-rsvp",
+  "CHECKIN_DB_NAME": "test-checkin",
+  "UPLOAD_DB_NAME": "test-upload",
+  "MAIL_DB_NAME": "test-mail",
+  "EVENT_DB_NAME": "test-event",
+  "STAT_DB_NAME": "test-stat",
+  "NOTIFICATIONS_DB_NAME": "test-notifications",
+
+  "S3_REGION": "us-east-1",
+  "S3_BUCKET": "hackillinois-upload-2019",
+
+  "SNS_REGION": "us-east-1",
+
+  "ANDROID_PLATFORM_ARN": "arn:aws:sns:us-east-1:256758753660:app/GCM/android",
+  "IOS_PLATFORM_ARN": "arn:aws:sns:us-east-1:256758753660:app/GCM/android",
+
+  "SPARKPOST_API": "https://api.sparkpost.com/api/v1",
+  "AUTH_REDIRECT_URI": "https://hackillinois.org/auth/",
+
+  "TOKEN_SECRET": "secret_string",
+  "GITHUB_CLIENT_ID": "",
+  "GITHUB_CLIENT_SECRET": "",
+  "GOOGLE_CLIENT_ID": "",
+  "GOOGLE_CLIENT_SECRET": "",
+  "LINKEDIN_CLIENT_ID": "",
+  "LINKEDIN_CLIENT_SECRET": "",
+
+  "SPARKPOST_APIKEY": "",
+
+  "IS_PRODUCTION": "false"
+}

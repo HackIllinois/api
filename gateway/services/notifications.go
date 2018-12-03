@@ -3,6 +3,8 @@ package services
 import (
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
+	"github.com/HackIllinois/api/gateway/models"
+
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
 	"net/http"
@@ -17,61 +19,61 @@ var NotificationsRoutes = arbor.RouteCollection{
 		"GetAllTopics",
 		"GET",
 		"/notifications/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetAllTopics).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole})).ThenFunc(GetAllTopics).ServeHTTP,
 	},
 	arbor.Route{
 		"GetAllNotifications",
 		"GET",
 		"/notifications/all/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetAllNotifications).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(GetAllNotifications).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateTopic",
 		"POST",
 		"/notifications/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(CreateTopic).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole})).ThenFunc(CreateTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"RegisterDeviceToUser",
 		"POST",
 		"/notifications/device/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(RegisterDeviceToUser).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(RegisterDeviceToUser).ServeHTTP,
 	},
 	arbor.Route{
 		"GetNotificationsForTopic",
 		"GET",
 		"/notifications/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetNotificationsForTopic).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(GetNotificationsForTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"DeleteTopic",
 		"DELETE",
 		"/notifications/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(DeleteTopic).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole})).ThenFunc(DeleteTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"PublishNotification",
 		"POST",
 		"/notifications/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(PublishNotification).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole})).ThenFunc(PublishNotification).ServeHTTP,
 	},
 	arbor.Route{
 		"AddUsersToTopic",
 		"POST",
 		"/notifications/{id}/add/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(AddUsersToTopic).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole})).ThenFunc(AddUsersToTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"RemoveUsersFromTopic",
 		"POST",
 		"/notifications/{id}/remove/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(RemoveUsersFromTopic).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole})).ThenFunc(RemoveUsersFromTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"GetTopicInfo",
 		"GET",
 		"/notifications/{id}/info/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetTopicInfo).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole})).ThenFunc(GetTopicInfo).ServeHTTP,
 	},
 }
 

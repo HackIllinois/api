@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
+	"github.com/HackIllinois/api/gateway/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
 	"net/http"
@@ -17,67 +18,67 @@ var RegistrationRoutes = arbor.RouteCollection{
 		"GetAllCurrentRegistrations",
 		"GET",
 		"/registration/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetRegistration).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"GetCurrentUserRegistration",
 		"GET",
 		"/registration/attendee/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetRegistration).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateCurrentUserRegistration",
 		"POST",
 		"/registration/attendee/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(CreateRegistration).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(CreateRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentUserRegistration",
 		"PUT",
 		"/registration/attendee/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Applicant"})).ThenFunc(UpdateRegistration).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"GetFilteredUserRegistrations",
 		"GET",
 		"/registration/filter/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetRegistration).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"GetCurrentMentorRegistration",
 		"GET",
 		"/registration/mentor/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(GetRegistration).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateCurrentMentorRegistration",
 		"POST",
 		"/registration/mentor/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(CreateRegistration).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(CreateRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentMentorRegistration",
 		"PUT",
 		"/registration/mentor/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Mentor"})).ThenFunc(UpdateRegistration).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUserRegistration",
 		"GET",
 		"/registration/attendee/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetRegistration).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"GetMentorRegistration",
 		"GET",
 		"/registration/mentor/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetRegistration).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"GetAllRegistrations",
 		"GET",
 		"/registration/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetRegistration).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetRegistration).ServeHTTP,
 	},
 }
 

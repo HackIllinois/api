@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"time"
 
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/event/config"
@@ -248,6 +249,16 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 		return errors.New("User has already been marked as attending")
 	}
 
+	is_event_active, err := IsEventActive(event_name)
+
+	if err != nil {
+		return err
+	}
+
+	if !is_event_active {
+		return errors.New("People cannot be checked-in for the event at this time.")
+	}
+
 	event_selector := database.QuerySelector{
 		"eventname": event_name,
 	}
@@ -285,4 +296,28 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 	}
 
 	return err
+}
+
+const PreEventCheckinIntervalInSeconds = 15 * 60
+
+/*
+	Check if an event is active, i.e., that check-ins are allowed for the event at the current time.
+	Returns true if and only if abs(Current Time - Event Start Time) <= 1200 seconds (20 minutes).
+*/
+func IsEventActive(event_name string) (bool, error) {
+	event, err := GetEvent(event_name)
+
+	if err != nil {
+		return false, err
+	}
+
+	start_time := event.StartTime
+	end_time := event.EndTime
+	current_time := time.Now().Unix()
+
+	if current_time < start_time {
+		return start_time-current_time <= PreEventCheckinIntervalInSeconds, nil
+	} else {
+		return current_time < end_time, nil
+	}
 }

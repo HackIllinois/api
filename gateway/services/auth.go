@@ -5,6 +5,7 @@ import (
 
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
+	"github.com/HackIllinois/api/gateway/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
 )
@@ -30,25 +31,25 @@ var AuthRoutes = arbor.RouteCollection{
 		"GetUserRoles",
 		"GET",
 		"/auth/roles/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(GetUserRoles).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserRoles).ServeHTTP,
 	},
 	arbor.Route{
 		"AddUserRole",
 		"PUT",
 		"/auth/roles/add/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(AddUserRole).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(AddUserRole).ServeHTTP,
 	},
 	arbor.Route{
 		"RemoveUserRole",
 		"PUT",
 		"/auth/roles/remove/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"Admin"})).ThenFunc(RemoveUserRole).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveUserRole).ServeHTTP,
 	},
 	arbor.Route{
 		"RefreshToken",
 		"GET",
 		"/auth/token/refresh/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]string{"User"})).ThenFunc(RefreshToken).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(RefreshToken).ServeHTTP,
 	},
 }
 

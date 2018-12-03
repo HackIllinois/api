@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
+	"strings"
 	"time"
 )
 
@@ -319,9 +320,11 @@ func RegisterDeviceToUser(user_id string, device_reg models.DeviceRegistration) 
 	var platform_arn string
 
 	// Map platform (android, ios etc) to its ARN
-	switch device_reg.Platform {
+	switch strings.ToLower(device_reg.Platform) {
 	case "android":
 		platform_arn = config.ANDROID_PLATFORM_ARN
+	case "ios":
+		platform_arn = config.IOS_PLATFORM_ARN
 	default:
 		return errors.New("Invalid platform")
 	}
@@ -441,4 +444,18 @@ func UnsubscribeDeviceFromTopic(topic models.Topic, device models.Device) error 
 		}
 	}
 	return nil
+}
+
+/*
+	Returns a list of registered devices
+*/
+func GetAllDevices() (*[]models.Device, error) {
+	var devices []models.Device
+	err := db.FindAll("devices", nil, &devices)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &devices, nil
 }

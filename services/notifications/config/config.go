@@ -14,3 +14,4 @@ var IS_PRODUCTION = (os.Getenv("IS_PRODUCTION") == "true")
 var SNS_REGION = os.Getenv("SNS_REGION")
 
 var ANDROID_PLATFORM_ARN = os.Getenv("ANDROID_PLATFORM_ARN")
+var IOS_PLATFORM_ARN = os.Getenv("IOS_PLATFORM_ARN")

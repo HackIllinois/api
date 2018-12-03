@@ -26,8 +26,8 @@ func init() {
 */
 func SetupTestDB(t *testing.T) {
 	topic := models.Topic{
-		Name: "test_topic",
-		Arn:  "arn:test",
+		Name:    "test_topic",
+		Arn:     "arn:test",
 		UserIDs: []string{"test_user"},
 	}
 
@@ -44,6 +44,28 @@ func SetupTestDB(t *testing.T) {
 	}
 
 	err = db.Insert("notifications", &notification)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	device := models.Device{
+		UserID:        "test_user",
+		DeviceToken:   "token1",
+		DeviceArn:     "arn:device_test_1",
+		Platform:      "android",
+		Subscriptions: map[string]string{"test_topic": ""},
+	}
+	device2 := models.Device{
+		UserID:        "test_user_2",
+		DeviceToken:   "token2",
+		DeviceArn:     "arn:device_test_2",
+		Platform:      "android",
+		Subscriptions: map[string]string{},
+	}
+
+	err = db.Insert("devices", &device)
+	err = db.Insert("devices", &device2)
 
 	if err != nil {
 		t.Fatal(err)
@@ -68,8 +90,8 @@ func TestGetAllTopicsSerice(t *testing.T) {
 	SetupTestDB(t)
 
 	topic := models.Topic{
-		Name: "test_topic_2",
-		Arn:  "arn:test2",
+		Name:    "test_topic_2",
+		Arn:     "arn:test2",
 		UserIDs: []string{"test_user_2"},
 	}
 
@@ -334,13 +356,201 @@ func TestGetTopicInfoService(t *testing.T) {
 	}
 
 	expected_topic_info := models.Topic{
-		Name: "test_topic",
-		Arn:  "arn:test",
+		Name:    "test_topic",
+		Arn:     "arn:test",
 		UserIDs: []string{"test_user"},
 	}
 
 	if !reflect.DeepEqual(actual_topic_info, &expected_topic_info) {
 		t.Errorf("Wrong topic info. Expected %v, got %v", &expected_topic_info, actual_topic_info)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for subscribing users to a topic
+*/
+func TestSubscribeUserService(t *testing.T) {
+	SetupTestDB(t)
+
+	userid_list := models.UserIDList{
+		UserIDs: []string{
+			"test_user_2",
+			"test_user_3",
+		},
+	}
+
+	err := service.AddUsersToTopic("test_topic", userid_list)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	actual_topic_info, err := service.GetTopicInfo("test_topic")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_topic_info := models.Topic{
+		Name: "test_topic",
+		Arn:  "arn:test",
+		UserIDs: []string{
+			"test_user",
+			"test_user_2",
+			"test_user_3",
+		},
+	}
+
+	if !reflect.DeepEqual(actual_topic_info, &expected_topic_info) {
+		t.Errorf("Wrong topic info. Expected %v, got %v", &expected_topic_info, actual_topic_info)
+	}
+
+	actual_devices_list, err := service.GetAllDevices()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_devices_list := []models.Device{
+		models.Device{
+			UserID:        "test_user",
+			DeviceToken:   "token1",
+			DeviceArn:     "arn:device_test_1",
+			Platform:      "android",
+			Subscriptions: map[string]string{"test_topic": ""},
+		},
+		models.Device{
+			UserID:        "test_user_2",
+			DeviceToken:   "token2",
+			DeviceArn:     "arn:device_test_2",
+			Platform:      "android",
+			Subscriptions: map[string]string{"test_topic": ""},
+		},
+	}
+
+	if !reflect.DeepEqual(actual_devices_list, &expected_devices_list) {
+		t.Errorf("Wrong devices list. Expected %v, got %v", &expected_devices_list, actual_devices_list)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for unsubscribing users from a topic
+*/
+func TestUnsubscribeUserService(t *testing.T) {
+	SetupTestDB(t)
+
+	userid_list := models.UserIDList{
+		UserIDs: []string{
+			"test_user",
+			"test_user_3",
+		},
+	}
+
+	err := service.RemoveUsersFromTopic("test_topic", userid_list)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	actual_topic_info, err := service.GetTopicInfo("test_topic")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_topic_info := models.Topic{
+		Name:    "test_topic",
+		Arn:     "arn:test",
+		UserIDs: []string{},
+	}
+
+	if !reflect.DeepEqual(actual_topic_info, &expected_topic_info) {
+		t.Errorf("Wrong topic info. Expected %v, got %v", &expected_topic_info, actual_topic_info)
+	}
+
+	actual_devices_list, err := service.GetAllDevices()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_devices_list := []models.Device{
+		models.Device{
+			UserID:        "test_user",
+			DeviceToken:   "token1",
+			DeviceArn:     "arn:device_test_1",
+			Platform:      "android",
+			Subscriptions: map[string]string{},
+		},
+		models.Device{
+			UserID:        "test_user_2",
+			DeviceToken:   "token2",
+			DeviceArn:     "arn:device_test_2",
+			Platform:      "android",
+			Subscriptions: map[string]string{},
+		},
+	}
+
+	if !reflect.DeepEqual(actual_devices_list, &expected_devices_list) {
+		t.Errorf("Wrong devices list. Expected %v, got %v", &expected_devices_list, actual_devices_list)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for registering a device to a user
+*/
+func TestRegisterDevice(t *testing.T) {
+	SetupTestDB(t)
+
+	device_registration := models.DeviceRegistration{
+		DeviceToken: "token3",
+		Platform:    "android",
+	}
+
+	err := service.RegisterDeviceToUser("test_user", device_registration)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	actual_devices_list, err := service.GetAllDevices()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_devices_list := []models.Device{
+		models.Device{
+			UserID:        "test_user",
+			DeviceToken:   "token1",
+			DeviceArn:     "arn:device_test_1",
+			Platform:      "android",
+			Subscriptions: map[string]string{"test_topic": ""},
+		},
+		models.Device{
+			UserID:        "test_user_2",
+			DeviceToken:   "token2",
+			DeviceArn:     "arn:device_test_2",
+			Platform:      "android",
+			Subscriptions: map[string]string{},
+		},
+		models.Device{
+			UserID:        "test_user",
+			DeviceToken:   "token3",
+			DeviceArn:     "",
+			Platform:      "android",
+			Subscriptions: map[string]string{"test_topic": ""},
+		},
+	}
+
+	if !reflect.DeepEqual(actual_devices_list, &expected_devices_list) {
+		t.Errorf("Wrong devices list. Expected %v, got %v", &expected_devices_list, actual_devices_list)
 	}
 
 	CleanupTestDB(t)

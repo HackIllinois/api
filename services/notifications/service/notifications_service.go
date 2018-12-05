@@ -415,34 +415,38 @@ func SubscribeDeviceToTopic(topic models.Topic, device models.Device) error {
 */
 func UnsubscribeDeviceFromTopic(topic models.Topic, device models.Device) error {
 	sub_arn, ok := device.Subscriptions[topic.Name]
-	if ok {
-		if config.IS_PRODUCTION {
-			_, err := client.Unsubscribe(&sns.UnsubscribeInput{SubscriptionArn: &sub_arn})
 
-			if err != nil {
-				return err
-			}
-		}
+	if !ok {
+		return errors.New("Device not subscribed to topic")
+	}
 
-		device_selector := database.QuerySelector{
-			"devicearn": device.DeviceArn,
-		}
-
-		set_query := fmt.Sprintf("subscriptions.%s", topic.Name)
-
-		// Unset device's subscription ARN for this topic since it's no longer needed
-		device_modifier := database.QuerySelector{
-			"$unset": database.QuerySelector{
-				set_query: "",
-			},
-		}
-
-		err := db.Update("devices", device_selector, &device_modifier)
+	if config.IS_PRODUCTION {
+		_, err := client.Unsubscribe(&sns.UnsubscribeInput{SubscriptionArn: &sub_arn})
 
 		if err != nil {
 			return err
 		}
 	}
+
+	device_selector := database.QuerySelector{
+		"devicearn": device.DeviceArn,
+	}
+
+	set_query := fmt.Sprintf("subscriptions.%s", topic.Name)
+
+	// Unset device's subscription ARN for this topic since it's no longer needed
+	device_modifier := database.QuerySelector{
+		"$unset": database.QuerySelector{
+			set_query: "",
+		},
+	}
+
+	err := db.Update("devices", device_selector, &device_modifier)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

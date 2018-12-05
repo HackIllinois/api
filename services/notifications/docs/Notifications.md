@@ -8,10 +8,10 @@ Response format:
 
 ```
 {
-    "topics": [
-        "Mentors",
-        "Attendees"
-    ]
+		"topics": [
+				"Mentors",
+				"Attendees"
+		]
 }
 ```
 
@@ -43,23 +43,23 @@ Response format:
 
 ```
 {
-    "notifications": [
-        {
-            "message": "This is a notification!",
-            "time": 1541037801,
-            "topicName": "Attendee"
-        },
+		"notifications": [
+				{
+						"message": "This is a notification!",
+						"time": 1541037801,
+						"topicName": "Attendee"
+				},
 		{
-            "message": "This is another notification!",
-            "time": 1541069201,
-            "topicName": "Attendee"
-        },
+						"message": "This is another notification!",
+						"time": 1541069201,
+						"topicName": "Attendee"
+				},
 		{
-            "message": "This is another notification, for another topic!",
-            "time": 1541169201,
-            "topicName": "Mentor"
-        }
-    ]
+						"message": "This is another notification, for another topic!",
+						"time": 1541169201,
+						"topicName": "Mentor"
+				}
+		]
 }
 ```
 
@@ -71,18 +71,18 @@ Response format:
 
 ```
 {
-    "notifications": [
-        {
-            "message": "This is a notification!",
-            "time": 1541037801,
-            "topicName": "Attendee"
-        },
+		"notifications": [
+				{
+						"message": "This is a notification!",
+						"time": 1541037801,
+						"topicName": "Attendee"
+				},
 		{
-            "message": "This is another notification!",
-            "time": 1541069201,
-            "topicName": "Attendee"
-        }
-    ]
+						"message": "This is another notification!",
+						"time": 1541069201,
+						"topicName": "Attendee"
+				}
+		]
 }
 ```
 
@@ -94,10 +94,10 @@ Response format:
 
 ```
 {
-    "topics": [
-        "Mentors",
-        "Attendees"
-    ]
+		"topics": [
+				"Mentors",
+				"Attendees"
+		]
 }
 ```
 
@@ -133,8 +133,8 @@ Response format:
 {
 	"arn": "arn:aws:sns:us-east-2:256758753660:Mentors",
 	"name": "Mentors",
-  "userIds": [
-    "testuser1"
+	"userIds": [
+		"testuser1"
 	]
 }
 ```
@@ -148,7 +148,7 @@ Request format:
 ```
 {
 	"userIds": [
-    "testuser1",
+		"testuser1",
 		"testuser2"
 	]
 }
@@ -159,8 +159,8 @@ Response format:
 ```
 {
 	"name": "Mentors",
-  "userIds": [
-    "testuser1"
+	"userIds": [
+		"testuser1"
 	]
 }
 ```
@@ -174,7 +174,7 @@ Request format:
 ```
 {
 	"userIds": [
-    "testuser1",
+		"testuser1",
 	]
 }
 ```
@@ -184,8 +184,8 @@ Response format:
 ```
 {
 	"name": "Mentors",
-  "userIds": [
-    "testuser2"
+	"userIds": [
+		"testuser2"
 	]
 }
 ```
@@ -200,7 +200,7 @@ Request format:
 ```
 {
 	"deviceToken": "abcdef",
-  "platform": "android"
+	"platform": "android"
 }
 ```
 
@@ -209,6 +209,6 @@ Response format:
 ```
 {
 	"deviceToken": "abcdef",
-  "platform": "android"
+	"platform": "android"
 }
 ```

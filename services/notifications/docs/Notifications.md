@@ -125,13 +125,12 @@ Response format:
 
 ## GET /notifications/TOPICNAME/info/
 
-Gets information associated by the topic `TOPICNAME`, including its ARN.
+Gets information associated by the topic `TOPICNAME`.
 
 Response format:
 
 ```
 {
-	"arn": "arn:aws:sns:us-east-2:256758753660:Mentors",
 	"name": "Mentors",
 	"userIds": [
 		"testuser1"

@@ -132,7 +132,12 @@ func GetTopicInfo(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	json.NewEncoder(w).Encode(topic)
+	var topic_public models.TopicPublic
+	if topic != nil {
+		topic_public = models.TopicPublic{Name: topic.Name, UserIDs: topic.UserIDs}
+	}
+
+	json.NewEncoder(w).Encode(topic_public)
 }
 
 /*
@@ -156,7 +161,12 @@ func AddUsersToTopic(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	json.NewEncoder(w).Encode(topic)
+	var topic_public models.TopicPublic
+	if topic != nil {
+		topic_public = models.TopicPublic{Name: topic.Name, UserIDs: topic.UserIDs}
+	}
+
+	json.NewEncoder(w).Encode(topic_public)
 }
 
 /*
@@ -180,7 +190,12 @@ func RemoveUsersFromTopic(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	json.NewEncoder(w).Encode(topic)
+	var topic_public models.TopicPublic
+	if topic != nil {
+		topic_public = models.TopicPublic{Name: topic.Name, UserIDs: topic.UserIDs}
+	}
+
+	json.NewEncoder(w).Encode(topic_public)
 }
 
 /*

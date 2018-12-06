@@ -18,6 +18,7 @@ func GetAuthorizeRedirect(provider string, redirect_uri string) (string, error) 
 		return ConstructSafeURL("https", "github.com", "login/oauth/authorize",
 			map[string]string{
 				"client_id":    config.GITHUB_CLIENT_ID,
+				"scope":        "user:email",
 				"redirect_uri": redirect_uri,
 			})
 	case "google":

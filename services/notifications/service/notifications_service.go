@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/HackIllinois/api/common/database"
@@ -14,6 +15,7 @@ import (
 )
 
 const APPLICATION_PROTOCOL = "application"
+const MESSAGE_STRUCTURE = "json"
 
 var sess *session.Session
 var client *sns.SNS
@@ -78,7 +80,7 @@ func GetAllNotifications() (*models.NotificationList, error) {
 func CreateTopic(name string) error {
 	var arn string
 
-	if config.IS_PRODUCTION {
+	if config.IS_PRODUCTION || true {
 		out, err := client.CreateTopic(&sns.CreateTopicInput{Name: &name})
 
 		if err != nil {
@@ -119,7 +121,7 @@ func DeleteTopic(name string) error {
 		return err
 	}
 
-	if config.IS_PRODUCTION {
+	if config.IS_PRODUCTION || true {
 		_, err = client.DeleteTopic(&sns.DeleteTopicInput{TopicArn: &topic.Arn})
 
 		if err != nil {
@@ -167,12 +169,20 @@ func PublishNotification(topic_name string, notification models.Notification) (*
 		return nil, err
 	}
 
-	arn := topic.Arn
+	notification_json_str, err := GenerateNotificationJson(notification)
 
-	if config.IS_PRODUCTION {
+	if err != nil {
+		return nil, err
+	}
+
+	arn := topic.Arn
+	message_structure := MESSAGE_STRUCTURE
+
+	if config.IS_PRODUCTION || true {
 		_, err = client.Publish(&sns.PublishInput{
-			TopicArn: &arn,
-			Message:  &notification.Message,
+			TopicArn:         &arn,
+			Message:          notification_json_str,
+			MessageStructure: &message_structure,
 		})
 
 		if err != nil {
@@ -182,7 +192,7 @@ func PublishNotification(topic_name string, notification models.Notification) (*
 
 	current_time := time.Now().Unix()
 
-	past_notification := models.PastNotification{TopicName: topic_name, Message: notification.Message, Time: current_time}
+	past_notification := models.PastNotification{TopicName: topic_name, Title: notification.Title, Body: notification.Body, Time: current_time}
 	err = db.Insert("notifications", &past_notification)
 
 	return &past_notification, nil
@@ -329,7 +339,7 @@ func RegisterDeviceToUser(user_id string, device_reg models.DeviceRegistration) 
 		return errors.New("Invalid platform")
 	}
 
-	if config.IS_PRODUCTION {
+	if config.IS_PRODUCTION || true {
 		out, err := client.CreatePlatformEndpoint(&sns.CreatePlatformEndpointInput{CustomUserData: &user_id, Token: &device_reg.DeviceToken, PlatformApplicationArn: &platform_arn})
 
 		if err != nil {
@@ -382,7 +392,7 @@ func SubscribeDeviceToTopic(topic models.Topic, device models.Device) error {
 
 	var sub_arn string
 
-	if config.IS_PRODUCTION {
+	if config.IS_PRODUCTION || true {
 		out, err := client.Subscribe(&sns.SubscribeInput{Protocol: &app_protocol, TopicArn: &topic.Arn, Endpoint: &device.DeviceArn})
 
 		if err != nil {
@@ -420,7 +430,7 @@ func UnsubscribeDeviceFromTopic(topic models.Topic, device models.Device) error 
 		return errors.New("Device not subscribed to topic")
 	}
 
-	if config.IS_PRODUCTION {
+	if config.IS_PRODUCTION || true {
 		_, err := client.Unsubscribe(&sns.UnsubscribeInput{SubscriptionArn: &sub_arn})
 
 		if err != nil {
@@ -462,4 +472,48 @@ func GetAllDevices() (*[]models.Device, error) {
 	}
 
 	return &devices, nil
+}
+
+func GenerateNotificationJson(notification models.Notification) (*string, error) {
+	apns_payload := models.APNSPayload{
+		Alert: models.APNSAlert{
+			Title: notification.Title,
+			Body:  notification.Body,
+		},
+	}
+
+	gcm_payload := models.GCMPayload{
+		Notification: models.GCMNotification{
+			Title: notification.Title,
+			Body:  notification.Body,
+		},
+	}
+
+	apns_payload_json, err := json.Marshal(apns_payload)
+
+	if err != nil {
+		return nil, err
+	}
+
+	gcm_payload_json, err := json.Marshal(gcm_payload)
+
+	if err != nil {
+		return nil, err
+	}
+
+	notification_payload := models.NotificationPayload{
+		APNS:    string(apns_payload_json),
+		GCM:     string(gcm_payload_json),
+		Default: notification.Body,
+	}
+
+	notification_json, err := json.Marshal(notification_payload)
+
+	if err != nil {
+		return nil, err
+	}
+
+	notification_json_str := string(notification_json)
+
+	return &notification_json_str, nil
 }

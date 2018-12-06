@@ -1,5 +1,6 @@
 package models
 
 type Notification struct {
-	Message string `json:"message"`
+	Body  string `json:"body"`
+	Title string `json:"title"`
 }

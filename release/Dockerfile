@@ -28,47 +28,5 @@ RUN chmod +x start.sh
 RUN mkdir log/
 RUN touch log/access.log
 
-# Setup default environment variables
-ENV IS_PRODUCTION true
-
-ENV AUTH_SERVICE http://localhost:8002
-ENV USER_SERVICE http://localhost:8003
-ENV REGISTRATION_SERVICE http://localhost:8004
-ENV DECISION_SERVICE http://localhost:8005
-ENV RSVP_SERVICE http://localhost:8006
-ENV CHECKIN_SERVICE http://localhost:8007
-ENV UPLOAD_SERVICE http://localhost:8008
-ENV MAIL_SERVICE http://localhost:8009
-ENV EVENT_SERVICE http://localhost:8010
-ENV STAT_SERVICE http://localhost:8011
-ENV NOTIFICATIONS_SERVICE http://localhost:8012
-
-ENV AUTH_PORT :8002
-ENV USER_PORT :8003
-ENV REGISTRATION_PORT :8004
-ENV DECISION_PORT :8005
-ENV RSVP_PORT :8006
-ENV CHECKIN_PORT :8007
-ENV UPLOAD_PORT :8008
-ENV MAIL_PORT :8009
-ENV EVENT_PORT :8010
-ENV STAT_PORT :8011
-ENV NOTIFICATIONS_PORT :8012
-
-ENV GATEWAY_PORT 8000
-
-ENV AUTH_DB_NAME auth
-ENV USER_DB_NAME user
-ENV REGISTRATION_DB_NAME registration
-ENV DECISION_DB_NAME decision
-ENV RSVP_DB_NAME rsvp
-ENV CHECKIN_DB_NAME checkin
-ENV MAIL_DB_NAME mail
-ENV EVENT_DB_NAME event
-ENV STAT_DB_NAME stat
-ENV NOTIFICATIONS_DB_NAME notifications
-
-ENV SPARKPOST_API https://api.sparkpost.com/api/v1
-
 # Startup gateway and services
 CMD ["./start.sh"]

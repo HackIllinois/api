@@ -45,17 +45,20 @@ Response format:
 {
 		"notifications": [
 				{
-						"message": "This is a notification!",
+						"title": "Notification 1",
+						"body": "This is a notification!",
 						"time": 1541037801,
 						"topicName": "Attendee"
 				},
 		{
-						"message": "This is another notification!",
+						"title": "Notification 2",
+						"body": "This is another notification!",
 						"time": 1541069201,
 						"topicName": "Attendee"
 				},
 		{
-						"message": "This is another notification, for another topic!",
+						"title": "Notification 3",
+						"body": "This is another notification, for another topic!",
 						"time": 1541169201,
 						"topicName": "Mentor"
 				}
@@ -73,12 +76,14 @@ Response format:
 {
 		"notifications": [
 				{
-						"message": "This is a notification!",
+						"title": "Notification 1",
+						"body": "This is a notification!",
 						"time": 1541037801,
 						"topicName": "Attendee"
 				},
 		{
-						"message": "This is another notification!",
+						"title": "Notification 2",
+						"body": "This is another notification!",
 						"time": 1541069201,
 						"topicName": "Attendee"
 				}
@@ -109,7 +114,8 @@ Request format:
 
 ```
 {
-	"message": "Message to send to users"
+	"topic": "Message topic",
+	"body": "Message to send to users"
 }
 ```
 
@@ -117,7 +123,8 @@ Response format:
 
 ```
 {
-	"message": "Message to send to users",
+	"topic": "Message topic",
+	"body": "Message to send to users",
 	"time": 1541644690,
 	"topicName": "Attendee"
 }

@@ -38,7 +38,8 @@ func SetupTestDB(t *testing.T) {
 	}
 
 	notification := models.PastNotification{
-		Message:   "test message",
+		Body:      "test message",
+		Title:     "test title",
 		TopicName: "test_topic",
 		Time:      2000,
 	}
@@ -160,7 +161,8 @@ func TestGetAllNotificationsService(t *testing.T) {
 	SetupTestDB(t)
 
 	notification := models.PastNotification{
-		Message:   "test message 2",
+		Body:      "test message 2",
+		Title:     "test title 2",
 		TopicName: "test_topic_2",
 		Time:      3000,
 	}
@@ -180,12 +182,14 @@ func TestGetAllNotificationsService(t *testing.T) {
 	expected_notification_list := models.NotificationList{
 		Notifications: []models.PastNotification{
 			models.PastNotification{
-				Message:   "test message",
+				Body:      "test message",
+				Title:     "test title",
 				TopicName: "test_topic",
 				Time:      2000,
 			},
 			models.PastNotification{
-				Message:   "test message 2",
+				Body:      "test message 2",
+				Title:     "test title 2",
 				TopicName: "test_topic_2",
 				Time:      3000,
 			},
@@ -206,7 +210,8 @@ func TestGetNotificationsForTopicService(t *testing.T) {
 	SetupTestDB(t)
 
 	notification := models.PastNotification{
-		Message:   "test message again",
+		Body:      "test message again",
+		Title:     "test title again",
 		TopicName: "test_topic",
 		Time:      5000,
 	}
@@ -218,7 +223,8 @@ func TestGetNotificationsForTopicService(t *testing.T) {
 	}
 
 	notification = models.PastNotification{
-		Message:   "test message 2",
+		Body:      "test message 2",
+		Title:     "test title 2",
 		TopicName: "test_topic_2",
 		Time:      3000,
 	}
@@ -238,12 +244,14 @@ func TestGetNotificationsForTopicService(t *testing.T) {
 	expected_notification_list := models.NotificationList{
 		Notifications: []models.PastNotification{
 			models.PastNotification{
-				Message:   "test message",
+				Body:      "test message",
+				Title:     "test title",
 				TopicName: "test_topic",
 				Time:      2000,
 			},
 			models.PastNotification{
-				Message:   "test message again",
+				Body:      "test message again",
+				Title:     "test title again",
 				TopicName: "test_topic",
 				Time:      5000,
 			},
@@ -306,7 +314,8 @@ func TestCreateNotificationService(t *testing.T) {
 	SetupTestDB(t)
 
 	notification := models.Notification{
-		Message: "test message 2",
+		Body:  "test message 2",
+		Title: "test title 2",
 	}
 
 	past_notification, err := service.PublishNotification("test_topic", notification)
@@ -324,12 +333,14 @@ func TestCreateNotificationService(t *testing.T) {
 	expected_notification_list := models.NotificationList{
 		Notifications: []models.PastNotification{
 			models.PastNotification{
-				Message:   "test message",
+				Body:      "test message",
+				Title:     "test title",
 				TopicName: "test_topic",
 				Time:      2000,
 			},
 			models.PastNotification{
-				Message:   "test message 2",
+				Body:      "test message 2",
+				Title:     "test title 2",
 				TopicName: "test_topic",
 				Time:      past_notification.Time,
 			},

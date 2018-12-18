@@ -255,10 +255,10 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id"))
 	}
 
-	var mentor_registration models.MentorRegistration
+	mentor_registration := datastore.NewDataStore(config.MENTOR_REGISTRATION_DEFINITION)
 	json.NewDecoder(r.Body).Decode(&mentor_registration)
 
-	mentor_registration.ID = id
+	mentor_registration.Data["id"] = id
 
 	user_info, err := service.GetUserInfo(id)
 
@@ -266,13 +266,13 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	mentor_registration.GitHub = user_info.Username
-	mentor_registration.Email = user_info.Email
-	mentor_registration.FirstName = user_info.FirstName
-	mentor_registration.LastName = user_info.LastName
+	mentor_registration.Data["github"] = user_info.Username
+	mentor_registration.Data["email"] = user_info.Email
+	mentor_registration.Data["firstName"] = user_info.FirstName
+	mentor_registration.Data["lastName"] = user_info.LastName
 
-	mentor_registration.CreatedAt = time.Now().Unix()
-	mentor_registration.UpdatedAt = time.Now().Unix()
+	mentor_registration.Data["createdAt"] = time.Now().Unix()
+	mentor_registration.Data["updatedAt"] = time.Now().Unix()
 
 	err = service.CreateMentorRegistration(id, mentor_registration)
 
@@ -305,10 +305,10 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id"))
 	}
 
-	var mentor_registration models.MentorRegistration
+	mentor_registration := datastore.NewDataStore(config.MENTOR_REGISTRATION_DEFINITION)
 	json.NewDecoder(r.Body).Decode(&mentor_registration)
 
-	mentor_registration.ID = id
+	mentor_registration.Data["id"] = id
 
 	user_info, err := service.GetUserInfo(id)
 
@@ -322,13 +322,13 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	mentor_registration.GitHub = user_info.Username
-	mentor_registration.Email = user_info.Email
-	mentor_registration.FirstName = user_info.FirstName
-	mentor_registration.LastName = user_info.LastName
+	mentor_registration.Data["github"] = user_info.Username
+	mentor_registration.Data["email"] = user_info.Email
+	mentor_registration.Data["firstName"] = user_info.FirstName
+	mentor_registration.Data["lastName"] = user_info.LastName
 
-	mentor_registration.CreatedAt = original_registration.CreatedAt
-	mentor_registration.UpdatedAt = time.Now().Unix()
+	mentor_registration.Data["createdAt"] = original_registration.Data["'createdAt"]
+	mentor_registration.Data["updatedAt"] = time.Now().Unix()
 
 	err = service.UpdateMentorRegistration(id, mentor_registration)
 

@@ -162,7 +162,7 @@ func GetMentorRegistration(id string) (*models.MentorRegistration, error) {
 	Creates the registration associated with the given mentor id
 */
 func CreateMentorRegistration(id string, mentor_registration models.MentorRegistration) error {
-	err := validate.Struct(mentor_registration)
+	err := mentor_registration.Validate()
 
 	if err != nil {
 		return err
@@ -186,7 +186,7 @@ func CreateMentorRegistration(id string, mentor_registration models.MentorRegist
 	Updates the registration associated with the given mentor id
 */
 func UpdateMentorRegistration(id string, mentor_registration models.MentorRegistration) error {
-	err := validate.Struct(mentor_registration)
+	err := mentor_registration.Validate()
 
 	if err != nil {
 		return err

@@ -48,7 +48,7 @@ func GetUserRegistration(id string) (*models.UserRegistration, error) {
 	Creates the registration associated with the given user id
 */
 func CreateUserRegistration(id string, user_registration models.UserRegistration) error {
-	err := validate.Struct(user_registration)
+	err := user_registration.Validate()
 
 	if err != nil {
 		return err
@@ -72,7 +72,7 @@ func CreateUserRegistration(id string, user_registration models.UserRegistration
 	Updates the registration associated with the given user id
 */
 func UpdateUserRegistration(id string, user_registration models.UserRegistration) error {
-	err := validate.Struct(user_registration)
+	err := user_registration.Validate()
 
 	if err != nil {
 		return err

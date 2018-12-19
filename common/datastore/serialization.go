@@ -38,7 +38,15 @@ func (datastore *DataStore) GetBSON() (interface{}, error) {
 }
 
 func (datastore *DataStore) SetBSON(raw bson.Raw) error {
-	return raw.Unmarshal(&datastore.Data)
+	err := raw.Unmarshal(&datastore.Data)
+
+	if err != nil {
+		return err
+	}
+
+	delete(datastore.Data, "_id")
+
+	return nil
 }
 
 func buildDataFromDefinition(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {

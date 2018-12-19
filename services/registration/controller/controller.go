@@ -2,7 +2,9 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 	"github.com/HackIllinois/api/services/registration/service"
 	"github.com/gorilla/mux"
@@ -94,10 +96,10 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id"))
 	}
 
-	var user_registration models.UserRegistration
+	user_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
 	json.NewDecoder(r.Body).Decode(&user_registration)
 
-	user_registration.ID = id
+	user_registration.Data["id"] = id
 
 	user_info, err := service.GetUserInfo(id)
 
@@ -105,13 +107,13 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	user_registration.GitHub = user_info.Username
-	user_registration.Email = user_info.Email
-	user_registration.FirstName = user_info.FirstName
-	user_registration.LastName = user_info.LastName
+	user_registration.Data["github"] = user_info.Username
+	user_registration.Data["email"] = user_info.Email
+	user_registration.Data["firstName"] = user_info.FirstName
+	user_registration.Data["lastName"] = user_info.LastName
 
-	user_registration.CreatedAt = time.Now().Unix()
-	user_registration.UpdatedAt = time.Now().Unix()
+	user_registration.Data["createdAt"] = time.Now().Unix()
+	user_registration.Data["updatedAt"] = time.Now().Unix()
 
 	err = service.CreateUserRegistration(id, user_registration)
 
@@ -167,10 +169,10 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id"))
 	}
 
-	var user_registration models.UserRegistration
+	user_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
 	json.NewDecoder(r.Body).Decode(&user_registration)
 
-	user_registration.ID = id
+	user_registration.Data["id"] = id
 
 	user_info, err := service.GetUserInfo(id)
 
@@ -184,13 +186,13 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	user_registration.GitHub = user_info.Username
-	user_registration.Email = user_info.Email
-	user_registration.FirstName = user_info.FirstName
-	user_registration.LastName = user_info.LastName
+	user_registration.Data["github"] = user_info.Username
+	user_registration.Data["email"] = user_info.Email
+	user_registration.Data["firstName"] = user_info.FirstName
+	user_registration.Data["lastName"] = user_info.LastName
 
-	user_registration.CreatedAt = original_registration.CreatedAt
-	user_registration.UpdatedAt = time.Now().Unix()
+	user_registration.Data["createdAt"] = original_registration.Data["createdAt"]
+	user_registration.Data["updatedAt"] = time.Now().Unix()
 
 	err = service.UpdateUserRegistration(id, user_registration)
 
@@ -253,10 +255,10 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id"))
 	}
 
-	var mentor_registration models.MentorRegistration
+	mentor_registration := datastore.NewDataStore(config.MENTOR_REGISTRATION_DEFINITION)
 	json.NewDecoder(r.Body).Decode(&mentor_registration)
 
-	mentor_registration.ID = id
+	mentor_registration.Data["id"] = id
 
 	user_info, err := service.GetUserInfo(id)
 
@@ -264,13 +266,13 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	mentor_registration.GitHub = user_info.Username
-	mentor_registration.Email = user_info.Email
-	mentor_registration.FirstName = user_info.FirstName
-	mentor_registration.LastName = user_info.LastName
+	mentor_registration.Data["github"] = user_info.Username
+	mentor_registration.Data["email"] = user_info.Email
+	mentor_registration.Data["firstName"] = user_info.FirstName
+	mentor_registration.Data["lastName"] = user_info.LastName
 
-	mentor_registration.CreatedAt = time.Now().Unix()
-	mentor_registration.UpdatedAt = time.Now().Unix()
+	mentor_registration.Data["createdAt"] = time.Now().Unix()
+	mentor_registration.Data["updatedAt"] = time.Now().Unix()
 
 	err = service.CreateMentorRegistration(id, mentor_registration)
 
@@ -303,10 +305,10 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id"))
 	}
 
-	var mentor_registration models.MentorRegistration
+	mentor_registration := datastore.NewDataStore(config.MENTOR_REGISTRATION_DEFINITION)
 	json.NewDecoder(r.Body).Decode(&mentor_registration)
 
-	mentor_registration.ID = id
+	mentor_registration.Data["id"] = id
 
 	user_info, err := service.GetUserInfo(id)
 
@@ -320,13 +322,13 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	mentor_registration.GitHub = user_info.Username
-	mentor_registration.Email = user_info.Email
-	mentor_registration.FirstName = user_info.FirstName
-	mentor_registration.LastName = user_info.LastName
+	mentor_registration.Data["github"] = user_info.Username
+	mentor_registration.Data["email"] = user_info.Email
+	mentor_registration.Data["firstName"] = user_info.FirstName
+	mentor_registration.Data["lastName"] = user_info.LastName
 
-	mentor_registration.CreatedAt = original_registration.CreatedAt
-	mentor_registration.UpdatedAt = time.Now().Unix()
+	mentor_registration.Data["createdAt"] = original_registration.Data["createdAt"]
+	mentor_registration.Data["updatedAt"] = time.Now().Unix()
 
 	err = service.UpdateMentorRegistration(id, mentor_registration)
 

@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/HackIllinois/api/common/configloader"
+	"github.com/HackIllinois/api/common/datastore"
 	"os"
 )
 
@@ -14,6 +15,9 @@ var USER_SERVICE string
 var AUTH_SERVICE string
 var DECISION_SERVICE string
 var MAIL_SERVICE string
+
+var REGISTRATION_DEFINITION datastore.DataStoreDefinition
+var MENTOR_REGISTRATION_DEFINITION datastore.DataStoreDefinition
 
 func init() {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
@@ -59,6 +63,18 @@ func init() {
 	}
 
 	MAIL_SERVICE, err = cfg_loader.Get("MAIL_SERVICE")
+
+	if err != nil {
+		panic(err)
+	}
+
+	err = cfg_loader.ParseInto("REGISTRATION_DEFINITION", &REGISTRATION_DEFINITION)
+
+	if err != nil {
+		panic(err)
+	}
+
+	err = cfg_loader.ParseInto("MENTOR_REGISTRATION_DEFINITION", &MENTOR_REGISTRATION_DEFINITION)
 
 	if err != nil {
 		panic(err)

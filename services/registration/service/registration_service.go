@@ -92,7 +92,6 @@ func GetFilteredUserRegistrations(parameters map[string][]string) (*models.Filte
 	query := make(map[string]interface{})
 	for key, values := range parameters {
 		if len(values) == 1 {
-			key = strings.ToLower(key)
 			value_list := strings.Split(values[0], ",")
 
 			correctly_typed_value_list := make([]interface{}, len(value_list))
@@ -120,12 +119,12 @@ func GetFilteredUserRegistrations(parameters map[string][]string) (*models.Filte
 }
 
 func AssignValueType(key, value string) (interface{}, error) {
-	int_keys := []string{"age", "graduationyear"}
+	int_keys := []string{"age", "graduationYear"}
 	if Contains(int_keys, key) {
 		return strconv.Atoi(value)
 	}
 
-	bool_keys := []string{"isnovice", "isprivate"}
+	bool_keys := []string{"isNovice", "isPrivate"}
 	if Contains(bool_keys, key) {
 		return strconv.ParseBool(value)
 	}

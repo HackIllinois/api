@@ -2,11 +2,13 @@ package tests
 
 import (
 	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 	"github.com/HackIllinois/api/services/registration/service"
 	"reflect"
 	"testing"
+	"encoding/json"
 )
 
 var db database.Database
@@ -25,14 +27,14 @@ func init() {
 	Initialize db with test user and mentor info
 */
 func SetupTestDB(t *testing.T) {
-	user_registration := base_user_registration
+	user_registration := getBaseUserRegistration()
 	err := db.Insert("attendees", &user_registration)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	mentor_registration := base_mentor_registration
+	mentor_registration := getBaseMentorRegistration()
 	err = db.Insert("mentors", &mentor_registration)
 
 	if err != nil {
@@ -63,10 +65,10 @@ func TestGetUserRegistrationService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registration := base_user_registration
+	expected_registration := getBaseUserRegistration()
 
-	if !reflect.DeepEqual(user_registration, &expected_registration) {
-		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registration, user_registration)
+	if !reflect.DeepEqual(user_registration.Data["firstName"], expected_registration.Data["firstName"]) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registration.Data["firstName"], user_registration.Data["firstName"])
 	}
 
 	CleanupTestDB(t)
@@ -78,10 +80,10 @@ func TestGetUserRegistrationService(t *testing.T) {
 func TestCreateUserRegistrationService(t *testing.T) {
 	SetupTestDB(t)
 
-	new_registration := base_user_registration
-	new_registration.ID = "testid2"
-	new_registration.FirstName = "first2"
-	new_registration.LastName = "last2"
+	new_registration := getBaseUserRegistration()
+	new_registration.Data["id"] = "testid2"
+	new_registration.Data["firstName"] = "first2"
+	new_registration.Data["lastName"] = "last2"
 	err := service.CreateUserRegistration("testid2", new_registration)
 
 	if err != nil {
@@ -94,13 +96,13 @@ func TestCreateUserRegistrationService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registration := base_user_registration
-	expected_registration.ID = "testid2"
-	expected_registration.FirstName = "first2"
-	expected_registration.LastName = "last2"
+	expected_registration := getBaseUserRegistration()
+	expected_registration.Data["id"] = "testid2"
+	expected_registration.Data["firstName"] = "first2"
+	expected_registration.Data["lastName"] = "last2"
 
-	if !reflect.DeepEqual(user_registration, &expected_registration) {
-		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registration, user_registration)
+	if !reflect.DeepEqual(user_registration.Data["firstName"], expected_registration.Data["firstName"]) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registration.Data["firstName"], user_registration.Data["firstName"])
 	}
 
 	CleanupTestDB(t)
@@ -112,10 +114,10 @@ func TestCreateUserRegistrationService(t *testing.T) {
 func TestUpdateUserRegistrationService(t *testing.T) {
 	SetupTestDB(t)
 
-	updated_registration := base_user_registration
-	updated_registration.ID = "testid"
-	updated_registration.FirstName = "first2"
-	updated_registration.LastName = "last2"
+	updated_registration := getBaseUserRegistration()
+	updated_registration.Data["id"] = "testid"
+	updated_registration.Data["firstName"] = "first2"
+	updated_registration.Data["lastName"] = "last2"
 	err := service.UpdateUserRegistration("testid", updated_registration)
 
 	if err != nil {
@@ -128,13 +130,13 @@ func TestUpdateUserRegistrationService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registration := base_user_registration
-	expected_registration.ID = "testid"
-	expected_registration.FirstName = "first2"
-	expected_registration.LastName = "last2"
+	expected_registration := getBaseUserRegistration()
+	expected_registration.Data["id"] = "testid"
+	expected_registration.Data["firstName"] = "first2"
+	expected_registration.Data["lastName"] = "last2"
 
-	if !reflect.DeepEqual(user_registration, &expected_registration) {
-		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registration, user_registration)
+	if !reflect.DeepEqual(user_registration.Data["firstName"], expected_registration.Data["firstName"]) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registration.Data["firstName"], user_registration.Data["firstName"])
 	}
 
 	CleanupTestDB(t)
@@ -152,10 +154,10 @@ func TestGetMentorRegistrationService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registration := base_mentor_registration
+	expected_registration := getBaseMentorRegistration()
 
-	if !reflect.DeepEqual(mentor_registration, &expected_registration) {
-		t.Errorf("Wrong mentor info.\nExpected %v\ngot %v\n", expected_registration, mentor_registration)
+	if !reflect.DeepEqual(mentor_registration.Data["firstName"], expected_registration.Data["firstName"]) {
+		t.Errorf("Wrong mentor info.\nExpected %v\ngot %v\n", expected_registration.Data["firstName"], mentor_registration.Data["firstName"])
 	}
 
 	CleanupTestDB(t)
@@ -167,10 +169,10 @@ func TestGetMentorRegistrationService(t *testing.T) {
 func TestCreateMentorRegistrationService(t *testing.T) {
 	SetupTestDB(t)
 
-	new_registration := base_mentor_registration
-	new_registration.ID = "testid2"
-	new_registration.FirstName = "first2"
-	new_registration.LastName = "last2"
+	new_registration := getBaseMentorRegistration()
+	new_registration.Data["id"] = "testid2"
+	new_registration.Data["firstName"] = "first2"
+	new_registration.Data["lastName"] = "last2"
 	err := service.CreateMentorRegistration("testid2", new_registration)
 
 	if err != nil {
@@ -183,13 +185,13 @@ func TestCreateMentorRegistrationService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registration := base_mentor_registration
-	expected_registration.ID = "testid2"
-	expected_registration.FirstName = "first2"
-	expected_registration.LastName = "last2"
+	expected_registration := getBaseMentorRegistration()
+	expected_registration.Data["id"] = "testid2"
+	expected_registration.Data["firstName"] = "first2"
+	expected_registration.Data["lastName"] = "last2"
 
-	if !reflect.DeepEqual(mentor_registration, &expected_registration) {
-		t.Errorf("Wrong mentor info.\nExpected %v\ngot %v\n", expected_registration, mentor_registration)
+	if !reflect.DeepEqual(mentor_registration.Data["firstName"], expected_registration.Data["firstName"]) {
+		t.Errorf("Wrong mentor info.\nExpected %v\ngot %v\n", expected_registration.Data["firstName"], mentor_registration.Data["firstName"])
 	}
 
 	CleanupTestDB(t)
@@ -201,10 +203,10 @@ func TestCreateMentorRegistrationService(t *testing.T) {
 func TestUpdateMentorRegistrationService(t *testing.T) {
 	SetupTestDB(t)
 
-	updated_registration := base_mentor_registration
-	updated_registration.ID = "testid"
-	updated_registration.FirstName = "first2"
-	updated_registration.LastName = "last2"
+	updated_registration := getBaseMentorRegistration()
+	updated_registration.Data["id"] = "testid"
+	updated_registration.Data["firstName"] = "first2"
+	updated_registration.Data["lastName"] = "last2"
 	err := service.UpdateMentorRegistration("testid", updated_registration)
 
 	if err != nil {
@@ -217,13 +219,13 @@ func TestUpdateMentorRegistrationService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registration := base_mentor_registration
-	expected_registration.ID = "testid"
-	expected_registration.FirstName = "first2"
-	expected_registration.LastName = "last2"
+	expected_registration := getBaseMentorRegistration()
+	expected_registration.Data["id"] = "testid"
+	expected_registration.Data["firstName"] = "first2"
+	expected_registration.Data["lastName"] = "last2"
 
-	if !reflect.DeepEqual(mentor_registration, &expected_registration) {
-		t.Errorf("Wrong mentor info.\nExpected %v\ngot %v\n", expected_registration, mentor_registration)
+	if !reflect.DeepEqual(mentor_registration.Data["firstName"], expected_registration.Data["firstName"]) {
+		t.Errorf("Wrong mentor info.\nExpected %v\ngot %v\n", expected_registration.Data["firstName"], mentor_registration.Data["firstName"])
 	}
 
 	CleanupTestDB(t)
@@ -235,18 +237,19 @@ func TestUpdateMentorRegistrationService(t *testing.T) {
 func TestGetFilteredUserRegistrationsService(t *testing.T) {
 	SetupTestDB(t)
 
-	registration_1 := base_user_registration
+	registration_1 := getBaseUserRegistration()
 
-	registration_2 := base_user_registration
-	registration_2.ID = "testid2"
-	err := service.CreateUserRegistration(registration_2.ID, registration_2)
+	registration_2 := getBaseUserRegistration()
+	registration_2.Data["id"] = "testid2"
+
+	err := service.CreateUserRegistration(registration_2.Data["id"].(string), registration_2)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Test capitalized keys
+	// Test single value and one keys
 	parameters := map[string][]string{
-		"ID": []string{"testid"},
+		"id": []string{"testid"},
 	}
 	user_registrations, err := service.GetFilteredUserRegistrations(parameters)
 	if err != nil {
@@ -258,8 +261,13 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 			registration_1,
 		},
 	}
-	if !reflect.DeepEqual(user_registrations, &expected_registrations) {
-		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations, user_registrations)
+
+	if(len(user_registrations.Registrations) != len(expected_registrations.Registrations)) {
+		t.Errorf("Wrong number of registrations.\nExpected %v\ngot %v\n", len(expected_registrations.Registrations), len(user_registrations.Registrations))
+	}
+
+	if !reflect.DeepEqual(user_registrations.Registrations[0].Data["firstName"], expected_registrations.Registrations[0].Data["firstName"]) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations.Registrations[0].Data["firstName"], user_registrations.Registrations[0].Data["firstName"])
 	}
 
 	// Test multiple values
@@ -277,8 +285,13 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 			registration_2,
 		},
 	}
-	if !reflect.DeepEqual(user_registrations, &expected_registrations) {
-		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations, user_registrations)
+
+	if(len(user_registrations.Registrations) != len(expected_registrations.Registrations)) {
+		t.Errorf("Wrong number of registrations.\nExpected %v\ngot %v\n", len(expected_registrations.Registrations), len(user_registrations.Registrations))
+	}
+
+	if !reflect.DeepEqual(user_registrations.Registrations[1].Data["firstName"], expected_registrations.Registrations[1].Data["firstName"]) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations.Registrations[1].Data["firstName"], user_registrations.Registrations[1].Data["firstName"])
 	}
 
 	// Test type casting
@@ -298,66 +311,93 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 			registration_2,
 		},
 	}
-	if !reflect.DeepEqual(user_registrations, &expected_registrations) {
-		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations, user_registrations)
+
+	if(len(user_registrations.Registrations) != len(expected_registrations.Registrations)) {
+		t.Errorf("Wrong number of registrations.\nExpected %v\ngot %v\n", len(expected_registrations.Registrations), len(user_registrations.Registrations))
+	}
+
+	if !reflect.DeepEqual(user_registrations.Registrations[1].Data["firstName"], expected_registrations.Registrations[1].Data["firstName"]) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations.Registrations[1].Data["firstName"], user_registrations.Registrations[1].Data["firstName"])
 	}
 
 	CleanupTestDB(t)
 }
 
-var base_user_registration models.UserRegistration = models.UserRegistration{
-	ID:                   "testid",
-	FirstName:            "first",
-	LastName:             "last",
-	Email:                "test@gmail.com",
-	ShirtSize:            "M",
-	Diet:                 "NONE",
-	Age:                  20,
-	GraduationYear:       2019,
-	Transportation:       "BUS",
-	School:               "University of Illinois at Urbana-Champaign",
-	Major:                "Computer Science",
-	Gender:               "MALE",
-	ProfessionalInterest: "INTERNSHIP",
-	GitHub:               "githubusername",
-	Linkedin:             "linkedinusername",
-	Interests:            "things",
-	IsNovice:             true,
-	IsPrivate:            false,
-	PhoneNumber:          "555-287-2903",
-	LongForms: []models.UserLongForm{
-		models.UserLongForm{
-			Response: "longformresponse",
-		},
-	},
-	ExtraInfos: []models.UserExtraInfo{
-		models.UserExtraInfo{
-			Response: "extrainforesponse",
-		},
-	},
-	OsContributors: []models.UserOsContributor{
-		models.UserOsContributor{
-			Name:        "contributorname",
-			ContactInfo: "contact@test.com",
-		},
-	},
-	Collaborators: []models.UserCollaborator{
-		models.UserCollaborator{
-			Github: "collaboratorgithub",
-		},
-	},
-	CreatedAt: 10,
-	UpdatedAt: 15,
+/*
+	Returns a basic user registration
+*/
+func getBaseUserRegistration() datastore.DataStore {
+	base_user_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
+	json.Unmarshal([]byte(user_registration_data), &base_user_registration)
+	return base_user_registration
 }
 
-var base_mentor_registration models.MentorRegistration = models.MentorRegistration{
-	ID:        "testid",
-	FirstName: "first",
-	LastName:  "last",
-	Email:     "test@gmail.com",
-	ShirtSize: "M",
-	GitHub:    "githubusername",
-	Linkedin:  "linkedinusername",
-	CreatedAt: 10,
-	UpdatedAt: 15,
+/*
+	Returns a basic mentor registration
+*/
+func getBaseMentorRegistration() datastore.DataStore {
+	base_mentor_registration := datastore.NewDataStore(config.MENTOR_REGISTRATION_DEFINITION)
+	json.Unmarshal([]byte(user_registration_data), &base_mentor_registration)
+	return base_mentor_registration
 }
+
+var user_registration_data string = `
+{
+	"id": "testid",
+	"firstName": "first",
+	"lastName": "last",
+	"email": "test@gmail.com",
+	"shirtSize": "M",
+	"diet": "NONE",
+	"age": 20,
+	"graduationYear": 2020,
+	"transportation": "NONE",
+	"school": "University of Illinois at Urbana-Champaign",
+	"major": "Computer Science",
+	"gender": "MALE",
+	"professionalInterest": "INTERNSHIP",
+	"github": "githubusername",
+	"linkedin": "linkedinusername",
+	"interests": "Software",
+	"isNovice": true,
+	"isPrivate": false,
+	"phoneNumber": "555-928-7402",
+	"longforms": [
+		{
+			"response": "This is a longform."
+		}
+	],
+	"extraInfos": [
+		{
+			"response": "This is an extra info."
+		}
+	],
+	"osContributors": [
+		{
+			"name": "Person",
+			"contactInfo": "person@gmail.com"
+		}
+	],
+	"collaborators": [
+		{
+			"github": "persongithub"
+		}
+	],
+	"createdAt": 10,
+	"updatedAt": 15
+}
+`
+
+var mentor_registration_data string = `
+{
+	"id": "testid",
+	"firstName": "first",
+	"lastName": "last",
+	"email": "test@gmail.com",
+	"shirtSize": "M",
+	"github": "githubusername",
+	"linkedin": "linkedinusername",
+	"createdAt": 10,
+	"updatedAt": 15
+}
+`

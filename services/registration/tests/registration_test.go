@@ -298,7 +298,6 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 	parameters = map[string][]string{
 		"firstName": []string{"first"},
 		"age":       []string{"20"},
-		"isNovice":  []string{"true"},
 	}
 	user_registrations, err = service.GetFilteredUserRegistrations(parameters)
 	if err != nil {
@@ -348,41 +347,9 @@ var user_registration_data string = `
 	"lastName": "last",
 	"email": "test@gmail.com",
 	"shirtSize": "M",
-	"diet": "NONE",
-	"age": 20,
-	"graduationYear": 2020,
-	"transportation": "NONE",
-	"school": "University of Illinois at Urbana-Champaign",
-	"major": "Computer Science",
-	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
 	"github": "githubusername",
 	"linkedin": "linkedinusername",
-	"interests": "Software",
-	"isNovice": true,
-	"isPrivate": false,
-	"phoneNumber": "555-928-7402",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
-	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Person",
-			"contactInfo": "person@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "persongithub"
-		}
-	],
+	"age": 20,
 	"createdAt": 10,
 	"updatedAt": 15
 }

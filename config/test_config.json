@@ -63,7 +63,7 @@
 	"IS_PRODUCTION": "false",
 
 	"REGISTRATION_DEFINITION": {
-		"name": "user_registration",
+		"name": "mentor_registration",
 		"type": "object",
 		"validations": "required",
 		"fields": [
@@ -98,54 +98,6 @@
 				"fields": []
 			},
 			{
-				"name": "diet",
-				"type": "string",
-				"validations": "required,oneof=NONE VEGAN VEGETARIAN",
-				"fields": []
-			},
-			{
-				"name": "age",
-				"type": "int",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "graduationYear",
-				"type": "int",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "transportation",
-				"type": "string",
-				"validations": "required,oneof=NONE BUS",
-				"fields": []
-			},
-			{
-				"name": "school",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "major",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "gender",
-				"type": "string",
-				"validations": "required,oneof=MALE FEMALE NONBINARY OTHER",
-				"fields": []
-			},
-			{
-				"name": "interests",
-				"type": "[]string",
-				"validations": "required,dive,oneof=INTERNSHIP FULLTIME",
-				"fields": []
-			},
-			{
 				"name": "github",
 				"type": "string",
 				"validations": "required",
@@ -158,38 +110,8 @@
 				"fields": []
 			},
 			{
-				"name": "isBeginner",
-				"type": "boolean",
-				"validations": "required|isdefault",
-				"fields": []
-			},
-			{
-				"name": "priorAttendence",
-				"type": "boolean",
-				"validations": "required|isdefault",
-				"fields": []
-			},
-			{
-				"name": "phone",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "skills",
-				"type": "[]string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "extraInfo",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "teamMembers",
-				"type": "[]string",
+				"name": "age",
+				"type": "int",
 				"validations": "required",
 				"fields": []
 			},
@@ -204,37 +126,6 @@
 				"type": "int",
 				"validations": "required",
 				"fields": []
-			},
-			{
-				"name": "beginnerInfo",
-				"type": "object",
-				"validations": "required",
-				"fields": [
-					{
-						"name": "versionControl",
-						"type": "int",
-						"validations": "required",
-						"fields": []
-					},
-					{
-						"name": "pullRequest",
-						"type": "int",
-						"validations": "required",
-						"fields": []
-					},
-					{
-						"name": "yearsExperience",
-						"type": "int",
-						"validations": "required",
-						"fields": []
-					},
-					{
-						"name": "technicalSkills",
-						"type": "[]string",
-						"validations": "required",
-						"fields": []
-					}
-				]
 			}
 		]
 	},

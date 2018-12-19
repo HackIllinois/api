@@ -22,10 +22,7 @@ func SendUserMail(id string, template string) error {
 		Template: template,
 	}
 
-	request_body := bytes.Buffer{}
-	json.NewEncoder(&request_body).Encode(&mail_order)
-
-	status, err := apirequest.Post(config.MAIL_SERVICE+"/mail/send/", &request_body, nil)
+	status, err := apirequest.Post(config.MAIL_SERVICE+"/mail/send/", &mail_order, nil)
 
 	if err != nil {
 		return err

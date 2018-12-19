@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"encoding/json"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/services/registration/config"
@@ -8,7 +9,6 @@ import (
 	"github.com/HackIllinois/api/services/registration/service"
 	"reflect"
 	"testing"
-	"encoding/json"
 )
 
 var db database.Database
@@ -262,7 +262,7 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 		},
 	}
 
-	if(len(user_registrations.Registrations) != len(expected_registrations.Registrations)) {
+	if len(user_registrations.Registrations) != len(expected_registrations.Registrations) {
 		t.Errorf("Wrong number of registrations.\nExpected %v\ngot %v\n", len(expected_registrations.Registrations), len(user_registrations.Registrations))
 	}
 
@@ -286,7 +286,7 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 		},
 	}
 
-	if(len(user_registrations.Registrations) != len(expected_registrations.Registrations)) {
+	if len(user_registrations.Registrations) != len(expected_registrations.Registrations) {
 		t.Errorf("Wrong number of registrations.\nExpected %v\ngot %v\n", len(expected_registrations.Registrations), len(user_registrations.Registrations))
 	}
 
@@ -312,7 +312,7 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 		},
 	}
 
-	if(len(user_registrations.Registrations) != len(expected_registrations.Registrations)) {
+	if len(user_registrations.Registrations) != len(expected_registrations.Registrations) {
 		t.Errorf("Wrong number of registrations.\nExpected %v\ngot %v\n", len(expected_registrations.Registrations), len(user_registrations.Registrations))
 	}
 

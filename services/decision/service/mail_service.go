@@ -1,8 +1,6 @@
 package service
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -35,19 +33,13 @@ func AddUserToMailList(id string, decision *models.DecisionHistory) error {
 		UserIDs: []string{id},
 	}
 
-	request_body := bytes.Buffer{}
-	json.NewEncoder(&request_body).Encode(&mail_list)
-
-	status, err_update := apirequest.Post(config.MAIL_SERVICE+"/mail/list/add/", &request_body, nil)
+	status, err_update := apirequest.Post(config.MAIL_SERVICE+"/mail/list/add/", &mail_list, nil)
 
 	if err_update == nil && status != http.StatusOK {
 		// The mail list with given id does not exist.
 		// A new one will be created with the current user in it.
 
-		// Since the buffer gets consumed after the preceding POST request
-		json.NewEncoder(&request_body).Encode(&mail_list)
-
-		status, err_create := apirequest.Post(config.MAIL_SERVICE+"/mail/list/create/", &request_body, nil)
+		status, err_create := apirequest.Post(config.MAIL_SERVICE+"/mail/list/create/", &mail_list, nil)
 
 		if err_create == nil && status != http.StatusOK {
 

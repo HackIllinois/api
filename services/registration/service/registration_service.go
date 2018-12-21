@@ -197,3 +197,26 @@ func UpdateMentorRegistration(id string, mentor_registration models.MentorRegist
 
 	return err
 }
+
+/*
+	Returns all registration stats
+*/
+func GetStats() (map[string]interface{}, error) {
+	attendee_stats, err := db.GetStats("attendees")
+
+	if err != nil {
+		return nil, err
+	}
+
+	mentor_stats, err := db.GetStats("mentors")
+
+	if err != nil {
+		return nil, err
+	}
+
+	stats := make(map[string]interface{})
+	stats["attendees"] = attendee_stats
+	stats["mentors"] = mentor_stats
+
+	return stats, nil
+}

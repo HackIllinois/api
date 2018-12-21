@@ -9,7 +9,7 @@ import (
 var ErrTypeMismatch = errors.New("Error: TYPE_MISMATCH")
 
 /*
-	Returns a maps of default stats 
+	Returns a maps of default stats
 */
 func GetDefaultStats() map[string]interface{} {
 	stats := make(map[string]interface{})
@@ -42,24 +42,24 @@ func AddEntryToStats(stats map[string]interface{}, entry map[string]interface{})
 		default:
 			reflect_type := reflect.TypeOf(value)
 			switch reflect_type.Kind() {
-				case reflect.Array:
-					fallthrough
-				case reflect.Slice:
-					slice_value := reflect.ValueOf(value)
-					for i := 0; i < slice_value.Len(); i++ {
-						element := slice_value.Index(i)
-						err := UpdateStatsField(stats, key, element)
-
-						if err != nil {
-							return err
-						}
-					}
-				default:
-					err := UpdateStatsField(stats, key, value)
+			case reflect.Array:
+				fallthrough
+			case reflect.Slice:
+				slice_value := reflect.ValueOf(value)
+				for i := 0; i < slice_value.Len(); i++ {
+					element := slice_value.Index(i)
+					err := UpdateStatsField(stats, key, element)
 
 					if err != nil {
 						return err
 					}
+				}
+			default:
+				err := UpdateStatsField(stats, key, value)
+
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}

@@ -213,7 +213,7 @@ func (db *MongoDatabase) DropDatabase() error {
 /*
 	Returns a map of statistics for a given collection
 */
-func (db *MongoDatabase) GetStats(collection_name string) (map[string]interface{}, error) {
+func (db *MongoDatabase) GetStats(collection_name string, fields []string) (map[string]interface{}, error) {
 	current_session := db.GetSession()
 	defer current_session.Close()
 
@@ -229,7 +229,7 @@ func (db *MongoDatabase) GetStats(collection_name string) (map[string]interface{
 	for iter.Next(&result) {
 		count += 1
 
-		err := AddEntryToStats(stats, result)
+		err := AddEntryToStats(stats, result, fields)
 
 		if err != nil {
 			return nil, convertMgoError(err)

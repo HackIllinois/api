@@ -3,6 +3,7 @@ package database
 import (
 	"errors"
 	"fmt"
+	"github.com/HackIllinois/api/common/utils"
 	"reflect"
 )
 
@@ -19,8 +20,12 @@ func GetDefaultStats() map[string]interface{} {
 /*
 	Updates the stats with the given entry
 */
-func AddEntryToStats(stats map[string]interface{}, entry map[string]interface{}) error {
+func AddEntryToStats(stats map[string]interface{}, entry map[string]interface{}, fields []string) error {
 	for key, v := range entry {
+		if !slice_utils.ContainsString(fields, key) {
+			continue
+		}
+
 		switch value := v.(type) {
 		case map[string]interface{}:
 			_, exists := stats[key]
@@ -35,7 +40,7 @@ func AddEntryToStats(stats map[string]interface{}, entry map[string]interface{})
 				return ErrTypeMismatch
 			}
 
-			AddEntryToStats(mapped_stats, value)
+			AddEntryToStats(mapped_stats, value, fields)
 		default:
 			reflect_type := reflect.TypeOf(value)
 			switch reflect_type.Kind() {

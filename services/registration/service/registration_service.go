@@ -202,13 +202,13 @@ func UpdateMentorRegistration(id string, mentor_registration models.MentorRegist
 	Returns all registration stats
 */
 func GetStats() (map[string]interface{}, error) {
-	attendee_stats, err := db.GetStats("attendees")
+	attendee_stats, err := db.GetStats("attendees", []string{"jobinterest", "major", "school"})
 
 	if err != nil {
 		return nil, err
 	}
 
-	mentor_stats, err := db.GetStats("mentors")
+	mentor_stats, err := db.GetStats("mentors", []string{})
 
 	if err != nil {
 		return nil, err

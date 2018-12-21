@@ -14,7 +14,7 @@ type Database interface {
 	Update(collection_name string, selector interface{}, update interface{}) error
 	UpdateAll(collection_name string, selector interface{}, update interface{}) (*ChangeResults, error)
 	DropDatabase() error
-	GetStats(collection_name string) (map[string]interface{}, error)
+	GetStats(collection_name string, fields []string) (map[string]interface{}, error)
 }
 
 /*

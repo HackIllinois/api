@@ -19,6 +19,8 @@ var MAIL_SERVICE string
 var REGISTRATION_DEFINITION datastore.DataStoreDefinition
 var MENTOR_REGISTRATION_DEFINITION datastore.DataStoreDefinition
 
+var REGISTRATION_STAT_FIELDS []string
+
 func init() {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
 
@@ -75,6 +77,12 @@ func init() {
 	}
 
 	err = cfg_loader.ParseInto("MENTOR_REGISTRATION_DEFINITION", &MENTOR_REGISTRATION_DEFINITION)
+
+	if err != nil {
+		panic(err)
+	}
+
+	err = cfg_loader.ParseInto("REGISTRATION_STAT_FIELDS", &REGISTRATION_STAT_FIELDS)
 
 	if err != nil {
 		panic(err)

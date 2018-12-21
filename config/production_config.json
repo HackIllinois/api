@@ -41,6 +41,11 @@
 
 	"IS_PRODUCTION": "true",
 
+	"REGISTRATION_STAT_FIELDS": [
+		"major",
+		"school"
+	],
+
 	"REGISTRATION_DEFINITION": {
 		"name": "user_registration",
 		"type": "object",

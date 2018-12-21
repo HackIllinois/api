@@ -221,13 +221,16 @@ func (db *MongoDatabase) GetStats(collection_name string) (map[string]interface{
 
 	iter := collection.Find(nil).Iter()
 
-	stats := make(map[string]interface{})
+	stats := GetDefaultStats()
 	stats["count"] = 0
 
 	var result map[string]interface{}
 	for iter.Next(&result) {
-		// Do a thing
-		stats["count"] = stats["count"].(int) + 1
+		err := AddEntryToStats(stats, result)
+
+		if err != nil {
+			return nil, convertMgoError(err)
+		}
 	}
 
 	err := iter.Err()

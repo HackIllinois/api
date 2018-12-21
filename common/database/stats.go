@@ -13,8 +13,6 @@ var ErrTypeMismatch = errors.New("Error: TYPE_MISMATCH")
 */
 func GetDefaultStats() map[string]interface{} {
 	stats := make(map[string]interface{})
-	// stats["count"] = 0
-
 	return stats
 }
 
@@ -22,7 +20,6 @@ func GetDefaultStats() map[string]interface{} {
 	Updates the stats with the given entry
 */
 func AddEntryToStats(stats map[string]interface{}, entry map[string]interface{}) error {
-	// stats["count"] = stats["count"].(int) + 1
 	for key, v := range entry {
 		switch value := v.(type) {
 		case map[string]interface{}:

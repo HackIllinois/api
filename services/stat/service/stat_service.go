@@ -3,23 +3,10 @@ package service
 import (
 	"errors"
 	"github.com/HackIllinois/api/common/apirequest"
-	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/stat/config"
 	"github.com/HackIllinois/api/services/stat/models"
 	"net/http"
 )
-
-var db database.Database
-
-func init() {
-	db_connection, err := database.InitDatabase(config.STAT_DB_HOST, config.STAT_DB_NAME)
-
-	if err != nil {
-		panic(err)
-	}
-
-	db = db_connection
-}
 
 /*
 	Retrieve stats from the specified service

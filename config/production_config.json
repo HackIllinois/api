@@ -152,7 +152,7 @@
 				"fields": []
 			},
 			{
-				"name": "priorAttendence",
+				"name": "priorAttendance",
 				"type": "boolean",
 				"validations": "required|isdefault",
 				"fields": []

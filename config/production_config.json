@@ -78,8 +78,8 @@
 			},
 			{
 				"name": "diet",
-				"type": "string",
-				"validations": "required,oneof=NONE VEGAN VEGETARIAN",
+				"type": "[]string",
+				"validations": "required,dive,oneof=NONE VEGAN VEGETARIAN NOPEANUT NOGLUTEN",
 				"fields": []
 			},
 			{
@@ -115,7 +115,7 @@
 			{
 				"name": "gender",
 				"type": "string",
-				"validations": "required,oneof=MALE FEMALE NONBINARY OTHER",
+				"validations": "required,oneof=MALE FEMALE NONBINARY OTHER NOANSWER",
 				"fields": []
 			},
 			{

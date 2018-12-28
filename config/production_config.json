@@ -121,7 +121,7 @@
 			{
 				"name": "interests",
 				"type": "[]string",
-				"validations": "required,dive,oneof=INTERNSHIP FULLTIME",
+				"validations": "dive,oneof=INTERNSHIP FULLTIME",
 				"fields": []
 			},
 			{
@@ -133,7 +133,7 @@
 			{
 				"name": "linkedin",
 				"type": "string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			},
 			{
@@ -157,19 +157,19 @@
 			{
 				"name": "skills",
 				"type": "[]string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			},
 			{
 				"name": "extraInfo",
 				"type": "string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			},
 			{
 				"name": "teamMembers",
 				"type": "[]string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			},
 			{
@@ -210,7 +210,7 @@
 					{
 						"name": "technicalSkills",
 						"type": "[]string",
-						"validations": "required",
+						"validations": "",
 						"fields": []
 					}
 				]

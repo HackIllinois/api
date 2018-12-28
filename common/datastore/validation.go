@@ -2,6 +2,7 @@ package datastore
 
 import (
 	"gopkg.in/go-playground/validator.v9"
+	"fmt"
 )
 
 func (datastore *DataStore) Validate() error {
@@ -14,7 +15,7 @@ func validateField(data interface{}, definition DataStoreDefinition, validate *v
 	err := validate.Var(data, definition.Validations)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("Key '%v' with value '%v' failed validation '%v'", definition.Name, data, definition.Validations);
 	}
 
 	switch definition.Type {

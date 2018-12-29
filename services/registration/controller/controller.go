@@ -97,7 +97,11 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
-	json.NewDecoder(r.Body).Decode(&user_registration)
+	err := json.NewDecoder(r.Body).Decode(&user_registration)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
 
 	user_registration.Data["id"] = id
 
@@ -170,7 +174,11 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
-	json.NewDecoder(r.Body).Decode(&user_registration)
+	err := json.NewDecoder(r.Body).Decode(&user_registration)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
 
 	user_registration.Data["id"] = id
 
@@ -256,7 +264,11 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mentor_registration := datastore.NewDataStore(config.MENTOR_REGISTRATION_DEFINITION)
-	json.NewDecoder(r.Body).Decode(&mentor_registration)
+	err := json.NewDecoder(r.Body).Decode(&mentor_registration)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
 
 	mentor_registration.Data["id"] = id
 
@@ -306,7 +318,11 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mentor_registration := datastore.NewDataStore(config.MENTOR_REGISTRATION_DEFINITION)
-	json.NewDecoder(r.Body).Decode(&mentor_registration)
+	err := json.NewDecoder(r.Body).Decode(&mentor_registration)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
 
 	mentor_registration.Data["id"] = id
 

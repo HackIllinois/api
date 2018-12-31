@@ -18,6 +18,8 @@ func SetupController(route *mux.Route) {
 	router.Handle("/", alice.New().ThenFunc(GetCurrentUserCheckin)).Methods("GET")
 	router.Handle("/list/", alice.New().ThenFunc(GetAllCheckedInUsers)).Methods("GET")
 	router.Handle("/{id}/", alice.New().ThenFunc(GetUserCheckin)).Methods("GET")
+
+	router.Handle("/internal/stats/", alice.New().ThenFunc(GetStats)).Methods("GET")
 }
 
 /*
@@ -131,4 +133,17 @@ func GetAllCheckedInUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(checked_in_users)
+}
+
+/*
+	Endpoint to get checkin stats
+*/
+func GetStats(w http.ResponseWriter, r *http.Request) {
+	stats, err := service.GetStats()
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(stats)
 }

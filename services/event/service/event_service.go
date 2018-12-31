@@ -321,3 +321,25 @@ func IsEventActive(event_name string) (bool, error) {
 		return current_time < end_time, nil
 	}
 }
+
+/*
+	Returns all event stats
+*/
+func GetStats() (map[string]interface{}, error) {
+	query := database.QuerySelector{}
+
+	var trackers []models.EventTracker
+	err := db.FindAll("eventtrackers", query, &trackers)
+
+	if err != nil {
+		return nil, err
+	}
+
+	stats := make(map[string]interface{})
+
+	for _, tracker := range trackers {
+		stats[tracker.EventName] = len(tracker.Users)
+	}
+
+	return stats, nil
+}

@@ -30,6 +30,8 @@ func SetupController(route *mux.Route) {
 	router.Handle("/{id}/", alice.New().ThenFunc(GetAllRegistrations)).Methods("GET")
 	router.Handle("/attendee/{id}/", alice.New().ThenFunc(GetUserRegistration)).Methods("GET")
 	router.Handle("/mentor/{id}", alice.New().ThenFunc(GetMentorRegistration)).Methods("GET")
+
+	router.Handle("/internal/stats/", alice.New().ThenFunc(GetStats)).Methods("GET")
 }
 
 /*
@@ -389,4 +391,17 @@ func GetMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(mentor_registration)
+}
+
+/*
+	Endpoint to get registration stats
+*/
+func GetStats(w http.ResponseWriter, r *http.Request) {
+	stats, err := service.GetStats()
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(stats)
 }

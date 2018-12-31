@@ -41,6 +41,15 @@
 
 	"IS_PRODUCTION": "true",
 
+	"STAT_ENDPOINTS": {
+		"registration": "http://registration.api.:8004/registration/internal/stats/"
+	},
+
+	"REGISTRATION_STAT_FIELDS": [
+		"major",
+		"school"
+	],
+
 	"REGISTRATION_DEFINITION": {
 		"name": "user_registration",
 		"type": "object",

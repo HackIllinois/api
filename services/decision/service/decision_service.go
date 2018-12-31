@@ -150,3 +150,10 @@ func GetFilteredDecisions(parameters map[string][]string) (*models.FilteredDecis
 
 	return &filtered_decisions, nil
 }
+
+/*
+	Returns all decision stats
+*/
+func GetStats() (map[string]interface{}, error) {
+	return db.GetStats("decision", []string{"status", "finalized", "wave"})
+}

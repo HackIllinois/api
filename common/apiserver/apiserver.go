@@ -30,11 +30,24 @@ func StartServer(address string, router *mux.Router, name string) error {
 	return server.ListenAndServe()
 }
 
+/*
+	Endpoint which returns health stats
+	Returns HTTP200 when the service is healthy
+	Returns HTTP503 when the service is unhealthy
+*/
 func GetHealthStats(stats_middleware *stats.Stats) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		health_stats := stats_middleware.Data()
 
 		w.Header().Set("Content-Type", "application/json")
+
+		// Set http response code based on service health
+		// Used for easy health checks
+		if IsHealthy(health_stats) {
+			w.WriteHeader(http.StatusOK)
+		} else {
+			w.WriteHeader(http.StatusServiceUnavailable)
+		}
 
 		json.NewEncoder(w).Encode(health_stats)
 	}

@@ -12,5 +12,5 @@ func main() {
 	router := mux.NewRouter()
 	controller.SetupController(router.PathPrefix("/rsvp"))
 
-	log.Fatal(apiserver.StartServer(config.RSVP_PORT, router))
+	log.Fatal(apiserver.StartServer(config.RSVP_PORT, router, "rsvp"))
 }

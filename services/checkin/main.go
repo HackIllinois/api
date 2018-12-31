@@ -12,5 +12,5 @@ func main() {
 	router := mux.NewRouter()
 	controller.SetupController(router.PathPrefix("/checkin"))
 
-	log.Fatal(apiserver.StartServer(config.CHECKIN_PORT, router))
+	log.Fatal(apiserver.StartServer(config.CHECKIN_PORT, router, "checkin"))
 }

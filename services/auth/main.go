@@ -12,5 +12,5 @@ func main() {
 	router := mux.NewRouter()
 	controller.SetupController(router.PathPrefix("/auth"))
 
-	log.Fatal(apiserver.StartServer(config.AUTH_PORT, router))
+	log.Fatal(apiserver.StartServer(config.AUTH_PORT, router, "auth"))
 }

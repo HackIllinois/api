@@ -12,5 +12,5 @@ func main() {
 	router := mux.NewRouter()
 	controller.SetupController(router.PathPrefix("/registration"))
 
-	log.Fatal(apiserver.StartServer(config.REGISTRATION_PORT, router))
+	log.Fatal(apiserver.StartServer(config.REGISTRATION_PORT, router, "registration"))
 }

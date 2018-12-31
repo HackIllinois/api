@@ -12,5 +12,5 @@ func main() {
 	router := mux.NewRouter()
 	controller.SetupController(router.PathPrefix("/event"))
 
-	log.Fatal(apiserver.StartServer(config.EVENT_PORT, router))
+	log.Fatal(apiserver.StartServer(config.EVENT_PORT, router, "event"))
 }

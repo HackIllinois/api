@@ -12,5 +12,5 @@ func main() {
 	router := mux.NewRouter()
 	controller.SetupController(router.PathPrefix("/decision"))
 
-	log.Fatal(apiserver.StartServer(config.DECISION_PORT, router))
+	log.Fatal(apiserver.StartServer(config.DECISION_PORT, router, "decision"))
 }

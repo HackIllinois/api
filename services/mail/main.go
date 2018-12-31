@@ -12,5 +12,5 @@ func main() {
 	router := mux.NewRouter()
 	controller.SetupController(router.PathPrefix("/mail"))
 
-	log.Fatal(apiserver.StartServer(config.MAIL_PORT, router))
+	log.Fatal(apiserver.StartServer(config.MAIL_PORT, router, "mail"))
 }

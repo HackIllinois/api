@@ -1,14 +1,14 @@
 package apiserver
 
 import (
-	"fmt"
-	"time"
-	"net/http"
 	"encoding/json"
+	"fmt"
+	"github.com/HackIllinois/api/common/middleware"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
-	"github.com/HackIllinois/api/common/middleware"
 	"github.com/thoas/stats"
+	"net/http"
+	"time"
 )
 
 func StartServer(address string, router *mux.Router, name string) error {

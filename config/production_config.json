@@ -87,8 +87,8 @@
 			},
 			{
 				"name": "diet",
-				"type": "string",
-				"validations": "required,oneof=NONE VEGAN VEGETARIAN",
+				"type": "[]string",
+				"validations": "required,dive,oneof=NONE VEGAN VEGETARIAN NOPEANUT NOGLUTEN",
 				"fields": []
 			},
 			{
@@ -124,13 +124,13 @@
 			{
 				"name": "gender",
 				"type": "string",
-				"validations": "required,oneof=MALE FEMALE NONBINARY OTHER",
+				"validations": "required,oneof=MALE FEMALE NONBINARY OTHER NOANSWER",
 				"fields": []
 			},
 			{
 				"name": "interests",
 				"type": "[]string",
-				"validations": "required,dive,oneof=INTERNSHIP FULLTIME",
+				"validations": "dive,oneof=INTERNSHIP FULLTIME",
 				"fields": []
 			},
 			{
@@ -142,7 +142,7 @@
 			{
 				"name": "linkedin",
 				"type": "string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			},
 			{
@@ -166,19 +166,19 @@
 			{
 				"name": "skills",
 				"type": "[]string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			},
 			{
 				"name": "extraInfo",
 				"type": "string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			},
 			{
 				"name": "teamMembers",
 				"type": "[]string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			},
 			{
@@ -219,7 +219,7 @@
 					{
 						"name": "technicalSkills",
 						"type": "[]string",
-						"validations": "required",
+						"validations": "",
 						"fields": []
 					}
 				]

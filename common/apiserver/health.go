@@ -33,7 +33,7 @@ func IsHealthy(health_stats *stats.Data) bool {
 		}
 	}
 
-	if float64(ok_response_count) / float64(total_response_count)  < HEALTHY_OK_RESPONSE_PERCENT {
+	if float64(ok_response_count)/float64(total_response_count) < HEALTHY_OK_RESPONSE_PERCENT {
 		return false
 	}
 

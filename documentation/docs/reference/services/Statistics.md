@@ -1,36 +1,41 @@
 Event
 =====
 
-GET /stat/service/SERVICENAME/
-------------------------------
+GET /stat/
+----------
 
-Returns the service with the name of `SERVICENAME`.
-
-Response format:
-```
-{
-	"name": "ExampleService",
-	"url": "http://localhost:8050"
-}
-```
-
-POST /stat/service/
--------------------
-
-Registers a service with the given name. Returns the registered service.
-
-Request format:
-```
-{
-	"name": "ExampleService",
-	"url": "http://localhost:8050"
-}
-```
+Returns statistics for all services.
 
 Response format:
 ```
 {
-	"name": "ExampleService",
-	"url": "http://localhost:8050"
+	"registration": {
+		"school": {
+			"University of Illinois Urbana-Champaign": 5,
+			"Northwestern University": 3
+		},
+		"major": {
+			"Computer Science": 4,
+			"Computer Engineering": 4
+		}
+	},
+	"event": {
+		"OpeningCeremony": 8,
+		"Breakfast": 6
+	}
+}
+```
+
+GET /stat/SERVICENAME/
+----------------------
+
+Returns statistics for the service with the name `SERVICENAME`.
+
+Response format:
+```
+{
+
+	"OpeningCeremony": 8,
+	"Breakfast": 6
 }
 ```

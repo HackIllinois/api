@@ -21,6 +21,8 @@ func SetupController(route *mux.Route) {
 	router.Handle("/qr/{id}/", alice.New().ThenFunc(GetQrCodeInfo)).Methods("GET")
 
 	router.Handle("/{id}/", alice.New().ThenFunc(GetUserInfo)).Methods("GET")
+
+	router.Handle("/internal/stats/", alice.New().ThenFunc(GetStats)).Methods("GET")
 }
 
 /*
@@ -131,4 +133,17 @@ func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(qr_info_container)
+}
+
+/*
+	Endpoint to get user stats
+*/
+func GetStats(w http.ResponseWriter, r *http.Request) {
+	stats, err := service.GetStats()
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(stats)
 }

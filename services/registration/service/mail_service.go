@@ -1,8 +1,6 @@
 package service
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -22,10 +20,7 @@ func SendUserMail(id string, template string) error {
 		Template: template,
 	}
 
-	request_body := bytes.Buffer{}
-	json.NewEncoder(&request_body).Encode(&mail_order)
-
-	status, err := apirequest.Post(config.MAIL_SERVICE+"/mail/send/", &request_body, nil)
+	status, err := apirequest.Post(config.MAIL_SERVICE+"/mail/send/", &mail_order, nil)
 
 	if err != nil {
 		return err
@@ -50,10 +45,7 @@ func AddUserToMailList(user_id string, mail_list_id string) error {
 		UserIDs: []string{user_id},
 	}
 
-	update_request_body := bytes.Buffer{}
-	json.NewEncoder(&update_request_body).Encode(&mail_list)
-
-	status, err := apirequest.Post(add_to_mail_list_url, &update_request_body, nil)
+	status, err := apirequest.Post(add_to_mail_list_url, &mail_list, nil)
 
 	if err != nil {
 		return err
@@ -63,10 +55,7 @@ func AddUserToMailList(user_id string, mail_list_id string) error {
 		// The mailing list didn't exist
 		create_mail_list_url := fmt.Sprintf("%s/mail/list/create/", config.MAIL_SERVICE)
 
-		create_request_body := bytes.Buffer{}
-		json.NewEncoder(&create_request_body).Encode(&mail_list)
-
-		status, err = apirequest.Post(create_mail_list_url, &create_request_body, nil)
+		status, err = apirequest.Post(create_mail_list_url, &mail_list, nil)
 
 		if err != nil {
 			return err

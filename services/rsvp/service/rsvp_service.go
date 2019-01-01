@@ -67,3 +67,10 @@ func UpdateUserRsvp(id string, rsvp models.UserRsvp) error {
 
 	return err
 }
+
+/*
+	Returns all rsvp stats
+*/
+func GetStats() (map[string]interface{}, error) {
+	return db.GetStats("rsvps", []string{"isattending"})
+}

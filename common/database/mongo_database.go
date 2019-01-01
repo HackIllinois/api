@@ -198,6 +198,9 @@ func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{},
 	return &change_results, convertMgoError(err)
 }
 
+/*
+	Drops the entire database
+*/
 func (db *MongoDatabase) DropDatabase() error {
 	current_session := db.GetSession()
 	defer current_session.Close()
@@ -205,4 +208,47 @@ func (db *MongoDatabase) DropDatabase() error {
 	err := current_session.DB(db.name).DropDatabase()
 
 	return convertMgoError(err)
+}
+
+/*
+	Returns a map of statistics for a given collection
+*/
+func (db *MongoDatabase) GetStats(collection_name string, fields []string) (map[string]interface{}, error) {
+	current_session := db.GetSession()
+	defer current_session.Close()
+
+	collection := current_session.DB(db.name).C(collection_name)
+
+	iter := collection.Find(nil).Iter()
+
+	stats := GetDefaultStats()
+
+	count := 0
+
+	var result map[string]interface{}
+	for iter.Next(&result) {
+		count += 1
+
+		err := AddEntryToStats(stats, result, fields)
+
+		if err != nil {
+			return nil, convertMgoError(err)
+		}
+	}
+
+	err := iter.Err()
+
+	if err != nil {
+		return nil, convertMgoError(err)
+	}
+
+	err = iter.Close()
+
+	if err != nil {
+		return nil, convertMgoError(err)
+	}
+
+	stats["count"] = count
+
+	return stats, nil
 }

@@ -336,8 +336,8 @@ func GetEventFavorites(id string) (*models.EventFavorites, error) {
 
 	if err != nil {
 		if err == database.ErrNotFound {
-			err  = db.Insert("favorites", &models.EventFavorites{
-				ID:    id,
+			err = db.Insert("favorites", &models.EventFavorites{
+				ID:     id,
 				Events: []string{},
 			})
 
@@ -361,7 +361,7 @@ func GetEventFavorites(id string) (*models.EventFavorites, error) {
 /*
 	Adds the given event to the favorites for the user with the given id
 */
-func AddEventFavorite(id string, event string) (error) {
+func AddEventFavorite(id string, event string) error {
 	selector := database.QuerySelector{
 		"id": id,
 	}
@@ -384,7 +384,7 @@ func AddEventFavorite(id string, event string) (error) {
 /*
 	Removes the given event to the favorites for the user with the given id
 */
-func RemoveEventFavorite(id string, event string) (error) {
+func RemoveEventFavorite(id string, event string) error {
 	selector := database.QuerySelector{
 		"id": id,
 	}

@@ -19,19 +19,19 @@ var EventRoutes = arbor.RouteCollection{
 		"GetEventFavorites",
 		"GET",
 		"/event/favorite/",
-		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetEventFavorites).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetEventFavorites).ServeHTTP,
 	},
 	arbor.Route{
 		"AddEventFavorite",
 		"POST",
 		"/event/favorite/add/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(AddEventFavorite).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(AddEventFavorite).ServeHTTP,
 	},
 	arbor.Route{
 		"RemoveEventFavorite",
 		"POST",
 		"/event/favorite/remove/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveEventFavorite).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveEventFavorite).ServeHTTP,
 	},
 	arbor.Route{
 		"MarkUserAsAttendingEvent",

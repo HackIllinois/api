@@ -41,6 +41,8 @@
 
 	"IS_PRODUCTION": "true",
 
+	"DECISION_EXPIRATION_HOURS": "48",
+
 	"STAT_ENDPOINTS": {
 		"registration": "http://registration.api.:8004/registration/internal/stats/",
 		"decision": "http://decision.api.:8005/decision/internal/stats/",

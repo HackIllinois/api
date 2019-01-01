@@ -366,6 +366,12 @@ func AddEventFavorite(id string, event string) error {
 		"id": id,
 	}
 
+	_, err := GetEvent(event)
+
+	if err != nil {
+		return errors.New("Could not find event with the given name")
+	}
+
 	event_favorites, err := GetEventFavorites(id)
 
 	if err != nil {

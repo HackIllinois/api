@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/HackIllinois/api/common/configloader"
 	"os"
+	"strconv"
 )
 
 var RSVP_DB_HOST string
@@ -13,6 +14,8 @@ var RSVP_PORT string
 var AUTH_SERVICE string
 var DECISION_SERVICE string
 var MAIL_SERVICE string
+
+var DECISION_EXPIRATION_HOURS int
 
 func init() {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
@@ -56,4 +59,18 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	decision_expiration_str, err := cfg_loader.Get("DECISION_EXPIRATION_HOURS")
+
+	if err != nil {
+		panic(err)
+	}
+
+	decision_expiration, err := strconv.Atoi(decision_expiration_str)
+
+	if err != nil {
+		panic(err)
+	}
+
+	DECISION_EXPIRATION_HOURS = decision_expiration
 }

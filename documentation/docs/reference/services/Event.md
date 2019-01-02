@@ -207,3 +207,65 @@ Response format:
 	]
 }
 ```
+
+GET /event/favorite/
+--------------------
+
+Returns the event favorites for the current user.
+
+Response format:
+```
+{
+	"id": "github001",
+	"events": [
+		"Example Event 1",
+		"Example Event 2"
+	]
+}
+```
+
+POST /event/favorite/add/
+-------------------------
+
+Adds the given event to the favorites for the current user.
+
+Request format:
+```
+{
+	"eventName": "Example Event",
+}
+```
+
+Response format:
+```
+{
+	"id": "github001",
+	"events": [
+		"Example Event",
+		"Example Event 1",
+		"Example Event 2"
+	]
+}
+```
+
+POST /event/favorite/remove/
+----------------------------
+
+Removes the given event from the favorites for the current user.
+
+Request format:
+```
+{
+	"eventName": "Example Event 1",
+}
+```
+
+Response format:
+```
+{
+	"id": "github001",
+	"events": [
+		"Example Event 2"
+	]
+}
+```

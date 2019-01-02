@@ -14,6 +14,10 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
+	router.Handle("/favorite/", alice.New().ThenFunc(GetEventFavorites)).Methods("GET")
+	router.Handle("/favorite/add/", alice.New().ThenFunc(AddEventFavorite)).Methods("POST")
+	router.Handle("/favorite/remove/", alice.New().ThenFunc(RemoveEventFavorite)).Methods("POST")
+
 	router.Handle("/{name}/", alice.New().ThenFunc(GetEvent)).Methods("GET")
 	router.Handle("/{name}/", alice.New().ThenFunc(DeleteEvent)).Methods("DELETE")
 	router.Handle("/", alice.New().ThenFunc(CreateEvent)).Methods("POST")
@@ -23,6 +27,8 @@ func SetupController(route *mux.Route) {
 	router.Handle("/track/", alice.New().ThenFunc(MarkUserAsAttendingEvent)).Methods("POST")
 	router.Handle("/track/event/{name}/", alice.New().ThenFunc(GetEventTrackingInfo)).Methods("GET")
 	router.Handle("/track/user/{id}/", alice.New().ThenFunc(GetUserTrackingInfo)).Methods("GET")
+
+	router.Handle("/internal/stats/", alice.New().ThenFunc(GetStats)).Methods("GET")
 }
 
 /*
@@ -185,4 +191,80 @@ func MarkUserAsAttendingEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(tracking_status)
+}
+
+/*
+	Endpoint to get the current user's event favorites
+*/
+func GetEventFavorites(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	favorites, err := service.GetEventFavorites(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(favorites)
+}
+
+/*
+	Endpoint to add an event favorite for the current user
+*/
+func AddEventFavorite(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	var event_favorite_modification models.EventFavoriteModification
+	json.NewDecoder(r.Body).Decode(&event_favorite_modification)
+
+	err := service.AddEventFavorite(id, event_favorite_modification.EventName)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	favorites, err := service.GetEventFavorites(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(favorites)
+}
+
+/*
+	Endpoint to remove an event favorite for the current user
+*/
+func RemoveEventFavorite(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	var event_favorite_modification models.EventFavoriteModification
+	json.NewDecoder(r.Body).Decode(&event_favorite_modification)
+
+	err := service.RemoveEventFavorite(id, event_favorite_modification.EventName)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	favorites, err := service.GetEventFavorites(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(favorites)
+}
+
+/*
+	Endpoint to get event stats
+*/
+func GetStats(w http.ResponseWriter, r *http.Request) {
+	stats, err := service.GetStats()
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(stats)
 }

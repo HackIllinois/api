@@ -30,6 +30,8 @@ func SetupController(route *mux.Route) {
 	router.Handle("/{id}/", alice.New().ThenFunc(GetAllRegistrations)).Methods("GET")
 	router.Handle("/attendee/{id}/", alice.New().ThenFunc(GetUserRegistration)).Methods("GET")
 	router.Handle("/mentor/{id}", alice.New().ThenFunc(GetMentorRegistration)).Methods("GET")
+
+	router.Handle("/internal/stats/", alice.New().ThenFunc(GetStats)).Methods("GET")
 }
 
 /*
@@ -97,7 +99,11 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
-	json.NewDecoder(r.Body).Decode(&user_registration)
+	err := json.NewDecoder(r.Body).Decode(&user_registration)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
 
 	user_registration.Data["id"] = id
 
@@ -170,7 +176,11 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
-	json.NewDecoder(r.Body).Decode(&user_registration)
+	err := json.NewDecoder(r.Body).Decode(&user_registration)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
 
 	user_registration.Data["id"] = id
 
@@ -256,7 +266,11 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mentor_registration := datastore.NewDataStore(config.MENTOR_REGISTRATION_DEFINITION)
-	json.NewDecoder(r.Body).Decode(&mentor_registration)
+	err := json.NewDecoder(r.Body).Decode(&mentor_registration)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
 
 	mentor_registration.Data["id"] = id
 
@@ -306,7 +320,11 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mentor_registration := datastore.NewDataStore(config.MENTOR_REGISTRATION_DEFINITION)
-	json.NewDecoder(r.Body).Decode(&mentor_registration)
+	err := json.NewDecoder(r.Body).Decode(&mentor_registration)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
 
 	mentor_registration.Data["id"] = id
 
@@ -373,4 +391,17 @@ func GetMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(mentor_registration)
+}
+
+/*
+	Endpoint to get registration stats
+*/
+func GetStats(w http.ResponseWriter, r *http.Request) {
+	stats, err := service.GetStats()
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(stats)
 }

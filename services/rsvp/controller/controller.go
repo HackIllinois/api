@@ -17,6 +17,8 @@ func SetupController(route *mux.Route) {
 	router.Handle("/", alice.New().ThenFunc(GetCurrentUserRsvp)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(CreateCurrentUserRsvp)).Methods("POST")
 	router.Handle("/", alice.New().ThenFunc(UpdateCurrentUserRsvp)).Methods("PUT")
+
+	router.Handle("/internal/stats/", alice.New().ThenFunc(GetStats)).Methods("GET")
 }
 
 /*
@@ -60,7 +62,7 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id"))
 	}
 
-	isAccepted, err := service.IsApplicantAccepted(id)
+	isAccepted, isActive, err := service.IsApplicantAcceptedAndActive(id)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
@@ -68,6 +70,10 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 
 	if !isAccepted {
 		panic(errors.UnprocessableError("Applicant must be accepted to rsvp"))
+	}
+
+	if !isActive {
+		panic(errors.UnprocessableError("Applicant decision has expired"))
 	}
 
 	var rsvp models.UserRsvp
@@ -116,6 +122,20 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Must provide id"))
 	}
 
+	isAccepted, isActive, err := service.IsApplicantAcceptedAndActive(id)
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	if !isAccepted {
+		panic(errors.UnprocessableError("Applicant must be accepted to modify rsvp"))
+	}
+
+	if !isActive {
+		panic(errors.UnprocessableError("Cannot modify rsvp, applicant decision has expired"))
+	}
+
 	original_rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
@@ -161,4 +181,17 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_rsvp)
+}
+
+/*
+	Endpoint to get rsvp stats
+*/
+func GetStats(w http.ResponseWriter, r *http.Request) {
+	stats, err := service.GetStats()
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(stats)
 }

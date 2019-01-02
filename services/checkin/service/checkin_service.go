@@ -118,3 +118,10 @@ func GetAllCheckedInUsers() (*models.CheckinList, error) {
 
 	return &checkin_list, nil
 }
+
+/*
+	Returns all checkin stats
+*/
+func GetStats() (map[string]interface{}, error) {
+	return db.GetStats("checkins", []string{"override", "hascheckedin", "haspickedupswag"})
+}

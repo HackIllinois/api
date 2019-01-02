@@ -10,6 +10,8 @@ var STAT_DB_NAME string
 
 var STAT_PORT string
 
+var STAT_ENDPOINTS map[string]string
+
 func init() {
 
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
@@ -31,6 +33,12 @@ func init() {
 	}
 
 	STAT_PORT, err = cfg_loader.Get("STAT_PORT")
+
+	if err != nil {
+		panic(err)
+	}
+
+	err = cfg_loader.ParseInto("STAT_ENDPOINTS", &STAT_ENDPOINTS)
 
 	if err != nil {
 		panic(err)

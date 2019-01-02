@@ -20,6 +20,8 @@ func SetupController(route *mux.Route) {
 	router.Handle("/finalize/", alice.New().ThenFunc(FinalizeDecision)).Methods("POST")
 	router.Handle("/filter/", alice.New().ThenFunc(GetFilteredDecisions)).Methods("GET")
 	router.Handle("/{id}/", alice.New().ThenFunc(GetDecision)).Methods("GET")
+
+	router.Handle("/internal/stats/", alice.New().ThenFunc(GetStats)).Methods("GET")
 }
 
 /*
@@ -177,4 +179,17 @@ func GetDecision(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(decision)
+}
+
+/*
+	Endpoint to get decision stats
+*/
+func GetStats(w http.ResponseWriter, r *http.Request) {
+	stats, err := service.GetStats()
+
+	if err != nil {
+		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	json.NewEncoder(w).Encode(stats)
 }

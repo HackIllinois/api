@@ -62,6 +62,22 @@
 
 	"IS_PRODUCTION": "false",
 
+	"DECISION_EXPIRATION_HOURS": "48",
+
+	"STAT_ENDPOINTS": {
+		"registration": "http://localhost:8004/registration/internal/stats/",
+		"decision": "http://localhost:8005/decision/internal/stats/",
+		"rsvp": "http://localhost:8006/rsvp/internal/stats/",
+		"checkin": "http://localhost:8007/checkin/internal/stats/",
+		"user": "http://localhost:8003/user/internal/stats/",
+		"event": "http://localhost:8010/event/internal/stats/"
+	},
+
+	"REGISTRATION_STAT_FIELDS": [
+		"major",
+		"school"
+	],
+
 	"REGISTRATION_DEFINITION": {
 		"name": "user_registration",
 		"type": "object",

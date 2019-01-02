@@ -16,6 +16,24 @@ const EventFormat string = "JSON"
 
 var EventRoutes = arbor.RouteCollection{
 	arbor.Route{
+		"GetEventFavorites",
+		"GET",
+		"/event/favorite/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetEventFavorites).ServeHTTP,
+	},
+	arbor.Route{
+		"AddEventFavorite",
+		"POST",
+		"/event/favorite/add/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(AddEventFavorite).ServeHTTP,
+	},
+	arbor.Route{
+		"RemoveEventFavorite",
+		"POST",
+		"/event/favorite/remove/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveEventFavorite).ServeHTTP,
+	},
+	arbor.Route{
 		"MarkUserAsAttendingEvent",
 		"POST",
 		"/event/track/",
@@ -91,4 +109,16 @@ func GetEventTrackingInfo(w http.ResponseWriter, r *http.Request) {
 
 func GetUserTrackingInfo(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, EventURL+r.URL.String(), EventFormat, "", r)
+}
+
+func GetEventFavorites(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, EventURL+r.URL.String(), EventFormat, "", r)
+}
+
+func AddEventFavorite(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, EventURL+r.URL.String(), EventFormat, "", r)
+}
+
+func RemoveEventFavorite(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, EventURL+r.URL.String(), EventFormat, "", r)
 }

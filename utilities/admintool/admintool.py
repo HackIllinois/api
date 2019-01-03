@@ -4,11 +4,12 @@ import sys
 import os
 
 from apistat import stat_entry
+from apievent import event_entry
 from helper import options_menu
 
 MODULES = {
 	'registration': None,
-	'event': None,
+	'event': event_entry,
 	'stat': stat_entry
 }
 

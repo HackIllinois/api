@@ -33,7 +33,7 @@ func GetCurrentDecision(w http.ResponseWriter, r *http.Request) {
 	decision, err := service.GetDecision(id)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DATABASE_ERROR("Could not get current user's decision."))
 	}
 
 	decision_view := models.DecisionView{
@@ -58,24 +58,24 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&decision)
 
 	if decision.ID == "" {
-		panic(errors.UnprocessableError("Must provide id parameter."))
+		panic(errors.MALFORMED_REQUEST_ERROR("Must provide ID parameter in request."))
 	}
 
 	has_decision, err := service.HasDecision(decision.ID)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DATABASE_ERROR("Could not determine user's decision."))
 	}
 
 	if has_decision {
 		existing_decision_history, err := service.GetDecision(decision.ID)
 
 		if err != nil {
-			panic(errors.UnprocessableError(err.Error()))
+			panic(errors.DATABASE_ERROR("Could not get current user's existing decision history."))
 		}
 
 		if existing_decision_history.Finalized {
-			panic(errors.UnprocessableError("Cannot modify finalized decisions."))
+			panic(errors.ATTRIBUTE_MISMATCH_ERROR("Cannot modify finalized decisions."))
 		}
 	}
 
@@ -87,13 +87,13 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	err = service.UpdateDecision(decision.ID, decision)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.INTERNAL_ERROR("Could not update decision."))
 	}
 
 	updated_decision, err := service.GetDecision(decision.ID)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DATABASE_ERROR("Could not fetch updated decision."))
 	}
 
 	json.NewEncoder(w).Encode(updated_decision)
@@ -110,7 +110,7 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	id := decision_finalized.ID
 
 	if id == "" {
-		panic(errors.UnprocessableError("Must provide id parameter to retrieve current decision	"))
+		panic(errors.MALFORMED_REQUEST_ERROR("Must provide id parameter to retrieve current decision."))
 	}
 
 	// Assuming we are working on the specified user's decision
@@ -129,23 +129,23 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 		err := service.UpdateDecision(id, latest_decision)
 
 		if err != nil {
-			panic(errors.UnprocessableError("Error updating the decision, in an attempt to finalize it."))
+			panic(errors.INTERNAL_ERROR("Error updating the decision, in an attempt to finalize it."))
 		}
 	} else {
-		panic(errors.UnprocessableError("Decision already finalized."))
+		panic(errors.ATTRIBUTE_MISMATCH_ERROR("Decision already finalized."))
 	}
 
 	updated_decision, err := service.GetDecision(id)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DATABASE_ERROR("Could not fetch updated decision."))
 	}
 
 	if updated_decision.Finalized {
 		err = service.AddUserToMailList(id, updated_decision)
 
 		if err != nil {
-			panic(errors.UnprocessableError(err.Error()))
+			panic(errors.INTERNAL_ERROR("Could not add user to mail list."))
 		}
 	}
 
@@ -160,7 +160,7 @@ func GetFilteredDecisions(w http.ResponseWriter, r *http.Request) {
 	decisions, err := service.GetFilteredDecisions(parameters)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DATABASE_ERROR("Could not retrieve filtered decisions."))
 	}
 
 	json.NewEncoder(w).Encode(decisions)
@@ -175,7 +175,7 @@ func GetDecision(w http.ResponseWriter, r *http.Request) {
 	decision, err := service.GetDecision(id)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DATABASE_ERROR("Could not get decision for the specified user."))
 	}
 
 	json.NewEncoder(w).Encode(decision)
@@ -188,7 +188,7 @@ func GetStats(w http.ResponseWriter, r *http.Request) {
 	stats, err := service.GetStats()
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.INTERNAL_ERROR("Could not get decision service statistics."))
 	}
 
 	json.NewEncoder(w).Encode(stats)

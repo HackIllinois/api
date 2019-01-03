@@ -60,7 +60,7 @@ func CreateUserRegistration(id string, user_registration models.UserRegistration
 		if err != nil {
 			return err
 		}
-		return errors.New("Registration already exists")
+		return errors.New("Registration already exists.")
 	}
 
 	err = db.Insert("attendees", &user_registration)

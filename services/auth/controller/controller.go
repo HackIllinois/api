@@ -38,7 +38,7 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 	oauth_authorization_url, err := service.GetAuthorizeRedirect(provider, client_application_url)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.AUTHORIZATION_ERROR("Could not retrieve OAuth provider authorization code URL."))
 	}
 
 	http.Redirect(w, r, oauth_authorization_url, 302)
@@ -63,55 +63,55 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	oauth_token, err := service.GetOauthToken(oauth_code.Code, provider, client_application_url)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.AUTHORIZATION_ERROR("Could not get OAuth token.\n" + err.Error()))
 	}
 
 	email, err := service.GetEmail(oauth_token, provider)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.AUTHORIZATION_ERROR("Could not fetch user's email from OAuth provider.\n" + err.Error()))
 	}
 
 	id, err := service.GetUniqueId(oauth_token, provider)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.AUTHORIZATION_ERROR("Could not fetch user's unique ID from OAuth provider.\n" + err.Error()))
 	}
 
 	roles, err := service.GetUserRoles(id, true)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.AUTHORIZATION_ERROR("Could not fetch user's API roles.\n" + err.Error()))
 	}
 
 	signed_token, err := service.MakeToken(id, email, roles)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.AUTHORIZATION_ERROR("Could not create HackIllinois API JWT for user."))
 	}
 
 	username, err := service.GetUsername(oauth_token, provider)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.AUTHORIZATION_ERROR("Could not fetch user's username from OAuth provider."))
 	}
 
 	first_name, err := service.GetFirstName(oauth_token, provider)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.AUTHORIZATION_ERROR("Could not get user's first name from OAuth provider."))
 	}
 
 	last_name, err := service.GetLastName(oauth_token, provider)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.AUTHORIZATION_ERROR("Could not get user's last name from OAuth provider."))
 	}
 
 	err = service.SendUserInfo(id, username, first_name, last_name, email)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.INTERNAL_ERROR("Could not send user information to user service."))
 	}
 
 	token := models.Token{
@@ -128,13 +128,13 @@ func GetRoles(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
 	if id == "" {
-		panic(errors.UnprocessableError("Must provide id parameter"))
+		panic(errors.MALFORMED_REQUEST_ERROR("Must provide ID parameter in request."))
 	}
 
 	roles, err := service.GetUserRoles(id, false)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.AUTHORIZATION_ERROR("Could not get user's roles."))
 	}
 
 	user_roles := models.UserRoles{
@@ -153,19 +153,19 @@ func AddRole(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&role_modification)
 
 	if role_modification.ID == "" {
-		panic(errors.UnprocessableError("Must provide id parameter"))
+		panic(errors.MALFORMED_REQUEST_ERROR("Must provide ID parameter in request."))
 	}
 
 	err := service.AddUserRole(role_modification.ID, role_modification.Role)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.INTERNAL_ERROR("Could not add user role.\n" + err.Error()))
 	}
 
 	roles, err := service.GetUserRoles(role_modification.ID, false)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.INTERNAL_ERROR("Could not get user's roles.\n" + err.Error()))
 	}
 
 	updated_roles := models.UserRoles{
@@ -184,19 +184,19 @@ func RemoveRole(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&role_modification)
 
 	if role_modification.ID == "" {
-		panic(errors.UnprocessableError("Must provide id parameter"))
+		panic(errors.MALFORMED_REQUEST_ERROR("Must provide ID parameter in request."))
 	}
 
 	err := service.RemoveUserRole(role_modification.ID, role_modification.Role)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.INTERNAL_ERROR("Could not remove user's user role.\n" + err.Error()))
 	}
 
 	roles, err := service.GetUserRoles(role_modification.ID, false)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.INTERNAL_ERROR("Could not fetch user's roles.\n" + err.Error()))
 	}
 
 	updated_roles := models.UserRoles{
@@ -219,7 +219,7 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 	user_info, err := service.GetUserInfo(id)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DATABASE_ERROR("Could not fetch user info."))
 	}
 
 	email := user_info.Email
@@ -229,7 +229,7 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 	roles, err := service.GetUserRoles(id, false)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.INTERNAL_ERROR("Could not fetch user roles.\n" + err.Error()))
 	}
 
 	// Create the new token using user ID, email, and (updated) roles.
@@ -237,7 +237,7 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 	signed_token, err := service.MakeToken(id, email, roles)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.AUTHORIZATION_ERROR("Could not make a new JWT for the user."))
 	}
 
 	new_token := models.Token{

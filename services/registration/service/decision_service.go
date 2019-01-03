@@ -37,7 +37,7 @@ func AddInitialDecision(id string) error {
 	}
 
 	if status != http.StatusOK {
-		return errors.New("Decision service failed to create decision")
+		return errors.New("Decision service failed to create decision.")
 	}
 
 	return nil

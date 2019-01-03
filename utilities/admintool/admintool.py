@@ -6,12 +6,14 @@ import os
 from apistat import stat_entry
 from apievent import event_entry
 from apiregistration import registration_entry
+from apiauth import auth_entry
 from helper import options_menu
 
 MODULES = {
 	'registration': registration_entry,
 	'event': event_entry,
-	'stat': stat_entry
+	'stat': stat_entry,
+	'auth': auth_entry
 }
 
 def main():

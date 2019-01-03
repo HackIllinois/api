@@ -3,7 +3,7 @@ import csv
 
 import api
 
-from helper import options_menu
+from helper import options_menu, dict_flatten
 
 def registration_download():
 	data, success = api.make_request('GET', '/registration/filter/')
@@ -12,7 +12,7 @@ def registration_download():
 		print('Failed to download registrations')
 		return
 
-	registrations = data['registrations']
+	registrations = [dict_flatten(reg) for reg in data['registrations']]
 	fields = registrations[0].keys()
 
 	print('Enter the csv file location to save registration')

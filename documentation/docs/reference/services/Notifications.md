@@ -8,10 +8,10 @@ Response format:
 
 ```
 {
-		"topics": [
-				"Mentors",
-				"Attendees"
-		]
+	"topics": [
+		"Mentors",
+		"Attendees"
+	]
 }
 ```
 
@@ -43,26 +43,26 @@ Response format:
 
 ```
 {
-		"notifications": [
-				{
-						"title": "Notification 1",
-						"body": "This is a notification!",
-						"time": 1541037801,
-						"topicName": "Attendee"
-				},
+	"notifications": [
 		{
-						"title": "Notification 2",
-						"body": "This is another notification!",
-						"time": 1541069201,
-						"topicName": "Attendee"
-				},
+			"title": "Notification 1",
+			"body": "This is a notification!",
+			"time": 1541037801,
+			"topicName": "Attendee"
+		},
 		{
-						"title": "Notification 3",
-						"body": "This is another notification, for another topic!",
-						"time": 1541169201,
-						"topicName": "Mentor"
-				}
-		]
+			"title": "Notification 2",
+			"body": "This is another notification!",
+			"time": 1541069201,
+			"topicName": "Attendee"
+		},
+		{
+			"title": "Notification 3",
+			"body": "This is another notification, for another topic!",
+			"time": 1541169201,
+			"topicName": "Mentor"
+		}
+	]
 }
 ```
 
@@ -74,20 +74,20 @@ Response format:
 
 ```
 {
-		"notifications": [
-				{
-						"title": "Notification 1",
-						"body": "This is a notification!",
-						"time": 1541037801,
-						"topicName": "Attendee"
-				},
+	"notifications": [
 		{
-						"title": "Notification 2",
-						"body": "This is another notification!",
-						"time": 1541069201,
-						"topicName": "Attendee"
-				}
-		]
+			"title": "Notification 1",
+			"body": "This is a notification!",
+			"time": 1541037801,
+			"topicName": "Attendee"
+		},
+	{
+			"title": "Notification 2",
+			"body": "This is another notification!",
+			"time": 1541069201,
+			"topicName": "Attendee"
+		}
+	]
 }
 ```
 
@@ -99,10 +99,10 @@ Response format:
 
 ```
 {
-		"topics": [
-				"Mentors",
-				"Attendees"
-		]
+	"topics": [
+		"Mentors",
+		"Attendees"
+	]
 }
 ```
 

@@ -31,7 +31,7 @@ var NotificationsRoutes = arbor.RouteCollection{
 		"CreateTopic",
 		"POST",
 		"/notifications/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole})).ThenFunc(CreateTopic).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(CreateTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"RegisterDeviceToUser",
@@ -49,13 +49,13 @@ var NotificationsRoutes = arbor.RouteCollection{
 		"DeleteTopic",
 		"DELETE",
 		"/notifications/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole})).ThenFunc(DeleteTopic).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(DeleteTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"PublishNotification",
 		"POST",
 		"/notifications/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole})).ThenFunc(PublishNotification).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(PublishNotification).ServeHTTP,
 	},
 	arbor.Route{
 		"AddUsersToTopic",
@@ -73,7 +73,7 @@ var NotificationsRoutes = arbor.RouteCollection{
 		"GetTopicInfo",
 		"GET",
 		"/notifications/{id}/info/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole})).ThenFunc(GetTopicInfo).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(GetTopicInfo).ServeHTTP,
 	},
 }
 

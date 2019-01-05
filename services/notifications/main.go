@@ -6,12 +6,11 @@ import (
 	"github.com/HackIllinois/api/services/notifications/controller"
 	"github.com/gorilla/mux"
 	"log"
-	"net/http"
 )
 
 func main() {
 	router := mux.NewRouter()
 	controller.SetupController(router.PathPrefix("/notifications"))
 
- 	log.Fatal(apiserver.StartServer(config.NOTIFICATIONS_PORT, router, "notifications"))
+ 	log.Fatal(apiserver.StartServer(config.NOT, router, "notifications"))
 }

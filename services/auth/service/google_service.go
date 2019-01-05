@@ -10,27 +10,27 @@ import (
 /*
 	Uses a valid oauth token to get the user's primary email
 */
-func GetGoogleEmail(oauth_token string) (string, error) {
+func GetGoogleEmail(oauth_token string) (string, bool, error) {
 	request, err := grequests.Get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json", &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization": "Bearer " + oauth_token},
 	})
 
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 
 	var user_info models.GoogleUserInfo
 	err = request.JSON(&user_info)
 
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 
 	if user_info.Email == "" {
-		return "", errors.New("Invalid oauth token")
+		return "", false, errors.New("Invalid oauth token")
 	}
 
-	return user_info.Email, nil
+	return user_info.Email, user_info.IsVerified, nil
 }
 
 /*

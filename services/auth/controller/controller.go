@@ -66,7 +66,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	email, err := service.GetEmail(oauth_token, provider)
+	email, _, err := service.GetEmail(oauth_token, provider)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))

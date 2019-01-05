@@ -479,3 +479,93 @@ func TestIsEventActive(t *testing.T) {
 
 	CleanupTestDB(t)
 }
+
+/*
+	Tests that getting event favorites works correctly at the service level
+*/
+func TestGetEventFavorites(t *testing.T) {
+	SetupTestDB(t)
+
+	event_favorites, err := service.GetEventFavorites("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_favorites := models.EventFavorites{
+		ID:     "testid",
+		Events: []string{},
+	}
+
+	if !reflect.DeepEqual(event_favorites, &expected_event_favorites) {
+		t.Errorf("Wrong tracker info. Expected %v, got %v", &expected_event_favorites, event_favorites)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests that adding event favorites works correctly at the service level
+*/
+func TestAddEventFavorite(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.AddEventFavorite("testid", "testname")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	event_favorites, err := service.GetEventFavorites("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_favorites := models.EventFavorites{
+		ID:     "testid",
+		Events: []string{"testname"},
+	}
+
+	if !reflect.DeepEqual(event_favorites, &expected_event_favorites) {
+		t.Errorf("Wrong tracker info. Expected %v, got %v", &expected_event_favorites, event_favorites)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests that removing event favorites works correctly at the service level
+*/
+func TestRemoveEventFavorite(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.AddEventFavorite("testid", "testname")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = service.RemoveEventFavorite("testid", "testname")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	event_favorites, err := service.GetEventFavorites("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_favorites := models.EventFavorites{
+		ID:     "testid",
+		Events: []string{},
+	}
+
+	if !reflect.DeepEqual(event_favorites, &expected_event_favorites) {
+		t.Errorf("Wrong tracker info. Expected %v, got %v", &expected_event_favorites, event_favorites)
+	}
+
+	CleanupTestDB(t)
+}

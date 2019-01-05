@@ -35,7 +35,6 @@ Creates an rsvp for the user with the `id` in the JWT token provided in the Auth
 Request format:
 ```
 {
-	"id": "github0000001"
 	"isAttending": true,
 }
 ```
@@ -56,7 +55,6 @@ Updated the rsvp for the user with the `id` in the JWT token provided in the Aut
 Request format:
 ```
 {
-	"id": "github0000001"
 	"isAttending": true,
 }
 ```

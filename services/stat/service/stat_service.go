@@ -3,126 +3,49 @@ package service
 import (
 	"errors"
 	"github.com/HackIllinois/api/common/apirequest"
-	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/stat/config"
 	"github.com/HackIllinois/api/services/stat/models"
 	"net/http"
 )
 
-var db database.Database
-
-func init() {
-	db_connection, err := database.InitDatabase(config.STAT_DB_HOST, config.STAT_DB_NAME)
-
-	if err != nil {
-		panic(err)
-	}
-
-	db = db_connection
-}
-
 /*
-	Returns the service with the given name
+	Retrieve stats from the specified service
 */
-func GetService(name string) (*models.Service, error) {
-	query := database.QuerySelector{
-		"name": name,
-	}
+func GetAggregatedStats(service string) (*models.Stat, error) {
+	endpoint, exists := config.STAT_ENDPOINTS[service]
 
-	var service models.Service
-	err := db.FindOne("services", query, &service)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &service, nil
-}
-
-/*
-	Registers the service with the given name
-	The service will be created if it doesn't exist
-*/
-func RegisterService(name string, service models.Service) error {
-	_, err := GetService(name)
-
-	if err == database.ErrNotFound {
-		err = db.Insert("services", &service)
-
-		return err
-	}
-
-	if err != nil {
-		return err
-	}
-
-	selector := database.QuerySelector{
-		"name": name,
-	}
-
-	err = db.Update("services", selector, &service)
-
-	return err
-}
-
-/*
-	Returns all services that were registered
-*/
-func GetAllServices() ([]models.Service, error) {
-	var services []models.Service
-	err := db.FindAll("services", database.QuerySelector{}, &services)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return services, nil
-}
-
-/*
-	Retrieve stats from a specified registered service
-*/
-func GetAggregatedStats(name string) (*models.Stat, error) {
-	service, err := GetService(name)
-
-	if err != nil {
-		return nil, err
+	if !exists {
+		return nil, errors.New("Could not find endpoint for requested stats")
 	}
 
 	var stat models.Stat
-	status, err := apirequest.Get(service.URL, &stat)
+	status, err := apirequest.Get(endpoint, &stat)
 
 	if err != nil {
 		return nil, err
 	}
 
 	if status != http.StatusOK {
-		return nil, errors.New("Could not retreive stats from registed service")
+		return nil, errors.New("Could not retreive stats from service")
 	}
 
 	return &stat, nil
 }
 
 /*
-	Retreives stats from the registered services
+	Retreives stats from all services
 	Returns a map of service name to stats
 */
 func GetAllAggregatedStats() (*models.AggregatedStat, error) {
 	stats := models.AggregatedStat{}
 
-	services, err := GetAllServices()
-
-	if err != nil {
-		return nil, err
-	}
-
-	for _, service := range services {
-		stat, err := GetAggregatedStats(service.Name)
+	for service, _ := range config.STAT_ENDPOINTS {
+		stat, err := GetAggregatedStats(service)
 
 		if err == nil {
-			stats[service.Name] = *stat
+			stats[service] = *stat
 		} else {
-			stats[service.Name] = nil
+			stats[service] = nil
 		}
 	}
 

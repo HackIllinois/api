@@ -103,3 +103,10 @@ func GetQrInfo(id string) (string, error) {
 
 	return uri.String(), nil
 }
+
+/*
+	Returns all user stats
+*/
+func GetStats() (map[string]interface{}, error) {
+	return db.GetStats("info", []string{})
+}

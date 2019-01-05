@@ -1,6 +1,8 @@
 package service
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/registration/config"
@@ -17,7 +19,18 @@ func AddInitialDecision(id string) error {
 		Status: "PENDING",
 	}
 
-	status, err := apirequest.Post(config.DECISION_SERVICE+"/decision/", &decision, nil)
+	body := bytes.Buffer{}
+	json.NewEncoder(&body).Encode(&decision)
+
+	req, err := http.NewRequest("POST", config.DECISION_SERVICE+"/decision/", &body)
+
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("HackIllinois-Identity", "registrationservice")
+
+	status, err := apirequest.Do(req, nil)
 
 	if err != nil {
 		return err

@@ -68,5 +68,145 @@
 
 	"SPARKPOST_APIKEY": "",
 
-	"IS_PRODUCTION": "false"
+	"IS_PRODUCTION": "false",
+
+	"DECISION_EXPIRATION_HOURS": "48",
+
+	"STAT_ENDPOINTS": {
+		"registration": "http://localhost:8004/registration/internal/stats/"
+	},
+
+	"REGISTRATION_STAT_FIELDS": [
+		"major",
+		"school"
+	],
+
+	"REGISTRATION_DEFINITION": {
+		"name": "mentor_registration",
+		"type": "object",
+		"validations": "required",
+		"fields": [
+			{
+				"name": "id",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "firstName",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "lastName",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "email",
+				"type": "string",
+				"validations": "required,email",
+				"fields": []
+			},
+			{
+				"name": "shirtSize",
+				"type": "string",
+				"validations": "required,oneof=S M L XL",
+				"fields": []
+			},
+			{
+				"name": "github",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "linkedin",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "age",
+				"type": "int",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "createdAt",
+				"type": "int",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "updatedAt",
+				"type": "int",
+				"validations": "required",
+				"fields": []
+			}
+		]
+	},
+	"MENTOR_REGISTRATION_DEFINITION": {
+		"name": "mentor_registration",
+		"type": "object",
+		"validations": "required",
+		"fields": [
+			{
+				"name": "id",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "firstName",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "lastName",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "email",
+				"type": "string",
+				"validations": "required,email",
+				"fields": []
+			},
+			{
+				"name": "shirtSize",
+				"type": "string",
+				"validations": "required,oneof=S M L XL",
+				"fields": []
+			},
+			{
+				"name": "github",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "linkedin",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "createdAt",
+				"type": "int",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "updatedAt",
+				"type": "int",
+				"validations": "required",
+				"fields": []
+			}
+		]
+	}
 }

@@ -48,7 +48,9 @@ release: all
 .PHONY: setup
 setup: all
 	@echo 'Generating API admin token'
+	export HI_CONFIG=file://${GOPATH}/src/github.com/HackIllinois/api/config/dev_config.json; \
 	hackillinois-utility-accountgen
+	export HI_CONFIG=file://${GOPATH}/src/github.com/HackIllinois/api/config/dev_config.json; \
 	hackillinois-utility-tokengen
 
 .PHONY: docs

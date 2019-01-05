@@ -112,7 +112,7 @@ func RemoveUserRole(id string, role string) error {
 /*
 	Automatically grant staff and admin roles based on user's verified email
 */
-func AddAutomaticRoleGrants(id string, email string, role string) error {
+func AddAutomaticRoleGrants(id string, email string) error {
 	email_components := strings.Split(email, "@")
 
 	if len(email_components) < 2 {

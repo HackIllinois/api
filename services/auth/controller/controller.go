@@ -66,7 +66,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	email, _, err := service.GetEmail(oauth_token, provider)
+	email, is_email_verified, err := service.GetEmail(oauth_token, provider)
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
@@ -82,6 +82,20 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		panic(errors.UnprocessableError(err.Error()))
+	}
+
+	if is_email_verified {
+		err = service.AddAutomaticRoleGrants(id, email)
+
+		if err != nil {
+			panic(errors.UnprocessableError(err.Error()))
+		}
+
+		roles, err = service.GetUserRoles(id, false)
+
+		if err != nil {
+			panic(errors.UnprocessableError(err.Error()))
+		}
 	}
 
 	signed_token, err := service.MakeToken(id, email, roles)

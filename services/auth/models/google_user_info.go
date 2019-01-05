@@ -6,5 +6,5 @@ type GoogleUserInfo struct {
 	Name       string `json:"name"`
 	FirstName  string `json:"given_name"`
 	LastName   string `json:"family_name"`
-	IsVerified bool   `json:"verified"`
+	IsVerified bool   `json:"verified_email"`
 }

@@ -47,6 +47,9 @@
 	"S3_REGION": "us-east-1",
 	"S3_BUCKET": "hackillinois-upload-2019",
 
+	"STAFF_DOMAIN": "hackillinois.org",
+	"SYSTEM_ADMIN_EMAIL": "systems@hackillinois.org",
+
 	"SPARKPOST_API": "https://api.sparkpost.com/api/v1",
 	"AUTH_REDIRECT_URI": "https://hackillinois.org/auth/",
 

@@ -12,5 +12,5 @@ func main() {
 	router := mux.NewRouter()
 	controller.SetupController(router.PathPrefix("/notifications"))
 
- 	log.Fatal(apiserver.StartServer(config.NOTIFICATIONS_PORT, router, "notifications"))
+	log.Fatal(apiserver.StartServer(config.NOTIFICATIONS_PORT, router, "notifications"))
 }

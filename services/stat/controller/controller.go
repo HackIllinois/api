@@ -26,7 +26,7 @@ func GetStat(w http.ResponseWriter, r *http.Request) {
 	stat, err := service.GetAggregatedStats(name)
 
 	if err != nil {
-		panic(errors.INTERNAL_ERROR(err.Error()))
+		panic(errors.InternalError(err.Error(), err.Error()))
 	}
 
 	json.NewEncoder(w).Encode(stat)
@@ -39,7 +39,7 @@ func GetAllStat(w http.ResponseWriter, r *http.Request) {
 	all_stat, err := service.GetAllAggregatedStats()
 
 	if err != nil {
-		panic(errors.INTERNAL_ERROR(err.Error()))
+		panic(errors.InternalError(err.Error(), err.Error()))
 	}
 
 	json.NewEncoder(w).Encode(all_stat)

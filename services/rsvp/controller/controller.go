@@ -30,7 +30,7 @@ func GetUserRsvp(w http.ResponseWriter, r *http.Request) {
 	rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		panic(errors.DATABASE_ERROR("Cannot get user's RSVP status."))
+		panic(errors.DatabaseError(err.Error(), "Cannot get user's RSVP status."))
 	}
 
 	json.NewEncoder(w).Encode(rsvp)
@@ -45,7 +45,7 @@ func GetCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		panic(errors.DATABASE_ERROR("Cannot get user's RSVP status."))
+		panic(errors.DatabaseError(err.Error(), "Cannot get user's RSVP status."))
 	}
 
 	json.NewEncoder(w).Encode(rsvp)
@@ -59,17 +59,17 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		panic(errors.MALFORMED_REQUEST_ERROR("Must provide ID in request."))
+		panic(errors.MalformedRequestError("Must provide ID in request.", "Must provide ID in request."))
 	}
 
 	isAccepted, err := service.IsApplicantAccepted(id)
 
 	if err != nil {
-		panic(errors.INTERNAL_ERROR(err.Error()))
+		panic(errors.InternalError(err.Error(), err.Error()))
 	}
 
 	if !isAccepted {
-		panic(errors.ATTRIBUTE_MISMATCH_ERROR("Applicant must be accepted to RSVP."))
+		panic(errors.AttributeMismatchError(err.Error(), "Applicant must be accepted to RSVP."))
 	}
 
 	var rsvp models.UserRsvp
@@ -80,28 +80,28 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	err = service.CreateUserRsvp(id, rsvp)
 
 	if err != nil {
-		panic(errors.INTERNAL_ERROR(err.Error()))
+		panic(errors.InternalError(err.Error(), err.Error()))
 	}
 
 	if rsvp.IsAttending {
 		err = service.AddAttendeeRole(id)
 
 		if err != nil {
-			panic(errors.INTERNAL_ERROR(err.Error()))
+			panic(errors.InternalError(err.Error(), err.Error()))
 		}
 	}
 
 	updated_rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		panic(errors.DATABASE_ERROR("Could not get user's RSVP."))
+		panic(errors.DatabaseError(err.Error(), "Could not get user's RSVP."))
 	}
 
 	mail_template := "rsvp_confirmation"
 	err = service.SendUserMail(id, mail_template)
 
 	if err != nil {
-		panic(errors.INTERNAL_ERROR("Could not send user RSVP confirmation mail."))
+		panic(errors.InternalError(err.Error(), "Could not send user RSVP confirmation mail."))
 	}
 
 	json.NewEncoder(w).Encode(updated_rsvp)
@@ -115,13 +115,13 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		panic(errors.MALFORMED_REQUEST_ERROR("Must provide ID in the request."))
+		panic(errors.MalformedRequestError("Must provide ID in request.", "Must provide ID in the request."))
 	}
 
 	original_rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		panic(errors.DATABASE_ERROR("Could not get user's RSVP status."))
+		panic(errors.DatabaseError(err.Error(), "Could not get user's RSVP status."))
 	}
 
 	var rsvp models.UserRsvp
@@ -132,34 +132,34 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	err = service.UpdateUserRsvp(id, rsvp)
 
 	if err != nil {
-		panic(errors.DATABASE_ERROR("Could not update user RSVP."))
+		panic(errors.DatabaseError(err.Error(), "Could not update user RSVP."))
 	}
 
 	if !original_rsvp.IsAttending && rsvp.IsAttending {
 		err = service.AddAttendeeRole(id)
 
 		if err != nil {
-			panic(errors.INTERNAL_ERROR(err.Error()))
+			panic(errors.InternalError(err.Error(), err.Error()))
 		}
 	} else if original_rsvp.IsAttending && !rsvp.IsAttending {
 		err = service.RemoveAttendeeRole(id)
 
 		if err != nil {
-			panic(errors.INTERNAL_ERROR(err.Error()))
+			panic(errors.InternalError(err.Error(), err.Error()))
 		}
 	}
 
 	updated_rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		panic(errors.DATABASE_ERROR("Could not get updated RSVP for user."))
+		panic(errors.DatabaseError(err.Error(), "Could not get updated RSVP for user."))
 	}
 
 	mail_template := "rsvp_update"
 	err = service.SendUserMail(id, mail_template)
 
 	if err != nil {
-		panic(errors.INTERNAL_ERROR("Could not send user confirmation mail for RSVP update."))
+		panic(errors.InternalError(err.Error(), "Could not send user confirmation mail for RSVP update."))
 	}
 
 	json.NewEncoder(w).Encode(updated_rsvp)
@@ -172,7 +172,7 @@ func GetStats(w http.ResponseWriter, r *http.Request) {
 	stats, err := service.GetStats()
 
 	if err != nil {
-		panic(errors.INTERNAL_ERROR("Could not get RSVP service statistics."))
+		panic(errors.InternalError(err.Error(), "Could not get RSVP service statistics."))
 	}
 
 	json.NewEncoder(w).Encode(stats)

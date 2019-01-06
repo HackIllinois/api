@@ -34,7 +34,7 @@ func GetCurrentUserInfo(w http.ResponseWriter, r *http.Request) {
 	user_info, err := service.GetUserInfo(id)
 
 	if err != nil {
-		panic(errors.DATABASE_ERROR("Could not fetch user info by ID."))
+		panic(errors.DatabaseError(err.Error(), "Could not fetch user info by ID."))
 	}
 
 	json.NewEncoder(w).Encode(user_info)
@@ -48,19 +48,19 @@ func SetUserInfo(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&user_info)
 
 	if user_info.ID == "" {
-		panic(errors.MALFORMED_REQUEST_ERROR("Must provide user ID."))
+		panic(errors.MalformedRequestError("Must provide user ID.", "Must provide user ID."))
 	}
 
 	err := service.SetUserInfo(user_info.ID, user_info)
 
 	if err != nil {
-		panic(errors.DATABASE_ERROR("Could not upsert user info."))
+		panic(errors.DatabaseError(err.Error(), "Could not upsert user info."))
 	}
 
 	updated_info, err := service.GetUserInfo(user_info.ID)
 
 	if err != nil {
-		panic(errors.DATABASE_ERROR("Could not fetch user info by ID."))
+		panic(errors.DatabaseError(err.Error(), "Could not fetch user info by ID."))
 	}
 
 	json.NewEncoder(w).Encode(updated_info)
@@ -74,7 +74,7 @@ func GetFilteredUserInfo(w http.ResponseWriter, r *http.Request) {
 	user_info, err := service.GetFilteredUserInfo(parameters)
 
 	if err != nil {
-		panic(errors.DATABASE_ERROR("Could not fetch filtered list of users."))
+		panic(errors.DatabaseError(err.Error(), "Could not fetch filtered list of users."))
 	}
 
 	json.NewEncoder(w).Encode(user_info)
@@ -89,7 +89,7 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	user_info, err := service.GetUserInfo(id)
 
 	if err != nil {
-		panic(errors.DATABASE_ERROR("Could not fetch user information by user id."))
+		panic(errors.DatabaseError(err.Error(), "Could not fetch user information by user id."))
 	}
 
 	json.NewEncoder(w).Encode(user_info)
@@ -104,7 +104,7 @@ func GetCurrentQrCodeInfo(w http.ResponseWriter, r *http.Request) {
 	uri, err := service.GetQrInfo(id)
 
 	if err != nil {
-		panic(errors.INTERNAL_ERROR("Could not parse QR code URI."))
+		panic(errors.InternalError(err.Error(), "Could not parse QR code URI."))
 	}
 
 	qr_info_container := models.QrInfoContainer{
@@ -124,7 +124,7 @@ func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {
 	uri, err := service.GetQrInfo(id)
 
 	if err != nil {
-		panic(errors.DATABASE_ERROR("Could not parse QR code URI."))
+		panic(errors.DatabaseError(err.Error(), "Could not parse QR code URI."))
 	}
 
 	qr_info_container := models.QrInfoContainer{
@@ -142,7 +142,7 @@ func GetStats(w http.ResponseWriter, r *http.Request) {
 	stats, err := service.GetStats()
 
 	if err != nil {
-		panic(errors.INTERNAL_ERROR("Could not retrieve user service statistics."))
+		panic(errors.InternalError(err.Error(), "Could not retrieve user service statistics."))
 	}
 
 	json.NewEncoder(w).Encode(stats)

@@ -25,6 +25,9 @@ var AUTH_PORT string
 
 var USER_SERVICE string
 
+var STAFF_DOMAIN string
+var SYSTEM_ADMIN_EMAIL string
+
 func init() {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
 
@@ -101,6 +104,18 @@ func init() {
 	}
 
 	USER_SERVICE, err = cfg_loader.Get("USER_SERVICE")
+
+	if err != nil {
+		panic(err)
+	}
+
+	STAFF_DOMAIN, err = cfg_loader.Get("STAFF_DOMAIN")
+
+	if err != nil {
+		panic(err)
+	}
+
+	SYSTEM_ADMIN_EMAIL, err = cfg_loader.Get("SYSTEM_ADMIN_EMAIL")
 
 	if err != nil {
 		panic(err)

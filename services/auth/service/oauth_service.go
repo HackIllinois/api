@@ -45,7 +45,7 @@ func GetAuthorizeRedirect(provider string, redirect_uri string) (string, error) 
 /*
 	Gets the user's email from the specified oauth provider
 */
-func GetEmail(oauth_token string, provider string) (string, error) {
+func GetEmail(oauth_token string, provider string) (string, bool, error) {
 	switch provider {
 	case "github":
 		return GetGithubEmail(oauth_token)
@@ -54,7 +54,7 @@ func GetEmail(oauth_token string, provider string) (string, error) {
 	case "linkedin":
 		return GetLinkedinEmail(oauth_token)
 	default:
-		return "", errors.New("Invalid provider")
+		return "", false, errors.New("Invalid provider")
 	}
 }
 

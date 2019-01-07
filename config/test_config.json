@@ -55,6 +55,9 @@
 	"ANDROID_PLATFORM_ARN": "",
 	"IOS_PLATFORM_ARN": "",
 
+	"STAFF_DOMAIN": "hackillinois.org",
+	"SYSTEM_ADMIN_EMAIL": "systems@hackillinois.org",
+
 	"SPARKPOST_API": "https://api.sparkpost.com/api/v1",
 	"AUTH_REDIRECT_URI": "https://hackillinois.org/auth/",
 

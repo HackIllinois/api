@@ -56,6 +56,9 @@
 	"ANDROID_PLATFORM_ARN": "arn:aws:sns:us-east-1:256758753660:app/GCM/android",
 	"IOS_PLATFORM_ARN": "arn:aws:sns:us-east-1:256758753660:app/GCM/android",
 
+	"STAFF_DOMAIN": "hackillinois.org",
+	"SYSTEM_ADMIN_EMAIL": "systems@hackillinois.org",
+
 	"SPARKPOST_API": "https://api.sparkpost.com/api/v1",
 	"AUTH_REDIRECT_URI": "https://hackillinois.org/auth/",
 

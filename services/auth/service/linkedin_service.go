@@ -13,7 +13,7 @@ const LINKEDIN_USER_INFO_URL = "https://api.linkedin.com/v1/people/~:(id,formatt
 /*
 	Uses a valid OAuth token to get the user's primary email.
 */
-func GetLinkedinEmail(oauth_token string) (string, error) {
+func GetLinkedinEmail(oauth_token string) (string, bool, error) {
 	request, err := grequests.Get(LINKEDIN_USER_INFO_URL, &grequests.RequestOptions{
 		Headers: map[string]string{
 			"Authorization": fmt.Sprintf("Bearer %v", oauth_token),
@@ -22,21 +22,21 @@ func GetLinkedinEmail(oauth_token string) (string, error) {
 	})
 
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 
 	var user_info models.LinkedinUserInfo
 	err = request.JSON(&user_info)
 
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 
 	if user_info.ID == "" {
-		return "", errors.New("Invalid OAuth token.")
+		return "", false, errors.New("Invalid OAuth token.")
 	}
 
-	return user_info.Email, nil
+	return user_info.Email, true, nil
 }
 
 /*

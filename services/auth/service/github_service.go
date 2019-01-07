@@ -11,29 +11,29 @@ import (
 /*
 	Uses a valid oauth token to get the user's primary email
 */
-func GetGithubEmail(oauth_token string) (string, error) {
+func GetGithubEmail(oauth_token string) (string, bool, error) {
 	request, err := grequests.Get("https://api.github.com/user/emails", &grequests.RequestOptions{
 		Headers: map[string]string{"Authorization": "token " + oauth_token},
 	})
 
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 
 	var emails []models.GithubEmail
 	err = request.JSON(&emails)
 
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 
 	for _, email := range emails {
 		if email.IsPrimary {
-			return email.Email, nil
+			return email.Email, email.IsVerified, nil
 		}
 	}
 
-	return "", errors.New("No primary email")
+	return "", false, errors.New("No primary email")
 }
 
 /*

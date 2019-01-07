@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"github.com/HackIllinois/api/common/utils"
+	"strings"
 
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/auth/config"
@@ -106,4 +107,35 @@ func RemoveUserRole(id string, role string) error {
 	})
 
 	return err
+}
+
+/*
+	Automatically grant staff and admin roles based on user's verified email
+*/
+func AddAutomaticRoleGrants(id string, email string) error {
+	email_components := strings.Split(email, "@")
+
+	if len(email_components) < 2 {
+		return errors.New("Could not parse user's email")
+	}
+
+	domain := email_components[1]
+
+	if domain == config.STAFF_DOMAIN {
+		err := AddUserRole(id, models.StaffRole)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	if email == config.SYSTEM_ADMIN_EMAIL {
+		err := AddUserRole(id, models.AdminRole)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

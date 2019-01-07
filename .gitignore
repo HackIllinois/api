@@ -3,3 +3,5 @@ build/
 *.tar
 documentation/site/
 documentation/docs/getting-started/developer-guide.md
+*.pyc
+*.csv

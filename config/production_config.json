@@ -300,5 +300,25 @@
 				"fields": []
 			}
 		]
+	},
+
+	"RSVP_DEFINITION": {
+		"name": "user_rsvp",
+		"type": "object",
+		"validations": "required",
+		"fields": [
+			{
+				"name": "id",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "isAttending",
+				"type": "boolean",
+				"validations": "required|isdefault",
+				"fields": []
+			}
+		]
 	}
 }

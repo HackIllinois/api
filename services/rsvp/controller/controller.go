@@ -3,8 +3,9 @@ package controller
 import (
 	"encoding/json"
 	"github.com/HackIllinois/api/common/errors"
-	"github.com/HackIllinois/api/services/rsvp/models"
+	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/services/rsvp/service"
+	"github.com/HackIllinois/api/services/rsvp/config"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"net/http"
@@ -76,10 +77,10 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError("Applicant decision has expired"))
 	}
 
-	var rsvp models.UserRsvp
+	rsvp := datastore.NewDataStore(config.RSVP_DEFINITION)
 	json.NewDecoder(r.Body).Decode(&rsvp)
 
-	rsvp.ID = id
+	rsvp.Data["id"] = id
 
 	err = service.CreateUserRsvp(id, rsvp)
 
@@ -87,7 +88,13 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	if rsvp.IsAttending {
+	isAttending, ok := rsvp.Data["isAttending"].(bool)
+
+	if !ok {
+		panic(errors.UnprocessableError("Failure in parsing user rsvp"))
+	}
+
+	if isAttending {
 		err = service.AddAttendeeRole(id)
 
 		if err != nil {
@@ -142,10 +149,10 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	var rsvp models.UserRsvp
+	rsvp := datastore.NewDataStore(config.RSVP_DEFINITION)
 	json.NewDecoder(r.Body).Decode(&rsvp)
 
-	rsvp.ID = id
+	rsvp.Data["id"] = id
 
 	err = service.UpdateUserRsvp(id, rsvp)
 
@@ -153,13 +160,25 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		panic(errors.UnprocessableError(err.Error()))
 	}
 
-	if !original_rsvp.IsAttending && rsvp.IsAttending {
+	wasAttending, ok := original_rsvp.Data["isAttending"].(bool)
+
+	if !ok {
+		panic(errors.UnprocessableError("Failure in parsing user rsvp"))
+	}
+
+	isAttending, ok := rsvp.Data["isAttending"].(bool)
+
+	if !ok {
+		panic(errors.UnprocessableError("Failure in parsing user rsvp"))
+	}
+
+	if !wasAttending && isAttending {
 		err = service.AddAttendeeRole(id)
 
 		if err != nil {
 			panic(errors.UnprocessableError(err.Error()))
 		}
-	} else if original_rsvp.IsAttending && !rsvp.IsAttending {
+	} else if wasAttending && !isAttending {
 		err = service.RemoveAttendeeRole(id)
 
 		if err != nil {

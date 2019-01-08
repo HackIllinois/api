@@ -2,11 +2,12 @@ package tests
 
 import (
 	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/services/rsvp/config"
-	"github.com/HackIllinois/api/services/rsvp/models"
 	"github.com/HackIllinois/api/services/rsvp/service"
 	"reflect"
 	"testing"
+	"encoding/json"
 )
 
 var db database.Database
@@ -25,10 +26,7 @@ func init() {
 	Initialize db with test user info
 */
 func SetupTestDB(t *testing.T) {
-	rsvp := models.UserRsvp{
-		ID:          "testid",
-		IsAttending: true,
-	}
+	rsvp := getBaseUserRsvp()
 
 	err := db.Insert("rsvps", &rsvp)
 
@@ -60,13 +58,10 @@ func TestGetUserRsvpService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_rsvp := models.UserRsvp{
-		ID:          "testid",
-		IsAttending: true,
-	}
+	expected_rsvp := getBaseUserRsvp()
 
-	if !reflect.DeepEqual(rsvp, &expected_rsvp) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_rsvp, rsvp)
+	if !reflect.DeepEqual(rsvp.Data["isAttending"], expected_rsvp.Data["isAttending"]) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_rsvp.Data["isAttending"], rsvp.Data["isAttending"])
 	}
 
 	CleanupTestDB(t)
@@ -78,10 +73,9 @@ func TestGetUserRsvpService(t *testing.T) {
 func TestCreateUserRsvpService(t *testing.T) {
 	SetupTestDB(t)
 
-	new_rsvp := models.UserRsvp{
-		ID:          "testid2",
-		IsAttending: false,
-	}
+	new_rsvp := getBaseUserRsvp()
+	new_rsvp.Data["id"] = "testid2"
+	new_rsvp.Data["isAttending"] = false
 
 	err := service.CreateUserRsvp("testid2", new_rsvp)
 
@@ -95,13 +89,12 @@ func TestCreateUserRsvpService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_rsvp := models.UserRsvp{
-		ID:          "testid2",
-		IsAttending: false,
-	}
+	expected_rsvp := getBaseUserRsvp()
+	expected_rsvp.Data["id"] = "testid2"
+	expected_rsvp.Data["isAttending"] = false
 
-	if !reflect.DeepEqual(rsvp, &expected_rsvp) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_rsvp, rsvp)
+	if !reflect.DeepEqual(rsvp.Data["isAttending"], expected_rsvp.Data["isAttending"]) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_rsvp.Data["isAttending"], rsvp.Data["isAttending"])
 	}
 
 	CleanupTestDB(t)
@@ -113,10 +106,8 @@ func TestCreateUserRsvpService(t *testing.T) {
 func TestUpdateUserRsvpService(t *testing.T) {
 	SetupTestDB(t)
 
-	rsvp := models.UserRsvp{
-		ID:          "testid",
-		IsAttending: false,
-	}
+	rsvp := getBaseUserRsvp()
+	rsvp.Data["isAttending"] = false
 
 	err := service.UpdateUserRsvp("testid", rsvp)
 
@@ -130,14 +121,28 @@ func TestUpdateUserRsvpService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_rsvp := models.UserRsvp{
-		ID:          "testid",
-		IsAttending: false,
-	}
+	expected_rsvp := getBaseUserRsvp()
+	expected_rsvp.Data["isAttending"] = false
 
-	if !reflect.DeepEqual(updated_rsvp, &expected_rsvp) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_rsvp, updated_rsvp)
+	if !reflect.DeepEqual(updated_rsvp.Data["isAttending"], expected_rsvp.Data["isAttending"]) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_rsvp.Data["isAttending"], updated_rsvp.Data["isAttending"])
 	}
 
 	CleanupTestDB(t)
 }
+
+/*
+	Returns a basic user registration
+*/
+func getBaseUserRsvp() datastore.DataStore {
+	base_user_rsvp := datastore.NewDataStore(config.RSVP_DEFINITION)
+	json.Unmarshal([]byte(user_rsvp_data), &base_user_rsvp)
+	return base_user_rsvp
+}
+
+var user_rsvp_data string = `
+{
+	"id": "testid",
+	"isAttending": true
+}
+`

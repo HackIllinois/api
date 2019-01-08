@@ -1,13 +1,13 @@
 package tests
 
 import (
+	"encoding/json"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/services/rsvp/config"
 	"github.com/HackIllinois/api/services/rsvp/service"
 	"reflect"
 	"testing"
-	"encoding/json"
 )
 
 var db database.Database

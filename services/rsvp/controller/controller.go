@@ -62,7 +62,7 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		panic(errors.MalformedRequestError("Must provide ID in request.", "Must provide ID in request."))
 	}
 
-	isAccepted, err := service.IsApplicantAccepted(id)
+	isAccepted, isActive, err := service.IsApplicantAcceptedAndActive(id)
 
 	if err != nil {
 		panic(errors.InternalError(err.Error(), err.Error()))
@@ -70,6 +70,10 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 
 	if !isAccepted {
 		panic(errors.AttributeMismatchError(err.Error(), "Applicant must be accepted to RSVP."))
+	}
+
+	if !isActive {
+		panic(errors.AttributeMismatchError("Applicant decision has expired.", "Applicant decision has expired."))
 	}
 
 	var rsvp models.UserRsvp
@@ -116,6 +120,20 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 
 	if id == "" {
 		panic(errors.MalformedRequestError("Must provide ID in request.", "Must provide ID in the request."))
+	}
+
+	isAccepted, isActive, err := service.IsApplicantAcceptedAndActive(id)
+
+	if err != nil {
+		panic(errors.InternalError(err.Error(), "Could not determine if applicant was accepted and/or decision expiration status."))
+	}
+
+	if !isAccepted {
+		panic(errors.AttributeMismatchError("Applicant must be accepted to modify RSVP.", "Applicant must be accepted to modify RSVP."))
+	}
+
+	if !isActive {
+		panic(errors.AttributeMismatchError("Cannot modify RSVP, applicant decision has expired.", "Cannot modify RSVP, applicant decision has expired."))
 	}
 
 	original_rsvp, err := service.GetUserRsvp(id)

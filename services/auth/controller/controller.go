@@ -63,25 +63,39 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	oauth_token, err := service.GetOauthToken(oauth_code.Code, provider, client_application_url)
 
 	if err != nil {
-		panic(errors.AuthorizationError(err.Error(), "Could not get OAuth token.\n"+err.Error()))
+		panic(errors.AuthorizationError(err.Error(), "Could not get OAuth token.\n"))
 	}
 
-	email, err := service.GetEmail(oauth_token, provider)
+	email, is_email_verified, err := service.GetEmail(oauth_token, provider)
 
 	if err != nil {
-		panic(errors.AuthorizationError(err.Error(), "Could not fetch user's email from OAuth provider.\n"+err.Error()))
+		panic(errors.AuthorizationError(err.Error(), "Could not fetch user's email from OAuth provider."))
 	}
 
 	id, err := service.GetUniqueId(oauth_token, provider)
 
 	if err != nil {
-		panic(errors.AuthorizationError(err.Error(), "Could not fetch user's unique ID from OAuth provider.\n"+err.Error()))
+		panic(errors.AuthorizationError(err.Error(), "Could not fetch user's unique ID from OAuth provider."))
 	}
 
 	roles, err := service.GetUserRoles(id, true)
 
 	if err != nil {
-		panic(errors.AuthorizationError(err.Error(), "Could not fetch user's API roles.\n"+err.Error()))
+		panic(errors.AuthorizationError(err.Error(), "Could not fetch user's API roles."))
+	}
+
+	if is_email_verified {
+		err = service.AddAutomaticRoleGrants(id, email)
+
+		if err != nil {
+			panic(errors.AuthorizationError(err.Error(), "Could not automatically grant roles to user (based on verified email domain)."))
+		}
+
+		roles, err = service.GetUserRoles(id, false)
+
+		if err != nil {
+			panic(errors.AuthorizationError(err.Error(), "Could not determine user roles, after automatic role grants."))
+		}
 	}
 
 	signed_token, err := service.MakeToken(id, email, roles)
@@ -159,13 +173,13 @@ func AddRole(w http.ResponseWriter, r *http.Request) {
 	err := service.AddUserRole(role_modification.ID, role_modification.Role)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not add user role.\n"+err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not add user role."))
 	}
 
 	roles, err := service.GetUserRoles(role_modification.ID, false)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not get user's roles.\n"+err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not get user's roles."))
 	}
 
 	updated_roles := models.UserRoles{
@@ -190,13 +204,13 @@ func RemoveRole(w http.ResponseWriter, r *http.Request) {
 	err := service.RemoveUserRole(role_modification.ID, role_modification.Role)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not remove user's user role.\n"+err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not remove user's user role."))
 	}
 
 	roles, err := service.GetUserRoles(role_modification.ID, false)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not fetch user's roles.\n"+err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not fetch user's roles."))
 	}
 
 	updated_roles := models.UserRoles{
@@ -229,7 +243,7 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 	roles, err := service.GetUserRoles(id, false)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not fetch user roles.\n"+err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not fetch user roles."))
 	}
 
 	// Create the new token using user ID, email, and (updated) roles.

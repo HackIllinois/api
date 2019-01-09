@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/event/config"
 	"github.com/HackIllinois/api/services/event/models"
 	"gopkg.in/go-playground/validator.v9"
@@ -320,6 +321,95 @@ func IsEventActive(event_name string) (bool, error) {
 	} else {
 		return current_time < end_time, nil
 	}
+}
+
+/*
+	Returns the event favorites for the user with the given id
+*/
+func GetEventFavorites(id string) (*models.EventFavorites, error) {
+	query := database.QuerySelector{
+		"id": id,
+	}
+
+	var event_favorites models.EventFavorites
+	err := db.FindOne("favorites", query, &event_favorites)
+
+	if err != nil {
+		if err == database.ErrNotFound {
+			err = db.Insert("favorites", &models.EventFavorites{
+				ID:     id,
+				Events: []string{},
+			})
+
+			if err != nil {
+				return nil, err
+			}
+
+			err = db.FindOne("favorites", query, &event_favorites)
+
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, err
+		}
+	}
+
+	return &event_favorites, nil
+}
+
+/*
+	Adds the given event to the favorites for the user with the given id
+*/
+func AddEventFavorite(id string, event string) error {
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	_, err := GetEvent(event)
+
+	if err != nil {
+		return errors.New("Could not find event with the given name.")
+	}
+
+	event_favorites, err := GetEventFavorites(id)
+
+	if err != nil {
+		return err
+	}
+
+	if !slice_utils.ContainsString(event_favorites.Events, event) {
+		event_favorites.Events = append(event_favorites.Events, event)
+	}
+
+	err = db.Update("favorites", selector, event_favorites)
+
+	return err
+}
+
+/*
+	Removes the given event to the favorites for the user with the given id
+*/
+func RemoveEventFavorite(id string, event string) error {
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	event_favorites, err := GetEventFavorites(id)
+
+	if err != nil {
+		return err
+	}
+
+	event_favorites.Events, err = slice_utils.RemoveString(event_favorites.Events, event)
+
+	if err != nil {
+		return errors.New("User's event favorites does not have specified event")
+	}
+
+	err = db.Update("favorites", selector, event_favorites)
+
+	return err
 }
 
 /*

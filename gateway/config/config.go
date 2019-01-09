@@ -22,6 +22,7 @@ var UPLOAD_SERVICE string
 var MAIL_SERVICE string
 var EVENT_SERVICE string
 var STAT_SERVICE string
+var NOTIFICATIONS_SERVICE string
 
 func init() {
 
@@ -92,6 +93,12 @@ func init() {
 	}
 
 	STAT_SERVICE, err = cfg_loader.Get("STAT_SERVICE")
+
+	if err != nil {
+		panic(err)
+	}
+
+	NOTIFICATIONS_SERVICE, err = cfg_loader.Get("NOTIFICATIONS_SERVICE")
 
 	if err != nil {
 		panic(err)

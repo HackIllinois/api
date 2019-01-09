@@ -24,6 +24,7 @@ hackillinois-api-upload &
 hackillinois-api-mail &
 hackillinois-api-event &
 hackillinois-api-stat &
+hackillinois-api-notifications &
 
 hackillinois-api-gateway -u &
 

@@ -4,7 +4,6 @@ import (
 	"github.com/HackIllinois/api/common/configloader"
 	"github.com/HackIllinois/api/common/errors"
 	"os"
-	"strings"
 )
 
 var IS_PRODUCTION bool
@@ -14,22 +13,22 @@ func init() {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not load from config file."))
+		panic(err)
 	}
 
 	production, err := cfg_loader.Get("IS_PRODUCTION")
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not get variable IS_PRODUCTION from configloader."))
+		panic(err)
 	}
 
-	IS_PRODUCTION = (strings.ToLower(production) == "true")
+	IS_PRODUCTION = production == "true"
 
 	debug_mode, err := cfg_loader.Get("DEBUG_MODE")
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not get variable DEBUG_MODE from configloader."))
+		panic(err)
 	}
 
-	DEBUG_MODE = (strings.ToLower(debug_mode) == "true")
+	DEBUG_MODE = debug_mode == "true"
 }

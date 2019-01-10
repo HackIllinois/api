@@ -14,7 +14,7 @@ Our persistence layer consists of a [MongoDB](https://mongodb.com) database, whi
 
 ##  Errors
 
-Setting the DEBUG_MODE to "true" (case-insensitive) in the config file allows raw error messages (if applicable) to be passed through to the client. Otherwise, the raw error is suppressed.
+Setting the DEBUG_MODE to "true" in the config file allows raw error messages (if applicable) to be passed through to the client. Otherwise, the raw error is suppressed.
 
 Errors are classified into the following types:
 

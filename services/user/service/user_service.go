@@ -74,6 +74,7 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 
 	var filtered_users models.FilteredUsers
 	err := db.FindAll("info", query, &filtered_users.Users)
+
 	if err != nil {
 		return nil, err
 	}
@@ -85,6 +86,11 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 	Generates a QR string for a user with the provided ID, as a URI
 */
 func GetQrInfo(id string) (string, error) {
+	_, err := GetUserInfo(id)
+
+	if err != nil {
+		return "", errors.New("User does not exist.")
+	}
 
 	// Construct the URI
 

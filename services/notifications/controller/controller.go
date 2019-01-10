@@ -32,7 +32,7 @@ func GetAllTopics(w http.ResponseWriter, r *http.Request) {
 	topics, err := service.GetAllTopics()
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not get all SNS topics."))
 	}
 
 	json.NewEncoder(w).Encode(topics)
@@ -45,7 +45,7 @@ func GetAllNotifications(w http.ResponseWriter, r *http.Request) {
 	notifications_list, err := service.GetAllNotifications()
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not get all past notifications."))
 	}
 
 	json.NewEncoder(w).Encode(notifications_list)
@@ -61,7 +61,7 @@ func CreateTopic(w http.ResponseWriter, r *http.Request) {
 	err := service.CreateTopic(topic_name.Name)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not create a new SNS topic."))
 	}
 
 	json.NewEncoder(w).Encode(topic_name)
@@ -76,13 +76,13 @@ func DeleteTopic(w http.ResponseWriter, r *http.Request) {
 	err := service.DeleteTopic(topic_name)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not delete topic."))
 	}
 
 	topics, err := service.GetAllTopics()
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not fetch updated topics."))
 	}
 
 	json.NewEncoder(w).Encode(topics)
@@ -99,7 +99,7 @@ func PublishNotification(w http.ResponseWriter, r *http.Request) {
 	past_notification, err := service.PublishNotification(topic_name, notification)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not publish new notification."))
 	}
 
 	json.NewEncoder(w).Encode(past_notification)
@@ -114,7 +114,7 @@ func GetNotificationsForTopic(w http.ResponseWriter, r *http.Request) {
 	notifications_list, err := service.GetNotificationsForTopic(topic_name)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not get all past notifications for the given topic."))
 	}
 
 	json.NewEncoder(w).Encode(notifications_list)
@@ -129,7 +129,7 @@ func GetTopicInfo(w http.ResponseWriter, r *http.Request) {
 	topic, err := service.GetTopicInfo(topic_name)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not get name / ARN for topic."))
 	}
 
 	var topic_public models.TopicPublic
@@ -152,13 +152,13 @@ func AddUsersToTopic(w http.ResponseWriter, r *http.Request) {
 	err := service.AddUsersToTopic(topic_name, userid_list)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not add users to specified topic."))
 	}
 
 	topic, err := service.GetTopicInfo(topic_name)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not get name / ARN for topic."))
 	}
 
 	var topic_public models.TopicPublic
@@ -181,13 +181,13 @@ func RemoveUsersFromTopic(w http.ResponseWriter, r *http.Request) {
 	err := service.RemoveUsersFromTopic(topic_name, userid_list)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not remove given users from topic."))
 	}
 
 	topic, err := service.GetTopicInfo(topic_name)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not get name / ARN for topic."))
 	}
 
 	var topic_public models.TopicPublic
@@ -205,7 +205,7 @@ func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		panic(errors.UnprocessableError("Must provide userid"))
+		panic(errors.MalformedRequestError("Must provide id to register a device token with.", "Must provide id to register a device token with."))
 	}
 
 	var device_registration models.DeviceRegistration
@@ -214,7 +214,7 @@ func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
 	err := service.RegisterDeviceToUser(id, device_registration)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not register device to user."))
 	}
 
 	json.NewEncoder(w).Encode(device_registration)

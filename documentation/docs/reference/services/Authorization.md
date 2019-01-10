@@ -35,7 +35,7 @@ Response format:
 }
 ```
 GET /auth/roles/USERID/
---------------------------
+-----------------------
 
 Gets the roles of the user with the id `USERID`.
 
@@ -50,6 +50,7 @@ Response format:
 ```
 
 PUT /auth/roles/add/
+--------------------
 
 Adds the given `role` to the user with the given `id`. The updated user's roles will be returned.
 
@@ -74,6 +75,7 @@ Response format:
 ```
 
 PUT /auth/roles/remove/
+-----------------------
 
 Removes the given `role` from the user with the given `id`. The updated user's roles will be returned.
 
@@ -96,7 +98,7 @@ Response format:
 ```
 
 GET /auth/token/refresh/
------------------
+------------------------
 
 Creates a new JWT for the current user. This is useful when the user's roles change, and the updated roles need to be encoded into a new JWT, such as during registration.
 

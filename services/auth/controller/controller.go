@@ -63,7 +63,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	oauth_token, err := service.GetOauthToken(oauth_code.Code, provider, client_application_url)
 
 	if err != nil {
-		panic(errors.AuthorizationError(err.Error(), "Could not get OAuth token.\n"))
+		panic(errors.AuthorizationError(err.Error(), "Could not get OAuth token."))
 	}
 
 	email, is_email_verified, err := service.GetEmail(oauth_token, provider)
@@ -142,7 +142,7 @@ func GetRoles(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
 	if id == "" {
-		panic(errors.MalformedRequestError("Must provide ID parameter in request.", "Must provide ID parameter in request."))
+		panic(errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
 	}
 
 	roles, err := service.GetUserRoles(id, false)
@@ -167,7 +167,7 @@ func AddRole(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&role_modification)
 
 	if role_modification.ID == "" {
-		panic(errors.MalformedRequestError("Must provide ID parameter in request.", "Must provide ID parameter in request."))
+		panic(errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
 	}
 
 	err := service.AddUserRole(role_modification.ID, role_modification.Role)
@@ -198,7 +198,7 @@ func RemoveRole(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&role_modification)
 
 	if role_modification.ID == "" {
-		panic(errors.MalformedRequestError("Must provide ID parameter in request.", "Must provide ID parameter in request."))
+		panic(errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
 	}
 
 	err := service.RemoveUserRole(role_modification.ID, role_modification.Role)

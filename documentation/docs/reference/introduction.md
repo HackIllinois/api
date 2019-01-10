@@ -14,7 +14,7 @@ Our persistence layer consists of a [MongoDB](https://mongodb.com) database, whi
 
 ##  Errors
 
-Setting the DEBUG_MODE environment variable to true (case-insensitive) allows raw error messages (if applicable) to be passed through to the client. Otherwise, the raw error is suppressed.
+Setting the DEBUG_MODE to "true" (case-insensitive) in the config file allows raw error messages (if applicable) to be passed through to the client. Otherwise, the raw error is suppressed.
 
 Errors are classified into the following types:
 
@@ -26,4 +26,6 @@ Errors are classified into the following types:
 
 4. **AttributeMismatchError** - When an action is performed on a user who is missing some attribute, such as when a check-in (without override) is attempted for a user who doesn't have a registration or RSVP, modifying a decision on a candidate (hacker) whose decision has already been finalized by a senior staff member etc. 
 
-5. **InternalError** - When the cause of error can't be determined, or there could be multiple causes. Using DEBUG_MODE to get the raw error is highly recommended to expedite bug resolution.
+5. **InternalError** - When there could be multiple possible causes of the error, this is what we use. Using DEBUG_MODE to get the raw error is highly recommended to expedite bug resolution.
+
+6. **UnknownError** - When the cause of an error cannot be identified.

@@ -205,7 +205,7 @@ func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		panic(errors.MalformedRequestError("Must provide ID to register a device token with.", "Must provide ID to register a device token with."))
+		panic(errors.MalformedRequestError("Must provide id to register a device token with.", "Must provide id to register a device token with."))
 	}
 
 	var device_registration models.DeviceRegistration

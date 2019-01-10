@@ -59,7 +59,7 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		panic(errors.MalformedRequestError("Must provide ID in request.", "Must provide ID in request."))
+		panic(errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 	}
 
 	isAccepted, isActive, err := service.IsApplicantAcceptedAndActive(id)
@@ -69,7 +69,7 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isAccepted {
-		panic(errors.AttributeMismatchError(err.Error(), "Applicant must be accepted to RSVP."))
+		panic(errors.AttributeMismatchError("Applicant not accepted.", "Applicant must be accepted to RSVP."))
 	}
 
 	if !isActive {
@@ -91,7 +91,7 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		err = service.AddAttendeeRole(id)
 
 		if err != nil {
-			panic(errors.InternalError(err.Error(), err.Error()))
+			panic(errors.AuthorizationError(err.Error(), "Could not add Attendee role to applicant."))
 		}
 	}
 
@@ -119,7 +119,7 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		panic(errors.MalformedRequestError("Must provide ID in request.", "Must provide ID in the request."))
+		panic(errors.MalformedRequestError("Must provide id in request.", "Must provide id in the request."))
 	}
 
 	isAccepted, isActive, err := service.IsApplicantAcceptedAndActive(id)

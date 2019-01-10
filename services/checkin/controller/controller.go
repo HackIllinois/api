@@ -66,7 +66,7 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !can_user_checkin {
-		panic(errors.AttributeMismatchError(err.Error(), "Attendee must be RSVPed to check-in (or have a staff override)."))
+		panic(errors.AttributeMismatchError("Reasons for not being able to check-in include: no RSVP, no staff override (in case of no RSVP), or check-ins are not allowed at this time.", "Attendee is not allowed to check-in."))
 	}
 
 	err = service.CreateUserCheckin(user_checkin.ID, user_checkin)
@@ -85,7 +85,7 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 		err = service.AddAttendeeRole(updated_checkin.ID)
 
 		if err != nil {
-			panic(errors.InternalError(err.Error(), "Could not add attendee role to user.\n"+err.Error()))
+			panic(errors.AuthorizationError(err.Error(), "Could not add attendee role to user."))
 		}
 	}
 
@@ -115,7 +115,7 @@ func UpdateUserCheckin(w http.ResponseWriter, r *http.Request) {
 		err = service.AddAttendeeRole(updated_checkin.ID)
 
 		if err != nil {
-			panic(errors.InternalError(err.Error(), "Could not add attendee role.\n"+err.Error()))
+			panic(errors.AuthorizationError(err.Error(), "Could not add attendee role."))
 		}
 	}
 

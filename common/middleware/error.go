@@ -3,10 +3,9 @@ package middleware
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/HackIllinois/api/common/config"
 	"github.com/HackIllinois/api/common/errors"
 	"net/http"
-	"os"
-	"strings"
 )
 
 type ErrorLogEntry struct {
@@ -52,10 +51,8 @@ func handleApiError(err errors.ApiError, w http.ResponseWriter, r *http.Request)
 
 	w.WriteHeader(err.Status)
 
-	mode, is_mode_set := os.LookupEnv("DEBUG_MODE")
-
 	// Strip the raw error string if we're not in debug mode
-	if !is_mode_set || (is_mode_set && strings.ToLower(mode) != "true") {
+	if config.DEBUG_MODE {
 		err.RawError = ""
 	}
 
@@ -67,5 +64,7 @@ func handleUnknownError(err interface{}, w http.ResponseWriter, r *http.Request)
 
 	w.WriteHeader(http.StatusInternalServerError)
 
-	json.NewEncoder(w).Encode(errors.ApiError{Status: http.StatusInternalServerError, Type: "UNKNOWN_ERROR", Message: err.(string), RawError: ""})
+	err_string := fmt.Sprintf("%v", err)
+
+	json.NewEncoder(w).Encode(errors.UnknownError(err_string, err_string))
 }

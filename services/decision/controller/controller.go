@@ -58,7 +58,7 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&decision)
 
 	if decision.ID == "" {
-		panic(errors.MalformedRequestError("Must provide ID parameter in request.", "Must provide ID parameter in request."))
+		panic(errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
 	}
 
 	has_decision, err := service.HasDecision(decision.ID)
@@ -75,7 +75,7 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if existing_decision_history.Finalized {
-			panic(errors.AttributeMismatchError(err.Error(), "Cannot modify finalized decisions."))
+			panic(errors.AttributeMismatchError("Cannot modify finalized decisions.", "Cannot modify finalized decisions."))
 		}
 	}
 
@@ -110,7 +110,7 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	id := decision_finalized.ID
 
 	if id == "" {
-		panic(errors.MalformedRequestError("Must provide ID parameter to retrieve current decision.", "Must provide ID parameter to retrieve current decision."))
+		panic(errors.MalformedRequestError("Must provide id parameter to retrieve current decision.", "Must provide id parameter to retrieve current decision."))
 	}
 
 	// Assuming we are working on the specified user's decision
@@ -132,7 +132,7 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 			panic(errors.InternalError(err.Error(), "Error updating the decision, in an attempt to finalize it."))
 		}
 	} else {
-		panic(errors.AttributeMismatchError(err.Error(), "Decision already finalized."))
+		panic(errors.AttributeMismatchError("Decision already finalized.", "Decision already finalized."))
 	}
 
 	updated_decision, err := service.GetDecision(id)

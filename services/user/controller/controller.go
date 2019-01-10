@@ -48,7 +48,7 @@ func SetUserInfo(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&user_info)
 
 	if user_info.ID == "" {
-		panic(errors.MalformedRequestError("Must provide user ID.", "Must provide user ID."))
+		panic(errors.MalformedRequestError("Must provide user id in request.", "Must provide user id in request."))
 	}
 
 	err := service.SetUserInfo(user_info.ID, user_info)

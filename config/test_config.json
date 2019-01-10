@@ -73,6 +73,8 @@
 
 	"IS_PRODUCTION": "false",
 
+	"DEBUG_MODE": "true",
+
 	"DECISION_EXPIRATION_HOURS": "48",
 
 	"STAT_ENDPOINTS": {

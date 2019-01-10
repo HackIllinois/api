@@ -95,7 +95,7 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		panic(errors.MalformedRequestError("Must provide ID in request.", "Must provide ID in request."))
+		panic(errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 	}
 
 	user_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
@@ -124,19 +124,19 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	err = service.CreateUserRegistration(id, user_registration)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not create user registration.\n"+err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not create user registration."))
 	}
 
 	err = service.AddApplicantRole(id)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not add applicant role.\n"+err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not add applicant role."))
 	}
 
 	err = service.AddInitialDecision(id)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not add initial decision.\n"+err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not add initial decision."))
 	}
 
 	updated_registration, err := service.GetUserRegistration(id)
@@ -172,7 +172,7 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		panic(errors.MalformedRequestError("Must provide ID in request.", "Must provide ID in request."))
+		panic(errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 	}
 
 	user_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
@@ -207,7 +207,7 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	err = service.UpdateUserRegistration(id, user_registration)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not update user's registration.\n"+err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not update user's registration."))
 	}
 
 	updated_registration, err := service.GetUserRegistration(id)
@@ -234,7 +234,7 @@ func GetFilteredUserRegistrations(w http.ResponseWriter, r *http.Request) {
 	user_registrations, err := service.GetFilteredUserRegistrations(parameters)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get filtered user registrations.\n"+err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not get filtered user registrations."))
 	}
 
 	json.NewEncoder(w).Encode(user_registrations)
@@ -262,7 +262,7 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		panic(errors.MalformedRequestError("Must provide ID in request.", "Must provide ID in request."))
+		panic(errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 	}
 
 	mentor_registration := datastore.NewDataStore(config.MENTOR_REGISTRATION_DEFINITION)
@@ -291,13 +291,13 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	err = service.CreateMentorRegistration(id, mentor_registration)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not create mentor registration.\n"+err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not create mentor registration."))
 	}
 
 	err = service.AddMentorRole(id)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not add mentor role.\n"+err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not add mentor role."))
 	}
 
 	updated_registration, err := service.GetMentorRegistration(id)
@@ -316,7 +316,7 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		panic(errors.MalformedRequestError("Must provide ID in request.", "Must provide ID in request."))
+		panic(errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 	}
 
 	mentor_registration := datastore.NewDataStore(config.MENTOR_REGISTRATION_DEFINITION)
@@ -351,7 +351,7 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	err = service.UpdateMentorRegistration(id, mentor_registration)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not update mentor registration.\n"+err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not update mentor registration."))
 	}
 
 	updated_registration, err := service.GetMentorRegistration(id)

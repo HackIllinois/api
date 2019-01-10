@@ -21,6 +21,7 @@
 	"MAIL_PORT": ":8009",
 	"EVENT_PORT": ":8010",
 	"STAT_PORT": ":8011",
+	"NOTIFICATIONS_PORT": ":8012",
 
 	"AUTH_DB_NAME": "auth",
 	"USER_DB_NAME": "user",
@@ -32,9 +33,12 @@
 	"MAIL_DB_NAME": "mail",
 	"EVENT_DB_NAME": "event",
 	"STAT_DB_NAME": "stat",
+	"NOTIFICATIONS_DB_NAME": "notifications",
 
 	"S3_REGION": "us-east-1",
 	"S3_BUCKET": "hackillinois-upload-2019",
+
+	"SNS_REGION": "us-east-1",
 
 	"STAFF_DOMAIN": "hackillinois.org",
 	"SYSTEM_ADMIN_EMAIL": "systems@hackillinois.org",
@@ -43,6 +47,8 @@
 	"AUTH_REDIRECT_URI": "https://hackillinois.org/auth/",
 
 	"IS_PRODUCTION": "true",
+
+	"DEBUG_MODE": "false",
 
 	"DECISION_EXPIRATION_HOURS": "48",
 

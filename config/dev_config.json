@@ -9,6 +9,7 @@
 	"MAIL_SERVICE": "http://localhost:8009",
 	"EVENT_SERVICE": "http://localhost:8010",
 	"STAT_SERVICE": "http://localhost:8011",
+	"NOTIFICATIONS_SERVICE": "http://localhost:8012",
 
 	"GATEWAY_PORT": "8000",
 	"AUTH_PORT": ":8002",
@@ -21,6 +22,7 @@
 	"MAIL_PORT": ":8009",
 	"EVENT_PORT": ":8010",
 	"STAT_PORT": ":8011",
+	"NOTIFICATIONS_PORT": ":8012",
 
 	"AUTH_DB_HOST": "localhost",
 	"USER_DB_HOST": "localhost",
@@ -32,6 +34,7 @@
 	"MAIL_DB_HOST": "localhost",
 	"EVENT_DB_HOST": "localhost",
 	"STAT_DB_HOST": "localhost",
+	"NOTIFICATIONS_DB_HOST": "localhost",
 
 	"AUTH_DB_NAME": "auth",
 	"USER_DB_NAME": "user",
@@ -43,9 +46,15 @@
 	"MAIL_DB_NAME": "mail",
 	"EVENT_DB_NAME": "event",
 	"STAT_DB_NAME": "stat",
+	"NOTIFICATIONS_DB_NAME": "notifications",
 
 	"S3_REGION": "us-east-1",
 	"S3_BUCKET": "hackillinois-upload-2019",
+
+	"SNS_REGION": "us-east-1",
+
+	"ANDROID_PLATFORM_ARN": "",
+	"IOS_PLATFORM_ARN": "",
 
 	"STAFF_DOMAIN": "hackillinois.org",
 	"SYSTEM_ADMIN_EMAIL": "systems@hackillinois.org",
@@ -64,6 +73,8 @@
 	"SPARKPOST_APIKEY": "",
 
 	"IS_PRODUCTION": "false",
+
+	"DEBUG_MODE": "true",
 
 	"DECISION_EXPIRATION_HOURS": "48",
 

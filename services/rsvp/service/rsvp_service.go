@@ -47,7 +47,7 @@ func CreateUserRsvp(id string, rsvp models.UserRsvp) error {
 		if err != nil {
 			return err
 		}
-		return errors.New("Rsvp already exists")
+		return errors.New("RSVP already exists.")
 	}
 
 	err = db.Insert("rsvps", &rsvp)

@@ -35,7 +35,7 @@ func AddRole(id string, role models.Role) error {
 	}
 
 	if status != http.StatusOK {
-		return errors.New("Auth service failed to update roles")
+		return errors.New("Auth service failed to update roles.")
 	}
 
 	return nil

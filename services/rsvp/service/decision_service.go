@@ -21,7 +21,7 @@ func IsApplicantAcceptedAndActive(id string) (bool, bool, error) {
 	}
 
 	if status != http.StatusOK {
-		return false, false, errors.New("Decision service failed to return status")
+		return false, false, errors.New("Decision service failed to return status.")
 	}
 
 	return decision.Status == "ACCEPTED" && decision.Finalized, time.Now().Unix() < decision.Timestamp+HoursToUnixSeconds(config.DECISION_EXPIRATION_HOURS), nil

@@ -26,7 +26,7 @@ func GetUserResume(w http.ResponseWriter, r *http.Request) {
 	resume, err := service.GetUserResumeLink(id)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.InternalError(err.Error(), "(S3) Cannot fetch user resume link."))
 	}
 
 	json.NewEncoder(w).Encode(resume)
@@ -41,7 +41,7 @@ func GetCurrentUserResume(w http.ResponseWriter, r *http.Request) {
 	resume, err := service.GetUserResumeLink(id)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.InternalError(err.Error(), "(S3) Cannot fetch user resume link."))
 	}
 
 	json.NewEncoder(w).Encode(resume)
@@ -56,7 +56,7 @@ func GetUpdateUserResume(w http.ResponseWriter, r *http.Request) {
 	resume, err := service.GetUpdateUserResumeLink(id)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.InternalError(err.Error(), "(S3) Cannot get/update user's resume."))
 	}
 
 	json.NewEncoder(w).Encode(resume)

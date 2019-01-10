@@ -21,7 +21,7 @@ func init() {
 		panic(err)
 	}
 
-	IS_PRODUCTION = production == "true"
+	IS_PRODUCTION = (production == "true")
 
 	debug_mode, err := cfg_loader.Get("DEBUG_MODE")
 
@@ -29,5 +29,5 @@ func init() {
 		panic(err)
 	}
 
-	DEBUG_MODE = debug_mode == "true"
+	DEBUG_MODE = (debug_mode == "true")
 }

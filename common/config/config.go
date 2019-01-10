@@ -2,7 +2,6 @@ package config
 
 import (
 	"github.com/HackIllinois/api/common/configloader"
-	"github.com/HackIllinois/api/common/errors"
 	"os"
 )
 

@@ -164,13 +164,13 @@ func MarkUserAsAttendingEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !is_checkedin {
-		panic(errors.AttributeMismatchError("User must be checked-in to attend event. ", "User must be checked-in to attend event."))
+		panic(errors.AttributeMismatchError("User must be checked-in to attend event.", "User must be checked-in to attend event."))
 	}
 
 	err = service.MarkUserAsAttendingEvent(tracking_info.EventName, tracking_info.UserID)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not mark user as attending the event."))
 	}
 
 	event_tracker, err := service.GetEventTracker(tracking_info.EventName)

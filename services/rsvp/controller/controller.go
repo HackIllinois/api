@@ -65,7 +65,7 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	isAccepted, isActive, err := service.IsApplicantAcceptedAndActive(id)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not determine status of applicant decision, which is needed to create an RSVP for the user."))
 	}
 
 	if !isAccepted {
@@ -84,7 +84,7 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	err = service.CreateUserRsvp(id, rsvp)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not create an RSVP for the user."))
 	}
 
 	if rsvp.IsAttending {
@@ -157,13 +157,13 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		err = service.AddAttendeeRole(id)
 
 		if err != nil {
-			panic(errors.InternalError(err.Error(), err.Error()))
+			panic(errors.AuthorizationError(err.Error(), "Could not add Attendee role to user."))
 		}
 	} else if original_rsvp.IsAttending && !rsvp.IsAttending {
 		err = service.RemoveAttendeeRole(id)
 
 		if err != nil {
-			panic(errors.InternalError(err.Error(), err.Error()))
+			panic(errors.InternalError(err.Error(), "Could not remove Attendee role from user."))
 		}
 	}
 

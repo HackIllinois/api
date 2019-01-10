@@ -66,7 +66,7 @@ func CreateMailList(w http.ResponseWriter, r *http.Request) {
 	err := service.CreateMailList(mail_list)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not create the specified mail list."))
 	}
 
 	created_list, err := service.GetMailList(mail_list.ID)

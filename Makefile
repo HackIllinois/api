@@ -18,9 +18,9 @@ api:
 .PHONY: test
 test:
 	@echo 'Testing services'
-	@$(foreach service,$(SERVICES),go test $(BASE_PACKAGE)/services/$(service)/tests;)
+	@$(foreach service,$(SERVICES),HI_CONFIG=file://$(REPO_ROOT)/config/test_config.json go test $(BASE_PACKAGE)/services/$(service)/tests;)
 	@echo 'Testing gateway'
-	@$(foreach gateway,$(GATEWAYS),go test $(BASE_PACKAGE)/$(gateway)/tests;)
+	@$(foreach gateway,$(GATEWAYS),HI_CONFIG=file://$(REPO_ROOT)/config/test_config.json go test $(BASE_PACKAGE)/$(gateway)/tests;)
 
 .PHONY: utilities
 utilities:

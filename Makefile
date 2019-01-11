@@ -13,7 +13,7 @@ all: api utilities
 api:
 	@echo 'Building api'
 	@mkdir -p $(REPO_ROOT)/bin
-	@go build -i -o $(REPO_ROOT)/bin/hackillinois-api $(BASE_PACKAGE)
+	@go build -o $(REPO_ROOT)/bin/hackillinois-api $(BASE_PACKAGE)
 
 .PHONY: test
 test:
@@ -26,7 +26,7 @@ test:
 utilities:
 	@echo 'Building utilities'
 	@mkdir -p $(REPO_ROOT)/bin
-	@$(foreach utility,$(UTILITIES),go build -i -o $(REPO_ROOT)/bin/hackillinois-utility-$(utility) $(BASE_PACKAGE)/utilities/$(utility);)
+	@$(foreach utility,$(UTILITIES),go build -o $(REPO_ROOT)/bin/hackillinois-utility-$(utility) $(BASE_PACKAGE)/utilities/$(utility);)
 
 .PHONY: setup
 setup: all

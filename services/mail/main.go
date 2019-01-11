@@ -1,4 +1,4 @@
-package main
+package mail
 
 import (
 	"github.com/HackIllinois/api/common/apiserver"
@@ -8,7 +8,7 @@ import (
 	"log"
 )
 
-func main() {
+func Entry() {
 	router := mux.NewRouter()
 	controller.SetupController(router.PathPrefix("/mail"))
 

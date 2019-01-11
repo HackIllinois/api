@@ -1,4 +1,4 @@
-package main
+package gateway
 
 import (
 	"github.com/HackIllinois/api/gateway/config"
@@ -6,7 +6,7 @@ import (
 	"github.com/arbor-dev/arbor"
 )
 
-func main() {
+func Entry() {
 	config.LoadArborConfig()
 	Routes := services.RegisterAPIs()
 	arbor.Boot(Routes, "0.0.0.0", config.GATEWAY_PORT)

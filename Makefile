@@ -2,7 +2,7 @@ BASE_PACKAGE := github.com/HackIllinois/api
 REPO_ROOT := $(shell git rev-parse --show-toplevel)
 
 SERVICES := auth user registration decision rsvp checkin upload mail event stat notifications
-GATEWAYS := gateway
+GATEWAYS := gateway common
 
 UTILITIES := accountgen tokengen
 

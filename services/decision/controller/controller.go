@@ -130,10 +130,10 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 		panic(errors.AttributeMismatchError("Superfluous request. Existing decision already at desired state of finalization.", "Superfluous request. Existing decision already at desired state of finalization."))
 	}
 
-	err := service.UpdateDecision(id, latest_decision)
+	err = service.UpdateDecision(id, latest_decision)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Error updating the decision, in an attempt to finalize it."))
+		panic(errors.InternalError(err.Error(), "Error updating the decision, in an attempt to alter its finalized status."))
 	}
 
 	updated_decision, err := service.GetDecision(id)

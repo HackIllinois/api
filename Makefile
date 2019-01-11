@@ -28,6 +28,15 @@ utilities:
 	@mkdir -p $(REPO_ROOT)/bin
 	@$(foreach utility,$(UTILITIES),go build -i -o $(REPO_ROOT)/bin/hackillinois-utility-$(utility) $(BASE_PACKAGE)/utilities/$(utility);)
 
+.PHONY: setup
+setup: all
+	@echo 'Generating API admin account'
+	@export HI_CONFIG=file://$(REPO_ROOT)/config/dev_config.json; \
+	$(REPO_ROOT)/bin/hackillinois-utility-accountgen
+	@echo 'Generating token for admin account'
+	@export HI_CONFIG=file://$(REPO_ROOT)/config/dev_config.json; \
+	$(REPO_ROOT)/bin/hackillinois-utility-tokengen
+
 .PHONY: fmt
 fmt:
 	go fmt ./...

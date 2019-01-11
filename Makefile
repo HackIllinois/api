@@ -1,4 +1,5 @@
 BASE_PACKAGE := github.com/HackIllinois/api
+REPO_ROOT := $(shell git rev-parse --show-toplevel)
 
 SERVICES := auth user registration decision rsvp checkin upload mail event stat notifications
 GATEWAYS := gateway
@@ -11,7 +12,8 @@ all: api utilities
 .PHONY: api
 api:
 	@echo 'Building api'
-	@go build -i -o hackillinois-api $(BASE_PACKAGE)
+	@mkdir -p $(REPO_ROOT)/bin
+	@go build -i -o $(REPO_ROOT)/bin/hackillinois-api $(BASE_PACKAGE)
 
 .PHONY: test
 test:
@@ -23,7 +25,8 @@ test:
 .PHONY: utilities
 utilities:
 	@echo 'Building utilities'
-	@$(foreach utility,$(UTILITIES),go build $(BASE_PACKAGE)/utilities/$(utility);)
+	@mkdir -p $(REPO_ROOT)/bin
+	@$(foreach utility,$(UTILITIES),go build -i -o $(REPO_ROOT)/bin/hackillinois-utility-$(utility) $(BASE_PACKAGE)/utilities/$(utility);)
 
 .PHONY: fmt
 fmt:

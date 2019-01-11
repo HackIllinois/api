@@ -2,35 +2,35 @@ package main
 
 import (
 	"flag"
-	"os"
 	"fmt"
+	"os"
 
 	"github.com/HackIllinois/api/gateway"
 	"github.com/HackIllinois/api/services/auth"
-	"github.com/HackIllinois/api/services/user"
-	"github.com/HackIllinois/api/services/registration"
-	"github.com/HackIllinois/api/services/decision"
-	"github.com/HackIllinois/api/services/rsvp"
 	"github.com/HackIllinois/api/services/checkin"
-	"github.com/HackIllinois/api/services/upload"
-	"github.com/HackIllinois/api/services/mail"
+	"github.com/HackIllinois/api/services/decision"
 	"github.com/HackIllinois/api/services/event"
-	"github.com/HackIllinois/api/services/stat"
+	"github.com/HackIllinois/api/services/mail"
 	"github.com/HackIllinois/api/services/notifications"
+	"github.com/HackIllinois/api/services/registration"
+	"github.com/HackIllinois/api/services/rsvp"
+	"github.com/HackIllinois/api/services/stat"
+	"github.com/HackIllinois/api/services/upload"
+	"github.com/HackIllinois/api/services/user"
 )
 
-var SERVICE_ENTRYPOINTS = map[string](func()) {
-	"gateway": gateway.Entry,
-	"auth": auth.Entry,
-	"user": user.Entry,
-	"registration": registration.Entry,
-	"decision": decision.Entry,
-	"rsvp": rsvp.Entry,
-	"checkin": checkin.Entry,
-	"upload": upload.Entry,
-	"mail": mail.Entry,
-	"event": event.Entry,
-	"stat": stat.Entry,
+var SERVICE_ENTRYPOINTS = map[string](func()){
+	"gateway":       gateway.Entry,
+	"auth":          auth.Entry,
+	"user":          user.Entry,
+	"registration":  registration.Entry,
+	"decision":      decision.Entry,
+	"rsvp":          rsvp.Entry,
+	"checkin":       checkin.Entry,
+	"upload":        upload.Entry,
+	"mail":          mail.Entry,
+	"event":         event.Entry,
+	"stat":          stat.Entry,
 	"notifications": notifications.Entry,
 }
 

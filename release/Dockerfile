@@ -9,7 +9,7 @@ EXPOSE 443
 WORKDIR /opt/hackillinois/
 
 # Add gateway and services to container
-ADD hackillinois-api-* /opt/hackillinois/
+ADD hackillinois-api /opt/hackillinois/
 
 # Add statup script to container
 ADD start.sh /opt/hackillinois/
@@ -19,7 +19,7 @@ RUN apt-get update
 RUN apt-get install -y ca-certificates
 
 # Make gateway and services executable
-RUN chmod +x hackillinois-api-*
+RUN chmod +x hackillinois-api
 
 # Make the startup script executable
 RUN chmod +x start.sh

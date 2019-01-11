@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # Start gateway and api services
-./hackillinois-api-auth &
-./hackillinois-api-user &
-./hackillinois-api-registration &
-./hackillinois-api-decision &
-./hackillinois-api-rsvp &
-./hackillinois-api-checkin &
-./hackillinois-api-upload &
-./hackillinois-api-mail &
-./hackillinois-api-event &
-./hackillinois-api-stat &
-./hackillinois-api-notifications &
-./hackillinois-api-gateway -u
+./hackillinois-api --service auth &
+./hackillinois-api --service user &
+./hackillinois-api --service registration &
+./hackillinois-api --service decision &
+./hackillinois-api --service rsvp &
+./hackillinois-api --service checkin &
+./hackillinois-api --service upload &
+./hackillinois-api --service mail &
+./hackillinois-api --service event &
+./hackillinois-api --service stat &
+./hackillinois-api --service notifications &
+./hackillinois-api --service gateway

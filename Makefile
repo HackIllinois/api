@@ -37,6 +37,10 @@ setup: all
 	@export HI_CONFIG=file://$(REPO_ROOT)/config/dev_config.json; \
 	$(REPO_ROOT)/bin/hackillinois-utility-tokengen
 
+.PHONY: run
+run:
+	@$(REPO_ROOT)/scripts/run.sh
+
 .PHONY: fmt
 fmt:
 	go fmt ./...

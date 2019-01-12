@@ -91,7 +91,7 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	isAttending, ok := rsvp.Data["isAttending"].(bool)
 
 	if !ok {
-		panic(errors.UnprocessableError("Failure in parsing user rsvp"))
+		panic(errors.InternalError(err.Error(), "Failure in parsing user rsvp"))
 	}
 
 	if isAttending {
@@ -163,13 +163,13 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	wasAttending, ok := original_rsvp.Data["isAttending"].(bool)
 
 	if !ok {
-		panic(errors.UnprocessableError("Failure in parsing user rsvp"))
+		panic(errors.InternalError(err.Error(), "Failure in parsing user rsvp"))
 	}
 
 	isAttending, ok := rsvp.Data["isAttending"].(bool)
 
 	if !ok {
-		panic(errors.UnprocessableError("Failure in parsing user rsvp"))
+		panic(errors.InternalError(err.Error(), "Failure in parsing user rsvp"))
 	}
 
 	if !wasAttending && isAttending {

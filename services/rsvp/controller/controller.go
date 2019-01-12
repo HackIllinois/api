@@ -78,7 +78,11 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rsvp := datastore.NewDataStore(config.RSVP_DEFINITION)
-	json.NewDecoder(r.Body).Decode(&rsvp)
+	err = json.NewDecoder(r.Body).Decode(&rsvp)
+
+	if err != nil {
+		panic(errors.InternalError(err.Error(), "Could not decode user rsvp information. Failure in JSON validation or incorrect rsvp definition."))
+	}
 
 	rsvp.Data["id"] = id
 
@@ -150,7 +154,11 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rsvp := datastore.NewDataStore(config.RSVP_DEFINITION)
-	json.NewDecoder(r.Body).Decode(&rsvp)
+	err = json.NewDecoder(r.Body).Decode(&rsvp)
+
+	if err != nil {
+		panic(errors.InternalError(err.Error(), "Could not decode user rsvp information. Failure in JSON validation or incorrect rsvp definition."))
+	}
 
 	rsvp.Data["id"] = id
 

@@ -31,7 +31,7 @@ func GetUserRsvp(w http.ResponseWriter, r *http.Request) {
 	rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Cannot get user's RSVP status."))
 	}
 
 	json.NewEncoder(w).Encode(rsvp)
@@ -46,7 +46,7 @@ func GetCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Cannot get user's RSVP status."))
 	}
 
 	json.NewEncoder(w).Encode(rsvp)
@@ -60,21 +60,21 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		panic(errors.UnprocessableError("Must provide id"))
+		panic(errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 	}
 
 	isAccepted, isActive, err := service.IsApplicantAcceptedAndActive(id)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not determine status of applicant decision, which is needed to create an RSVP for the user."))
 	}
 
 	if !isAccepted {
-		panic(errors.UnprocessableError("Applicant must be accepted to rsvp"))
+		panic(errors.AttributeMismatchError("Applicant not accepted.", "Applicant must be accepted to RSVP."))
 	}
 
 	if !isActive {
-		panic(errors.UnprocessableError("Applicant decision has expired"))
+		panic(errors.AttributeMismatchError("Applicant decision has expired.", "Applicant decision has expired."))
 	}
 
 	rsvp := datastore.NewDataStore(config.RSVP_DEFINITION)
@@ -85,7 +85,7 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	err = service.CreateUserRsvp(id, rsvp)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not create an RSVP for the user."))
 	}
 
 	isAttending, ok := rsvp.Data["isAttending"].(bool)
@@ -98,21 +98,21 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		err = service.AddAttendeeRole(id)
 
 		if err != nil {
-			panic(errors.UnprocessableError(err.Error()))
+			panic(errors.AuthorizationError(err.Error(), "Could not add Attendee role to applicant."))
 		}
 	}
 
 	updated_rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not get user's RSVP."))
 	}
 
 	mail_template := "rsvp_confirmation"
 	err = service.SendUserMail(id, mail_template)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not send user RSVP confirmation mail."))
 	}
 
 	json.NewEncoder(w).Encode(updated_rsvp)
@@ -126,27 +126,27 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		panic(errors.UnprocessableError("Must provide id"))
+		panic(errors.MalformedRequestError("Must provide id in request.", "Must provide id in the request."))
 	}
 
 	isAccepted, isActive, err := service.IsApplicantAcceptedAndActive(id)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not determine if applicant was accepted and/or decision expiration status."))
 	}
 
 	if !isAccepted {
-		panic(errors.UnprocessableError("Applicant must be accepted to modify rsvp"))
+		panic(errors.AttributeMismatchError("Applicant must be accepted to modify RSVP.", "Applicant must be accepted to modify RSVP."))
 	}
 
 	if !isActive {
-		panic(errors.UnprocessableError("Cannot modify rsvp, applicant decision has expired"))
+		panic(errors.AttributeMismatchError("Cannot modify RSVP, applicant decision has expired.", "Cannot modify RSVP, applicant decision has expired."))
 	}
 
 	original_rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not get user's RSVP status."))
 	}
 
 	rsvp := datastore.NewDataStore(config.RSVP_DEFINITION)
@@ -157,7 +157,7 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	err = service.UpdateUserRsvp(id, rsvp)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not update user RSVP."))
 	}
 
 	wasAttending, ok := original_rsvp.Data["isAttending"].(bool)
@@ -176,27 +176,27 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		err = service.AddAttendeeRole(id)
 
 		if err != nil {
-			panic(errors.UnprocessableError(err.Error()))
+			panic(errors.AuthorizationError(err.Error(), "Could not add Attendee role to user."))
 		}
 	} else if wasAttending && !isAttending {
 		err = service.RemoveAttendeeRole(id)
 
 		if err != nil {
-			panic(errors.UnprocessableError(err.Error()))
+			panic(errors.InternalError(err.Error(), "Could not remove Attendee role from user."))
 		}
 	}
 
 	updated_rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.DatabaseError(err.Error(), "Could not get updated RSVP for user."))
 	}
 
 	mail_template := "rsvp_update"
 	err = service.SendUserMail(id, mail_template)
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not send user confirmation mail for RSVP update."))
 	}
 
 	json.NewEncoder(w).Encode(updated_rsvp)
@@ -209,7 +209,7 @@ func GetStats(w http.ResponseWriter, r *http.Request) {
 	stats, err := service.GetStats()
 
 	if err != nil {
-		panic(errors.UnprocessableError(err.Error()))
+		panic(errors.InternalError(err.Error(), "Could not get RSVP service statistics."))
 	}
 
 	json.NewEncoder(w).Encode(stats)

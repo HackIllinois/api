@@ -15,7 +15,7 @@ func GetAggregatedStats(service string) (*models.Stat, error) {
 	endpoint, exists := config.STAT_ENDPOINTS[service]
 
 	if !exists {
-		return nil, errors.New("Could not find endpoint for requested stats")
+		return nil, errors.New("Could not find endpoint for requested stats.")
 	}
 
 	var stat models.Stat
@@ -26,7 +26,7 @@ func GetAggregatedStats(service string) (*models.Stat, error) {
 	}
 
 	if status != http.StatusOK {
-		return nil, errors.New("Could not retreive stats from service")
+		return nil, errors.New("Could not retreive stats from service.")
 	}
 
 	return &stat, nil

@@ -116,7 +116,11 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	// Assuming we are working on the specified user's decision
 	existing_decision_history, err := service.GetDecision(id)
 
-	// Create a new potential DecisionHistory struct and fill it in with the provided Finalized status, and existing decision history.
+	// It is an error to finalize a finalized decision, or unfinalize an unfinalized decision.
+	if existing_decision_history.Finalized == decision_finalized.Finalized {
+		panic(errors.AttributeMismatchError("Superfluous request. Existing decision already at desired state of finalization.", "Superfluous request. Existing decision already at desired state of finalization."))
+	}
+
 	var latest_decision models.Decision
 	latest_decision.Finalized = decision_finalized.Finalized
 	latest_decision.ID = id
@@ -124,11 +128,6 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	latest_decision.Wave = existing_decision_history.Wave
 	latest_decision.Reviewer = r.Header.Get("HackIllinois-Identity")
 	latest_decision.Timestamp = time.Now().Unix()
-
-	// It is an error to finalize a finalized decision, or unfinalize an unfinalized decision.
-	if existing_decision_history.Finalized == decision_finalized.Finalized {
-		panic(errors.AttributeMismatchError("Superfluous request. Existing decision already at desired state of finalization.", "Superfluous request. Existing decision already at desired state of finalization."))
-	}
 
 	err = service.UpdateDecision(id, latest_decision)
 

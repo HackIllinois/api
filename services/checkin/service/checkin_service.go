@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/checkin/config"
 	"github.com/HackIllinois/api/services/checkin/models"
 )
@@ -69,8 +70,14 @@ func UpdateUserCheckin(id string, user_checkin models.UserCheckin) error {
 	return err
 }
 
+const (
+	SponsorRole = "Sponsor"
+	MentorRole  = "Mentor"
+)
+
 /*
 	Returns true, nil if a user with specified ID is allowed to checkin, and false, nil if not allowed.
+	Sponsors, mentors, and those with staff overrides do not need an RSVP to check-in.
 */
 func CanUserCheckin(id string, user_has_override bool) (bool, error) {
 	is_user_registered, err := IsUserRegistered(id)
@@ -79,8 +86,16 @@ func CanUserCheckin(id string, user_has_override bool) (bool, error) {
 		return false, err
 	}
 
+	user_roles, err := GetRoles(id)
+
+	if err != nil {
+		panic(err)
+	}
+
+	is_sponsor_or_mentor := slice_utils.ContainsString(user_roles.Roles, SponsorRole) || slice_utils.ContainsString(user_roles.Roles, MentorRole)
+
 	// To checkin, the user must either (have RSVPed) or (have registered and got an override)
-	if is_user_registered && user_has_override {
+	if is_user_registered && (user_has_override || is_sponsor_or_mentor) {
 		return true, nil
 	}
 

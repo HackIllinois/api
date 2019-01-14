@@ -240,6 +240,12 @@
 						"fields": []
 					}
 				]
+			},
+			{
+				"name": "isOSContributor",
+				"type": "boolean",
+				"validations": "required|isdefault",
+				"fields": []
 			}
 		]
 	},

@@ -106,13 +106,13 @@
 			{
 				"name": "firstName",
 				"type": "string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			},
 			{
 				"name": "lastName",
 				"type": "string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			},
 			{
@@ -265,6 +265,12 @@
 						"fields": []
 					}
 				]
+			},
+			{
+				"name": "isOSContributor",
+				"type": "boolean",
+				"validations": "required|isdefault",
+				"fields": []
 			}
 		]
 	},

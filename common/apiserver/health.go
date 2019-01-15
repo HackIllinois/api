@@ -28,7 +28,7 @@ func IsHealthy(health_stats *stats.Data) bool {
 	for status_code, count := range health_stats.TotalStatusCodeCount {
 		total_response_count += count
 
-		if len(status_code) > 0 && status_code[0] == '2' {
+		if len(status_code) > 0 && (status_code[0] == '2' || status_code[0] == '3') {
 			ok_response_count += count
 		}
 	}

@@ -100,8 +100,8 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Finalizes the decision associated with the provided ID.
-	Finalized decisions are blocked from further review.
+	Finalizes / unfinalizes the decision associated with the provided ID.
+	Finalized decisions are blocked from further review, unless unfinalized.
 */
 func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	var decision_finalized models.DecisionFinalized
@@ -116,23 +116,23 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	// Assuming we are working on the specified user's decision
 	existing_decision_history, err := service.GetDecision(id)
 
-	// If the decision is NOT already finalized, set it to what was provided in the request body
-	if !existing_decision_history.Finalized {
-		var latest_decision models.Decision
-		latest_decision.Finalized = decision_finalized.Finalized
-		latest_decision.ID = id
-		latest_decision.Status = existing_decision_history.Status
-		latest_decision.Wave = existing_decision_history.Wave
-		latest_decision.Reviewer = r.Header.Get("HackIllinois-Identity")
-		latest_decision.Timestamp = time.Now().Unix()
+	// It is an error to finalize a finalized decision, or unfinalize an unfinalized decision.
+	if existing_decision_history.Finalized == decision_finalized.Finalized {
+		panic(errors.AttributeMismatchError("Superfluous request. Existing decision already at desired state of finalization.", "Superfluous request. Existing decision already at desired state of finalization."))
+	}
 
-		err := service.UpdateDecision(id, latest_decision)
+	var latest_decision models.Decision
+	latest_decision.Finalized = decision_finalized.Finalized
+	latest_decision.ID = id
+	latest_decision.Status = existing_decision_history.Status
+	latest_decision.Wave = existing_decision_history.Wave
+	latest_decision.Reviewer = r.Header.Get("HackIllinois-Identity")
+	latest_decision.Timestamp = time.Now().Unix()
 
-		if err != nil {
-			panic(errors.InternalError(err.Error(), "Error updating the decision, in an attempt to finalize it."))
-		}
-	} else {
-		panic(errors.AttributeMismatchError("Decision already finalized.", "Decision already finalized."))
+	err = service.UpdateDecision(id, latest_decision)
+
+	if err != nil {
+		panic(errors.InternalError(err.Error(), "Error updating the decision, in an attempt to alter its finalized status."))
 	}
 
 	updated_decision, err := service.GetDecision(id)

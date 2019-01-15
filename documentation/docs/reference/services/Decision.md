@@ -104,14 +104,13 @@ Response format:
 POST /decision/finalize/
 --------------------------
 
-Finalizes the decision for the current user. The full decision history is returned in the response. 
+Finalizes / unfinalizes the decision for the current user. The full decision history is returned in the response. This endpoint will return an AttributeMismatchError if the requested action results in a Finalized status matching the current Finalized status. 
 
 Request format:
 ```
 {
 	"id": "github9279532",
 	"finalized": true
-
 }
 ```
 

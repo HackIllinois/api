@@ -23,44 +23,46 @@ Response format:
 		"school": "University of Illinois at Urbana-Champaign",
 		"major": "Computer Science",
 		"gender": "MALE",
-		"professionalInterest": "INTERNSHIP",
+		"interests": "INTERNSHIP",
 		"github": "JSmith",
 		"linkedin": "john-smith",
 		"interests": "Software",
-		"isNovice": false,
-		"isPrivate": false,
-		"phoneNumber": "555-555-5555",
-		"longforms": [
-			{
-				"response": "This is a longform."
-			}
+		"isBeginner": false,
+		"priorAttendance": false,
+		"phone": "555-555-5555",
+		"extraInfo": "Extra information",
+		"teamMembers": [
+			"member1",
+			"member2",
+			"member3
 		],
-		"extraInfos": [
-			{
-				"response": "This is an extra info."
-			}
-		],
-		"osContributors": [
-			{
-				"name": "Tom",
-				"contactInfo": "tom@gmail.com"
-			}
-		],
-		"collaborators": [
-			{
-				"github": "collabgithub"
-			}
-		]
+		"createdAt": 123123,
+		"updatedAt": 1234353,
+		"beginnerInfo": {
+				"versionControl": 4,
+				"pullRequest": 2,
+				"yearsExperience": 6,
+				"technicalSkills": [
+					"algorithms",
+					"distributed systems",
+					"machine learning"
+				]
+		},
+		{
+			"isOSContributor": true
+		}
 	},
 	"mentor": {
-		"id": "github0000001"
+		"id": "github0001",
 		"firstName": "John",
 		"lastName": "Smith",
-		"email": "john@gmail.com",
-		"shirtSize": "M",
-		"github": "JSmith",
-		"linkedin": "john-smith"
-	} 
+		"email": "john.smith@email.com"
+		"shirtSize": "S",
+		"github": "JohnSmith",
+		"linkedin": "john-smith",
+		"createdAt": 1231231,
+		"updatedAt": 3132423
+	}
 }
 ```
 
@@ -86,43 +88,43 @@ Response format:
 		"school": "University of Illinois at Urbana-Champaign",
 		"major": "Computer Science",
 		"gender": "MALE",
-		"professionalInterest": "INTERNSHIP",
+		"interests": "INTERNSHIP",
 		"github": "JSmith",
 		"linkedin": "john-smith",
 		"interests": "Software",
-		"isNovice": false,
-		"isPrivate": false,
-		"phoneNumber": "555-555-5555",
-		"longforms": [
-			{
-				"response": "This is a longform."
-			}
+		"isBeginner": false,
+		"priorAttendance": false,
+		"phone": "555-555-5555",
+		"extraInfo": "Extra information",
+		"teamMembers": [
+			"member1",
+			"member2",
+			"member3
 		],
-		"extraInfos": [
-			{
-				"response": "This is an extra info."
-			}
-		],
-		"osContributors": [
-			{
-				"name": "Tom",
-				"contactInfo": "tom@gmail.com"
-			}
-		],
-		"collaborators": [
-			{
-				"github": "collabgithub"
-			}
-		]
+		"createdAt": 123123,
+		"updatedAt": 1234353,
+		"beginnerInfo": {
+				"versionControl": 4,
+				"pullRequest": 2,
+				"yearsExperience": 6,
+				"technicalSkills": [
+					"algorithms",
+					"distributed systems",
+					"machine learning"
+				]
+		},
+		"isOSContributor": true
 	},
 	"mentor": {
-		"id": "github0000001"
+		"id": "github0001",
 		"firstName": "John",
 		"lastName": "Smith",
-		"email": "john@gmail.com",
-		"shirtSize": "M",
-		"github": "JSmith",
-		"linkedin": "john-smith"
+		"email": "john.smith@email.com"
+		"shirtSize": "S",
+		"github": "JohnSmith",
+		"linkedin": "john-smith",
+		"createdAt": 1231231,
+		"updatedAt": 3132423
 	}
 }
 ```
@@ -130,7 +132,7 @@ Response format:
 GET /registration/attendee/USERID/
 -------------------------
 
-Returns the user registration stored for the user with the `id` `USERID`.
+Returns the user registration stored for the Attendee with the `id` `USERID`.
 
 Response format:
 ```
@@ -147,34 +149,32 @@ Response format:
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
 	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
+	"interests": "INTERNSHIP",
 	"github": "JSmith",
 	"linkedin": "john-smith",
 	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
+	"isBeginner": false,
+	"priorAttendance": false,
+	"phone": "555-555-5555",
+	"extraInfo": "Extra information",
+	"teamMembers": [
+		"member1",
+		"member2",
+		"member3
 	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
-	]
+	"createdAt": 123123,
+	"updatedAt": 1234353,
+	"beginnerInfo": {
+			"versionControl": 4,
+			"pullRequest": 2,
+			"yearsExperience": 6,
+			"technicalSkills": [
+				"algorithms",
+				"distributed systems",
+				"machine learning"
+			]
+	},
+	"isOSContributor": true
 }
 ```
 
@@ -198,34 +198,32 @@ Response format:
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
 	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
+	"interests": "INTERNSHIP",
 	"github": "JSmith",
 	"linkedin": "john-smith",
 	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
+	"isBeginner": false,
+	"priorAttendance": false,
+	"phone": "555-555-5555",
+	"extraInfo": "Extra information",
+	"teamMembers": [
+		"member1",
+		"member2",
+		"member3
 	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
-	]
+	"createdAt": 123123,
+	"updatedAt": 1234353,
+	"beginnerInfo": {
+			"versionControl": 4,
+			"pullRequest": 2,
+			"yearsExperience": 6,
+			"technicalSkills": [
+				"algorithms",
+				"distributed systems",
+				"machine learning"
+			]
+	},
+	"isOSContributor": true
 }
 ```
 
@@ -237,6 +235,7 @@ Creates a registration for the user with the `id` in the JWT token provided in t
 Request format:
 ```
 {
+	"id": "github0000001"
 	"firstName": "John",
 	"lastName": "Smith",
 	"email": "john@gmail.com",
@@ -248,34 +247,32 @@ Request format:
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
 	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
+	"interests": "INTERNSHIP",
 	"github": "JSmith",
 	"linkedin": "john-smith",
 	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
+	"isBeginner": false,
+	"priorAttendance": false,
+	"phone": "555-555-5555",
+	"extraInfo": "Extra information",
+	"teamMembers": [
+		"member1",
+		"member2",
+		"member3
 	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
-	]
+	"createdAt": 123123,
+	"updatedAt": 1234353,
+	"beginnerInfo": {
+			"versionControl": 4,
+			"pullRequest": 2,
+			"yearsExperience": 6,
+			"technicalSkills": [
+				"algorithms",
+				"distributed systems",
+				"machine learning"
+			]
+	},
+	"isOSContributor": true
 }
 ```
 
@@ -294,34 +291,32 @@ Response format:
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
 	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
+	"interests": "INTERNSHIP",
 	"github": "JSmith",
 	"linkedin": "john-smith",
 	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
+	"isBeginner": false,
+	"priorAttendance": false,
+	"phone": "555-555-5555",
+	"extraInfo": "Extra information",
+	"teamMembers": [
+		"member1",
+		"member2",
+		"member3
 	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
-	]
+	"createdAt": 123123,
+	"updatedAt": 1234353,
+	"beginnerInfo": {
+			"versionControl": 4,
+			"pullRequest": 2,
+			"yearsExperience": 6,
+			"technicalSkills": [
+				"algorithms",
+				"distributed systems",
+				"machine learning"
+			]
+	},
+	"isOSContributor": true
 }
 ```
 
@@ -333,6 +328,7 @@ Updated the registration for the user with the `id` in the JWT token provided in
 Request format:
 ```
 {
+	"id": "github0000001"
 	"firstName": "John",
 	"lastName": "Smith",
 	"email": "john@gmail.com",
@@ -344,34 +340,32 @@ Request format:
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
 	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
+	"interests": "INTERNSHIP",
 	"github": "JSmith",
 	"linkedin": "john-smith",
 	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
+	"isBeginner": false,
+	"priorAttendance": false,
+	"phone": "555-555-5555",
+	"extraInfo": "Extra information",
+	"teamMembers": [
+		"member1",
+		"member2",
+		"member3
 	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
-	]
+	"createdAt": 123123,
+	"updatedAt": 1234353,
+	"beginnerInfo": {
+			"versionControl": 4,
+			"pullRequest": 2,
+			"yearsExperience": 6,
+			"technicalSkills": [
+				"algorithms",
+				"distributed systems",
+				"machine learning"
+			]
+	},
+	"isOSContributor": true
 }
 ```
 
@@ -390,34 +384,32 @@ Response format:
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
 	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
+	"interests": "INTERNSHIP",
 	"github": "JSmith",
 	"linkedin": "john-smith",
 	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
+	"isBeginner": false,
+	"priorAttendance": false,
+	"phone": "555-555-5555",
+	"extraInfo": "Extra information",
+	"teamMembers": [
+		"member1",
+		"member2",
+		"member3
 	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
-	]
+	"createdAt": 123123,
+	"updatedAt": 1234353,
+	"beginnerInfo": {
+			"versionControl": 4,
+			"pullRequest": 2,
+			"yearsExperience": 6,
+			"technicalSkills": [
+				"algorithms",
+				"distributed systems",
+				"machine learning"
+			]
+	},
+	"isOSContributor": true
 }
 ```
 
@@ -429,13 +421,15 @@ Returns the mentor registration stored for the mentor with the `id` `USERID`.
 Response format:
 ```
 {
-	"id": "github0000001"
+	"id": "github0001",
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"github": "JSmith",
-	"linkedin": "john-smith"
+	"email": "john.smith@email.com"
+	"shirtSize": "S",
+	"github": "JohnSmith",
+	"linkedin": "john-smith",
+	"createdAt": 1231231,
+	"updatedAt": 3132423
 }
 ```
 
@@ -447,13 +441,15 @@ Returns the mentor registration stored for the mentor with the `id` stored in th
 Response format:
 ```
 {
-	"id": "github0000001"
+	"id": "github0001",
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"github": "JSmith",
-	"linkedin": "john-smith"
+	"email": "john.smith@email.com"
+	"shirtSize": "S",
+	"github": "JohnSmith",
+	"linkedin": "john-smith",
+	"createdAt": 1231231,
+	"updatedAt": 3132423
 }
 ```
 
@@ -465,25 +461,30 @@ Creates a registration for the mentor with the `id` in the JWT token provided in
 Request format:
 ```
 {
+	"id": "github0001",
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"github": "JSmith",
-	"linkedin": "john-smith"
+	"email": "john.smith@email.com"
+	"shirtSize": "S",
+	"github": "JohnSmith",
+	"linkedin": "john-smith",
+	"createdAt": 1231231,
+	"updatedAt": 3132423
 }
 ```
 
 Response format:
 ```
 {
-	"id": "github0000001"
+	"id": "github0001",
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"github": "JSmith",
-	"linkedin": "john-smith"
+	"email": "john.smith@email.com"
+	"shirtSize": "S",
+	"github": "JohnSmith",
+	"linkedin": "john-smith",
+	"createdAt": 1231231,
+	"updatedAt": 3132423
 }
 ```
 
@@ -495,25 +496,30 @@ Updated the registration for the user with the `id` in the JWT token provided in
 Request format:
 ```
 {
+	"id": "github0001",
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"github": "JSmith",
-	"linkedin": "john-smith"
+	"email": "john.smith@email.com"
+	"shirtSize": "S",
+	"github": "JohnSmith",
+	"linkedin": "john-smith",
+	"createdAt": 1231231,
+	"updatedAt": 3132423
 }
 ```
 
 Response format:
 ```
 {
-	"id": "github0000001"
+	"id": "github0001",
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"github": "JSmith",
-	"linkedin": "john-smith"
+	"email": "john.smith@email.com"
+	"shirtSize": "S",
+	"github": "JohnSmith",
+	"linkedin": "john-smith",
+	"createdAt": 1231231,
+	"updatedAt": 3132423
 }
 ```
 
@@ -539,78 +545,73 @@ Response format:
 			"school": "University of Illinois at Urbana-Champaign",
 			"major": "Computer Science",
 			"gender": "MALE",
-			"professionalInterest": "INTERNSHIP",
+			"interests": "INTERNSHIP",
 			"github": "JSmith",
 			"linkedin": "john-smith",
 			"interests": "Software",
-			"isNovice": false,
-			"isPrivate": false,
-			"phoneNumber": "555-555-5555",
-			"longforms": [
-				{
-					"response": "This is a longform."
-				}
+			"isBeginner": false,
+			"priorAttendance": false,
+			"phone": "555-555-5555",
+			"extraInfo": "Extra information",
+			"teamMembers": [
+				"member1",
+				"member2",
+				"member3
 			],
-			"extraInfos": [
-				{
-					"response": "This is an extra info."
-				}
-			],
-			"osContributors": [
-				{
-					"name": "Tom",
-					"contactInfo": "tom@gmail.com"
-				}
-			],
-			"collaborators": [
-				{
-					"github": "collabgithub"
-				}
-			]
+			"createdAt": 123123,
+			"updatedAt": 1234353,
+			"beginnerInfo": {
+					"versionControl": 4,
+					"pullRequest": 2,
+					"yearsExperience": 6,
+					"technicalSkills": [
+						"algorithms",
+						"distributed systems",
+						"machine learning"
+					]
+			},
+			"isOSContributor": true
 		},
 		{
 			"id": "github0000002"
-			"firstName": "John",
-			"lastName": "Doe",
-			"email": "jdoe@gmail.com",
-			"shirtSize": "M",
+			"firstName": "John2",
+			"lastName": "Smith2",
+			"email": "john2@gmail.com",
+			"shirtSize": "L",
 			"diet": "NONE",
 			"age": 19,
 			"graduationYear": 2019,
 			"transportation": "NONE",
-			"school": "Purdue",
+			"school": "University of Illinois at Urbana-Champaign",
 			"major": "Computer Science",
 			"gender": "MALE",
-			"professionalInterest": "INTERNSHIP",
-			"github": "JDoe",
-			"linkedin": "john-doe",
+			"interests": "INTERNSHIP",
+			"github": "JSmith",
+			"linkedin": "john-smith",
 			"interests": "Software",
-			"isNovice": false,
-			"isPrivate": false,
-			"phoneNumber": "666-666-6666",
-			"longforms": [
-				{
-					"response": "This is a longform."
-				}
+			"isBeginner": false,
+			"priorAttendance": true,
+			"phone": "555-555-5555",
+			"extraInfo": "Extra information",
+			"teamMembers": [
+				"member1",
+				"member2",
+				"member3
 			],
-			"extraInfos": [
-				{
-					"response": "This is an extra info."
-				}
-			],
-			"osContributors": [
-				{
-					"name": "Tom",
-					"contactInfo": "tom@gmail.com"
-				}
-			],
-			"collaborators": [
-				{
-					"github": "collabgithub"
-				}
-			]
+			"createdAt": 123123,
+			"updatedAt": 1234353,
+			"beginnerInfo": {
+					"versionControl": 4,
+					"pullRequest": 2,
+					"yearsExperience": 6,
+					"technicalSkills": [
+						"algorithms",
+						"distributed systems",
+						"machine learning"
+					]
+			},
+			"isOSContributor": true
 		}
 	]
 }
-
 ```

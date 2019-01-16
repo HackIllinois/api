@@ -70,11 +70,6 @@ func UpdateUserCheckin(id string, user_checkin models.UserCheckin) error {
 	return err
 }
 
-const (
-	SponsorRole = "Sponsor"
-	MentorRole  = "Mentor"
-)
-
 /*
 	Returns true, nil if a user with specified ID is allowed to checkin, and false, nil if not allowed.
 	Sponsors, mentors, and those with staff overrides do not need an RSVP to check-in.
@@ -86,29 +81,30 @@ func CanUserCheckin(id string, user_has_override bool) (bool, error) {
 		return false, err
 	}
 
+	if !is_user_registered {
+		return false, errors.New("User is not registered.")
+	}
+
+	if user_has_override {
+		return true, nil
+	}
+
 	user_roles, err := GetRoles(id)
 
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	is_sponsor_or_mentor := slice_utils.ContainsString(user_roles.Roles, SponsorRole) || slice_utils.ContainsString(user_roles.Roles, MentorRole)
+	is_sponsor_or_mentor := slice_utils.ContainsString(user_roles.Roles, models.SponsorRole) || slice_utils.ContainsString(user_roles.Roles, models.MentorRole)
 
-	// To checkin, the user must either (have RSVPed) or (have registered and got an override)
-	if is_user_registered && (user_has_override || is_sponsor_or_mentor) {
+	if is_sponsor_or_mentor {
 		return true, nil
 	}
 
 	// We do not want to call the below service function if the above condition is met, as it results
 	// in a 400 (Bad Request) / error if the user's RSVP info cannot be found.
 	// Therefore, we do not combine the conditions, and return as early as possible.
-	is_user_rsvped, err := IsAttendeeRsvped(id)
-
-	if err != nil {
-		return false, err
-	}
-
-	return is_user_rsvped, nil
+	return IsAttendeeRsvped(id)
 }
 
 /*

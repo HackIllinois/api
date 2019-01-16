@@ -230,7 +230,7 @@
 					{
 						"name": "yearsExperience",
 						"type": "int",
-						"validations": "required",
+						"validations": "",
 						"fields": []
 					},
 					{

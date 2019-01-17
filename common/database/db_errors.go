@@ -8,7 +8,7 @@ import (
 var (
 	ErrNotFound   = errors.New("Error: NOT_FOUND")
 	ErrConnection = errors.New("Error: CONNECTION_FAILED")
-	ErrUnknown    = errors.New("Error: UNKOWN")
+	ErrUnknown    = errors.New("Error: UNKNOWN")
 )
 
 /*

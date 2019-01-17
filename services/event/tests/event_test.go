@@ -102,7 +102,7 @@ func TestGetAllEventsService(t *testing.T) {
 
 	expected_event_list := models.EventList{
 		Events: []models.Event{
-			models.Event{
+			{
 				Name:                "testname",
 				Description:         "testdescription",
 				StartTime:           TestTime,
@@ -113,7 +113,7 @@ func TestGetAllEventsService(t *testing.T) {
 				Sponsor:             "testsponsor",
 				EventType:           "WORKSHOP",
 			},
-			models.Event{
+			{
 				Name:                "testname2",
 				Description:         "testdescription2",
 				StartTime:           TestTime,

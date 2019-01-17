@@ -181,13 +181,13 @@ func TestGetAllNotificationsService(t *testing.T) {
 
 	expected_notification_list := models.NotificationList{
 		Notifications: []models.PastNotification{
-			models.PastNotification{
+			{
 				Body:      "test message",
 				Title:     "test title",
 				TopicName: "test_topic",
 				Time:      2000,
 			},
-			models.PastNotification{
+			{
 				Body:      "test message 2",
 				Title:     "test title 2",
 				TopicName: "test_topic_2",
@@ -243,13 +243,13 @@ func TestGetNotificationsForTopicService(t *testing.T) {
 
 	expected_notification_list := models.NotificationList{
 		Notifications: []models.PastNotification{
-			models.PastNotification{
+			{
 				Body:      "test message",
 				Title:     "test title",
 				TopicName: "test_topic",
 				Time:      2000,
 			},
-			models.PastNotification{
+			{
 				Body:      "test message again",
 				Title:     "test title again",
 				TopicName: "test_topic",
@@ -332,13 +332,13 @@ func TestCreateNotificationService(t *testing.T) {
 
 	expected_notification_list := models.NotificationList{
 		Notifications: []models.PastNotification{
-			models.PastNotification{
+			{
 				Body:      "test message",
 				Title:     "test title",
 				TopicName: "test_topic",
 				Time:      2000,
 			},
-			models.PastNotification{
+			{
 				Body:      "test message 2",
 				Title:     "test title 2",
 				TopicName: "test_topic",
@@ -425,14 +425,14 @@ func TestSubscribeUserService(t *testing.T) {
 	}
 
 	expected_devices_list := []models.Device{
-		models.Device{
+		{
 			UserID:        "test_user",
 			DeviceToken:   "token1",
 			DeviceArn:     "arn:device_test_1",
 			Platform:      "android",
 			Subscriptions: map[string]string{"test_topic": ""},
 		},
-		models.Device{
+		{
 			UserID:        "test_user_2",
 			DeviceToken:   "token2",
 			DeviceArn:     "arn:device_test_2",
@@ -490,14 +490,14 @@ func TestUnsubscribeUserService(t *testing.T) {
 	}
 
 	expected_devices_list := []models.Device{
-		models.Device{
+		{
 			UserID:        "test_user",
 			DeviceToken:   "token1",
 			DeviceArn:     "arn:device_test_1",
 			Platform:      "android",
 			Subscriptions: map[string]string{},
 		},
-		models.Device{
+		{
 			UserID:        "test_user_2",
 			DeviceToken:   "token2",
 			DeviceArn:     "arn:device_test_2",
@@ -537,21 +537,21 @@ func TestRegisterDevice(t *testing.T) {
 	}
 
 	expected_devices_list := []models.Device{
-		models.Device{
+		{
 			UserID:        "test_user",
 			DeviceToken:   "token1",
 			DeviceArn:     "arn:device_test_1",
 			Platform:      "android",
 			Subscriptions: map[string]string{"test_topic": ""},
 		},
-		models.Device{
+		{
 			UserID:        "test_user_2",
 			DeviceToken:   "token2",
 			DeviceArn:     "arn:device_test_2",
 			Platform:      "android",
 			Subscriptions: map[string]string{},
 		},
-		models.Device{
+		{
 			UserID:        "test_user",
 			DeviceToken:   "token3",
 			DeviceArn:     "",

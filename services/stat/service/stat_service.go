@@ -54,7 +54,7 @@ func GetAllAggregatedStats() (*models.AggregatedStat, error) {
 
 	stat_chan := make(chan models.AsyncStat)
 
-	for service, _ := range config.STAT_ENDPOINTS {
+	for service := range config.STAT_ENDPOINTS {
 		go GetAggregatedStatsAsync(service, stat_chan)
 	}
 

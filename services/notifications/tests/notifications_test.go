@@ -66,6 +66,11 @@ func SetupTestDB(t *testing.T) {
 	}
 
 	err = db.Insert("devices", &device)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	err = db.Insert("devices", &device2)
 
 	if err != nil {

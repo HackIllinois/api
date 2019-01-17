@@ -163,7 +163,7 @@ func TestGetAllCheckedInUsersService(t *testing.T) {
 	err := service.CreateUserCheckin("testid2", new_checkin)
 
 	if err != nil {
-		t.Errorf("Could not create a check-in for the user.")
+		t.Fatal(err)
 	}
 
 	new_checkin = models.UserCheckin{

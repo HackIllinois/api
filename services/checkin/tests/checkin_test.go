@@ -149,7 +149,7 @@ func TestUpdateUserCheckinService(t *testing.T) {
 }
 
 /*
-	Service level test for getting list of all checked in users.
+	Service level test for getting list of all checked in users
 */
 func TestGetAllCheckedInUsersService(t *testing.T) {
 	SetupTestDB(t)

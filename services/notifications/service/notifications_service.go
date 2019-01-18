@@ -193,9 +193,10 @@ func PublishNotification(topic_name string, notification models.Notification) (*
 	current_time := time.Now().Unix()
 
 	past_notification := models.PastNotification{TopicName: topic_name, Title: notification.Title, Body: notification.Body, Time: current_time}
+
 	err = db.Insert("notifications", &past_notification)
 
-	return &past_notification, nil
+	return &past_notification, err
 }
 
 func GetNotificationsForTopic(topic_name string) (*models.NotificationList, error) {

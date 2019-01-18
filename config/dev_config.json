@@ -346,6 +346,97 @@
 				"type": "boolean",
 				"validations": "required|isdefault",
 				"fields": []
+			},
+			{
+				"name": "phone",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "diet",
+				"type": "[]string",
+				"validations": "required,dive,oneof=NONE VEGAN VEGETARIAN NOPEANUT NOGLUTEN",
+				"fields": []
+			},
+			{
+				"name": "transportation",
+				"type": "string",
+				"validations": "required,oneof=NONE BUS",
+				"fields": []
+			},
+			{
+				"name": "lightningInterest",
+				"type": "boolean",
+				"validations": "required|isdefault",
+				"fields": []
+			},
+			{
+				"name": "lightningTopic",
+				"type": "string",
+				"validations": "",
+				"fields": []
+			},
+			{
+				"name": "programmingExperience",
+				"type": "object",
+				"validations": "required",
+				"fields": [
+					{
+						"name": "python",
+						"type": "int",
+						"validations": "",
+						"fields": []
+					},
+					{
+						"name": "javascript",
+						"type": "int",
+						"validations": "",
+						"fields": []
+					},
+					{
+						"name": "java",
+						"type": "int",
+						"validations": "",
+						"fields": []
+					},
+					{
+						"name": "cc++",
+						"type": "int",
+						"validations": "",
+						"fields": []
+					},
+					{
+						"name": "go",
+						"type": "int",
+						"validations": "",
+						"fields": []
+					},
+					{
+						"name": "ruby",
+						"type": "int",
+						"validations": "",
+						"fields": []
+					},
+					{
+						"name": "rust",
+						"type": "int",
+						"validations": "",
+						"fields": []
+					}
+				]
+			},
+			{
+				"name": "techInterests",
+				"type": "[]string",
+				"validations": "required,dive,oneof=DATASCIENCE WEBDEV SYSTEMS APPDEV HARDWARE DEVTOOLS",
+				"fields": []
+			},
+			{
+				"name": "osProject",
+				"type": "string",
+				"validations": "required",
+				"fields": []
 			}
 		]
 	}

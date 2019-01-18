@@ -1,6 +1,7 @@
 package models
 
-type UserRsvp struct {
-	ID          string `json:"id"`
-	IsAttending bool   `json:"isAttending"`
-}
+import (
+	"github.com/HackIllinois/api/common/datastore"
+)
+
+type UserRsvp = datastore.DataStore

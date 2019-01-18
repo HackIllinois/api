@@ -41,6 +41,20 @@ func GetUserRsvp(id string) (*models.UserRsvp, error) {
 	Creates the rsvp associated with the given user id
 */
 func CreateUserRsvp(id string, rsvp models.UserRsvp) error {
+	isAttending, ok := rsvp.Data["isAttending"].(bool)
+
+	if !ok {
+		return errors.New("Type mismatch in rsvp data")
+	}
+
+	if isAttending {
+		err := rsvp.Validate()
+
+		if err != nil {
+			return err
+		}
+	}
+
 	_, err := GetUserRsvp(id)
 
 	if err != database.ErrNotFound {
@@ -59,6 +73,20 @@ func CreateUserRsvp(id string, rsvp models.UserRsvp) error {
 	Updates the rsvp associated with the given user id
 */
 func UpdateUserRsvp(id string, rsvp models.UserRsvp) error {
+	isAttending, ok := rsvp.Data["isAttending"].(bool)
+
+	if !ok {
+		return errors.New("Type mismatch in rsvp data")
+	}
+
+	if isAttending {
+		err := rsvp.Validate()
+
+		if err != nil {
+			return err
+		}
+	}
+
 	selector := database.QuerySelector{
 		"id": id,
 	}

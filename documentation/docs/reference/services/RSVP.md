@@ -1,6 +1,8 @@
 RSVP
 ====
 
+*Note:* The exact fields in the rsvp requests and responses will change based on the rsvp definitions provided in the API configuration file.
+
 GET /rsvp/USERID/
 -----------------
 

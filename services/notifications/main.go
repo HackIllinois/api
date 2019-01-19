@@ -1,13 +1,13 @@
 package notifications
 
 import (
+	"fmt"
 	"github.com/HackIllinois/api/common/apiserver"
 	"github.com/HackIllinois/api/services/notifications/config"
 	"github.com/HackIllinois/api/services/notifications/controller"
 	"github.com/HackIllinois/api/services/notifications/service"
 	"github.com/gorilla/mux"
 	"log"
-	"fmt"
 	"os"
 )
 

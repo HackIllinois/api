@@ -1,13 +1,13 @@
 package user
 
 import (
+	"fmt"
 	"github.com/HackIllinois/api/common/apiserver"
 	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/controller"
 	"github.com/HackIllinois/api/services/user/service"
 	"github.com/gorilla/mux"
 	"log"
-	"fmt"
 	"os"
 )
 

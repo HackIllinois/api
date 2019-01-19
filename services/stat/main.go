@@ -1,13 +1,13 @@
 package stat
 
 import (
+	"fmt"
 	"github.com/HackIllinois/api/common/apiserver"
 	"github.com/HackIllinois/api/services/stat/config"
 	"github.com/HackIllinois/api/services/stat/controller"
 	"github.com/HackIllinois/api/services/stat/service"
 	"github.com/gorilla/mux"
 	"log"
-	"fmt"
 	"os"
 )
 

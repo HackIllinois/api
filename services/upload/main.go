@@ -1,13 +1,13 @@
 package upload
 
 import (
+	"fmt"
 	"github.com/HackIllinois/api/common/apiserver"
 	"github.com/HackIllinois/api/services/upload/config"
 	"github.com/HackIllinois/api/services/upload/controller"
 	"github.com/HackIllinois/api/services/upload/service"
 	"github.com/gorilla/mux"
 	"log"
-	"fmt"
 	"os"
 )
 

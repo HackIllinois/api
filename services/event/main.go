@@ -1,13 +1,13 @@
 package event
 
 import (
+	"fmt"
 	"github.com/HackIllinois/api/common/apiserver"
 	"github.com/HackIllinois/api/services/event/config"
 	"github.com/HackIllinois/api/services/event/controller"
 	"github.com/HackIllinois/api/services/event/service"
 	"github.com/gorilla/mux"
 	"log"
-	"fmt"
 	"os"
 )
 

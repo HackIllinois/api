@@ -1,10 +1,10 @@
 package gateway
 
 import (
+	"fmt"
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/services"
 	"github.com/arbor-dev/arbor/server"
-	"fmt"
 	"os"
 )
 

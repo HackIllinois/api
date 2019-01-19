@@ -1,13 +1,13 @@
 package checkin
 
 import (
+	"fmt"
 	"github.com/HackIllinois/api/common/apiserver"
 	"github.com/HackIllinois/api/services/checkin/config"
 	"github.com/HackIllinois/api/services/checkin/controller"
 	"github.com/HackIllinois/api/services/checkin/service"
 	"github.com/gorilla/mux"
 	"log"
-	"fmt"
 	"os"
 )
 

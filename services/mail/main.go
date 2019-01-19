@@ -1,13 +1,13 @@
 package mail
 
 import (
+	"fmt"
 	"github.com/HackIllinois/api/common/apiserver"
 	"github.com/HackIllinois/api/services/mail/config"
 	"github.com/HackIllinois/api/services/mail/controller"
 	"github.com/HackIllinois/api/services/mail/service"
 	"github.com/gorilla/mux"
 	"log"
-	"fmt"
 	"os"
 )
 

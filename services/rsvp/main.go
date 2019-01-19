@@ -1,13 +1,13 @@
 package rsvp
 
 import (
+	"fmt"
 	"github.com/HackIllinois/api/common/apiserver"
 	"github.com/HackIllinois/api/services/rsvp/config"
 	"github.com/HackIllinois/api/services/rsvp/controller"
 	"github.com/HackIllinois/api/services/rsvp/service"
 	"github.com/gorilla/mux"
 	"log"
-	"fmt"
 	"os"
 )
 

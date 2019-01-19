@@ -1,13 +1,13 @@
 package registration
 
 import (
+	"fmt"
 	"github.com/HackIllinois/api/common/apiserver"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/controller"
 	"github.com/HackIllinois/api/services/registration/service"
 	"github.com/gorilla/mux"
 	"log"
-	"fmt"
 	"os"
 )
 

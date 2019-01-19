@@ -1,13 +1,13 @@
 package decision
 
 import (
+	"fmt"
 	"github.com/HackIllinois/api/common/apiserver"
 	"github.com/HackIllinois/api/services/decision/config"
 	"github.com/HackIllinois/api/services/decision/controller"
 	"github.com/HackIllinois/api/services/decision/service"
 	"github.com/gorilla/mux"
 	"log"
-	"fmt"
 	"os"
 )
 

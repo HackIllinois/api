@@ -1,13 +1,13 @@
 package auth
 
 import (
+	"fmt"
 	"github.com/HackIllinois/api/common/apiserver"
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/controller"
 	"github.com/HackIllinois/api/services/auth/service"
 	"github.com/gorilla/mux"
 	"log"
-	"fmt"
 	"os"
 )
 

@@ -9,18 +9,38 @@ import (
 	"reflect"
 	"testing"
 	"time"
+	"fmt"
+	"os"
 )
 
 var db database.Database
 
-func init() {
-	db_connection, err := database.InitDatabase(config.EVENT_DB_HOST, config.EVENT_DB_NAME)
+func TestMain(m *testing.M) {
+	err := config.Initialize()
 
 	if err != nil {
-		panic(err)
+		fmt.Printf("ERROR: %v\n", err)
+		os.Exit(1)
+
 	}
 
-	db = db_connection
+	err = service.Initialize()
+
+	if err != nil {
+		fmt.Printf("ERROR: %v\n", err)
+		os.Exit(1)
+	}
+
+	db, err = database.InitDatabase(config.EVENT_DB_HOST, config.EVENT_DB_NAME)
+
+	if err != nil {
+		fmt.Printf("ERROR: %v\n", err)
+		os.Exit(1)
+	}
+
+	return_code := m.Run()
+
+	os.Exit(return_code)
 }
 
 var TestTime = time.Now().Unix()

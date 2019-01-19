@@ -10,8 +10,6 @@ import (
 	"github.com/justinas/alice"
 )
 
-var AuthURL = config.AUTH_SERVICE
-
 const AuthFormat string = "JSON"
 
 var AuthRoutes = arbor.RouteCollection{
@@ -54,25 +52,25 @@ var AuthRoutes = arbor.RouteCollection{
 }
 
 func OauthRedirect(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, AuthURL+r.URL.String(), AuthFormat, "", r)
+	arbor.GET(w, config.AUTH_SERVICE+r.URL.String(), AuthFormat, "", r)
 }
 
 func OauthCode(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, AuthURL+r.URL.String(), AuthFormat, "", r)
+	arbor.POST(w, config.AUTH_SERVICE+r.URL.String(), AuthFormat, "", r)
 }
 
 func GetUserRoles(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, AuthURL+r.URL.String(), AuthFormat, "", r)
+	arbor.GET(w, config.AUTH_SERVICE+r.URL.String(), AuthFormat, "", r)
 }
 
 func AddUserRole(w http.ResponseWriter, r *http.Request) {
-	arbor.PUT(w, AuthURL+r.URL.String(), AuthFormat, "", r)
+	arbor.PUT(w, config.AUTH_SERVICE+r.URL.String(), AuthFormat, "", r)
 }
 
 func RemoveUserRole(w http.ResponseWriter, r *http.Request) {
-	arbor.PUT(w, AuthURL+r.URL.String(), AuthFormat, "", r)
+	arbor.PUT(w, config.AUTH_SERVICE+r.URL.String(), AuthFormat, "", r)
 }
 
 func RefreshToken(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, AuthURL+r.URL.String(), AuthFormat, "", r)
+	arbor.GET(w, config.AUTH_SERVICE+r.URL.String(), AuthFormat, "", r)
 }

@@ -9,8 +9,6 @@ import (
 	"net/http"
 )
 
-var RsvpURL = config.RSVP_SERVICE
-
 const RsvpFormat string = "JSON"
 
 var RsvpRoutes = arbor.RouteCollection{
@@ -41,17 +39,17 @@ var RsvpRoutes = arbor.RouteCollection{
 }
 
 func GetCurrentRsvpInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, RsvpURL+r.URL.String(), RsvpFormat, "", r)
+	arbor.GET(w, config.RSVP_SERVICE+r.URL.String(), RsvpFormat, "", r)
 }
 
 func CreateCurrentRsvpInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, RsvpURL+r.URL.String(), RsvpFormat, "", r)
+	arbor.POST(w, config.RSVP_SERVICE+r.URL.String(), RsvpFormat, "", r)
 }
 
 func UpdateCurrentRsvpInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.PUT(w, RsvpURL+r.URL.String(), RsvpFormat, "", r)
+	arbor.PUT(w, config.RSVP_SERVICE+r.URL.String(), RsvpFormat, "", r)
 }
 
 func GetRsvpInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, RsvpURL+r.URL.String(), RsvpFormat, "", r)
+	arbor.GET(w, config.RSVP_SERVICE+r.URL.String(), RsvpFormat, "", r)
 }

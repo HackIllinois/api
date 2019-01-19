@@ -9,8 +9,6 @@ import (
 	"net/http"
 )
 
-var MailURL = config.MAIL_SERVICE
-
 const MailFormat string = "JSON"
 
 var MailRoutes = arbor.RouteCollection{
@@ -59,29 +57,29 @@ var MailRoutes = arbor.RouteCollection{
 }
 
 func SendMail(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, MailURL+r.URL.String(), MailFormat, "", r)
+	arbor.POST(w, config.MAIL_SERVICE+r.URL.String(), MailFormat, "", r)
 }
 
 func SendMailList(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, MailURL+r.URL.String(), MailFormat, "", r)
+	arbor.POST(w, config.MAIL_SERVICE+r.URL.String(), MailFormat, "", r)
 }
 
 func CreateMailList(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, MailURL+r.URL.String(), MailFormat, "", r)
+	arbor.POST(w, config.MAIL_SERVICE+r.URL.String(), MailFormat, "", r)
 }
 
 func AddToMailList(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, MailURL+r.URL.String(), MailFormat, "", r)
+	arbor.POST(w, config.MAIL_SERVICE+r.URL.String(), MailFormat, "", r)
 }
 
 func RemoveFromMailList(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, MailURL+r.URL.String(), MailFormat, "", r)
+	arbor.POST(w, config.MAIL_SERVICE+r.URL.String(), MailFormat, "", r)
 }
 
 func GetMailList(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, MailURL+r.URL.String(), MailFormat, "", r)
+	arbor.GET(w, config.MAIL_SERVICE+r.URL.String(), MailFormat, "", r)
 }
 
 func GetAllMailLists(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, MailURL+r.URL.String(), MailFormat, "", r)
+	arbor.GET(w, config.MAIL_SERVICE+r.URL.String(), MailFormat, "", r)
 }

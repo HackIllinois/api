@@ -32,7 +32,7 @@ func AddAttendeeRole(id string) error {
 */
 func GetRoles(id string) (*models.UserRoles, error) {
 	var user_roles models.UserRoles
-	status, err := apirequest.Get(config.AUTH_SERVICE+"/auth/roles/"+id+"/", user_roles)
+	status, err := apirequest.Get(config.AUTH_SERVICE+"/auth/roles/"+id+"/", &user_roles)
 
 	if err != nil {
 		return nil, err

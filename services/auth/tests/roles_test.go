@@ -1,14 +1,14 @@
 package tests
 
 import (
+	"fmt"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
 	"github.com/HackIllinois/api/services/auth/service"
+	"os"
 	"reflect"
 	"testing"
-	"fmt"
-	"os"
 )
 
 var db database.Database

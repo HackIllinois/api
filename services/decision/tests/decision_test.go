@@ -1,10 +1,10 @@
 package tests
 
 import (
-	"reflect"
-	"testing"
 	"fmt"
 	"os"
+	"reflect"
+	"testing"
 
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/decision/config"

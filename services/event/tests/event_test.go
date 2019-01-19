@@ -1,16 +1,16 @@
 package tests
 
 import (
+	"fmt"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/event/config"
 	"github.com/HackIllinois/api/services/event/models"
 	"github.com/HackIllinois/api/services/event/service"
 	"math"
+	"os"
 	"reflect"
 	"testing"
 	"time"
-	"fmt"
-	"os"
 )
 
 var db database.Database

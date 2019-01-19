@@ -34,11 +34,33 @@ var SERVICE_ENTRYPOINTS = map[string](func()){
 	"notifications": notifications.Entry,
 }
 
+func StartAll() {
+	gateway_entry, ok := SERVICE_ENTRYPOINTS["gateway"]
+
+	if !ok {
+		fmt.Fprintf(os.Stderr, "Could not find gateway\n")
+		os.Exit(1)
+	}
+
+	delete(SERVICE_ENTRYPOINTS, "gateway")
+
+	for _, entry := range SERVICE_ENTRYPOINTS {
+		go entry()
+	}
+
+	gateway_entry()
+}
+
 func main() {
 	var service string
 	flag.StringVar(&service, "service", "", "The service to start")
 
 	flag.Parse()
+
+	if service == "all" {
+		StartAll()
+		os.Exit(1)
+	}
 
 	entry, ok := SERVICE_ENTRYPOINTS[service]
 
@@ -48,4 +70,5 @@ func main() {
 	}
 
 	entry()
+	os.Exit(1)
 }

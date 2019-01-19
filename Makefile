@@ -41,6 +41,10 @@ setup: all
 run:
 	@$(REPO_ROOT)/scripts/run.sh
 
+.PHONY: run-single
+run-single:
+	@$(REPO_ROOT)/scripts/run-single.sh
+
 .PHONY: fmt
 fmt:
 	@gofmt -s -w -l .

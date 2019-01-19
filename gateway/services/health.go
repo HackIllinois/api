@@ -54,7 +54,7 @@ func GetHealthChecks(w http.ResponseWriter, r *http.Request) {
 		if status == http.StatusOK {
 			healthy_services = append(healthy_services, service_name)
 		} else {
-			unhealthy_services = append(healthy_services, service_name)
+			unhealthy_services = append(unhealthy_services, service_name)
 		}
 	}
 

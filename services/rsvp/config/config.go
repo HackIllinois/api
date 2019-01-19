@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/HackIllinois/api/common/configloader"
+	"github.com/HackIllinois/api/common/datastore"
 	"os"
 	"strconv"
 )
@@ -16,6 +17,8 @@ var DECISION_SERVICE string
 var MAIL_SERVICE string
 
 var DECISION_EXPIRATION_HOURS int
+
+var RSVP_DEFINITION datastore.DataStoreDefinition
 
 func init() {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
@@ -73,4 +76,10 @@ func init() {
 	}
 
 	DECISION_EXPIRATION_HOURS = decision_expiration
+
+	err = cfg_loader.ParseInto("RSVP_DEFINITION", &RSVP_DEFINITION)
+
+	if err != nil {
+		panic(err)
+	}
 }

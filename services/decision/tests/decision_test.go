@@ -34,7 +34,7 @@ func SetupTestDB(t *testing.T) {
 		Reviewer:  "reviewerid",
 		Timestamp: 1,
 		History: []models.Decision{
-			models.Decision{
+			{
 				Finalized: false,
 				ID:        "testid",
 				Status:    "PENDING",
@@ -81,7 +81,7 @@ func TestGetDecisionService(t *testing.T) {
 		Reviewer:  "reviewerid",
 		Timestamp: 1,
 		History: []models.Decision{
-			models.Decision{
+			{
 				Finalized: false,
 				ID:        "testid",
 				Status:    "PENDING",
@@ -132,7 +132,7 @@ func TestUpdateDecisionService(t *testing.T) {
 		Reviewer:  "reviewerid",
 		Timestamp: 2,
 		History: []models.Decision{
-			models.Decision{
+			{
 				Finalized: false,
 				ID:        "testid",
 				Status:    "PENDING",
@@ -140,7 +140,7 @@ func TestUpdateDecisionService(t *testing.T) {
 				Reviewer:  "reviewerid",
 				Timestamp: 1,
 			},
-			models.Decision{
+			{
 				Finalized: false,
 				ID:        "testid",
 				Status:    "ACCEPTED",
@@ -171,7 +171,7 @@ func TestGetFilteredDecisionsService(t *testing.T) {
 		Reviewer:  "reviewerid",
 		Timestamp: 2,
 		History: []models.Decision{
-			models.Decision{
+			{
 				ID:        "testid2",
 				Status:    "PENDING",
 				Wave:      1,
@@ -187,8 +187,8 @@ func TestGetFilteredDecisionsService(t *testing.T) {
 	}
 
 	parameters := map[string][]string{
-		"id":   []string{"testid2"},
-		"wave": []string{"1"},
+		"id":   {"testid2"},
+		"wave": {"1"},
 	}
 	decisions, err := service.GetFilteredDecisions(parameters)
 	if err != nil {

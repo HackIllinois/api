@@ -135,7 +135,7 @@ func TestGetFilteredUserInfoService(t *testing.T) {
 	}
 
 	parameters := map[string][]string{
-		"username": []string{"testusername"},
+		"username": {"testusername"},
 	}
 	filtered_info, err := service.GetFilteredUserInfo(parameters)
 	if err != nil {

@@ -195,11 +195,11 @@ func TestGetAllMailLists(t *testing.T) {
 
 	expected := &models.MailListList{
 		MailLists: []models.MailList{
-			models.MailList{
+			{
 				ID:      "testlist",
 				UserIDs: []string{"userid1", "userid2"},
 			},
-			models.MailList{
+			{
 				ID:      "testlist2",
 				UserIDs: []string{"userid1", "userid2"},
 			},

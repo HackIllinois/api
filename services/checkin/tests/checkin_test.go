@@ -162,6 +162,10 @@ func TestGetAllCheckedInUsersService(t *testing.T) {
 
 	err := service.CreateUserCheckin("testid2", new_checkin)
 
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	new_checkin = models.UserCheckin{
 		ID:              "testid3",
 		HasCheckedIn:    true,

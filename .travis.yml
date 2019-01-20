@@ -15,19 +15,7 @@ before_deploy:
     - make docs
     - make container
 deploy:
-    - provider: s3
-      access_key_id: $HACKILLINOIS_ACCESS_KEY
-      secret_access_key: $HACKILLINOIS_SECRET_KEY
-      bucket: hackillinois-api
-      skip_cleanup: true
-      local_dir: deploy
-      on:
-        branch: master
-    - provider: s3
-      access_key_id: $HACKILLINOIS_ACCESS_KEY
-      secret_access_key: $HACKILLINOIS_SECRET_KEY
-      bucket: hackillinois-api-docs
-      skip-cleanup: true
-      local_dir: documentation/site
+    - provider: script
+      script: bash -c "make container-push"
       on:
         branch: master

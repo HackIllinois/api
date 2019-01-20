@@ -64,6 +64,13 @@ release: container
 	@docker save -o $(REPO_ROOT)/bin/hackillinois-api-image.tar hackillinois-api:latest
 	@rm -rf $(REPO_ROOT)/build
 
+.PHONY: container-push
+container-push:
+	@echo 'Pushing container to DockerHub'
+	@echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin
+	@docker tag hackillinois-api:latest $(DOCKER_USERNAME)/api
+	@docker push $(DOCKER_USERNAME)/api
+
 .PHONY: docs
 docs:
 	$(MAKE) -C $(BASE_DIR)/documentation build

@@ -11,7 +11,13 @@ import (
 	"time"
 )
 
-func StartServer(address string, router *mux.Router, name string) error {
+func StartServer(address string, router *mux.Router, name string, initialize func() error) error {
+	err := initialize()
+
+	if err != nil {
+		return err
+	}
+
 	router.Use(middleware.ErrorMiddleware)
 	router.Use(middleware.ContentTypeMiddleware)
 

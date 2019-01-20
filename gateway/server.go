@@ -14,6 +14,12 @@ func Initialize() error {
 		return err
 	}
 
+	err = services.Initialize()
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

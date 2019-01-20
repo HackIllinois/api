@@ -15,6 +15,11 @@ var validate *validator.Validate
 var db database.Database
 
 func Initialize() error {
+	if db != nil {
+		db.Close()
+		db = nil
+	}
+
 	var err error
 	db, err = database.InitDatabase(config.REGISTRATION_DB_HOST, config.REGISTRATION_DB_NAME)
 

@@ -12,6 +12,11 @@ import (
 var db database.Database
 
 func Initialize() error {
+	if db != nil {
+		db.Close()
+		db = nil
+	}
+
 	var err error
 	db, err = database.InitDatabase(config.CHECKIN_DB_HOST, config.CHECKIN_DB_NAME)
 

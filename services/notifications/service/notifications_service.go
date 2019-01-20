@@ -27,6 +27,12 @@ func Initialize() error {
 	}))
 	client = sns.New(sess)
 
+	if db != nil {
+		db.Close()
+		db = nil
+	}
+
+
 	var err error
 	db, err = database.InitDatabase(config.NOTIFICATIONS_DB_HOST, config.NOTIFICATIONS_DB_NAME)
 

@@ -32,7 +32,6 @@ func Initialize() error {
 		db = nil
 	}
 
-
 	var err error
 	db, err = database.InitDatabase(config.NOTIFICATIONS_DB_HOST, config.NOTIFICATIONS_DB_NAME)
 

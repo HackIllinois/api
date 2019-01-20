@@ -1,7 +1,6 @@
 package services
 
 import (
-	"net/http"
 	"encoding/json"
 	"fmt"
 	"github.com/HackIllinois/api/common/apirequest"
@@ -9,7 +8,9 @@ import (
 	"github.com/HackIllinois/api/gateway/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
+	"net/http"
 )
+
 var ReloadRoutes = arbor.RouteCollection{
 	arbor.Route{
 		"Reload",
@@ -40,7 +41,7 @@ func Reload(w http.ResponseWriter, r *http.Request) {
 
 	reload_info := map[string][]string{
 		"success": reload_success,
-		"failed": reload_failed,
+		"failed":  reload_failed,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

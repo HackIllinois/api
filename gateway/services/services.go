@@ -2,10 +2,10 @@ package services
 
 import (
 	"fmt"
+	"github.com/HackIllinois/api/gateway/config"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
 	"net/http"
-	"github.com/HackIllinois/api/gateway/config"
 )
 
 var ServiceLocations map[string]string

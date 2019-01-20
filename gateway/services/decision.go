@@ -10,8 +10,6 @@ import (
 	"github.com/justinas/alice"
 )
 
-var DecisionURL = config.DECISION_SERVICE
-
 const DecisionFormat string = "JSON"
 
 var DecisionRoutes = arbor.RouteCollection{
@@ -48,21 +46,21 @@ var DecisionRoutes = arbor.RouteCollection{
 }
 
 func GetCurrentDecision(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, DecisionURL+r.URL.String(), DecisionFormat, "", r)
+	arbor.GET(w, config.DECISION_SERVICE+r.URL.String(), DecisionFormat, "", r)
 }
 
 func GetDecision(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, DecisionURL+r.URL.String(), DecisionFormat, "", r)
+	arbor.GET(w, config.DECISION_SERVICE+r.URL.String(), DecisionFormat, "", r)
 }
 
 func UpdateDecision(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, DecisionURL+r.URL.String(), DecisionFormat, "", r)
+	arbor.POST(w, config.DECISION_SERVICE+r.URL.String(), DecisionFormat, "", r)
 }
 
 func GetFilteredDecisions(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, DecisionURL+r.URL.String(), DecisionFormat, "", r)
+	arbor.GET(w, config.DECISION_SERVICE+r.URL.String(), DecisionFormat, "", r)
 }
 
 func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, DecisionURL+r.URL.String(), DecisionFormat, "", r)
+	arbor.POST(w, config.DECISION_SERVICE+r.URL.String(), DecisionFormat, "", r)
 }

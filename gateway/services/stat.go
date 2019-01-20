@@ -10,8 +10,6 @@ import (
 	"github.com/justinas/alice"
 )
 
-var StatURL = config.STAT_SERVICE
-
 const StatFormat string = "JSON"
 
 var StatRoutes = arbor.RouteCollection{
@@ -42,17 +40,17 @@ var StatRoutes = arbor.RouteCollection{
 }
 
 func RegisterService(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, StatURL+r.URL.String(), StatFormat, "", r)
+	arbor.POST(w, config.STAT_SERVICE+r.URL.String(), StatFormat, "", r)
 }
 
 func GetService(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, StatURL+r.URL.String(), StatFormat, "", r)
+	arbor.GET(w, config.STAT_SERVICE+r.URL.String(), StatFormat, "", r)
 }
 
 func GetStat(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, StatURL+r.URL.String(), StatFormat, "", r)
+	arbor.GET(w, config.STAT_SERVICE+r.URL.String(), StatFormat, "", r)
 }
 
 func GetAllStats(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, StatURL+r.URL.String(), StatFormat, "", r)
+	arbor.GET(w, config.STAT_SERVICE+r.URL.String(), StatFormat, "", r)
 }

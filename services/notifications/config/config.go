@@ -17,54 +17,56 @@ var SNS_REGION string
 var ANDROID_PLATFORM_ARN string
 var IOS_PLATFORM_ARN string
 
-func init() {
+func Initialize() error {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	NOTIFICATIONS_DB_HOST, err = cfg_loader.Get("NOTIFICATIONS_DB_HOST")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	NOTIFICATIONS_DB_NAME, err = cfg_loader.Get("NOTIFICATIONS_DB_NAME")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	NOTIFICATIONS_PORT, err = cfg_loader.Get("NOTIFICATIONS_PORT")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	SNS_REGION, err = cfg_loader.Get("SNS_REGION")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	ANDROID_PLATFORM_ARN, err = cfg_loader.Get("ANDROID_PLATFORM_ARN")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	IOS_PLATFORM_ARN, err = cfg_loader.Get("IOS_PLATFORM_ARN")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	production, err := cfg_loader.Get("IS_PRODUCTION")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	IS_PRODUCTION = (production == "true")
+
+	return nil
 }

@@ -12,14 +12,15 @@ import (
 
 var db database.Database
 
-func init() {
-	db_connection, err := database.InitDatabase(config.AUTH_DB_HOST, config.AUTH_DB_NAME)
+func Initialize() error {
+	var err error
+	db, err = database.InitDatabase(config.AUTH_DB_HOST, config.AUTH_DB_NAME)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	db = db_connection
+	return nil
 }
 
 /*

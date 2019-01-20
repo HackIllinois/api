@@ -9,8 +9,6 @@ import (
 	"net/http"
 )
 
-var CheckinURL = config.CHECKIN_SERVICE
-
 const CheckinFormat string = "JSON"
 
 var CheckinRoutes = arbor.RouteCollection{
@@ -47,21 +45,21 @@ var CheckinRoutes = arbor.RouteCollection{
 }
 
 func GetCurrentCheckinInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, CheckinURL+r.URL.String(), CheckinFormat, "", r)
+	arbor.GET(w, config.CHECKIN_SERVICE+r.URL.String(), CheckinFormat, "", r)
 }
 
 func CreateCurrentCheckinInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, CheckinURL+r.URL.String(), CheckinFormat, "", r)
+	arbor.POST(w, config.CHECKIN_SERVICE+r.URL.String(), CheckinFormat, "", r)
 }
 
 func UpdateCurrentCheckinInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.PUT(w, CheckinURL+r.URL.String(), CheckinFormat, "", r)
+	arbor.PUT(w, config.CHECKIN_SERVICE+r.URL.String(), CheckinFormat, "", r)
 }
 
 func GetCheckinInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, CheckinURL+r.URL.String(), CheckinFormat, "", r)
+	arbor.GET(w, config.CHECKIN_SERVICE+r.URL.String(), CheckinFormat, "", r)
 }
 
 func GetAllCheckedInUsers(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, CheckinURL+r.URL.String(), CheckinFormat, "", r)
+	arbor.GET(w, config.CHECKIN_SERVICE+r.URL.String(), CheckinFormat, "", r)
 }

@@ -89,7 +89,16 @@
 
 	"REGISTRATION_STAT_FIELDS": [
 		"major",
-		"school"
+		"school",
+		"shirtSize",
+		"diet",
+		"age",
+		"graduationYear",
+		"transportation",
+		"gender",
+		"interests",
+		"isBeginner",
+		"priorAttendance"
 	],
 
 	"REGISTRATION_DEFINITION": {

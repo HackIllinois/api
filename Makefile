@@ -22,7 +22,7 @@ run:
 
 .PHONY: fmt
 fmt:
-	go fmt ./...
+	@gofmt -s -w -l .
 
 .PHONY: deploy
 deploy:

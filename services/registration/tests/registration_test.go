@@ -249,7 +249,7 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 
 	// Test single value and one keys
 	parameters := map[string][]string{
-		"id": []string{"testid"},
+		"id": {"testid"},
 	}
 	user_registrations, err := service.GetFilteredUserRegistrations(parameters)
 	if err != nil {
@@ -272,7 +272,7 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 
 	// Test multiple values
 	parameters = map[string][]string{
-		"id": []string{"testid,testid2"},
+		"id": {"testid,testid2"},
 	}
 	user_registrations, err = service.GetFilteredUserRegistrations(parameters)
 	if err != nil {
@@ -296,8 +296,8 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 
 	// Test type casting
 	parameters = map[string][]string{
-		"firstName": []string{"first"},
-		"age":       []string{"20"},
+		"firstName": {"first"},
+		"age":       {"20"},
 	}
 	user_registrations, err = service.GetFilteredUserRegistrations(parameters)
 	if err != nil {

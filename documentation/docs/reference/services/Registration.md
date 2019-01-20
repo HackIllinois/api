@@ -1,6 +1,8 @@
 Registration
 ============
 
+*Note:* The exact fields in the registration requests and responses will change based on the registration definitions provided in the API configuration file.
+
 GET /registration/
 -------------------------
 

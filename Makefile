@@ -73,4 +73,4 @@ container-push:
 
 .PHONY: docs
 docs:
-	$(MAKE) -C $(BASE_DIR)/documentation build
+	$(MAKE) -C $(REPO_ROOT)/documentation build

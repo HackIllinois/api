@@ -49,7 +49,7 @@ There are a couple other useful but not necessary tools for working on the API. 
 In order to simply API development `make` is used for building, testing, and running the API. All `make` commands can be run from the root of the repository and they will properly find and operate on all of the services.
 
 ### Building the API
-Run the following command from the root of the repository. The gateway and all services will be built to `$GOPATH/bin` which should be in your `$PATH` so you can start up any of them easily.
+Run the following command from the root of the repository. The gateway and all services will be built into `bin`.
 ```
 make all
 ```
@@ -61,7 +61,7 @@ make test
 ```
 
 ### Running the API
-Run the following command from the root of the repository. Your `PATH` must contain `$GOPATH/bin` since that is where the services will be started from. Note that this command will not rebuild the API so you must first build the API to ensure your binaries are up to date.
+Run the following command from the root of the repository. Note that this command will not rebuild the API so you must first build the API to ensure your binaries are up to date.
 ```
 make run
 ```

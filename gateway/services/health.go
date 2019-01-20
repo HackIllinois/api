@@ -4,27 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/HackIllinois/api/common/apirequest"
-	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
 	"github.com/HackIllinois/api/gateway/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
 	"net/http"
 )
-
-var ServiceLocations = map[string]string{
-	"auth":          config.AUTH_SERVICE,
-	"user":          config.USER_SERVICE,
-	"registration":  config.REGISTRATION_SERVICE,
-	"decision":      config.DECISION_SERVICE,
-	"rsvp":          config.RSVP_SERVICE,
-	"checkin":       config.CHECKIN_SERVICE,
-	"upload":        config.UPLOAD_SERVICE,
-	"mail":          config.MAIL_SERVICE,
-	"event":         config.EVENT_SERVICE,
-	"stat":          config.STAT_SERVICE,
-	"notifications": config.NOTIFICATIONS_SERVICE,
-}
 
 var HealthRoutes = arbor.RouteCollection{
 	arbor.Route{

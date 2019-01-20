@@ -11,7 +11,13 @@ import (
 	"time"
 )
 
-func StartServer(address string, router *mux.Router, name string) error {
+func StartServer(address string, router *mux.Router, name string, initialize func() error) error {
+	err := initialize()
+
+	if err != nil {
+		return err
+	}
+
 	router.Use(middleware.ErrorMiddleware)
 	router.Use(middleware.ContentTypeMiddleware)
 
@@ -19,6 +25,7 @@ func StartServer(address string, router *mux.Router, name string) error {
 	router.Use(stats_middleware.Handler)
 
 	router.Handle(fmt.Sprintf("/%s/internal/healthstats/", name), alice.New().ThenFunc(GetHealthStats(stats_middleware))).Methods("GET")
+	router.Handle(fmt.Sprintf("/%s/internal/reload/", name), alice.New().ThenFunc(Reload(initialize))).Methods("GET")
 
 	server := &http.Server{
 		Handler:      router,
@@ -50,5 +57,20 @@ func GetHealthStats(stats_middleware *stats.Stats) http.HandlerFunc {
 		}
 
 		json.NewEncoder(w).Encode(health_stats)
+	}
+}
+
+/*
+	Reinitializes the service causing configuration variables to be reread
+*/
+func Reload(initialize func() error) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		err := initialize()
+
+		if err != nil {
+			w.WriteHeader(http.StatusUnprocessableEntity)
+		} else {
+			w.WriteHeader(http.StatusOK)
+		}
 	}
 }

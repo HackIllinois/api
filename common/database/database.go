@@ -5,6 +5,7 @@ package database
 */
 type Database interface {
 	Connect(host string) error
+	Close()
 	FindOne(collection_name string, query interface{}, result interface{}) error
 	FindAll(collection_name string, query interface{}, result interface{}) error
 	RemoveOne(collection_name string, query interface{}) error

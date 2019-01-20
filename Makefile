@@ -59,15 +59,9 @@ container: api
 	@rm -rf $(REPO_ROOT)/build
 
 .PHONY: release
-release: api
-	@echo 'Building release container'
-	@mkdir -p $(REPO_ROOT)/build
-	@cp $(REPO_ROOT)/bin/hackillinois-api $(REPO_ROOT)/build/hackillinois-api
-	@cp $(REPO_ROOT)/release/Dockerfile $(REPO_ROOT)/build/Dockerfile
-	@cp $(REPO_ROOT)/release/start.sh $(REPO_ROOT)/build/start.sh
-	@docker build -t hackillinois-api:release $(REPO_ROOT)/build
-	@docker save -o $(REPO_ROOT)/bin/hackillinois-api-image.tar hackillinois-api:release
-	@docker image rm -f hackillinois-api:release
+release: container
+	@echo 'Building API container release'
+	@docker save -o $(REPO_ROOT)/bin/hackillinois-api-image.tar hackillinois-api:latest
 	@rm -rf $(REPO_ROOT)/build
 
 .PHONY: docs

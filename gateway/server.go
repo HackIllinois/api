@@ -1,20 +1,27 @@
 package gateway
 
 import (
-	"fmt"
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/services"
 	"github.com/arbor-dev/arbor/server"
-	"os"
+	"log"
 )
 
-func Entry() {
+func Initialize() error {
 	err := config.Initialize()
 
 	if err != nil {
-		fmt.Printf("ERROR: %v\n", err)
-		os.Exit(1)
+		return err
+	}
 
+	return nil
+}
+
+func Entry() {
+	err := Initialize()
+
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	config.LoadArborConfig()

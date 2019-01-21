@@ -36,7 +36,7 @@ func (provider *GitHubOAuthProvider) GetAuthorizationRedirect(redirect_uri strin
 /*
 	Exchanges an OAuth code for an OAuth token
 */
-func (provider *GitHubOAuthProvider) Authorize(code string) error {
+func (provider *GitHubOAuthProvider) Authorize(code string, redirect_uri string) error {
 	request, err := grequests.Post("https://github.com/login/oauth/access_token", &grequests.RequestOptions{
 		Params: map[string]string{
 			"client_id":     config.GITHUB_CLIENT_ID,

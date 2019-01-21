@@ -9,7 +9,7 @@ import (
 
 type OAuthProvider interface {
 	GetAuthorizationRedirect(redirect_uri string) (string, error)
-	Authorize(code string) error
+	Authorize(code string, redirect_uri string) error
 	GetUserInfo() (*models.UserInfo, error)
 	IsVerifiedUser() bool
 }

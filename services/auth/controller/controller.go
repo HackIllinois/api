@@ -104,7 +104,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	signed_token, err := service.MakeToken(user_info.ID, user_info.Email, roles)
+	signed_token, err := service.MakeToken(user_info, roles)
 
 	if err != nil {
 		panic(errors.AuthorizationError(err.Error(), "Could not create HackIllinois API JWT for user."))
@@ -224,8 +224,6 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 		panic(errors.DatabaseError(err.Error(), "Could not fetch user info."))
 	}
 
-	email := user_info.Email
-
 	// Get the roles from the given user ID
 
 	roles, err := service.GetUserRoles(id, false)
@@ -236,7 +234,7 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 
 	// Create the new token using user ID, email, and (updated) roles.
 
-	signed_token, err := service.MakeToken(id, email, roles)
+	signed_token, err := service.MakeToken(user_info, roles)
 
 	if err != nil {
 		panic(errors.AuthorizationError(err.Error(), "Could not make a new JWT for the user."))

@@ -3,6 +3,7 @@ package apiserver
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/HackIllinois/api/common/config"
 	"github.com/HackIllinois/api/common/middleware"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
@@ -65,12 +66,20 @@ func GetHealthStats(stats_middleware *stats.Stats) http.HandlerFunc {
 */
 func Reload(initialize func() error) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		err := initialize()
+		err := config.Initialize()
 
 		if err != nil {
 			w.WriteHeader(http.StatusUnprocessableEntity)
-		} else {
-			w.WriteHeader(http.StatusOK)
+			return
 		}
+
+		err = initialize()
+
+		if err != nil {
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
 	}
 }

@@ -110,7 +110,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		panic(errors.AuthorizationError(err.Error(), "Could not create HackIllinois API JWT for user."))
 	}
 
-	err = service.SendUserInfo(user_info.ID, user_info.Username, user_info.FirstName, user_info.LastName, user_info.Email)
+	err = service.SendUserInfo(user_info)
 
 	if err != nil {
 		panic(errors.InternalError(err.Error(), "Could not send user information to user service."))

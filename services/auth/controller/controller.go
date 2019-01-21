@@ -35,7 +35,13 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 		client_application_url = config.AUTH_REDIRECT_URI
 	}
 
-	oauth_authorization_url, err := service.GetAuthorizeRedirect(provider, client_application_url)
+	oauth_provider, err := service.GetOAuthProvider(provider)
+
+	if err != nil {
+		panic(errors.MalformedRequestError(err.Error(), "Invalid OAuth provider."))
+	}
+
+	oauth_authorization_url, err := oauth_provider.GetAuthorizationRedirect(client_application_url)
 
 	if err != nil {
 		panic(errors.AuthorizationError(err.Error(), "Could not retrieve OAuth provider authorization code URL."))
@@ -60,69 +66,51 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		client_application_url = config.AUTH_REDIRECT_URI
 	}
 
-	oauth_token, err := service.GetOauthToken(oauth_code.Code, provider, client_application_url)
+	oauth_provider, err := service.GetOAuthProvider(provider)
+
+	if err != nil {
+		panic(errors.MalformedRequestError(err.Error(), "Invalid OAuth provider."))
+	}
+
+	err = oauth_provider.Authorize(oauth_code.Code, client_application_url)
 
 	if err != nil {
 		panic(errors.AuthorizationError(err.Error(), "Could not get OAuth token."))
 	}
 
-	email, is_email_verified, err := service.GetEmail(oauth_token, provider)
+	user_info, err := oauth_provider.GetUserInfo()
 
 	if err != nil {
-		panic(errors.AuthorizationError(err.Error(), "Could not fetch user's email from OAuth provider."))
+		panic(errors.AuthorizationError(err.Error(), "Could not fetch user's info from OAuth provider."))
 	}
 
-	id, err := service.GetUniqueId(oauth_token, provider)
-
-	if err != nil {
-		panic(errors.AuthorizationError(err.Error(), "Could not fetch user's unique ID from OAuth provider."))
-	}
-
-	roles, err := service.GetUserRoles(id, true)
+	roles, err := service.GetUserRoles(user_info.ID, true)
 
 	if err != nil {
 		panic(errors.AuthorizationError(err.Error(), "Could not fetch user's API roles."))
 	}
 
-	if is_email_verified {
-		err = service.AddAutomaticRoleGrants(id, email)
+	if oauth_provider.IsVerifiedUser() {
+		err = service.AddAutomaticRoleGrants(user_info.ID, user_info.Email)
 
 		if err != nil {
 			panic(errors.AuthorizationError(err.Error(), "Could not automatically grant roles to user (based on verified email domain)."))
 		}
 
-		roles, err = service.GetUserRoles(id, false)
+		roles, err = service.GetUserRoles(user_info.ID, false)
 
 		if err != nil {
 			panic(errors.AuthorizationError(err.Error(), "Could not determine user roles, after automatic role grants."))
 		}
 	}
 
-	signed_token, err := service.MakeToken(id, email, roles)
+	signed_token, err := service.MakeToken(user_info.ID, user_info.Email, roles)
 
 	if err != nil {
 		panic(errors.AuthorizationError(err.Error(), "Could not create HackIllinois API JWT for user."))
 	}
 
-	username, err := service.GetUsername(oauth_token, provider)
-
-	if err != nil {
-		panic(errors.AuthorizationError(err.Error(), "Could not fetch user's username from OAuth provider."))
-	}
-
-	first_name, err := service.GetFirstName(oauth_token, provider)
-
-	if err != nil {
-		panic(errors.AuthorizationError(err.Error(), "Could not get user's first name from OAuth provider."))
-	}
-
-	last_name, err := service.GetLastName(oauth_token, provider)
-
-	if err != nil {
-		panic(errors.AuthorizationError(err.Error(), "Could not get user's last name from OAuth provider."))
-	}
-
-	err = service.SendUserInfo(id, username, first_name, last_name, email)
+	err = service.SendUserInfo(user_info.ID, user_info.Username, user_info.FirstName, user_info.LastName, user_info.Email)
 
 	if err != nil {
 		panic(errors.InternalError(err.Error(), "Could not send user information to user service."))

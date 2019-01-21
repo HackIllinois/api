@@ -2,166 +2,31 @@ package service
 
 import (
 	"errors"
-	"github.com/HackIllinois/api/services/auth/config"
 	"net/url"
 	"strings"
+	"github.com/HackIllinois/api/services/auth/models"
 )
 
-var HASHTAG_INVALID_ERR = errors.New("`#` is an invalid character")
-
-/*
-	Return the oauth authorization url for the given provider
-*/
-func GetAuthorizeRedirect(provider string, redirect_uri string) (string, error) {
-	switch provider {
-	case "github":
-		return ConstructSafeURL("https", "github.com", "login/oauth/authorize",
-			map[string]string{
-				"client_id":    config.GITHUB_CLIENT_ID,
-				"scope":        "user:email",
-				"redirect_uri": redirect_uri,
-			})
-	case "google":
-		return ConstructSafeURL("https", "accounts.google.com", "o/oauth2/v2/auth",
-			map[string]string{
-				"client_id":     config.GOOGLE_CLIENT_ID,
-				"scope":         "profile email",
-				"response_type": "code",
-				"redirect_uri":  redirect_uri,
-			})
-	case "linkedin":
-		return ConstructSafeURL("https", "www.linkedin.com", "oauth2/v2/authorization",
-			map[string]string{
-				"client_id":     config.LINKEDIN_CLIENT_ID,
-				"scope":         "r_basicprofile r_emailaddress",
-				"response_type": "code",
-				"redirect_uri":  redirect_uri,
-			})
-	default:
-		return "", errors.New("Invalid provider")
-	}
+type OAuthProvider interface {
+	GetAuthorizationRedirect(redirect_uri string) (string, error)
+	Authorize(code string, redirect_uri string) error
+	GetUserInfo() (*models.UserInfo, error)
+	IsVerifiedUser() bool
 }
 
 /*
-	Gets the user's email from the specified oauth provider
+	Returns an OAuth provider struct for the requested provider
 */
-func GetEmail(oauth_token string, provider string) (string, bool, error) {
+func GetOAuthProvider(provider string) (OAuthProvider, error) {
 	switch provider {
 	case "github":
-		return GetGithubEmail(oauth_token)
+		return NewGitHubOAuth(), nil
 	case "google":
-		return GetGoogleEmail(oauth_token)
+		return NewGoogleOAuth(), nil
 	case "linkedin":
-		return GetLinkedinEmail(oauth_token)
+		return NewLinkedInOAuth(), nil
 	default:
-		return "", false, errors.New("Invalid provider")
-	}
-}
-
-/*
-	Converts an oauth code to an oauth token for the specified provider
-*/
-func GetOauthToken(code string, provider string, redirect_uri string) (string, error) {
-	switch provider {
-	case "github":
-		return GetGithubOauthToken(code)
-	case "google":
-		return GetGoogleOauthToken(code, redirect_uri)
-	case "linkedin":
-		return GetLinkedinOauthToken(code, redirect_uri)
-	default:
-		return "", errors.New("Invalid provider")
-	}
-}
-
-/*
-	Gets the user's unique id from the specified oauth provider
-*/
-func GetUniqueId(oauth_token string, provider string) (string, error) {
-	switch provider {
-	case "github":
-		return GetGithubUniqueId(oauth_token)
-	case "google":
-		return GetGoogleUniqueId(oauth_token)
-	case "linkedin":
-		return GetLinkedinUniqueId(oauth_token)
-	default:
-		return "", errors.New("Invalid provider")
-	}
-}
-
-/*
-	Gets the user's username from the specified oauth provider
-*/
-func GetUsername(oauth_token string, provider string) (string, error) {
-	switch provider {
-	case "github":
-		return GetGithubUsername(oauth_token)
-	case "google":
-		return GetGoogleUsername(oauth_token)
-	case "linkedin":
-		return GetLinkedinUsername(oauth_token)
-	default:
-		return "", errors.New("Invalid provider")
-	}
-}
-
-/*
-	Gets the user's first name from the specified oauth provider
-*/
-func GetFirstName(oauth_token string, provider string) (string, error) {
-	const number_of_names int = 2
-	const name_delimiter string = " "
-
-	switch provider {
-	case "github":
-		name, err := GetGithubName(oauth_token)
-
-		if err != nil {
-			return "", err
-		}
-
-		split_name := strings.SplitAfterN(name, name_delimiter, number_of_names)
-
-		return strings.TrimSpace(split_name[0]), nil
-	case "google":
-		return GetGoogleFirstName(oauth_token)
-	case "linkedin":
-		return GetLinkedinFirstName(oauth_token)
-	default:
-		return "", errors.New("Invalid provider")
-	}
-}
-
-/*
-	Gets the user's last name from the specified oauth provider
-*/
-func GetLastName(oauth_token string, provider string) (string, error) {
-	const number_of_names int = 2
-	const name_delimiter string = " "
-
-	switch provider {
-	case "github":
-		name, err := GetGithubName(oauth_token)
-
-		if err != nil {
-			return "", err
-		}
-
-		split_name := strings.SplitAfterN(name, name_delimiter, number_of_names)
-
-		// If there is only a single name, or if the name cannot be split.
-		if len(split_name) < 2 {
-			return "", nil
-		} else {
-			return strings.TrimSpace(split_name[1]), nil
-		}
-	case "google":
-		return GetGoogleLastName(oauth_token)
-	case "linkedin":
-		return GetLinkedinLastName(oauth_token)
-	default:
-		return "", errors.New("Invalid provider")
+		return nil, errors.New("Invalid provider")
 	}
 }
 
@@ -195,7 +60,7 @@ func ConstructSafeURL(scheme string, host string, path string, queryParams map[s
 	if queryParams != nil {
 		for _, val := range queryParams {
 			if strings.Contains(val, "#") {
-				return url.String(), HASHTAG_INVALID_ERR
+				return url.String(), errors.New("`#` is an invalid character")
 			}
 		}
 

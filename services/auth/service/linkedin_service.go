@@ -8,13 +8,13 @@ import (
 )
 
 type LinkedInOAuthProvider struct {
-	token string
+	token          string
 	isVerifiedUser bool
 }
 
 func NewLinkedInOAuth() *LinkedInOAuthProvider {
 	return &LinkedInOAuthProvider{
-		token: "",
+		token:          "",
 		isVerifiedUser: false,
 	}
 }

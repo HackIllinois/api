@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
+	"github.com/HackIllinois/api/services/auth/models"
 	"net/url"
 	"strings"
-	"github.com/HackIllinois/api/services/auth/models"
 )
 
 type OAuthProvider interface {

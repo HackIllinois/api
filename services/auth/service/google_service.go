@@ -8,13 +8,13 @@ import (
 )
 
 type GoogleOAuthProvider struct {
-	token string
+	token          string
 	isVerifiedUser bool
 }
 
 func NewGoogleOAuth() *GoogleOAuthProvider {
 	return &GoogleOAuthProvider{
-		token: "",
+		token:          "",
 		isVerifiedUser: false,
 	}
 }

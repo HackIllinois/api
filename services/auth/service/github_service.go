@@ -2,21 +2,21 @@ package service
 
 import (
 	"errors"
-	"strconv"
-	"strings"
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
 	"github.com/levigross/grequests"
+	"strconv"
+	"strings"
 )
 
 type GitHubOAuthProvider struct {
-	token string
+	token          string
 	isVerifiedUser bool
 }
 
 func NewGitHubOAuth() *GitHubOAuthProvider {
 	return &GitHubOAuthProvider{
-		token: "",
+		token:          "",
 		isVerifiedUser: false,
 	}
 }

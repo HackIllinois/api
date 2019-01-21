@@ -22,11 +22,9 @@ func GetOAuthProvider(provider string) (OAuthProvider, error) {
 	case "github":
 		return NewGitHubOAuth(), nil
 	case "google":
-		//return NewGoogleOAuth(), nil
-		fallthrough
+		return NewGoogleOAuth(), nil
 	case "linkedin":
-		//return NewLinkedinOauth(), nil
-		fallthrough
+		return NewLinkedInOAuth(), nil
 	default:
 		return nil, errors.New("Invalid provider")
 	}

@@ -30,7 +30,8 @@ func (provider *GitHubOAuthProvider) GetAuthorizationRedirect(redirect_uri strin
 			"client_id":    config.GITHUB_CLIENT_ID,
 			"scope":        "user:email",
 			"redirect_uri": redirect_uri,
-	})
+		},
+	)
 }
 
 /*

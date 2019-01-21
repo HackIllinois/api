@@ -29,7 +29,8 @@ func (provider *GoogleOAuthProvider) GetAuthorizationRedirect(redirect_uri strin
 			"scope":         "profile email",
 			"response_type": "code",
 			"redirect_uri":  redirect_uri,
-	})
+		},
+	)
 }
 
 /*

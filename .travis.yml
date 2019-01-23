@@ -14,9 +14,9 @@ script:
     - make test
 before_deploy:
     - make docs
-    - make container
+    - make container TAG=$TRAVIS_TAG
 deploy:
     - provider: script
-      script: bash -c "make container-push"
+      script: bash -c "make container-push TAG=$TRAVIS_TAG"
       on:
         branch: master

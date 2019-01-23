@@ -16,6 +16,12 @@ GATEWAYS := gateway common
 # Add new utilities to build here
 UTILITIES := accountgen tokengen
 
+# TAG is used to tag the docker containers being built
+TAG := latest
+ifeq ($(strip $(TAG)),)
+	override TAG := latest
+endif
+
 # Builds the API binary and all utilities
 .PHONY: all
 all: api utilities
@@ -74,14 +80,14 @@ container: api
 	@mkdir -p $(REPO_ROOT)/build
 	@cp $(REPO_ROOT)/bin/hackillinois-api $(REPO_ROOT)/build/hackillinois-api
 	@cp $(REPO_ROOT)/container/Dockerfile $(REPO_ROOT)/build/Dockerfile
-	@docker build -t hackillinois-api:latest $(REPO_ROOT)/build
+	@docker build -t hackillinois-api:$(TAG) $(REPO_ROOT)/build
 	@rm -rf $(REPO_ROOT)/build
 
 # Generates a tar archive of the API container
 .PHONY: release
 release: container
 	@echo 'Building API container release'
-	@docker save -o $(REPO_ROOT)/bin/hackillinois-api-image.tar hackillinois-api:latest
+	@docker save -o $(REPO_ROOT)/bin/hackillinois-api-image.tar hackillinois-api:$(TAG)
 	@rm -rf $(REPO_ROOT)/build
 
 # Pushes the API container to DockerHub
@@ -89,7 +95,7 @@ release: container
 container-push:
 	@echo 'Pushing container to DockerHub'
 	@echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin
-	@docker tag hackillinois-api:latest $(DOCKER_USERNAME)/api
+	@docker tag hackillinois-api:$(TAG) $(DOCKER_USERNAME)/api
 	@docker push $(DOCKER_USERNAME)/api
 
 # Builds static html documentation for the API

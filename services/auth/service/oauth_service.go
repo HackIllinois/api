@@ -30,7 +30,7 @@ func GetAuthorizeRedirect(provider string, redirect_uri string) (string, error) 
 				"redirect_uri":  redirect_uri,
 			})
 	case "linkedin":
-		return ConstructSafeURL("https", "www.linkedin.com", "oauth2/v2/authorization",
+		return ConstructSafeURL("https", "www.linkedin.com", "oauth/v2/authorization",
 			map[string]string{
 				"client_id":     config.LINKEDIN_CLIENT_ID,
 				"scope":         "r_basicprofile r_emailaddress",

@@ -15,6 +15,7 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
+	router.Handle("/roles/", alice.New().ThenFunc(GetCurrentUserRoles)).Methods("GET")
 	router.Handle("/{provider}/", alice.New().ThenFunc(Authorize)).Methods("GET")
 	router.Handle("/code/{provider}/", alice.New().ThenFunc(Login)).Methods("POST")
 	router.Handle("/roles/{id}/", alice.New().ThenFunc(GetRoles)).Methods("GET")
@@ -140,6 +141,30 @@ func Login(w http.ResponseWriter, r *http.Request) {
 */
 func GetRoles(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
+
+	if id == "" {
+		panic(errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
+	}
+
+	roles, err := service.GetUserRoles(id, false)
+
+	if err != nil {
+		panic(errors.AuthorizationError(err.Error(), "Could not get user's roles."))
+	}
+
+	user_roles := models.UserRoles{
+		ID:    id,
+		Roles: roles,
+	}
+
+	json.NewEncoder(w).Encode(user_roles)
+}
+
+/*
+	Gets the roles for the current user.
+*/
+func GetCurrentUserRoles(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
 		panic(errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))

@@ -49,6 +49,21 @@ Response format:
 }
 ```
 
+GET /auth/roles/
+-----------------------
+
+Gets the roles of the user with the `id` in the jwt.
+
+Response format:
+```
+{
+	"id": "github6892396",
+	"roles": [
+		"User"
+	]
+}
+```
+
 PUT /auth/roles/add/
 --------------------
 

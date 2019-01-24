@@ -23,7 +23,7 @@ func NewLinkedInOAuth() *LinkedInOAuthProvider {
 	Returns the url to redirects to for OAuth authorization
 */
 func (provider *LinkedInOAuthProvider) GetAuthorizationRedirect(redirect_uri string) (string, error) {
-	return ConstructSafeURL("https", "www.linkedin.com", "oauth2/v2/authorization",
+	return ConstructSafeURL("https", "www.linkedin.com", "oauth/v2/authorization",
 		map[string]string{
 			"client_id":     config.LINKEDIN_CLIENT_ID,
 			"scope":         "r_basicprofile r_emailaddress",

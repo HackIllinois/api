@@ -36,7 +36,7 @@ func SetupTestDB(t *testing.T) {
 		EndTime:     TestTime + 60000,
 		Sponsor:     "testsponsor",
 		EventType:   "WORKSHOP",
-		Locations:   []models.EventLocation{
+		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
 				Latitude:    123.456,
@@ -87,7 +87,7 @@ func TestGetAllEventsService(t *testing.T) {
 		EndTime:     TestTime + 60000,
 		Sponsor:     "testsponsor",
 		EventType:   "WORKSHOP",
-		Locations:   []models.EventLocation{
+		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
 				Latitude:    123.456,
@@ -117,7 +117,7 @@ func TestGetAllEventsService(t *testing.T) {
 				EndTime:     TestTime + 60000,
 				Sponsor:     "testsponsor",
 				EventType:   "WORKSHOP",
-				Locations:   []models.EventLocation{
+				Locations: []models.EventLocation{
 					{
 						Description: "testlocationdescription",
 						Latitude:    123.456,
@@ -132,7 +132,7 @@ func TestGetAllEventsService(t *testing.T) {
 				EndTime:     TestTime + 60000,
 				Sponsor:     "testsponsor",
 				EventType:   "WORKSHOP",
-				Locations:   []models.EventLocation{
+				Locations: []models.EventLocation{
 					{
 						Description: "testlocationdescription",
 						Latitude:    123.456,
@@ -170,7 +170,7 @@ func TestGetEventService(t *testing.T) {
 		EndTime:     TestTime + 60000,
 		Sponsor:     "testsponsor",
 		EventType:   "WORKSHOP",
-		Locations:   []models.EventLocation{
+		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
 				Latitude:    123.456,
@@ -199,7 +199,7 @@ func TestCreateEventService(t *testing.T) {
 		EndTime:     TestTime + 60000,
 		Sponsor:     "testsponsor",
 		EventType:   "WORKSHOP",
-		Locations:   []models.EventLocation{
+		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
 				Latitude:    123.456,
@@ -227,7 +227,7 @@ func TestCreateEventService(t *testing.T) {
 		EndTime:     TestTime + 60000,
 		Sponsor:     "testsponsor",
 		EventType:   "WORKSHOP",
-		Locations:   []models.EventLocation{
+		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
 				Latitude:    123.456,
@@ -321,7 +321,7 @@ func TestUpdateEventService(t *testing.T) {
 		EndTime:     TestTime + 60000,
 		Sponsor:     "testsponsor",
 		EventType:   "WORKSHOP",
-		Locations:   []models.EventLocation{
+		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
 				Latitude:    123.456,
@@ -349,7 +349,7 @@ func TestUpdateEventService(t *testing.T) {
 		EndTime:     TestTime + 60000,
 		Sponsor:     "testsponsor",
 		EventType:   "WORKSHOP",
-		Locations:   []models.EventLocation{
+		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
 				Latitude:    123.456,
@@ -477,7 +477,7 @@ func TestIsEventActive(t *testing.T) {
 		EndTime:     TestTime + ONE_MINUTE_IN_SECONDS*70,
 		Sponsor:     "testsponsor",
 		EventType:   "WORKSHOP",
-		Locations:   []models.EventLocation{
+		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
 				Latitude:    123.456,

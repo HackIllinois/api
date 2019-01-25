@@ -30,15 +30,19 @@ var TestTime = time.Now().Unix()
 */
 func SetupTestDB(t *testing.T) {
 	event := models.Event{
-		Name:                "testname",
-		Description:         "testdescription",
-		StartTime:           TestTime,
-		EndTime:             TestTime + 60000,
-		LocationDescription: "testlocationdescription",
-		Latitude:            123.456,
-		Longitude:           123.456,
-		Sponsor:             "testsponsor",
-		EventType:           "WORKSHOP",
+		Name:        "testname",
+		Description: "testdescription",
+		StartTime:   TestTime,
+		EndTime:     TestTime + 60000,
+		Sponsor:     "testsponsor",
+		EventType:   "WORKSHOP",
+		Locations: []models.EventLocation{
+			{
+				Description: "testlocationdescription",
+				Latitude:    123.456,
+				Longitude:   123.456,
+			},
+		},
 	}
 
 	err := db.Insert("events", &event)
@@ -77,15 +81,19 @@ func TestGetAllEventsService(t *testing.T) {
 	SetupTestDB(t)
 
 	event := models.Event{
-		Name:                "testname2",
-		Description:         "testdescription2",
-		StartTime:           TestTime,
-		EndTime:             TestTime + 60000,
-		LocationDescription: "testlocationdescription",
-		Latitude:            123.456,
-		Longitude:           123.456,
-		Sponsor:             "testsponsor",
-		EventType:           "WORKSHOP",
+		Name:        "testname2",
+		Description: "testdescription2",
+		StartTime:   TestTime,
+		EndTime:     TestTime + 60000,
+		Sponsor:     "testsponsor",
+		EventType:   "WORKSHOP",
+		Locations: []models.EventLocation{
+			{
+				Description: "testlocationdescription",
+				Latitude:    123.456,
+				Longitude:   123.456,
+			},
+		},
 	}
 
 	err := db.Insert("events", &event)
@@ -103,26 +111,34 @@ func TestGetAllEventsService(t *testing.T) {
 	expected_event_list := models.EventList{
 		Events: []models.Event{
 			{
-				Name:                "testname",
-				Description:         "testdescription",
-				StartTime:           TestTime,
-				EndTime:             TestTime + 60000,
-				LocationDescription: "testlocationdescription",
-				Latitude:            123.456,
-				Longitude:           123.456,
-				Sponsor:             "testsponsor",
-				EventType:           "WORKSHOP",
+				Name:        "testname",
+				Description: "testdescription",
+				StartTime:   TestTime,
+				EndTime:     TestTime + 60000,
+				Sponsor:     "testsponsor",
+				EventType:   "WORKSHOP",
+				Locations: []models.EventLocation{
+					{
+						Description: "testlocationdescription",
+						Latitude:    123.456,
+						Longitude:   123.456,
+					},
+				},
 			},
 			{
-				Name:                "testname2",
-				Description:         "testdescription2",
-				StartTime:           TestTime,
-				EndTime:             TestTime + 60000,
-				LocationDescription: "testlocationdescription",
-				Latitude:            123.456,
-				Longitude:           123.456,
-				Sponsor:             "testsponsor",
-				EventType:           "WORKSHOP",
+				Name:        "testname2",
+				Description: "testdescription2",
+				StartTime:   TestTime,
+				EndTime:     TestTime + 60000,
+				Sponsor:     "testsponsor",
+				EventType:   "WORKSHOP",
+				Locations: []models.EventLocation{
+					{
+						Description: "testlocationdescription",
+						Latitude:    123.456,
+						Longitude:   123.456,
+					},
+				},
 			},
 		},
 	}
@@ -148,15 +164,19 @@ func TestGetEventService(t *testing.T) {
 	}
 
 	expected_event := models.Event{
-		Name:                "testname",
-		Description:         "testdescription",
-		StartTime:           TestTime,
-		EndTime:             TestTime + 60000,
-		LocationDescription: "testlocationdescription",
-		Latitude:            123.456,
-		Longitude:           123.456,
-		Sponsor:             "testsponsor",
-		EventType:           "WORKSHOP",
+		Name:        "testname",
+		Description: "testdescription",
+		StartTime:   TestTime,
+		EndTime:     TestTime + 60000,
+		Sponsor:     "testsponsor",
+		EventType:   "WORKSHOP",
+		Locations: []models.EventLocation{
+			{
+				Description: "testlocationdescription",
+				Latitude:    123.456,
+				Longitude:   123.456,
+			},
+		},
 	}
 
 	if !reflect.DeepEqual(event, &expected_event) {
@@ -173,15 +193,19 @@ func TestCreateEventService(t *testing.T) {
 	SetupTestDB(t)
 
 	new_event := models.Event{
-		Name:                "testname2",
-		Description:         "testdescription2",
-		StartTime:           TestTime,
-		EndTime:             TestTime + 60000,
-		LocationDescription: "testlocationdescription",
-		Latitude:            123.456,
-		Longitude:           123.456,
-		Sponsor:             "testsponsor",
-		EventType:           "WORKSHOP",
+		Name:        "testname2",
+		Description: "testdescription2",
+		StartTime:   TestTime,
+		EndTime:     TestTime + 60000,
+		Sponsor:     "testsponsor",
+		EventType:   "WORKSHOP",
+		Locations: []models.EventLocation{
+			{
+				Description: "testlocationdescription",
+				Latitude:    123.456,
+				Longitude:   123.456,
+			},
+		},
 	}
 
 	err := service.CreateEvent("testname2", new_event)
@@ -197,15 +221,19 @@ func TestCreateEventService(t *testing.T) {
 	}
 
 	expected_event := models.Event{
-		Name:                "testname2",
-		Description:         "testdescription2",
-		StartTime:           TestTime,
-		EndTime:             TestTime + 60000,
-		LocationDescription: "testlocationdescription",
-		Latitude:            123.456,
-		Longitude:           123.456,
-		Sponsor:             "testsponsor",
-		EventType:           "WORKSHOP",
+		Name:        "testname2",
+		Description: "testdescription2",
+		StartTime:   TestTime,
+		EndTime:     TestTime + 60000,
+		Sponsor:     "testsponsor",
+		EventType:   "WORKSHOP",
+		Locations: []models.EventLocation{
+			{
+				Description: "testlocationdescription",
+				Latitude:    123.456,
+				Longitude:   123.456,
+			},
+		},
 	}
 
 	if !reflect.DeepEqual(event, &expected_event) {
@@ -287,15 +315,19 @@ func TestUpdateEventService(t *testing.T) {
 	SetupTestDB(t)
 
 	event := models.Event{
-		Name:                "testname",
-		Description:         "testdescription2",
-		StartTime:           TestTime,
-		EndTime:             TestTime + 60000,
-		LocationDescription: "testlocationdescription",
-		Latitude:            123.456,
-		Longitude:           123.456,
-		Sponsor:             "testsponsor",
-		EventType:           "WORKSHOP",
+		Name:        "testname",
+		Description: "testdescription2",
+		StartTime:   TestTime,
+		EndTime:     TestTime + 60000,
+		Sponsor:     "testsponsor",
+		EventType:   "WORKSHOP",
+		Locations: []models.EventLocation{
+			{
+				Description: "testlocationdescription",
+				Latitude:    123.456,
+				Longitude:   123.456,
+			},
+		},
 	}
 
 	err := service.UpdateEvent("testname", event)
@@ -311,15 +343,19 @@ func TestUpdateEventService(t *testing.T) {
 	}
 
 	expected_event := models.Event{
-		Name:                "testname",
-		Description:         "testdescription2",
-		StartTime:           TestTime,
-		EndTime:             TestTime + 60000,
-		LocationDescription: "testlocationdescription",
-		Latitude:            123.456,
-		Longitude:           123.456,
-		Sponsor:             "testsponsor",
-		EventType:           "WORKSHOP",
+		Name:        "testname",
+		Description: "testdescription2",
+		StartTime:   TestTime,
+		EndTime:     TestTime + 60000,
+		Sponsor:     "testsponsor",
+		EventType:   "WORKSHOP",
+		Locations: []models.EventLocation{
+			{
+				Description: "testlocationdescription",
+				Latitude:    123.456,
+				Longitude:   123.456,
+			},
+		},
 	}
 
 	if !reflect.DeepEqual(updated_event, &expected_event) {
@@ -435,15 +471,19 @@ func TestIsEventActive(t *testing.T) {
 	// Creating a 30 minute long event that SHOULD NOT be active
 	const ONE_MINUTE_IN_SECONDS = 60
 	new_event := models.Event{
-		Name:                "testiseventactive",
-		Description:         "testdescription2",
-		StartTime:           TestTime + ONE_MINUTE_IN_SECONDS*40,
-		EndTime:             TestTime + ONE_MINUTE_IN_SECONDS*70,
-		LocationDescription: "testlocationdescription",
-		Latitude:            123.456,
-		Longitude:           123.456,
-		Sponsor:             "testsponsor",
-		EventType:           "WORKSHOP",
+		Name:        "testiseventactive",
+		Description: "testdescription2",
+		StartTime:   TestTime + ONE_MINUTE_IN_SECONDS*40,
+		EndTime:     TestTime + ONE_MINUTE_IN_SECONDS*70,
+		Sponsor:     "testsponsor",
+		EventType:   "WORKSHOP",
+		Locations: []models.EventLocation{
+			{
+				Description: "testlocationdescription",
+				Latitude:    123.456,
+				Longitude:   123.456,
+			},
+		},
 	}
 
 	service.CreateEvent(new_event.Name, new_event)

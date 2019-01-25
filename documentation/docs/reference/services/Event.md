@@ -9,13 +9,17 @@ Returns the event with the name of `EVENTNAME`. `EVENTNAME` should be url encode
 Response format:
 ```
 {
-	"name": "Example Event",
+	"name": "Example Event 10",
 	"description": "This is a description",
 	"startTime": 1532202702,
 	"endTime": 1532212702,
-	"locationDescription": "Example Location",
-	"latitude": 40.1138,
-	"longitude": -88.2249,
+	"locations": [
+		{
+			"description": "Example Location",
+			"latitude": 40.1138,
+			"longitude": -88.2249
+		}
+	],
 	"sponsor": "Example sponsor",
 	"eventType": "WORKSHOP"
 }
@@ -31,25 +35,33 @@ Response format:
 {
 	events: [
 		{
-			"name": "Example Event",
+			"name": "Example Event 10",
 			"description": "This is a description",
 			"startTime": 1532202702,
 			"endTime": 1532212702,
-			"locationDescription": "Example Location",
-			"latitude": 40.1138,
-			"longitude": -88.2249,
+			"locations": [
+				{
+					"description": "Example Location",
+					"latitude": 40.1138,
+					"longitude": -88.2249
+				}
+			],
 			"sponsor": "Example sponsor",
 			"eventType": "WORKSHOP"
 		},
 		{
-			"name": "Example Event 2",
+			"name": "Example Event 11",
 			"description": "This is another description",
-			"startTime": 1532202703,
-			"endTime": 1532212703,
-			"locationDescription": "Example Location 2",
-			"latitude": 40.1139,
-			"longitude": -88.2250,
-			"sponsor": "Example sponsor 2",
+			"startTime": 1532202702,
+			"endTime": 1532212702,
+			"locations": [
+				{
+					"description": "Example Location",
+					"latitude": 40.1138,
+					"longitude": -88.2249
+				}
+			],
+			"sponsor": "Example sponsor",
 			"eventType": "WORKSHOP"
 		}
 	]
@@ -64,28 +76,36 @@ Creates an event with the requested fields. Returns the created event.
 Request format:
 ```
 {
-	"name": "Example Event",
+	"name": "Example Event 10",
 	"description": "This is a description",
 	"startTime": 1532202702,
 	"endTime": 1532212702,
-	"locationDescription": "Example Location",
-	"latitude": 40.1138,
-	"longitude": -88.2249,
 	"sponsor": "Example sponsor",
-	"eventType": "WORKSHOP"
+	"eventType": "WORKSHOP",
+	"locations": [
+		{
+			"description": "Example Location",
+			"latitude": 40.1138,
+			"longitude": -88.2249
+		}
+	]
 }
 ```
 
 Response format:
 ```
 {
-	"name": "Example Event",
+	"name": "Example Event 10",
 	"description": "This is a description",
 	"startTime": 1532202702,
 	"endTime": 1532212702,
-	"locationDescription": "Example Location",
-	"latitude": 40.1138,
-	"longitude": -88.2249,
+	"locations": [
+		{
+			"description": "Example Location",
+			"latitude": 40.1138,
+			"longitude": -88.2249
+		}
+	],
 	"sponsor": "Example sponsor",
 	"eventType": "WORKSHOP"
 }
@@ -100,13 +120,17 @@ It removes the `EVENTNAME` from the event trackers, and every user's tracker.
 Response format:
 ```
 {
-	"name": "Example Event",
+	"name": "Example Event 10",
 	"description": "This is a description",
 	"startTime": 1532202702,
 	"endTime": 1532212702,
-	"locationDescription": "Example Location",
-	"latitude": 40.1138,
-	"longitude": -88.2249,
+	"locations": [
+		{
+			"description": "Example Location",
+			"latitude": 40.1138,
+			"longitude": -88.2249
+		}
+	],
 	"sponsor": "Example sponsor",
 	"eventType": "WORKSHOP"
 }
@@ -120,28 +144,36 @@ Updates the event with the name specified in the `name` field of the request. Re
 Request format:
 ```
 {
-	"name": "Example Event",
-	"description": "This is an updated description",
+	"name": "Example Event 10",
+	"description": "This is a description",
 	"startTime": 1532202702,
 	"endTime": 1532212702,
-	"locationDescription": "Example Location",
-	"latitude": 40.1138,
-	"longitude": -88.2249,
 	"sponsor": "Example sponsor",
-	"eventType": "WORKSHOP"
+	"eventType": "WORKSHOP",
+	"locations": [
+		{
+			"description": "Example Location",
+			"latitude": 40.1138,
+			"longitude": -88.2249
+		}
+	]
 }
 ```
 
 Response format:
 ```
 {
-	"name": "Example Event",
-	"description": "This is an updated description",
+	"name": "Example Event 10",
+	"description": "This is a description",
 	"startTime": 1532202702,
 	"endTime": 1532212702,
-	"locationDescription": "Example Location",
-	"latitude": 40.1138,
-	"longitude": -88.2249,
+	"locations": [
+		{
+			"description": "Example Location",
+			"latitude": 40.1138,
+			"longitude": -88.2249
+		}
+	],
 	"sponsor": "Example sponsor",
 	"eventType": "WORKSHOP"
 }

@@ -425,7 +425,7 @@
 			{
 				"name": "osProject",
 				"type": "string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			}
 		]

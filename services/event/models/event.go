@@ -8,11 +8,6 @@ type Event struct {
 	Locations   []EventLocation `json:"locations"           validate:"required,dive,required"`
 	Sponsor     string          `json:"sponsor"             validate:"required"`
 	EventType   string          `json:"eventType"           validate:"required,oneof=MEAL SPEAKER WORKSHOP MINIEVENT OTHER"`
-
-	// Depreciated
-	LocationDescription string  `json:"locationDescription" validate:""`
-	Latitude            float64 `json:"latitude"            validate:""`
-	Longitude           float64 `json:"longitude"           validate:""`
 }
 
 type EventLocation struct {

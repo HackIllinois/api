@@ -11,6 +11,28 @@ import (
 )
 
 /*
+	Send user with specified id a confirmation email, with template as specified.
+*/
+func SendUserMail(id string, template string) error {
+	mail_order := models.MailOrder{
+		IDs:      []string{id},
+		Template: template,
+	}
+
+	status, err := apirequest.Post(config.MAIL_SERVICE+"/mail/send/", &mail_order, nil)
+
+	if err != nil {
+		return err
+	}
+
+	if status != http.StatusOK {
+		return errors.New("Error sending decision email.")
+	}
+
+	return nil
+}
+
+/*
 	Adds user with specified id to an appropriate mail list, based on their current decision.
 	If the mail list doesn't exist, a new one is created, containing the user.
 */

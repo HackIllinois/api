@@ -147,6 +147,22 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(errors.InternalError(err.Error(), "Could not add user to mail list."))
 		}
+
+		var err error
+		switch updated_decision.Status {
+		case "ACCEPTED":
+			err = service.SendUserMail(id, "acceptance")
+		case "REJECTED":
+			err = service.SendUserMail(id, "rejection")
+		case "WAITLISTED":
+			err = service.SendUserMail(id, "waitlisted")
+		default:
+			panic(errors.InternalError("Invalid decision status", "Could not send decision email."))
+		}
+
+		if err != nil {
+			panic(errors.InternalError(err.Error(), "Failed to send decision email."))
+		}
 	}
 
 	json.NewEncoder(w).Encode(updated_decision)

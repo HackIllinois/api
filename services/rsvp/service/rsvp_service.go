@@ -100,5 +100,5 @@ func UpdateUserRsvp(id string, rsvp models.UserRsvp) error {
 	Returns all rsvp stats
 */
 func GetStats() (map[string]interface{}, error) {
-	return db.GetStats("rsvps", []string{"isattending"})
+	return db.GetStats("rsvps", config.RSVP_STAT_FIELDS)
 }

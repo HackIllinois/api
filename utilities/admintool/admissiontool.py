@@ -27,7 +27,10 @@ def get_registrations():
 	return {registration['id'] : registration for registration in data['registrations']}
 
 def get_applicant_score(registration):
-	return get_registration_score(registration) + random.random(0.0, 1.0)
+	score = get_registration_score(registration) 
+	if score <= 0.0:
+		return 0.0
+	return score + random.random()
 
 def get_top_applicants(count):
 	applicants = get_pending_applicants()
@@ -36,9 +39,12 @@ def get_top_applicants(count):
 	applicant_scores = []
 
 	for applicant in applicants:
-		applicant_scores.append((applicant, get_applicant_score(registrations[applicant])))
+		score = get_applicant_score(registrations[applicant])
+		if score > 0.0:
+			applicant_scores.append((applicant, score))
 
-	applicant_scores.sort(lambda x: x[1], reverse = True)
+	applicant_scores.sort(key = lambda x: x[1], reverse = True)
+	count = min(count, len(applicant_scores))
 	applicant_scores = applicant_scores[0 : count]
 
 	return [applicant[0] for applicant in applicant_scores]
@@ -75,7 +81,7 @@ def admit_top_applicants(count, wave):
 	for applicant in top_applicants:
 		admit_applicant(applicant, wave)
 
-	print('Finished admitting top {} applicants'.format(count))
+	print('Finished admitting top {} applicants'.format(len(top_applicants)))
 
 def main():
 	if os.environ.get('HI_AUTH') == None:

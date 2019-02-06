@@ -345,6 +345,12 @@
 		]
 	},
 
+	"RSVP_STAT_FIELDS": [
+		"isAttending",
+		"diet",
+		"transportation"
+	],
+
 	"RSVP_DEFINITION": {
 		"name": "user_rsvp",
 		"type": "object",

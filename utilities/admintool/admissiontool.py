@@ -27,7 +27,10 @@ def get_registrations():
 	return {registration['id'] : registration for registration in data['registrations']}
 
 def get_applicant_score(registration):
-	return get_registration_score(registration) + random.random()
+	score = get_registration_score(registration) 
+	if score <= 0.0:
+		return 0.0
+	return score + random.random()
 
 def get_top_applicants(count):
 	applicants = get_pending_applicants()
@@ -37,7 +40,7 @@ def get_top_applicants(count):
 
 	for applicant in applicants:
 		score = get_applicant_score(registrations[applicant])
-		if score > 0.00001:
+		if score > 0.0:
 			applicant_scores.append((applicant, score))
 
 	applicant_scores.sort(key = lambda x: x[1], reverse = True)

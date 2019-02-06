@@ -216,7 +216,7 @@
 	},
 
 	"RSVP_STAT_FIELDS": [
-		"isAttending",
+		"isAttending"
 	],
 
 	"RSVP_DEFINITION": {

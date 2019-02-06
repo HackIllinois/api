@@ -36,7 +36,9 @@ def get_top_applicants(count):
 	applicant_scores = []
 
 	for applicant in applicants:
-		applicant_scores.append((applicant, get_applicant_score(registrations[applicant])))
+		score = get_applicant_score(registrations[applicant])
+		if score > 0.00001:
+			applicant_scores.append((applicant, score))
 
 	applicant_scores.sort(key = lambda x: x[1], reverse = True)
 	count = min(count, len(applicant_scores))
@@ -76,7 +78,7 @@ def admit_top_applicants(count, wave):
 	for applicant in top_applicants:
 		admit_applicant(applicant, wave)
 
-	print('Finished admitting top {} applicants'.format(count))
+	print('Finished admitting top {} applicants'.format(len(top_applicants)))
 
 def main():
 	if os.environ.get('HI_AUTH') == None:

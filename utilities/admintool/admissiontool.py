@@ -39,6 +39,7 @@ def get_top_applicants(count):
 		applicant_scores.append((applicant, get_applicant_score(registrations[applicant])))
 
 	applicant_scores.sort(key = lambda x: x[1], reverse = True)
+	count = min(count, len(applicant_scores))
 	applicant_scores = applicant_scores[0 : count]
 
 	return [applicant[0] for applicant in applicant_scores]

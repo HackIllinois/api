@@ -11,21 +11,31 @@ import (
 )
 
 /*
+	Gets the mailing list to add and remove from, based on a decision.
+*/
+func GetMailListFromDecision(decision *models.DecisionHistory) (*string, error) {
+	switch decision.Status {
+	case "ACCEPTED":
+		return fmt.Sprintf("accepted_wave_%v", decision.Wave), nil
+	case "REJECTED":
+		return "rejected", nil
+	case "WAITLISTED":
+		return "waitlisted", nil
+	default:
+		return nil, errors.New("Decision status is not valid.")
+	}
+}
+
+/*
 	Adds user with specified id to an appropriate mail list, based on their current decision.
 	If the mail list doesn't exist, a new one is created, containing the user.
 */
 func AddUserToMailList(id string, decision *models.DecisionHistory) error {
 
-	var mail_list_name string
-	switch decision.Status {
-	case "ACCEPTED":
-		mail_list_name = fmt.Sprintf("accepted_wave_%v", decision.Wave)
-	case "REJECTED":
-		mail_list_name = "rejected"
-	case "WAITLISTED":
-		mail_list_name = "waitlisted"
-	default:
-		return errors.New("Decision status is not valid.")
+	mail_list_name, err := GetMailListFromDecision(decision)
+
+	if err != nil {
+		return err
 	}
 
 	mail_list := models.MailList{
@@ -54,4 +64,28 @@ func AddUserToMailList(id string, decision *models.DecisionHistory) error {
 	// If there was an error creating / executing the update POST request, it is returned.
 	// Otherwise, the user should be in the correct mail list.
 	return err_update
+}
+
+/*
+	Removes user from appropriate mail list, based on decision.
+*/
+func RemoveUserFromMailList(id string, decision *models.DecisionHistory) error {
+	mail_list_name, err := GetMailListFromDecision(decision)
+
+	if err != nil {
+		return err
+	}
+
+	mail_list := models.MailList{
+		ID:      mail_list_name,
+		UserIDs: []string{id},
+	}
+
+	status, err_remove := apirequest.Post(config.MAIL_SERVICE+"/mail/list/remove/", &mail_list, nil)
+
+	if err_remove == nil && status != http.StatusOK {
+		return errors.New(fmt.Sprintf("Failed to remove user from mailing list %s.", mail_list_name))
+	}
+
+	return err_remove
 }

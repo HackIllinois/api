@@ -13,7 +13,7 @@ import (
 /*
 	Gets the mailing list to add and remove from, based on a decision.
 */
-func GetMailListFromDecision(decision *models.DecisionHistory) (*string, error) {
+func GetMailListFromDecision(decision *models.DecisionHistory) (string, error) {
 	switch decision.Status {
 	case "ACCEPTED":
 		return fmt.Sprintf("accepted_wave_%v", decision.Wave), nil
@@ -22,7 +22,7 @@ func GetMailListFromDecision(decision *models.DecisionHistory) (*string, error) 
 	case "WAITLISTED":
 		return "waitlisted", nil
 	default:
-		return nil, errors.New("Decision status is not valid.")
+		return "", errors.New("Decision status is not valid.")
 	}
 }
 

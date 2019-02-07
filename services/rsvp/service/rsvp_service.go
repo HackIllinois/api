@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"strings"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/rsvp/config"
 	"github.com/HackIllinois/api/services/rsvp/models"
@@ -94,6 +95,31 @@ func UpdateUserRsvp(id string, rsvp models.UserRsvp) error {
 	err := db.Update("rsvps", selector, &rsvp)
 
 	return err
+}
+
+/*
+	Returns the rsvps associated with the given parameters
+*/
+func GetFilteredRsvps(parameters map[string][]string) (*models.FilteredRsvps, error) {
+	query := make(map[string]interface{})
+
+	for key, values := range parameters {
+		if len(values) > 1 {
+			return nil, errors.New("Multiple usage of key " + key)
+		}
+
+		key = strings.ToLower(key)
+		query[key] = database.QuerySelector{"$in": strings.Split(values[0], ",")}
+	}
+
+	var filtered_rsvps models.FilteredRsvps
+	err := db.FindAll("rsvps", query, &filtered_rsvps.Rsvps)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &filtered_rsvps, nil
 }
 
 /*

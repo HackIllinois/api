@@ -2,10 +2,10 @@ package service
 
 import (
 	"errors"
-	"strings"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/rsvp/config"
 	"github.com/HackIllinois/api/services/rsvp/models"
+	"strings"
 )
 
 var db database.Database

@@ -215,6 +215,10 @@
 		]
 	},
 
+	"RSVP_STAT_FIELDS": [
+		"isAttending"
+	],
+
 	"RSVP_DEFINITION": {
 		"name": "user_rsvp",
 		"type": "object",

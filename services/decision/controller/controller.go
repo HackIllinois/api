@@ -147,7 +147,7 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(errors.InternalError(err.Error(), "Could not add user to mail list."))
 		}
-	} else if !updated_decision.Finalized {
+	} else {
 		err = service.RemoveUserFromMailList(id, updated_decision)
 
 		if err != nil {

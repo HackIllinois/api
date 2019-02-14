@@ -88,8 +88,15 @@
 	},
 
         "GROUP_TOPIC_MAP": {
-                "Admin": "Admin"
+                "Admin": "Admin",
+                "Staff": "Staff",
+                "Mentor": "Mentor",
+                "Applicant": "Applicant",
+                "Attendee", "Attendee",
+                "User", "User",
+                "Sponsor", "Sponsor"
         },
+
 
 	"REGISTRATION_STAT_FIELDS": [
 		"major",

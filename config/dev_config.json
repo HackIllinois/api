@@ -87,6 +87,10 @@
 		"event": "http://localhost:8010/event/internal/stats/"
 	},
 
+        "GROUP_TOPIC_MAP": {
+                "Admin": "Admins"
+        },
+
 	"REGISTRATION_STAT_FIELDS": [
 		"major",
 		"school",

@@ -222,7 +222,7 @@ func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-        Subscribes a user to topics corresponding to their roles, and unsubscribes a user from all other topics 
+   Subscribes a user to topics corresponding to their roles, and unsubscribes a user from all other topics
 */
 func UpdateUserSubscriptions(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")

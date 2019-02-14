@@ -220,9 +220,9 @@ func GetNotificationsForTopic(topic_name string) (*models.NotificationList, erro
 }
 
 /*
-        Subscribes a user to topics corresponding to their roles, and unsubscribes a user from all other topics 
+   Subscribes a user to topics corresponding to their roles, and unsubscribes a user from all other topics
 */
-func UpdateUserSubscriptions(user_id string) (*models.TopicList, error)  {
+func UpdateUserSubscriptions(user_id string) (*models.TopicList, error) {
 	user_roles, err := GetRoles(user_id)
 
 	if err != nil {

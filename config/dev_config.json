@@ -88,7 +88,7 @@
 	},
 
         "GROUP_TOPIC_MAP": {
-                "Admin": "Admins"
+                "Admin": "Admin"
         },
 
 	"REGISTRATION_STAT_FIELDS": [

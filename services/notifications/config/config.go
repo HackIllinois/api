@@ -17,6 +17,8 @@ var SNS_REGION string
 var ANDROID_PLATFORM_ARN string
 var IOS_PLATFORM_ARN string
 
+var GROUP_TOPIC_MAP map[string]string
+
 func init() {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
 
@@ -67,4 +69,10 @@ func init() {
 	}
 
 	IS_PRODUCTION = (production == "true")
+
+	err = cfg_loader.ParseInto("GROUP_TOPIC_MAP", &GROUP_TOPIC_MAP)
+
+	if err != nil {
+		panic(err)
+	}
 }

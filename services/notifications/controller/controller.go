@@ -17,6 +17,7 @@ func SetupController(route *mux.Route) {
 	router.Handle("/", alice.New().ThenFunc(CreateTopic)).Methods("POST")
 	router.Handle("/all/", alice.New().ThenFunc(GetAllNotifications)).Methods("GET")
 	router.Handle("/device/", alice.New().ThenFunc(RegisterDeviceToUser)).Methods("POST")
+	router.Handle("/update/", alice.New().ThenFunc(UpdateUserSubscriptions)).Methods("POST")
 	router.Handle("/{name}/", alice.New().ThenFunc(GetNotificationsForTopic)).Methods("GET")
 	router.Handle("/{name}/", alice.New().ThenFunc(DeleteTopic)).Methods("DELETE")
 	router.Handle("/{name}/", alice.New().ThenFunc(PublishNotification)).Methods("POST")
@@ -218,4 +219,23 @@ func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(device_registration)
+}
+
+/*
+        Subscribes a user to topics corresponding to their roles, and unsubscribes a user from all other topics 
+*/
+func UpdateUserSubscriptions(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	if id == "" {
+		panic(errors.MalformedRequestError("Must provide id of user to update subscriptions", "Must provide id of user to update subscriptions"))
+	}
+
+	topic_list, err := service.UpdateUserSubscriptions(id)
+
+	if err != nil {
+		panic(errors.InternalError(err.Error(), "Could not update user subscriptions."))
+	}
+
+	json.NewEncoder(w).Encode(topic_list)
 }

@@ -75,6 +75,12 @@ var NotificationsRoutes = arbor.RouteCollection{
 		"/notifications/{id}/info/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(GetTopicInfo).ServeHTTP,
 	},
+	arbor.Route{
+		"UpdateUserSubscriptions",
+		"POST",
+		"/notifications/update/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(UpdateUserSubscriptions).ServeHTTP,
+	},
 }
 
 func GetAllTopics(w http.ResponseWriter, r *http.Request) {
@@ -114,5 +120,9 @@ func RemoveUsersFromTopic(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+}
+
+func UpdateUserSubscriptions(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
 }

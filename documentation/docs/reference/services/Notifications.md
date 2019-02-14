@@ -218,3 +218,25 @@ Response format:
 	"platform": "android"
 }
 ```
+
+## POST /notifications/update/
+
+Updates a user's subscribed topics to match their user roles
+
+Request format:
+
+```
+{
+}
+```
+
+Response format:
+
+```
+{
+	"topics": [
+		  "Admin",
+		  "Attendee"
+	]
+}
+```

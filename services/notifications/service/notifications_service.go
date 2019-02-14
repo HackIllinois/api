@@ -220,6 +220,50 @@ func GetNotificationsForTopic(topic_name string) (*models.NotificationList, erro
 }
 
 /*
+        Subscribes a user to topics corresponding to their roles, and unsubscribes a user from all other topics 
+*/
+func UpdateUserSubscriptions(user_id string) (*models.TopicList, error)  {
+	user_roles, err := GetRoles(user_id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	topics_list, err := GetAllTopics()
+
+	if err != nil {
+		return nil, err
+	}
+
+	user_list := models.UserIDList{UserIDs: []string{user_id}}
+
+	for _, topic := range topics_list.Topics {
+		err = RemoveUsersFromTopic(topic, user_list)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	var topics []string
+
+	for _, role := range user_roles.Roles {
+		if topic, ok := config.GROUP_TOPIC_MAP[role]; ok {
+			topics = append(topics, topic)
+			err = AddUsersToTopic(topic, user_list)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	subscribed_topics := models.TopicList{
+		Topics: topics,
+	}
+
+	return &subscribed_topics, nil
+}
+
+/*
 	Adds the given userids to the specified topic
 */
 func AddUsersToTopic(topic_name string, userid_list models.UserIDList) error {

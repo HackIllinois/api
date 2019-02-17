@@ -81,6 +81,8 @@
 		"registration": "http://localhost:8004/registration/internal/stats/"
 	},
 
+        "GROUP_TOPIC_MAP": {},
+
 	"REGISTRATION_STAT_FIELDS": [
 		"major",
 		"school"

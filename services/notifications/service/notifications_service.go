@@ -507,9 +507,10 @@ func GenerateNotificationJson(notification models.Notification, past_notificatio
 	}
 
 	notification_payload := models.NotificationPayload{
-		APNS:    string(apns_payload_json),
-		GCM:     string(gcm_payload_json),
-		Default: notification.Body,
+		APNS:        string(apns_payload_json),
+		APNSSandbox: string(apns_payload_json),
+		GCM:         string(gcm_payload_json),
+		Default:     notification.Body,
 	}
 
 	notification_json, err := json.Marshal(notification_payload)

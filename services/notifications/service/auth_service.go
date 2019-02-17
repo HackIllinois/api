@@ -3,8 +3,8 @@ package service
 import (
 	"errors"
 	"github.com/HackIllinois/api/common/apirequest"
-	"github.com/HackIllinois/api/services/checkin/config"
-	"github.com/HackIllinois/api/services/checkin/models"
+	"github.com/HackIllinois/api/services/notifications/config"
+	"github.com/HackIllinois/api/services/notifications/models"
 	"net/http"
 )
 

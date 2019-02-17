@@ -40,6 +40,12 @@ var NotificationsRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(RegisterDeviceToUser).ServeHTTP,
 	},
 	arbor.Route{
+		"UpdateUserSubscriptions",
+		"POST",
+		"/notifications/update/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(UpdateUserSubscriptions).ServeHTTP,
+	},
+	arbor.Route{
 		"GetNotificationsForTopic",
 		"GET",
 		"/notifications/{id}/",
@@ -74,12 +80,6 @@ var NotificationsRoutes = arbor.RouteCollection{
 		"GET",
 		"/notifications/{id}/info/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(GetTopicInfo).ServeHTTP,
-	},
-	arbor.Route{
-		"UpdateUserSubscriptions",
-		"POST",
-		"/notifications/update/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(UpdateUserSubscriptions).ServeHTTP,
 	},
 }
 

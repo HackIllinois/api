@@ -482,6 +482,7 @@ func GenerateNotificationJson(notification models.Notification) (*string, error)
 				Title: notification.Title,
 				Body:  notification.Body,
 			},
+			Sound: "default",
 		},
 	}
 

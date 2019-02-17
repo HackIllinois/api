@@ -1,5 +1,5 @@
 package models
 
 type APNSPayload struct {
-	Alert APNSAlert `json:"alert"`
+	Container APNSContainer `json:"aps"`
 }

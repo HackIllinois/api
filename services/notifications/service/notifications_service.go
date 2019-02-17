@@ -17,6 +17,8 @@ import (
 const APPLICATION_PROTOCOL = "application"
 const MESSAGE_STRUCTURE = "json"
 
+var ERR_DEVICE_NOT_SUBSCRIBED = errors.New("Device not subscribed to topic")
+
 var sess *session.Session
 var client *sns.SNS
 var db database.Database
@@ -240,6 +242,9 @@ func UpdateUserSubscriptions(user_id string) (*models.TopicList, error) {
 	for _, topic := range topics_list.Topics {
 		err = RemoveUsersFromTopic(topic, user_list)
 		if err != nil {
+			if err == ERR_DEVICE_NOT_SUBSCRIBED {
+				continue
+			}
 			return nil, err
 		}
 	}
@@ -472,7 +477,7 @@ func UnsubscribeDeviceFromTopic(topic models.Topic, device models.Device) error 
 	sub_arn, ok := device.Subscriptions[topic.Name]
 
 	if !ok {
-		return errors.New("Device not subscribed to topic")
+		return ERR_DEVICE_NOT_SUBSCRIBED
 	}
 
 	if config.IS_PRODUCTION {

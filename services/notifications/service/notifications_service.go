@@ -169,7 +169,11 @@ func PublishNotification(topic_name string, notification models.Notification) (*
 		return nil, err
 	}
 
-	notification_json_str, err := GenerateNotificationJson(notification)
+	current_time := time.Now().Unix()
+
+	past_notification := models.PastNotification{TopicName: topic_name, Title: notification.Title, Body: notification.Body, Time: current_time}
+
+	notification_json_str, err := GenerateNotificationJson(notification, past_notification)
 
 	if err != nil {
 		return nil, err
@@ -189,10 +193,6 @@ func PublishNotification(topic_name string, notification models.Notification) (*
 			return nil, err
 		}
 	}
-
-	current_time := time.Now().Unix()
-
-	past_notification := models.PastNotification{TopicName: topic_name, Title: notification.Title, Body: notification.Body, Time: current_time}
 
 	err = db.Insert("notifications", &past_notification)
 
@@ -475,7 +475,7 @@ func GetAllDevices() (*[]models.Device, error) {
 	return &devices, nil
 }
 
-func GenerateNotificationJson(notification models.Notification) (*string, error) {
+func GenerateNotificationJson(notification models.Notification, past_notification models.PastNotification) (*string, error) {
 	apns_payload := models.APNSPayload{
 		Container: models.APNSContainer{
 			Alert: models.APNSAlert{
@@ -484,6 +484,7 @@ func GenerateNotificationJson(notification models.Notification) (*string, error)
 			},
 			Sound: "default",
 		},
+		Data: past_notification,
 	}
 
 	gcm_payload := models.GCMPayload{

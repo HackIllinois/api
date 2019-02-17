@@ -129,7 +129,7 @@ Response format:
 POST /mail/list/remove/
 ------------------
 
-Modifies the mailing list with the ID `id` adding the removing in the list `userIds`.
+Modifies the mailing list with the ID `id`, removing users that are specified in the list `userIds`.
 
 Request format:
 ```

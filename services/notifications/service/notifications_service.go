@@ -521,9 +521,12 @@ func GetAllDevices() (*[]models.Device, error) {
 
 func GenerateNotificationJson(notification models.Notification) (*string, error) {
 	apns_payload := models.APNSPayload{
-		Alert: models.APNSAlert{
-			Title: notification.Title,
-			Body:  notification.Body,
+		Container: models.APNSContainer{
+			Alert: models.APNSAlert{
+				Title: notification.Title,
+				Body:  notification.Body,
+			},
+			Sound: "default",
 		},
 	}
 

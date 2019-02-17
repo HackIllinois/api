@@ -92,9 +92,9 @@
                 "Staff": "Staff",
                 "Mentor": "Mentor",
                 "Applicant": "Applicant",
-                "Attendee", "Attendee",
-                "User", "User",
-                "Sponsor", "Sponsor"
+                "Attendee": "Attendee",
+                "User": "User",
+                "Sponsor": "Sponsor"
         },
 
 

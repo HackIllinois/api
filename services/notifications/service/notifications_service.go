@@ -179,7 +179,7 @@ func PublishNotification(topic_name string, notification models.Notification) (*
 		"time": past_notification.Time,
 	}
 
-	err := db.FindOne("notifications", time_selector, nil)
+	err = db.FindOne("notifications", time_selector, nil)
 
 	if err != database.ErrNotFound {
 		return nil, errors.New("Notification will same timestamp found")

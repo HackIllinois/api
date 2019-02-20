@@ -175,6 +175,16 @@ func PublishNotification(topic_name string, notification models.Notification) (*
 
 	past_notification := models.PastNotification{TopicName: topic_name, Title: notification.Title, Body: notification.Body, Time: current_time}
 
+	time_selector := database.QuerySelector{
+		"time": past_notification.Time,
+	}
+
+	err = db.FindOne("notifications", time_selector, nil)
+
+	if err != database.ErrNotFound {
+		return nil, errors.New("Notification will same timestamp found")
+	}
+
 	notification_json_str, err := GenerateNotificationJson(notification, past_notification)
 
 	if err != nil {

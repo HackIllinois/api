@@ -28,6 +28,12 @@ var NotificationsRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(GetAllNotifications).ServeHTTP,
 	},
 	arbor.Route{
+		"GetPublicNotifications",
+		"GET",
+		"/notifications/public/",
+		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetPublicNotifications).ServeHTTP,
+	},
+	arbor.Route{
 		"CreateTopic",
 		"POST",
 		"/notifications/",
@@ -89,6 +95,10 @@ func GetAllTopics(w http.ResponseWriter, r *http.Request) {
 
 func GetAllNotifications(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+}
+
+func GetPublicNotifications(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, NotificationsURL+"/notifications/Attendee/", NotificationsFormat, "", r)
 }
 
 func CreateTopic(w http.ResponseWriter, r *http.Request) {

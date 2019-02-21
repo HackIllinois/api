@@ -319,12 +319,18 @@ func AddUsersToTopic(topic_name string, userid_list models.UserIDList) error {
 		return err
 	}
 
+	err_chan := make(chan error)
 	for _, device := range devices {
-		err := SubscribeDeviceToTopic(topic, device)
+		go SubscribeDeviceAsync(topic, device, err_chan)
+	}
+
+	for range devices {
+		err := <-err_chan
 
 		if err != nil {
 			return err
 		}
+
 	}
 
 	return db.Update("topics", selector, &modifier)
@@ -371,12 +377,18 @@ func RemoveUsersFromTopic(topic_name string, userid_list models.UserIDList) erro
 		return err
 	}
 
+	err_chan := make(chan error)
 	for _, device := range devices {
-		err = UnsubscribeDeviceFromTopic(topic, device)
+		go UnsubscribeDeviceAsync(topic, device, err_chan)
+	}
+
+	for range devices {
+		err := <-err_chan
 
 		if err != nil {
 			return err
 		}
+
 	}
 
 	return db.Update("topics", selector, &modifier)
@@ -518,6 +530,24 @@ func UnsubscribeDeviceFromTopic(topic models.Topic, device models.Device) error 
 	}
 
 	return nil
+}
+
+/*
+	Attempts to subscribe a device to the given topic, returning an error or nil in the
+	channel
+*/
+func SubscribeDeviceAsync(topic models.Topic, device models.Device, err_chan chan error) {
+	err := SubscribeDeviceToTopic(topic, device)
+	err_chan <- err
+}
+
+/*
+	Attempts to unsubscribe a device to the given topic, returning an error or nil
+	in the channel
+*/
+func UnsubscribeDeviceAsync(topic models.Topic, device models.Device, err_chan chan error) {
+	err := UnsubscribeDeviceFromTopic(topic, device)
+	err_chan <- err
 }
 
 /*

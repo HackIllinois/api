@@ -12,7 +12,7 @@ import (
 */
 func MakeToken(user_info *models.UserInfo, roles []string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"exp":   time.Now().Add(time.Hour * 72).Unix(),
+		"exp":   time.Now().Add(time.Hour * 168).Unix(),
 		"id":    user_info.ID,
 		"email": user_info.Email,
 		"roles": roles,

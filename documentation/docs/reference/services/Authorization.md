@@ -6,7 +6,7 @@ GET /auth/PROVIDER/?redirect_uri=AUTHREDIRECTURI
 
 Redirects to the `PROVIDER`'s OAuth authorization page. Once the user accepts the OAuth authorization they will be redirected to the client's auth page with an OAuth code. This code should be sent to the API to be exchanged for an API JWT.
 
-Valid `PROVIDER` strings: `github`, `google`
+Valid `PROVIDER` strings: `github`, `google`, `linkedin`
 
 `AUTHREDIRECTURI` can be specified to override the default OAuth redirect URI. This is the URI to which the application is redirected after the Authorization request is approved / rejected.
 
@@ -38,6 +38,21 @@ GET /auth/roles/USERID/
 -----------------------
 
 Gets the roles of the user with the id `USERID`.
+
+Response format:
+```
+{
+	"id": "github6892396",
+	"roles": [
+		"User"
+	]
+}
+```
+
+GET /auth/roles/
+-----------------------
+
+Gets the roles of the user with the `id` in the jwt.
 
 Response format:
 ```

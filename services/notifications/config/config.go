@@ -17,6 +17,10 @@ var SNS_REGION string
 var ANDROID_PLATFORM_ARN string
 var IOS_PLATFORM_ARN string
 
+var GROUP_TOPIC_MAP map[string]string
+
+var AUTH_SERVICE string
+
 func Initialize() error {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
 
@@ -67,6 +71,18 @@ func Initialize() error {
 	}
 
 	IS_PRODUCTION = (production == "true")
+
+	err = cfg_loader.ParseInto("GROUP_TOPIC_MAP", &GROUP_TOPIC_MAP)
+
+	if err != nil {
+		return err
+	}
+
+	AUTH_SERVICE, err = cfg_loader.Get("AUTH_SERVICE")
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

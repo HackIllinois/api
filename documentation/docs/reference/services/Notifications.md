@@ -2,7 +2,7 @@
 
 ## GET /notifications/
 
-Returns a list of all notification topics.
+Returns a list of all notifications.
 
 Response format:
 
@@ -114,7 +114,7 @@ Request format:
 
 ```
 {
-	"topic": "Message topic",
+	"title": "Message topic",
 	"body": "Message to send to users"
 }
 ```
@@ -123,7 +123,7 @@ Response format:
 
 ```
 {
-	"topic": "Message topic",
+	"title": "Message topic",
 	"body": "Message to send to users",
 	"time": 1541644690,
 	"topicName": "Attendee"
@@ -196,7 +196,7 @@ Response format:
 }
 ```
 
-## POST /notifications/devices/
+## POST /notifications/device/
 
 Associates the device specified by the provided device token with the current user.
 Valid platforms are `android` and `ios`.
@@ -216,5 +216,27 @@ Response format:
 {
 	"deviceToken": "abcdef",
 	"platform": "android"
+}
+```
+
+## POST /notifications/update/
+
+Updates a user's subscribed topics to match their user roles
+
+Request format:
+
+```
+{
+}
+```
+
+Response format:
+
+```
+{
+	"topics": [
+		  "Admin",
+		  "Attendee"
+	]
 }
 ```

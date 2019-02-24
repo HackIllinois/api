@@ -14,6 +14,7 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
+	router.Handle("/filter/", alice.New().ThenFunc(GetFilteredRsvps)).Methods("GET")
 	router.Handle("/{id}/", alice.New().ThenFunc(GetUserRsvp)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(GetCurrentUserRsvp)).Methods("GET")
 	router.Handle("/", alice.New().ThenFunc(CreateCurrentUserRsvp)).Methods("POST")
@@ -208,6 +209,20 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_rsvp)
+}
+
+/*
+	Endpoint to get rsvps based on filters
+*/
+func GetFilteredRsvps(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+	rsvps, err := service.GetFilteredRsvps(parameters)
+
+	if err != nil {
+		panic(errors.DatabaseError(err.Error(), "Could not fetch filtered list of rsvps."))
+	}
+
+	json.NewEncoder(w).Encode(rsvps)
 }
 
 /*

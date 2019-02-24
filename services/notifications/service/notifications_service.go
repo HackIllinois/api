@@ -17,6 +17,8 @@ import (
 const APPLICATION_PROTOCOL = "application"
 const MESSAGE_STRUCTURE = "json"
 
+var ERR_DEVICE_NOT_SUBSCRIBED = errors.New("Device not subscribed to topic")
+
 var sess *session.Session
 var client *sns.SNS
 var db database.Database
@@ -175,7 +177,21 @@ func PublishNotification(topic_name string, notification models.Notification) (*
 		return nil, err
 	}
 
-	notification_json_str, err := GenerateNotificationJson(notification)
+	current_time := time.Now().Unix()
+
+	past_notification := models.PastNotification{TopicName: topic_name, Title: notification.Title, Body: notification.Body, Time: current_time}
+
+	time_selector := database.QuerySelector{
+		"time": past_notification.Time,
+	}
+
+	err = db.FindOne("notifications", time_selector, nil)
+
+	if err != database.ErrNotFound {
+		return nil, errors.New("Notification will same timestamp found")
+	}
+
+	notification_json_str, err := GenerateNotificationJson(notification, past_notification)
 
 	if err != nil {
 		return nil, err
@@ -195,10 +211,6 @@ func PublishNotification(topic_name string, notification models.Notification) (*
 			return nil, err
 		}
 	}
-
-	current_time := time.Now().Unix()
-
-	past_notification := models.PastNotification{TopicName: topic_name, Title: notification.Title, Body: notification.Body, Time: current_time}
 
 	err = db.Insert("notifications", &past_notification)
 
@@ -223,6 +235,53 @@ func GetNotificationsForTopic(topic_name string) (*models.NotificationList, erro
 	}
 
 	return &notifications_list, nil
+}
+
+/*
+   Subscribes a user to topics corresponding to their roles, and unsubscribes a user from all other topics
+*/
+func UpdateUserSubscriptions(user_id string) (*models.TopicList, error) {
+	user_roles, err := GetRoles(user_id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	topics_list, err := GetAllTopics()
+
+	if err != nil {
+		return nil, err
+	}
+
+	user_list := models.UserIDList{UserIDs: []string{user_id}}
+
+	for _, topic := range topics_list.Topics {
+		err = RemoveUsersFromTopic(topic, user_list)
+		if err != nil {
+			if err == ERR_DEVICE_NOT_SUBSCRIBED {
+				continue
+			}
+			return nil, err
+		}
+	}
+
+	var topics []string
+
+	for _, role := range user_roles.Roles {
+		if topic, ok := config.GROUP_TOPIC_MAP[role]; ok {
+			topics = append(topics, topic)
+			err = AddUsersToTopic(topic, user_list)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	subscribed_topics := models.TopicList{
+		Topics: topics,
+	}
+
+	return &subscribed_topics, nil
 }
 
 /*
@@ -434,7 +493,7 @@ func UnsubscribeDeviceFromTopic(topic models.Topic, device models.Device) error 
 	sub_arn, ok := device.Subscriptions[topic.Name]
 
 	if !ok {
-		return errors.New("Device not subscribed to topic")
+		return ERR_DEVICE_NOT_SUBSCRIBED
 	}
 
 	if config.IS_PRODUCTION {
@@ -481,12 +540,16 @@ func GetAllDevices() (*[]models.Device, error) {
 	return &devices, nil
 }
 
-func GenerateNotificationJson(notification models.Notification) (*string, error) {
+func GenerateNotificationJson(notification models.Notification, past_notification models.PastNotification) (*string, error) {
 	apns_payload := models.APNSPayload{
-		Alert: models.APNSAlert{
-			Title: notification.Title,
-			Body:  notification.Body,
+		Container: models.APNSContainer{
+			Alert: models.APNSAlert{
+				Title: notification.Title,
+				Body:  notification.Body,
+			},
+			Sound: "default",
 		},
+		Data: past_notification,
 	}
 
 	gcm_payload := models.GCMPayload{
@@ -509,9 +572,10 @@ func GenerateNotificationJson(notification models.Notification) (*string, error)
 	}
 
 	notification_payload := models.NotificationPayload{
-		APNS:    string(apns_payload_json),
-		GCM:     string(gcm_payload_json),
-		Default: notification.Body,
+		APNS:        string(apns_payload_json),
+		APNSSandbox: string(apns_payload_json),
+		GCM:         string(gcm_payload_json),
+		Default:     notification.Body,
 	}
 
 	notification_json, err := json.Marshal(notification_payload)

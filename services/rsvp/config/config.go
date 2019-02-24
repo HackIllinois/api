@@ -20,6 +20,8 @@ var DECISION_EXPIRATION_HOURS int
 
 var RSVP_DEFINITION datastore.DataStoreDefinition
 
+var RSVP_STAT_FIELDS []string
+
 func Initialize() error {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
 
@@ -78,6 +80,12 @@ func Initialize() error {
 	DECISION_EXPIRATION_HOURS = decision_expiration
 
 	err = cfg_loader.ParseInto("RSVP_DEFINITION", &RSVP_DEFINITION)
+
+	if err != nil {
+		return err
+	}
+
+	err = cfg_loader.ParseInto("RSVP_STAT_FIELDS", &RSVP_STAT_FIELDS)
 
 	if err != nil {
 		return err

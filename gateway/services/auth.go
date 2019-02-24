@@ -14,6 +14,12 @@ const AuthFormat string = "JSON"
 
 var AuthRoutes = arbor.RouteCollection{
 	arbor.Route{
+		"GetCurrentUserRoles",
+		"GET",
+		"/auth/roles/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserRoles).ServeHTTP,
+	},
+	arbor.Route{
 		"OauthRedirect",
 		"GET",
 		"/auth/{provider}/",

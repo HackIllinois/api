@@ -62,6 +62,17 @@
 		"event": "http://event.api.:8010/event/internal/stats/"
 	},
 
+        "GROUP_TOPIC_MAP": {
+                "Admin": "Admin",
+                "Staff": "Staff",
+                "Mentor": "Mentor",
+                "Applicant": "Applicant",
+                "Attendee": "Attendee",
+                "User": "User",
+                "Sponsor": "Sponsor"
+        },
+
+
 	"REGISTRATION_STAT_FIELDS": [
 		"major",
 		"school",
@@ -320,6 +331,12 @@
 		]
 	},
 
+	"RSVP_STAT_FIELDS": [
+		"isAttending",
+		"diet",
+		"transportation"
+	],
+
 	"RSVP_DEFINITION": {
 		"name": "user_rsvp",
 		"type": "object",
@@ -425,7 +442,7 @@
 			{
 				"name": "osProject",
 				"type": "string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			}
 		]

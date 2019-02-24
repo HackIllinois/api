@@ -81,6 +81,8 @@
 		"registration": "http://localhost:8004/registration/internal/stats/"
 	},
 
+        "GROUP_TOPIC_MAP": {},
+
 	"REGISTRATION_STAT_FIELDS": [
 		"major",
 		"school"
@@ -214,6 +216,10 @@
 			}
 		]
 	},
+
+	"RSVP_STAT_FIELDS": [
+		"isAttending"
+	],
 
 	"RSVP_DEFINITION": {
 		"name": "user_rsvp",

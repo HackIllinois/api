@@ -96,7 +96,7 @@ func GetAllNotifications(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPublicNotifications(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, NotificationsURL+"/notifications/Attendee/", NotificationsFormat, "", r)
+	arbor.GET(w, config.NOTIFICATIONS_SERVICE+"/notifications/Attendee/", NotificationsFormat, "", r)
 }
 
 func CreateTopic(w http.ResponseWriter, r *http.Request) {
@@ -132,5 +132,5 @@ func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateUserSubscriptions(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+	arbor.POST(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }

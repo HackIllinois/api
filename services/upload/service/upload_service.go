@@ -12,11 +12,13 @@ import (
 var sess *session.Session
 var client *s3.S3
 
-func init() {
+func Initialize() error {
 	sess = session.Must(session.NewSession(&aws.Config{
 		Region: aws.String(config.S3_REGION),
 	}))
 	client = s3.New(sess)
+
+	return nil
 }
 
 /*

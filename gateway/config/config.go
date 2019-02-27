@@ -24,99 +24,101 @@ var EVENT_SERVICE string
 var STAT_SERVICE string
 var NOTIFICATIONS_SERVICE string
 
-func init() {
+func Initialize() error {
 
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	TOKEN_SECRET, err = cfg_loader.Get("TOKEN_SECRET")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	AUTH_SERVICE, err = cfg_loader.Get("AUTH_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	USER_SERVICE, err = cfg_loader.Get("USER_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	REGISTRATION_SERVICE, err = cfg_loader.Get("REGISTRATION_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	DECISION_SERVICE, err = cfg_loader.Get("DECISION_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	RSVP_SERVICE, err = cfg_loader.Get("RSVP_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	CHECKIN_SERVICE, err = cfg_loader.Get("CHECKIN_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	UPLOAD_SERVICE, err = cfg_loader.Get("UPLOAD_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	MAIL_SERVICE, err = cfg_loader.Get("MAIL_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	EVENT_SERVICE, err = cfg_loader.Get("EVENT_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	STAT_SERVICE, err = cfg_loader.Get("STAT_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	NOTIFICATIONS_SERVICE, err = cfg_loader.Get("NOTIFICATIONS_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	port_str, err := cfg_loader.Get("GATEWAY_PORT")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	port, err := strconv.ParseUint(port_str, 10, 16)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	GATEWAY_PORT = uint16(port)
+
+	return nil
 }
 
 func LoadArborConfig() {

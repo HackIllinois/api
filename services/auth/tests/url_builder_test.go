@@ -121,7 +121,7 @@ func TestConstructFullURL(t *testing.T) {
 func TestFragmentCaughtURL(t *testing.T) {
 	_, err := service.ConstructSafeURL(DIFFERENT_SCHEME, HOST_WITH_PORT, URL_PATH, QUERY_PARAMS_HASHTAG)
 
-	if err != service.HASHTAG_INVALID_ERR {
+	if err == nil {
 		t.Error("The `#` in this URL was not caught!")
 	}
 }

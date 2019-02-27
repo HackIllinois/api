@@ -8,18 +8,12 @@ import (
 	"time"
 )
 
-var secret []byte
-
-func init() {
-	secret = []byte(config.TOKEN_SECRET)
-}
-
 func ExtractFieldFromJWT(token string, field string) ([]string, error) {
 	jwt_token, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
-		return secret, nil
+		return []byte(config.TOKEN_SECRET), nil
 	})
 
 	if err != nil {

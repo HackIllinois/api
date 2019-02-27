@@ -4,28 +4,30 @@ trap cleanup INT
 
 function cleanup {
 	echo "Cleaning up services"
-	pgrep "hackillinois-" | xargs kill
+	pgrep "hackillinois" | xargs kill
 	rm -rf log/
 	exit 0
 }
 
-export HI_CONFIG=file://${GOPATH}/src/github.com/HackIllinois/api/config/dev_config.json
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+export HI_CONFIG=file://$REPO_ROOT/config/dev_config.json
 
 mkdir log/
 touch log/access.log
 
-hackillinois-api-auth &
-hackillinois-api-user &
-hackillinois-api-registration &
-hackillinois-api-decision &
-hackillinois-api-rsvp &
-hackillinois-api-checkin &
-hackillinois-api-upload &
-hackillinois-api-mail &
-hackillinois-api-event &
-hackillinois-api-stat &
-hackillinois-api-notifications &
+$REPO_ROOT/bin/hackillinois-api --service auth &
+$REPO_ROOT/bin/hackillinois-api --service user &
+$REPO_ROOT/bin/hackillinois-api --service registration &
+$REPO_ROOT/bin/hackillinois-api --service decision &
+$REPO_ROOT/bin/hackillinois-api --service rsvp &
+$REPO_ROOT/bin/hackillinois-api --service checkin &
+$REPO_ROOT/bin/hackillinois-api --service upload &
+$REPO_ROOT/bin/hackillinois-api --service mail &
+$REPO_ROOT/bin/hackillinois-api --service event &
+$REPO_ROOT/bin/hackillinois-api --service stat &
+$REPO_ROOT/bin/hackillinois-api --service notifications &
 
-hackillinois-api-gateway -u &
+$REPO_ROOT/bin/hackillinois-api --service gateway &
 
 sleep infinity

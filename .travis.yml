@@ -21,6 +21,7 @@ deploy:
       skip_cleanup: true
       on:
         branch: master
+        tags: true
     - provider: s3
       access_key_id: $HACKILLINOIS_ACCESS_KEY
       secret_access_key: $HACKILLINOIS_SECRET_KEY

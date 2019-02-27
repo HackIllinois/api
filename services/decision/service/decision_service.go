@@ -15,20 +15,24 @@ import (
 
 var validate *validator.Validate
 
-func init() {
-	validate = validator.New()
-}
-
 var db database.Database
 
-func init() {
-	db_connection, err := database.InitDatabase(config.DECISION_DB_HOST, config.DECISION_DB_NAME)
-
-	if err != nil {
-		panic(err)
+func Initialize() error {
+	if db != nil {
+		db.Close()
+		db = nil
 	}
 
-	db = db_connection
+	var err error
+	db, err = database.InitDatabase(config.DECISION_DB_HOST, config.DECISION_DB_NAME)
+
+	if err != nil {
+		return err
+	}
+
+	validate = validator.New()
+
+	return nil
 }
 
 /*

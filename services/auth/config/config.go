@@ -28,17 +28,17 @@ var USER_SERVICE string
 var STAFF_DOMAIN string
 var SYSTEM_ADMIN_EMAIL string
 
-func init() {
+func Initialize() error {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	secret, err := cfg_loader.Get("TOKEN_SECRET")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	TOKEN_SECRET = []byte(secret)
@@ -46,78 +46,80 @@ func init() {
 	AUTH_REDIRECT_URI, err = cfg_loader.Get("AUTH_REDIRECT_URI")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	GITHUB_CLIENT_ID, err = cfg_loader.Get("GITHUB_CLIENT_ID")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	GITHUB_CLIENT_SECRET, err = cfg_loader.Get("GITHUB_CLIENT_SECRET")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	GOOGLE_CLIENT_ID, err = cfg_loader.Get("GOOGLE_CLIENT_ID")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	GOOGLE_CLIENT_SECRET, err = cfg_loader.Get("GOOGLE_CLIENT_SECRET")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	LINKEDIN_CLIENT_ID, err = cfg_loader.Get("LINKEDIN_CLIENT_ID")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	LINKEDIN_CLIENT_SECRET, err = cfg_loader.Get("LINKEDIN_CLIENT_SECRET")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	AUTH_DB_HOST, err = cfg_loader.Get("AUTH_DB_HOST")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	AUTH_DB_NAME, err = cfg_loader.Get("AUTH_DB_NAME")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	AUTH_PORT, err = cfg_loader.Get("AUTH_PORT")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	USER_SERVICE, err = cfg_loader.Get("USER_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	STAFF_DOMAIN, err = cfg_loader.Get("STAFF_DOMAIN")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	SYSTEM_ADMIN_EMAIL, err = cfg_loader.Get("SYSTEM_ADMIN_EMAIL")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }

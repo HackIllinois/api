@@ -14,14 +14,20 @@ import (
 
 var db database.Database
 
-func init() {
-	db_connection, err := database.InitDatabase(config.MAIL_DB_HOST, config.MAIL_DB_NAME)
-
-	if err != nil {
-		panic(err)
+func Initialize() error {
+	if db != nil {
+		db.Close()
+		db = nil
 	}
 
-	db = db_connection
+	var err error
+	db, err = database.InitDatabase(config.MAIL_DB_HOST, config.MAIL_DB_NAME)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 /*

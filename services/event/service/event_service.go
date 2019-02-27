@@ -13,20 +13,24 @@ import (
 
 var validate *validator.Validate
 
-func init() {
-	validate = validator.New()
-}
-
 var db database.Database
 
-func init() {
-	db_connection, err := database.InitDatabase(config.EVENT_DB_HOST, config.EVENT_DB_NAME)
-
-	if err != nil {
-		panic(err)
+func Initialize() error {
+	if db != nil {
+		db.Close()
+		db = nil
 	}
 
-	db = db_connection
+	var err error
+	db, err = database.InitDatabase(config.EVENT_DB_HOST, config.EVENT_DB_NAME)
+
+	if err != nil {
+		return err
+	}
+
+	validate = validator.New()
+
+	return nil
 }
 
 /*
@@ -299,11 +303,12 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 	return err
 }
 
-const PreEventCheckinIntervalInSeconds = 15 * 60
+const PreEventCheckinIntervalInMinutes = 15
+const PreEventCheckinIntervalInSeconds = PreEventCheckinIntervalInMinutes * 60
 
 /*
 	Check if an event is active, i.e., that check-ins are allowed for the event at the current time.
-	Returns true if and only if abs(Current Time - Event Start Time) <= 1200 seconds (20 minutes).
+	Returns true if the current time is between `PreEventCheckinIntervalInMinutes` number of minutes before the event, and the end of event.
 */
 func IsEventActive(event_name string) (bool, error) {
 	event, err := GetEvent(event_name)

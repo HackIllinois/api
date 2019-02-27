@@ -2,49 +2,42 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
 	"github.com/levigross/grequests"
 )
 
-const LINKEDIN_USER_INFO_URL = "https://api.linkedin.com/v1/people/~:(id,formatted-name,email-address,first-name,last-name)"
+type LinkedInOAuthProvider struct {
+	token          string
+	isVerifiedUser bool
+}
 
-/*
-	Uses a valid OAuth token to get the user's primary email.
-*/
-func GetLinkedinEmail(oauth_token string) (string, bool, error) {
-	request, err := grequests.Get(LINKEDIN_USER_INFO_URL, &grequests.RequestOptions{
-		Headers: map[string]string{
-			"Authorization": fmt.Sprintf("Bearer %v", oauth_token),
-			"Content-Type":  "application/json",
-			"x-li-format":   "json"},
-	})
-
-	if err != nil {
-		return "", false, err
+func NewLinkedInOAuth() *LinkedInOAuthProvider {
+	return &LinkedInOAuthProvider{
+		token:          "",
+		isVerifiedUser: false,
 	}
-
-	var user_info models.LinkedinUserInfo
-	err = request.JSON(&user_info)
-
-	if err != nil {
-		return "", false, err
-	}
-
-	if user_info.ID == "" {
-		return "", false, errors.New("Invalid OAuth token.")
-	}
-
-	return user_info.Email, true, nil
 }
 
 /*
-	Uses a valid OAuth authorization code to get a valid OAuth token for the user.
+	Returns the url to redirects to for OAuth authorization
 */
-func GetLinkedinOauthToken(code string, redirect_uri string) (string, error) {
-	const LINKEDIN_OAUTH_TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken"
-	request, err := grequests.Post(LINKEDIN_OAUTH_TOKEN_URL, &grequests.RequestOptions{
+func (provider *LinkedInOAuthProvider) GetAuthorizationRedirect(redirect_uri string) (string, error) {
+	return ConstructSafeURL("https", "www.linkedin.com", "oauth/v2/authorization",
+		map[string]string{
+			"client_id":     config.LINKEDIN_CLIENT_ID,
+			"scope":         "r_basicprofile r_emailaddress",
+			"response_type": "code",
+			"redirect_uri":  redirect_uri,
+		},
+	)
+}
+
+/*
+	Exchanges an OAuth code for an OAuth token
+*/
+func (provider *LinkedInOAuthProvider) Authorize(code string, redirect_uri string) error {
+	request, err := grequests.Post("https://www.linkedin.com/oauth/v2/accessToken", &grequests.RequestOptions{
 		Data: map[string]string{
 			"client_id":     config.LINKEDIN_CLIENT_ID,
 			"client_secret": config.LINKEDIN_CLIENT_SECRET,
@@ -60,133 +53,68 @@ func GetLinkedinOauthToken(code string, redirect_uri string) (string, error) {
 	})
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	var oauth_token models.LinkedinOauthToken
 	err = request.JSON(&oauth_token)
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	if oauth_token.Token == "" {
-		return "", errors.New("Invalid OAuth code.")
+		return errors.New("Invalid OAuth code.")
 	}
 
-	return oauth_token.Token, nil
+	provider.token = oauth_token.Token
+
+	return nil
 }
 
 /*
-	Uses a valid OAuth token to get the user's unique id.
+	Retrieves user info from the OAuth provider
 */
-func GetLinkedinUniqueId(oauth_token string) (string, error) {
-	request, err := grequests.Get(LINKEDIN_USER_INFO_URL, &grequests.RequestOptions{
+func (provider *LinkedInOAuthProvider) GetUserInfo() (*models.UserInfo, error) {
+	var user_info models.UserInfo
+
+	request, err := grequests.Get("https://api.linkedin.com/v1/people/~:(id,formatted-name,email-address,first-name,last-name)", &grequests.RequestOptions{
 		Headers: map[string]string{
-			"Authorization": fmt.Sprintf("Bearer %v", oauth_token),
+			"Authorization": "Bearer " + provider.token,
 			"Content-Type":  "application/json",
-			"x-li-format":   "json"},
+			"x-li-format":   "json",
+		},
 	})
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	var user_info models.LinkedinUserInfo
-	err = request.JSON(&user_info)
+	var linkedin_user_info models.LinkedinUserInfo
+	err = request.JSON(&linkedin_user_info)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	if user_info.ID == "" {
-		return "", errors.New("Invalid OAuth token.")
+	if linkedin_user_info.ID == "" {
+		return nil, errors.New("Invalid OAuth token.")
 	}
 
-	return fmt.Sprintf("linkedin%v", user_info.ID), nil
+	user_info.ID = "linkedin" + linkedin_user_info.ID
+	user_info.Username = linkedin_user_info.Username
+	user_info.Email = linkedin_user_info.Email
+	user_info.FirstName = linkedin_user_info.FirstName
+	user_info.LastName = linkedin_user_info.LastName
+
+	provider.isVerifiedUser = true
+
+	return &user_info, nil
 }
 
 /*
-	Uses a valid OAuth token to get the user's username.
+	Returns true if the user has a verified email
 */
-func GetLinkedinUsername(oauth_token string) (string, error) {
-	request, err := grequests.Get(LINKEDIN_USER_INFO_URL, &grequests.RequestOptions{
-		Headers: map[string]string{
-			"Authorization": fmt.Sprintf("Bearer %v", oauth_token),
-			"Content-Type":  "application/json",
-			"x-li-format":   "json"},
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	var user_info models.LinkedinUserInfo
-	err = request.JSON(&user_info)
-
-	if err != nil {
-		return "", err
-	}
-
-	if user_info.ID == "" {
-		return "", errors.New("Invalid oauth token")
-	}
-
-	return user_info.Username, nil
-}
-
-/*
-	Uses a valid OAuth token to get the user's name.
-*/
-func GetLinkedinFirstName(oauth_token string) (string, error) {
-	request, err := grequests.Get(LINKEDIN_USER_INFO_URL, &grequests.RequestOptions{
-		Headers: map[string]string{"Authorization": fmt.Sprintf("Bearer %v", oauth_token),
-			"Content-Type": "application/json",
-			"x-li-format":  "json"},
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	var user_info models.LinkedinUserInfo
-	err = request.JSON(&user_info)
-
-	if err != nil {
-		return "", err
-	}
-
-	if user_info.ID == "" {
-		return "", errors.New("Invalid OAuth token.")
-	}
-
-	return user_info.FirstName, nil
-}
-
-/*
-	Uses a valid OAuth token to get the user's last name.
-*/
-func GetLinkedinLastName(oauth_token string) (string, error) {
-	request, err := grequests.Get(LINKEDIN_USER_INFO_URL, &grequests.RequestOptions{
-		Headers: map[string]string{"Authorization": fmt.Sprintf("Bearer %v", oauth_token),
-			"Content-Type": "application/json",
-			"x-li-format":  "json"},
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	var user_info models.LinkedinUserInfo
-	err = request.JSON(&user_info)
-
-	if err != nil {
-		return "", err
-	}
-
-	if user_info.ID == "" {
-		return "", errors.New("Invalid OAuth token.")
-	}
-
-	return user_info.LastName, nil
+func (provider *LinkedInOAuthProvider) IsVerifiedUser() bool {
+	return provider.isVerifiedUser
 }

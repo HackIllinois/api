@@ -9,8 +9,6 @@ import (
 	"net/http"
 )
 
-var UserURL = config.USER_SERVICE
-
 const UserFormat string = "JSON"
 
 var UserRoutes = arbor.RouteCollection{
@@ -53,17 +51,17 @@ var UserRoutes = arbor.RouteCollection{
 }
 
 func GetUserInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, UserURL+r.URL.String(), UserFormat, "", r)
+	arbor.GET(w, config.USER_SERVICE+r.URL.String(), UserFormat, "", r)
 }
 
 func SetUserInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, UserURL+r.URL.String(), UserFormat, "", r)
+	arbor.POST(w, config.USER_SERVICE+r.URL.String(), UserFormat, "", r)
 }
 
 func GetCurrentQrCodeInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, UserURL+r.URL.String(), UserFormat, "", r)
+	arbor.GET(w, config.USER_SERVICE+r.URL.String(), UserFormat, "", r)
 }
 
 func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, UserURL+r.URL.String(), UserFormat, "", r)
+	arbor.GET(w, config.USER_SERVICE+r.URL.String(), UserFormat, "", r)
 }

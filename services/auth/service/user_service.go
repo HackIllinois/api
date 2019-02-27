@@ -12,16 +12,8 @@ import (
 /*
 	Send basic user info to the user service
 */
-func SendUserInfo(id string, username string, first_name string, last_name string, email string) error {
-	user_info := models.UserInfo{
-		ID:        id,
-		Username:  username,
-		FirstName: first_name,
-		LastName:  last_name,
-		Email:     email,
-	}
-
-	status, err := apirequest.Post(config.USER_SERVICE+"/user/", &user_info, nil)
+func SendUserInfo(user_info *models.UserInfo) error {
+	status, err := apirequest.Post(config.USER_SERVICE+"/user/", user_info, nil)
 
 	if err != nil {
 		return err

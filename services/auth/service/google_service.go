@@ -7,36 +7,36 @@ import (
 	"github.com/levigross/grequests"
 )
 
-/*
-	Uses a valid oauth token to get the user's primary email
-*/
-func GetGoogleEmail(oauth_token string) (string, bool, error) {
-	request, err := grequests.Get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json", &grequests.RequestOptions{
-		Headers: map[string]string{"Authorization": "Bearer " + oauth_token},
-	})
+type GoogleOAuthProvider struct {
+	token          string
+	isVerifiedUser bool
+}
 
-	if err != nil {
-		return "", false, err
+func NewGoogleOAuth() *GoogleOAuthProvider {
+	return &GoogleOAuthProvider{
+		token:          "",
+		isVerifiedUser: false,
 	}
-
-	var user_info models.GoogleUserInfo
-	err = request.JSON(&user_info)
-
-	if err != nil {
-		return "", false, err
-	}
-
-	if user_info.Email == "" {
-		return "", false, errors.New("Invalid oauth token")
-	}
-
-	return user_info.Email, user_info.IsVerified, nil
 }
 
 /*
-	Uses a valid oauth code to get a valid oauth token for the user
+	Returns the url to redirects to for OAuth authorization
 */
-func GetGoogleOauthToken(code string, redirect_uri string) (string, error) {
+func (provider *GoogleOAuthProvider) GetAuthorizationRedirect(redirect_uri string) (string, error) {
+	return ConstructSafeURL("https", "accounts.google.com", "o/oauth2/v2/auth",
+		map[string]string{
+			"client_id":     config.GOOGLE_CLIENT_ID,
+			"scope":         "profile email",
+			"response_type": "code",
+			"redirect_uri":  redirect_uri,
+		},
+	)
+}
+
+/*
+	Exchanges an OAuth code for an OAuth token
+*/
+func (provider *GoogleOAuthProvider) Authorize(code string, redirect_uri string) error {
 	request, err := grequests.Post("https://www.googleapis.com/oauth2/v4/token", &grequests.RequestOptions{
 		Params: map[string]string{
 			"client_id":     config.GOOGLE_CLIENT_ID,
@@ -51,123 +51,66 @@ func GetGoogleOauthToken(code string, redirect_uri string) (string, error) {
 	})
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	var oauth_token models.GoogleOauthToken
 	err = request.JSON(&oauth_token)
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	if oauth_token.Token == "" {
-		return "", errors.New("Invalid oauth code")
+		return errors.New("Invalid oauth code")
 	}
 
-	return oauth_token.Token, nil
+	provider.token = oauth_token.Token
+
+	return nil
 }
 
 /*
-	Uses a valid oauth token to get the user's unique id
+	Retrieves user info from the OAuth provider
 */
-func GetGoogleUniqueId(oauth_token string) (string, error) {
+func (provider *GoogleOAuthProvider) GetUserInfo() (*models.UserInfo, error) {
+	var user_info models.UserInfo
+
 	request, err := grequests.Get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json", &grequests.RequestOptions{
-		Headers: map[string]string{"Authorization": "Bearer " + oauth_token},
+		Headers: map[string]string{
+			"Authorization": "Bearer " + provider.token,
+		},
 	})
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	var user_info models.GoogleUserInfo
-	err = request.JSON(&user_info)
+	var google_user_info models.GoogleUserInfo
+	err = request.JSON(&google_user_info)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	if user_info.ID == "" {
-		return "", errors.New("Invalid oauth token")
+	if google_user_info.ID == "" {
+		return nil, errors.New("Invalid oauth token")
 	}
 
-	return "google" + user_info.ID, nil
+	user_info.ID = "google" + google_user_info.ID
+	user_info.Email = google_user_info.Email
+	user_info.Username = google_user_info.Name
+	user_info.FirstName = google_user_info.FirstName
+	user_info.LastName = google_user_info.LastName
+
+	provider.isVerifiedUser = google_user_info.IsVerified
+
+	return &user_info, nil
 }
 
 /*
-	Uses a valid oauth token to get the user's username
+	Returns true if the user has a verified email
 */
-func GetGoogleUsername(oauth_token string) (string, error) {
-	request, err := grequests.Get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json", &grequests.RequestOptions{
-		Headers: map[string]string{"Authorization": "Bearer " + oauth_token},
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	var user_info models.GoogleUserInfo
-	err = request.JSON(&user_info)
-
-	if err != nil {
-		return "", err
-	}
-
-	if user_info.Name == "" {
-		return "", errors.New("Invalid oauth token")
-	}
-
-	return user_info.Name, nil
-}
-
-/*
-	Uses a valid oauth token to get the user's first name
-*/
-func GetGoogleFirstName(oauth_token string) (string, error) {
-	request, err := grequests.Get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json", &grequests.RequestOptions{
-		Headers: map[string]string{"Authorization": "Bearer " + oauth_token},
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	var user_info models.GoogleUserInfo
-	err = request.JSON(&user_info)
-
-	if err != nil {
-		return "", err
-	}
-
-	if user_info.FirstName == "" {
-		return "", errors.New("Invalid oauth token")
-	}
-
-	return user_info.FirstName, nil
-}
-
-/*
-	Uses a valid oauth token to get the user's last name
-*/
-func GetGoogleLastName(oauth_token string) (string, error) {
-	request, err := grequests.Get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json", &grequests.RequestOptions{
-		Headers: map[string]string{"Authorization": "Bearer " + oauth_token},
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	var user_info models.GoogleUserInfo
-	err = request.JSON(&user_info)
-
-	if err != nil {
-		return "", err
-	}
-
-	if user_info.LastName == "" {
-		return "", errors.New("Invalid oauth token")
-	}
-
-	return user_info.LastName, nil
+func (provider *GoogleOAuthProvider) IsVerifiedUser() bool {
+	return provider.isVerifiedUser
 }

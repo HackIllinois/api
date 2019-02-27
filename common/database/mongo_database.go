@@ -64,6 +64,13 @@ func (db *MongoDatabase) Connect(host string) error {
 }
 
 /*
+	Close the global session to the given mongo database
+*/
+func (db *MongoDatabase) Close() {
+	db.global_session.Close()
+}
+
+/*
 	Returns a copy of the global session for use by a connection
 */
 func (db *MongoDatabase) GetSession() *mgo.Session {

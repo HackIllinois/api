@@ -20,7 +20,12 @@ deploy:
       script: bash -c "make container-push TAG=$TRAVIS_TAG"
       skip_cleanup: true
       on:
-        condition: branch = master OR tag IS present
+        branch: master
+    - provider: script
+      script: bash -c "make container-push TAG=$TRAVIS_TAG"
+      skip_cleanup: true
+      on:
+        tags: true
     - provider: s3
       access_key_id: $HACKILLINOIS_ACCESS_KEY
       secret_access_key: $HACKILLINOIS_SECRET_KEY

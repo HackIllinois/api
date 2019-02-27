@@ -10,8 +10,6 @@ import (
 	"github.com/justinas/alice"
 )
 
-var EventURL = config.EVENT_SERVICE
-
 const EventFormat string = "JSON"
 
 var EventRoutes = arbor.RouteCollection{
@@ -84,41 +82,41 @@ var EventRoutes = arbor.RouteCollection{
 }
 
 func GetEvent(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, EventURL+r.URL.String(), EventFormat, "", r)
+	arbor.GET(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }
 
 func DeleteEvent(w http.ResponseWriter, r *http.Request) {
-	arbor.DELETE(w, EventURL+r.URL.String(), EventFormat, "", r)
+	arbor.DELETE(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }
 
 func CreateEvent(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, EventURL+r.URL.String(), EventFormat, "", r)
+	arbor.POST(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }
 
 func UpdateEvent(w http.ResponseWriter, r *http.Request) {
-	arbor.PUT(w, EventURL+r.URL.String(), EventFormat, "", r)
+	arbor.PUT(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }
 
 func MarkUserAsAttendingEvent(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, EventURL+r.URL.String(), EventFormat, "", r)
+	arbor.POST(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }
 
 func GetEventTrackingInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, EventURL+r.URL.String(), EventFormat, "", r)
+	arbor.GET(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }
 
 func GetUserTrackingInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, EventURL+r.URL.String(), EventFormat, "", r)
+	arbor.GET(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }
 
 func GetEventFavorites(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, EventURL+r.URL.String(), EventFormat, "", r)
+	arbor.GET(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }
 
 func AddEventFavorite(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, EventURL+r.URL.String(), EventFormat, "", r)
+	arbor.POST(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }
 
 func RemoveEventFavorite(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, EventURL+r.URL.String(), EventFormat, "", r)
+	arbor.POST(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }

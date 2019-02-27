@@ -21,70 +21,72 @@ var MENTOR_REGISTRATION_DEFINITION datastore.DataStoreDefinition
 
 var REGISTRATION_STAT_FIELDS []string
 
-func init() {
+func Initialize() error {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	REGISTRATION_DB_HOST, err = cfg_loader.Get("REGISTRATION_DB_HOST")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	REGISTRATION_DB_NAME, err = cfg_loader.Get("REGISTRATION_DB_NAME")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	REGISTRATION_PORT, err = cfg_loader.Get("REGISTRATION_PORT")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	USER_SERVICE, err = cfg_loader.Get("USER_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	AUTH_SERVICE, err = cfg_loader.Get("AUTH_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	DECISION_SERVICE, err = cfg_loader.Get("DECISION_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	MAIL_SERVICE, err = cfg_loader.Get("MAIL_SERVICE")
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	err = cfg_loader.ParseInto("REGISTRATION_DEFINITION", &REGISTRATION_DEFINITION)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	err = cfg_loader.ParseInto("MENTOR_REGISTRATION_DEFINITION", &MENTOR_REGISTRATION_DEFINITION)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	err = cfg_loader.ParseInto("REGISTRATION_STAT_FIELDS", &REGISTRATION_STAT_FIELDS)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }

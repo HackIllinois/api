@@ -23,19 +23,25 @@ var sess *session.Session
 var client *sns.SNS
 var db database.Database
 
-func init() {
+func Initialize() error {
 	sess = session.Must(session.NewSession(&aws.Config{
 		Region: aws.String(config.SNS_REGION),
 	}))
 	client = sns.New(sess)
 
-	db_connection, err := database.InitDatabase(config.NOTIFICATIONS_DB_HOST, config.NOTIFICATIONS_DB_NAME)
-
-	if err != nil {
-		panic(err)
+	if db != nil {
+		db.Close()
+		db = nil
 	}
 
-	db = db_connection
+	var err error
+	db, err = database.InitDatabase(config.NOTIFICATIONS_DB_HOST, config.NOTIFICATIONS_DB_NAME)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 /*

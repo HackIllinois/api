@@ -10,8 +10,6 @@ import (
 	"net/http"
 )
 
-var NotificationsURL = config.NOTIFICATIONS_SERVICE
-
 const NotificationsFormat string = "JSON"
 
 var NotificationsRoutes = arbor.RouteCollection{
@@ -90,49 +88,49 @@ var NotificationsRoutes = arbor.RouteCollection{
 }
 
 func GetAllTopics(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+	arbor.GET(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }
 
 func GetAllNotifications(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+	arbor.GET(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }
 
 func GetPublicNotifications(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, NotificationsURL+"/notifications/Attendee/", NotificationsFormat, "", r)
+	arbor.GET(w, config.NOTIFICATIONS_SERVICE+"/notifications/Attendee/", NotificationsFormat, "", r)
 }
 
 func CreateTopic(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+	arbor.POST(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }
 
 func GetTopicInfo(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+	arbor.GET(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }
 
 func DeleteTopic(w http.ResponseWriter, r *http.Request) {
-	arbor.DELETE(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+	arbor.DELETE(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }
 
 func PublishNotification(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+	arbor.POST(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }
 
 func GetNotificationsForTopic(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+	arbor.GET(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }
 
 func AddUsersToTopic(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+	arbor.POST(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }
 
 func RemoveUsersFromTopic(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+	arbor.POST(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }
 
 func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+	arbor.POST(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }
 
 func UpdateUserSubscriptions(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, NotificationsURL+r.URL.String(), NotificationsFormat, "", r)
+	arbor.POST(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }

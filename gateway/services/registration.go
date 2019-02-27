@@ -9,8 +9,6 @@ import (
 	"net/http"
 )
 
-var RegistrationURL = config.REGISTRATION_SERVICE
-
 const RegistrationFormat string = "JSON"
 
 var RegistrationRoutes = arbor.RouteCollection{
@@ -83,13 +81,13 @@ var RegistrationRoutes = arbor.RouteCollection{
 }
 
 func GetRegistration(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, RegistrationURL+r.URL.String(), RegistrationFormat, "", r)
+	arbor.GET(w, config.REGISTRATION_SERVICE+r.URL.String(), RegistrationFormat, "", r)
 }
 
 func CreateRegistration(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, RegistrationURL+r.URL.String(), RegistrationFormat, "", r)
+	arbor.POST(w, config.REGISTRATION_SERVICE+r.URL.String(), RegistrationFormat, "", r)
 }
 
 func UpdateRegistration(w http.ResponseWriter, r *http.Request) {
-	arbor.PUT(w, RegistrationURL+r.URL.String(), RegistrationFormat, "", r)
+	arbor.PUT(w, config.REGISTRATION_SERVICE+r.URL.String(), RegistrationFormat, "", r)
 }

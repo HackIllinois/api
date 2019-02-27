@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/HackIllinois/api/services/auth/config"
+	"github.com/HackIllinois/api/services/auth/models"
 	jwt "github.com/dgrijalva/jwt-go"
 	"time"
 )
@@ -9,11 +10,11 @@ import (
 /*
 	Generates a signed oauth token with the user's id, email, and roles embedded in the claims
 */
-func MakeToken(id string, email string, roles []string) (string, error) {
+func MakeToken(user_info *models.UserInfo, roles []string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"exp":   time.Now().Add(time.Hour * 168).Unix(),
-		"id":    id,
-		"email": email,
+		"id":    user_info.ID,
+		"email": user_info.Email,
 		"roles": roles,
 	})
 

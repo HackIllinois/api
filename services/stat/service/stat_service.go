@@ -8,6 +8,10 @@ import (
 	"net/http"
 )
 
+func Initialize() error {
+	return nil
+}
+
 /*
 	Retrieve stats from the specified service
 */

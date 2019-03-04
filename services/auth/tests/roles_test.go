@@ -171,3 +171,30 @@ func TestRemoveRoleService(t *testing.T) {
 
 	CleanupTestDB(t)
 }
+
+func TestGetUsersByRoleService(t *testing.T) {
+	SetupTestDB(t)
+
+	err := db.Insert("roles", &models.UserRoles{
+		ID:    "testid2",
+		Roles: []string{"Staff"},
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	userids, err := service.GetUsersByRole("Staff")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_userids := []string{"testid2"}
+
+	if !reflect.DeepEqual(userids, expected_userids) {
+		t.Errorf("Wrong user ids. Expected %v, got %v", expected_userids, userids)
+	}
+
+	CleanupTestDB(t)
+}

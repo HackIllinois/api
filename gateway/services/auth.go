@@ -20,6 +20,18 @@ var AuthRoutes = arbor.RouteCollection{
 		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserRoles).ServeHTTP,
 	},
 	arbor.Route{
+		"GetRolesLists",
+		"GET",
+		"/auth/roles/list/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetRolesLists).ServeHTTP,
+	},
+	arbor.Route{
+		"GetUserListByRole",
+		"GET",
+		"/auth/roles/list/{role}/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserListByRole).ServeHTTP,
+	},
+	arbor.Route{
 		"OauthRedirect",
 		"GET",
 		"/auth/{provider}/",
@@ -66,6 +78,14 @@ func OauthCode(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUserRoles(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.AUTH_SERVICE+r.URL.String(), AuthFormat, "", r)
+}
+
+func GetRolesLists(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.AUTH_SERVICE+r.URL.String(), AuthFormat, "", r)
+}
+
+func GetUserListByRole(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, config.AUTH_SERVICE+r.URL.String(), AuthFormat, "", r)
 }
 

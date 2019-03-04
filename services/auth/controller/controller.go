@@ -16,6 +16,8 @@ func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
 	router.Handle("/roles/", alice.New().ThenFunc(GetCurrentUserRoles)).Methods("GET")
+	router.Handle("/roles/list/", alice.New().ThenFunc(GetRolesLists)).Methods("GET")
+	router.Handle("/roles/list/{role}/", alice.New().ThenFunc(GetUserListByRole)).Methods("GET")
 	router.Handle("/{provider}/", alice.New().ThenFunc(Authorize)).Methods("GET")
 	router.Handle("/code/{provider}/", alice.New().ThenFunc(Login)).Methods("POST")
 	router.Handle("/roles/{id}/", alice.New().ThenFunc(GetRoles)).Methods("GET")
@@ -270,4 +272,36 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(new_token)
+}
+
+/*
+	Responds with a list of valid roles
+*/
+func GetRolesLists(w http.ResponseWriter, r *http.Request) {
+	roles := service.GetValidRoles()
+
+	roles_list := models.UserRoleList{
+		Roles: roles,
+	}
+
+	json.NewEncoder(w).Encode(roles_list)
+}
+
+/*
+	Responds with a list of user with the requested role
+*/
+func GetUserListByRole(w http.ResponseWriter, r *http.Request) {
+	role := mux.Vars(r)["role"]
+
+	userids, err := service.GetUsersByRole(role)
+
+	if err != nil {
+		panic(errors.DatabaseError(err.Error(), "Could not retrieve list of users with requested role."))
+	}
+
+	user_list := models.UserList{
+		UserIDs: userids,
+	}
+
+	json.NewEncoder(w).Encode(user_list)
 }

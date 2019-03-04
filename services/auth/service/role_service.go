@@ -145,3 +145,39 @@ func AddAutomaticRoleGrants(id string, email string) error {
 
 	return nil
 }
+
+/*
+	Returns a list of valid roles for a user to be assigned
+*/
+func GetValidRoles() ([]models.Role) {
+	return models.Roles
+}
+
+/*
+	Returns a list of user ids with a given role
+*/
+func GetUsersByRole(role models.Role) ([]string, error){
+	query := database.QuerySelector{
+		"roles": database.QuerySelector{
+			"$elemMatch": database.QuerySelector{
+				"$eq": role,
+			},
+		},
+	}
+
+	var users []models.UserRoles
+	err := db.FindAll("roles", query, &users)
+
+	if err != nil {
+		return nil, err
+	}
+
+	userids := make([]string, len(users))
+
+	for i, user := range users {
+		userids[i] = user.ID
+	}
+
+	return userids, nil
+}
+

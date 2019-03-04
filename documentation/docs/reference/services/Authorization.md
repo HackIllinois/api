@@ -123,3 +123,39 @@ Response format:
 	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFybmF2c2Fua2FyYW5AZ21haWwuY29tIiwiZXhwIjoxNTI1ODQ1MzA0LCJpZCI6MCwicm9sZXMiOlsiVXNlciJdfQ.lYxFGSNDU9q7FoQHNHGvpKu1fTHf8yHsKPg8FDt9L-s"
 }
 ```
+
+GET /auth/roles/list/
+-----------------------
+
+Gets the list of valid roles a user can have.
+
+Response format:
+```
+{
+	"roles": [
+		"Admin",
+		"Staff",
+		"Mentor",
+		"Applicant",
+		"Attendee",
+		"User",
+		"Sponsor"
+	]
+}
+```
+
+GET /auth/roles/list/ROLE/
+--------------------------
+
+Gets the list of users with the role `ROLE`.
+
+Response format:
+```
+{
+	"userIds": [
+		"google901283019238091820933",
+		"google908290138109283982388",
+		"github1290381"
+	]
+}
+```

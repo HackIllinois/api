@@ -95,7 +95,7 @@ func CreateTopic(id string) error {
 	}
 
 	topic := models.Topic{
-		ID: id,
+		ID:      id,
 		UserIDs: []string{},
 	}
 
@@ -262,7 +262,7 @@ func GetUserDevices(id string) ([]string, error) {
 	if err != nil {
 		if err == database.ErrNotFound {
 			err := db.Insert("users", &models.User{
-				ID: id,
+				ID:      id,
 				Devices: []string{},
 			})
 
@@ -288,7 +288,7 @@ func SetUserDevices(id string, devices []string) error {
 	}
 
 	user := models.User{
-		ID: id,
+		ID:      id,
 		Devices: devices,
 	}
 
@@ -321,8 +321,8 @@ func RegisterDeviceToUser(token string, platform string, id string) error {
 	if config.IS_PRODUCTION {
 		response, err := client.CreatePlatformEndpoint(
 			&sns.CreatePlatformEndpointInput{
-				CustomUserData: &id,
-				Token: &token,
+				CustomUserData:         &id,
+				Token:                  &token,
 				PlatformApplicationArn: &platform_arn,
 			},
 		)

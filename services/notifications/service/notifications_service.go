@@ -264,7 +264,7 @@ func GetUserDevices(id string) ([]string, error) {
 
 	if err != nil {
 		if err == database.ErrNotFound {
-			err := db.Insert("users", &models.User{
+			err = db.Insert("users", &models.User{
 				ID:      id,
 				Devices: []string{},
 			})
@@ -298,7 +298,7 @@ func SetUserDevices(id string, devices []string) error {
 		Devices: devices,
 	}
 
-	err := db.Update("topics", selector, &user)
+	err := db.Update("users", selector, &user)
 
 	if err != nil {
 		return err

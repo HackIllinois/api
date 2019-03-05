@@ -71,11 +71,11 @@ func SetupTestDB(t *testing.T) {
 	}
 
 	user := models.User{
-		ID:      "test_userid",
+		ID:      "test_user",
 		Devices: []string{"test_arn"},
 	}
 
-	err = db.Insert("devices", &user)
+	err = db.Insert("users", &user)
 
 	if err != nil {
 		t.Fatal(err)
@@ -108,7 +108,7 @@ func TestGetAllTopicIDs(t *testing.T) {
 	expected_topics := []string{"User"}
 
 	if !reflect.DeepEqual(topics, expected_topics) {
-		t.Errorf("Wrong topcis.\nExpected %v\ngot %v\n", expected_topics, topics)
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_topics, topics)
 	}
 
 	CleanupTestDB(t)
@@ -132,7 +132,7 @@ func TestGetTopic(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(topic, &expected_topic) {
-		t.Errorf("Wrong topcis.\nExpected %v\ngot %v\n", &expected_topic, topic)
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", &expected_topic, topic)
 	}
 
 	CleanupTestDB(t)
@@ -162,7 +162,7 @@ func TestCreateTopic(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(topic, &expected_topic) {
-		t.Errorf("Wrong topcis.\nExpected %v\ngot %v\n", &expected_topic, topic)
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", &expected_topic, topic)
 	}
 
 	CleanupTestDB(t)
@@ -212,7 +212,7 @@ func TestGetAllNotificationsForTopic(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(notifications, expected_notifications) {
-		t.Errorf("Wrong topcis.\nExpected %v\ngot %v\n", expected_notifications, notifications)
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_notifications, notifications)
 	}
 
 	CleanupTestDB(t)
@@ -241,14 +241,14 @@ func TestGetAllNotifications(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(notifications, expected_notifications) {
-		t.Errorf("Wrong topcis.\nExpected %v\ngot %v\n", expected_notifications, notifications)
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_notifications, notifications)
 	}
 
 	CleanupTestDB(t)
 }
 
 /*
-	Tests getting all notifications for a set of topics
+	Tests getting all public notifications
 */
 func TestGetAllPublicNotifications(t *testing.T) {
 	SetupTestDB(t)
@@ -270,7 +270,112 @@ func TestGetAllPublicNotifications(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(notifications, expected_notifications) {
-		t.Errorf("Wrong topcis.\nExpected %v\ngot %v\n", expected_notifications, notifications)
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_notifications, notifications)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests subscriptioning user to a topic
+*/
+func TestSubscribeToTopic(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.SubscribeToTopic("test_user2", "User")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests unsubscriptioning user to a topic
+*/
+func TestUnsubscribeToTopic(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.UnsubscribeToTopic("test_user", "User")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests retrieving a user's devices
+*/
+func TestGetUserDevices(t *testing.T) {
+	SetupTestDB(t)
+
+	devices, err := service.GetUserDevices("test_user")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_devices := []string{"test_arn"}
+
+	if !reflect.DeepEqual(devices, expected_devices) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_devices, devices)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests setting a user's devices
+*/
+func TestSetUserDevices(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.SetUserDevices("test_user", []string{"test_arn", "test_arn2"})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	devices, err := service.GetUserDevices("test_user")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_devices := []string{"test_arn", "test_arn2"}
+
+	if !reflect.DeepEqual(devices, expected_devices) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_devices, devices)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests registering a device to a user
+*/
+func TestRegisterDeviceToUser(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.RegisterDeviceToUser("test_token", "android", "test_user")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	devices, err := service.GetUserDevices("test_user")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_devices := []string{"test_arn", ""}
+
+	if !reflect.DeepEqual(devices, expected_devices) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_devices, devices)
 	}
 
 	CleanupTestDB(t)

@@ -251,6 +251,9 @@ func UnsubscribeToTopic(userId string, topicId string) error {
 	return nil
 }
 
+/*
+	Gets the list of devices registered to a user
+*/
 func GetUserDevices(id string) ([]string, error) {
 	selector := database.QuerySelector{
 		"id": id,
@@ -282,6 +285,9 @@ func GetUserDevices(id string) ([]string, error) {
 	return user.Devices, nil
 }
 
+/*
+	Sets the list of devices registered to a user
+*/
 func SetUserDevices(id string, devices []string) error {
 	selector := database.QuerySelector{
 		"id": id,

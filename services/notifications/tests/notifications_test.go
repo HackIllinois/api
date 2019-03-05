@@ -46,7 +46,7 @@ func TestMain(m *testing.M) {
 */
 func SetupTestDB(t *testing.T) {
 	topic := models.Topic{
-		ID:      "test_topic",
+		ID:      "User",
 		UserIDs: []string{"test_user"},
 	}
 
@@ -60,7 +60,7 @@ func SetupTestDB(t *testing.T) {
 		ID:    "test_id",
 		Title: "test title",
 		Body:  "test body",
-		Topic: "test_topic",
+		Topic: "User",
 		Time:  2000,
 	}
 
@@ -105,7 +105,7 @@ func TestGetAllTopicIDs(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_topics := []string{"test_topic"}
+	expected_topics := []string{"User"}
 
 	if !reflect.DeepEqual(topics, expected_topics) {
 		t.Errorf("Wrong topcis.\nExpected %v\ngot %v\n", expected_topics, topics)
@@ -120,14 +120,14 @@ func TestGetAllTopicIDs(t *testing.T) {
 func TestGetTopic(t *testing.T) {
 	SetupTestDB(t)
 
-	topic, err := service.GetTopic("test_topic")
+	topic, err := service.GetTopic("User")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	expected_topic := models.Topic{
-		ID:      "test_topic",
+		ID:      "User",
 		UserIDs: []string{"test_user"},
 	}
 
@@ -144,20 +144,20 @@ func TestGetTopic(t *testing.T) {
 func TestCreateTopic(t *testing.T) {
 	SetupTestDB(t)
 
-	err := service.CreateTopic("test_topic2")
+	err := service.CreateTopic("User2")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	topic, err := service.GetTopic("test_topic2")
+	topic, err := service.GetTopic("User2")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	expected_topic := models.Topic{
-		ID:      "test_topic2",
+		ID:      "User2",
 		UserIDs: []string{},
 	}
 
@@ -174,16 +174,103 @@ func TestCreateTopic(t *testing.T) {
 func TestDeleteTopic(t *testing.T) {
 	SetupTestDB(t)
 
-	err := service.DeleteTopic("test_topic")
+	err := service.DeleteTopic("User")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = service.GetTopic("test_topic")
+	_, err = service.GetTopic("User")
 
 	if err != database.ErrNotFound {
 		t.Fatal(err)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests getting all notifications for a topic
+*/
+func TestGetAllNotificationsForTopic(t *testing.T) {
+	SetupTestDB(t)
+
+	notifications, err := service.GetAllNotificationsForTopic("User")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_notifications := []models.Notification{
+		models.Notification{
+			ID:    "test_id",
+			Title: "test title",
+			Body:  "test body",
+			Topic: "User",
+			Time:  2000,
+		},
+	}
+
+	if !reflect.DeepEqual(notifications, expected_notifications) {
+		t.Errorf("Wrong topcis.\nExpected %v\ngot %v\n", expected_notifications, notifications)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests getting all notifications for a set of topics
+*/
+func TestGetAllNotifications(t *testing.T) {
+	SetupTestDB(t)
+
+	notifications, err := service.GetAllNotifications([]string{"User"})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_notifications := []models.Notification{
+		models.Notification{
+			ID:    "test_id",
+			Title: "test title",
+			Body:  "test body",
+			Topic: "User",
+			Time:  2000,
+		},
+	}
+
+	if !reflect.DeepEqual(notifications, expected_notifications) {
+		t.Errorf("Wrong topcis.\nExpected %v\ngot %v\n", expected_notifications, notifications)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests getting all notifications for a set of topics
+*/
+func TestGetAllPublicNotifications(t *testing.T) {
+	SetupTestDB(t)
+
+	notifications, err := service.GetAllPublicNotifications()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_notifications := []models.Notification{
+		models.Notification{
+			ID:    "test_id",
+			Title: "test title",
+			Body:  "test body",
+			Topic: "User",
+			Time:  2000,
+		},
+	}
+
+	if !reflect.DeepEqual(notifications, expected_notifications) {
+		t.Errorf("Wrong topcis.\nExpected %v\ngot %v\n", expected_notifications, notifications)
 	}
 
 	CleanupTestDB(t)

@@ -8,6 +8,7 @@ import (
 	"github.com/HackIllinois/api/services/notifications/service"
 	"os"
 	"testing"
+	"reflect"
 )
 
 var db database.Database
@@ -93,9 +94,97 @@ func CleanupTestDB(t *testing.T) {
 }
 
 /*
-	Placeholder test for notifications service
+	Tests retrieving all topic ids
 */
-func TestPlaceholder(t *testing.T) {
+func TestGetAllTopicIDs(t *testing.T) {
 	SetupTestDB(t)
+
+	topics, err := service.GetAllTopicIDs()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_topics := []string{"test_topic"}
+
+	if !reflect.DeepEqual(topics, expected_topics) {
+		t.Errorf("Wrong topcis.\nExpected %v\ngot %v\n", expected_topics, topics)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests retrieving a topic
+*/
+func TestGetTopic(t *testing.T) {
+	SetupTestDB(t)
+
+	topic, err := service.GetTopic("test_topic")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_topic := models.Topic{
+		ID:      "test_topic",
+		UserIDs: []string{"test_user"},
+	}
+
+	if !reflect.DeepEqual(topic, &expected_topic) {
+		t.Errorf("Wrong topcis.\nExpected %v\ngot %v\n", &expected_topic, topic)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests creating a topic
+*/
+func TestCreateTopic(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.CreateTopic("test_topic2")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	topic, err := service.GetTopic("test_topic2")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_topic := models.Topic{
+		ID:      "test_topic2",
+		UserIDs: []string{},
+	}
+
+	if !reflect.DeepEqual(topic, &expected_topic) {
+		t.Errorf("Wrong topcis.\nExpected %v\ngot %v\n", &expected_topic, topic)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests deleting a topic
+*/
+func TestDeleteTopic(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.DeleteTopic("test_topic")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = service.GetTopic("test_topic")
+
+	if err != database.ErrNotFound {
+		t.Fatal(err)
+	}
+
 	CleanupTestDB(t)
 }

@@ -1,5 +1,5 @@
 package models
 
-type UserIDList struct {
+type UserList struct {
 	UserIDs []string `json:"userIds"`
 }

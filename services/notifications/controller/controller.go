@@ -35,6 +35,14 @@ func GetAllTopics(w http.ResponseWriter, r *http.Request) {
 		panic(errors.DatabaseError(err.Error(), "Could not retrieve topics."))
 	}
 
+	role_topics, err := service.GetValidRoles()
+
+	if err != nil {
+		panic(errors.DatabaseError(err.Error(), "Could not retrieve role based topics."))
+	}
+
+	topics = append(topics, role_topics.Roles...)
+
 	topic_list := models.TopicList{
 		Topics: topics,
 	}
@@ -134,7 +142,7 @@ func PublishNotificationToTopic(w http.ResponseWriter, r *http.Request) {
 	var notification models.Notification
 	json.NewDecoder(r.Body).Decode(&notification)
 
-	notification.ID = id
+	notification.Topic = id
 
 	result, err := service.PublishNotificationToTopic(notification)
 

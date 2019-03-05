@@ -11,7 +11,7 @@ import (
 /*
 	Gets the list of valid roles
 */
-func GetValidRoles(id string) (*models.UserRoleList, error) {
+func GetValidRoles() (*models.UserRoleList, error) {
 	var user_roles_list models.UserRoleList
 	status, err := apirequest.Get(config.AUTH_SERVICE+"/auth/roles/list/", &user_roles_list)
 

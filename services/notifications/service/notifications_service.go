@@ -3,7 +3,6 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/notifications/config"
@@ -85,7 +84,7 @@ func GetTopic(id string) (*models.Topic, error) {
 	Creates a topic
 */
 func CreateTopic(id string) error {
-	_, err = GetTopic(id)
+	_, err := GetTopic(id)
 
 	if err != database.ErrNotFound {
 		if err != nil {
@@ -148,7 +147,7 @@ func GetAllNotificationsForTopic(topic string) ([]models.Notification, error) {
 	Returns all notifications for the specified topics
 */
 func GetAllNotifications(topics []string) ([]models.Notification, error) {
-	notifications := make([]notifications, 0)
+	notifications := make([]models.Notification, 0)
 
 	for _, topic := range topics {
 		topic_notifications, err := GetAllNotificationsForTopic(topic)
@@ -157,7 +156,7 @@ func GetAllNotifications(topics []string) ([]models.Notification, error) {
 			return nil, err
 		}
 
-		notifications = append(notifications, topic_notifications)
+		notifications = append(notifications, topic_notifications...)
 	}
 
 	return notifications, nil
@@ -171,7 +170,7 @@ func GetAllPublicNotifications() ([]models.Notification, error) {
 }
 
 /*
-	Returns the list of topics the is subscribed to
+	Returns the list of topics the user is subscribed to
 */
 func GetSubscriptions(id string) ([]string, error) {
 	selector := database.QuerySelector{
@@ -182,8 +181,8 @@ func GetSubscriptions(id string) ([]string, error) {
 		},
 	}
 
-	var topics []models.Topics
-	err := db.FindAll("topics", nil, &topics)
+	var topics []models.Topic
+	err := db.FindAll("topics", selector, &topics)
 
 	if err != nil {
 		return nil, err
@@ -198,10 +197,10 @@ func GetSubscriptions(id string) ([]string, error) {
 	roles, err := GetUserRoles(id)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	topicIds = append(topicIds, roles)
+	topicIds = append(topicIds, roles...)
 
 	return topicIds, nil
 }
@@ -271,7 +270,7 @@ func GetUserDevices(id string) ([]string, error) {
 				return nil, err
 			}
 
-			err := db.FindOne("users", selector, &user)
+			err = db.FindOne("users", selector, &user)
 
 			if err != nil {
 				return nil, err
@@ -305,10 +304,10 @@ func SetUserDevices(id string, devices []string) error {
 /*
 	Registers the device token with SNS and stores the arn with the associated user
 */
-func RegisterDeviceToUser(token string, id string) error {
+func RegisterDeviceToUser(token string, platform string, id string) error {
 	var platform_arn string
 
-	switch strings.ToLower(device_reg.Platform) {
+	switch strings.ToLower(platform) {
 	case "android":
 		platform_arn = config.ANDROID_PLATFORM_ARN
 	case "ios":
@@ -324,8 +323,8 @@ func RegisterDeviceToUser(token string, id string) error {
 			&sns.CreatePlatformEndpointInput{
 				CustomUserData: &id,
 				Token: &token,
-				PlatformApplicationArn: &platform_arn
-			}
+				PlatformApplicationArn: &platform_arn,
+			},
 		)
 
 		if err != nil {
@@ -343,7 +342,7 @@ func RegisterDeviceToUser(token string, id string) error {
 
 	devices = append(devices, device_arn)
 
-	err := SetUserDevices(id, devices)
+	err = SetUserDevices(id, devices)
 
 	if err != nil {
 		return err
@@ -387,7 +386,7 @@ func GetNotificationRecipientArns(userIds []string) ([]string, error) {
 			return nil, err
 		}
 
-		device_arns = append(device_arns, devices)
+		device_arns = append(device_arns, devices...)
 	}
 
 	return device_arns, nil
@@ -450,7 +449,7 @@ func PublishNotificationToTopic(notification models.Notification) (*models.Publi
 		}
 	}
 
-	result := PublishResult{
+	result := models.PublishResult{
 		Success: success_count,
 		Failure: failure_count,
 	}
@@ -461,9 +460,9 @@ func PublishNotificationToTopic(notification models.Notification) (*models.Publi
 /*
 	Worker go routine to publish notifications
 */
-func PublishNotificationWorker(notification string, device_arns <-chan string, responses <-chan bool) {
+func PublishNotificationWorker(notification string, device_arns <-chan string, responses chan<- bool) {
 	for device_arn := range device_arns {
-		_, err = client.Publish(&sns.PublishInput{
+		_, err := client.Publish(&sns.PublishInput{
 			TargetArn:        &device_arn,
 			Message:          &notification,
 			MessageStructure: &SNS_MESSAGE_STRUCTURE,

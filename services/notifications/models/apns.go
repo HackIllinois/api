@@ -1,8 +1,8 @@
 package models
 
 type APNSPayload struct {
-	Container APNSContainer    `json:"aps"`
-	Data      PastNotification `json:"data"`
+	Container APNSContainer `json:"aps"`
+	Data      Notification  `json:"data"`
 }
 
 type APNSContainer struct {

@@ -2,7 +2,7 @@ package slice_utils
 
 import (
 	"math/rand"
-	"hex"
+	"encoding/hex"
 )
 
 func GenerateUniqueID() string {

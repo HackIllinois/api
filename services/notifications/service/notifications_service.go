@@ -15,7 +15,7 @@ import (
 )
 
 var SNS_MESSAGE_STRUCTURE string = "json"
-var WORKER_POOL_SIZE int = 2500
+var WORKER_POOL_SIZE int = 1000
 
 var sess *session.Session
 var client *sns.SNS

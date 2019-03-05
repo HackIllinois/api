@@ -7,8 +7,8 @@ import (
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/HackIllinois/api/services/notifications/service"
 	"os"
-	"testing"
 	"reflect"
+	"testing"
 )
 
 var db database.Database
@@ -202,7 +202,7 @@ func TestGetAllNotificationsForTopic(t *testing.T) {
 	}
 
 	expected_notifications := []models.Notification{
-		models.Notification{
+		{
 			ID:    "test_id",
 			Title: "test title",
 			Body:  "test body",
@@ -231,7 +231,7 @@ func TestGetAllNotifications(t *testing.T) {
 	}
 
 	expected_notifications := []models.Notification{
-		models.Notification{
+		{
 			ID:    "test_id",
 			Title: "test title",
 			Body:  "test body",
@@ -260,7 +260,7 @@ func TestGetAllPublicNotifications(t *testing.T) {
 	}
 
 	expected_notifications := []models.Notification{
-		models.Notification{
+		{
 			ID:    "test_id",
 			Title: "test title",
 			Body:  "test body",

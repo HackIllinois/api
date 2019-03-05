@@ -446,13 +446,17 @@ func PublishNotificationToTopic(notification models.Notification) (*models.Publi
 
 		close(queued_devices)
 
-		for response := range responses {
+		for i := 0; i < len(device_arns); i++ {
+			response := <-responses
+
 			if response {
 				success_count++
 			} else {
 				failure_count++
 			}
 		}
+
+		close(responses)
 	}
 
 	result := models.PublishResult{

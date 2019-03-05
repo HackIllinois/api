@@ -380,3 +380,77 @@ func TestRegisterDeviceToUser(t *testing.T) {
 
 	CleanupTestDB(t)
 }
+
+/*
+	Tests getting the list of userids to receive a notification
+*/
+func TestGetNotificationRecipients(t *testing.T) {
+	SetupTestDB(t)
+
+	userids, err := service.GetNotificationRecipients("User")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_userids := []string{"test_user"}
+
+	if !reflect.DeepEqual(userids, expected_userids) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_userids, userids)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests getting the list of arns to send a notification to based on userids
+*/
+func TestGetNotificationRecipientArns(t *testing.T) {
+	SetupTestDB(t)
+
+	arns, err := service.GetNotificationRecipientArns([]string{"test_user"})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_arns := []string{"test_arn"}
+
+	if !reflect.DeepEqual(arns, expected_arns) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_arns, arns)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests publishing a notification
+*/
+func TestPublishNotificationToTopic(t *testing.T) {
+	SetupTestDB(t)
+
+	notification := models.Notification{
+		ID:    "test_id2",
+		Title: "test title 2",
+		Body:  "test body 2",
+		Topic: "User",
+		Time:  3000,
+	}
+
+	result, err := service.PublishNotificationToTopic(notification)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_result := models.PublishResult{
+		Success: 0,
+		Failure: 0,
+	}
+
+	if !reflect.DeepEqual(result, &expected_result) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", &expected_result, result)
+	}
+
+	CleanupTestDB(t)
+}

@@ -1,242 +1,193 @@
-# Notifications
+Notifications
+=============
 
-## GET /notifications/
+GET /notifications/topic/
+-------------------------
 
-Returns a list of all notifications.
+Returns the list of valid topics.
 
 Response format:
-
 ```
 {
 	"topics": [
-		"Mentors",
-		"Attendees"
+		"Admin",
+		"Staff",
+		"Mentor",
+		"Applicant",
+		"Attendee",
+		"User",
+		"Sponsor",
+		"ExampleTopic"
 	]
 }
 ```
 
-## POST /notifications/
+POST /notifications/topic/
+--------------------------
 
-Creates a new topic with the requested name. Returns the created topic.
+Create a new topic with the specified information.
 
 Request format:
-
 ```
 {
-	"name": "Mentors"
+	"id": "ExampleTopic"
 }
 ```
 
 Response format:
-
 ```
 {
-	"name": "Mentors"
+	"id": "ExampleTopic",
+	"userIds": []
 }
 ```
 
-## GET /notifications/all/
+GET /notifications/topic/all/
+-----------------------------
 
-Returns a list of all past notifications.
+Returns the notifications for all topics the user is subscribed to.
 
 Response format:
-
 ```
 {
 	"notifications": [
 		{
-			"title": "Notification 1",
-			"body": "This is a notification!",
-			"time": 1541037801,
-			"topicName": "Attendee"
-		},
-		{
-			"title": "Notification 2",
-			"body": "This is another notification!",
-			"time": 1541069201,
-			"topicName": "Attendee"
-		},
-		{
-			"title": "Notification 3",
-			"body": "This is another notification, for another topic!",
-			"time": 1541169201,
-			"topicName": "Mentor"
+			"id": "52fdfc072182654f163f5f0f9a621d72",
+			"topic": "User",
+			"title": "Example Title",
+			"body": "Example Body",
+			"time": 1551805897
 		}
 	]
 }
 ```
 
-## GET /notifications/TOPICNAME/
+GET /notifications/topic/public/
+-----------------------------
 
-Returns a list of all past notifications for a given topic `TOPICNAME`.
+Returns the notifications which are publically viewable.
 
 Response format:
-
 ```
 {
 	"notifications": [
 		{
-			"title": "Notification 1",
-			"body": "This is a notification!",
-			"time": 1541037801,
-			"topicName": "Attendee"
-		},
-	{
-			"title": "Notification 2",
-			"body": "This is another notification!",
-			"time": 1541069201,
-			"topicName": "Attendee"
+			"id": "52fdfc072182654f163f5f0f9a621d72",
+			"topic": "User",
+			"title": "Example Title",
+			"body": "Example Body",
+			"time": 1551805897
 		}
 	]
 }
 ```
 
-## DELETE /notifications/TOPICNAME/
+GET /notifications/topic/TOPICID/
+-----------------------------
 
-Delete a topic with name `TOPICNAME`. Returns a list of all remaining topics.
+Returns the notifications for the topic with the id `TOPICID`.
 
 Response format:
+```
+{
+	"notifications": [
+		{
+			"id": "52fdfc072182654f163f5f0f9a621d72",
+			"topic": "User",
+			"title": "Example Title",
+			"body": "Example Body",
+			"time": 1551805897
+		}
+	]
+}
+```
 
+POST /notifications/topic/TOPICID/
+----------------------------------
+
+Publishes a notification to the topic with the ID `TOPICID`.
+
+Request format:
+```
+{
+	"title": "Example Title",
+	"body": "Example Body"
+}
+```
+
+Response format:
+```
+{
+	"success": 5,
+	"failure": 0
+}
+```
+
+DELETE /notifications/topic/TOPICID/
+------------------------------------
+
+Deletes the topic with the ID `TOPICID`.
+
+Response format:
+```
+{}
+```
+
+POST /notifications/topic/TOPICID/subscribe/
+--------------------------------------------
+
+Subscribes the user to the topic with the id `TOPICID` and return the user's list of subscriptions.
+
+Response format:
 ```
 {
 	"topics": [
-		"Mentors",
-		"Attendees"
+		"ExampleTopic",
+		"User",
+		"Applicant",
+		"Admin",
+		"Attendee",
+		"Mentor"
 	]
 }
 ```
 
-## POST /notifications/TOPICNAME/
+POST /notifications/topic/TOPICID/unsubscribe/
+--------------------------------------------
 
-Publishes and distributes a notification to all users subscribed to the topic `TOPICNAME`. Returns the created notification.
-
-Request format:
-
-```
-{
-	"title": "Message topic",
-	"body": "Message to send to users"
-}
-```
+Unsubscribes the user to the topic with the id `TOPICID` and return the user's list of subscriptions.
 
 Response format:
-
 ```
 {
-	"title": "Message topic",
-	"body": "Message to send to users",
-	"time": 1541644690,
-	"topicName": "Attendee"
-}
-```
-
-## GET /notifications/TOPICNAME/info/
-
-Gets information associated by the topic `TOPICNAME`.
-
-Response format:
-
-```
-{
-	"name": "Mentors",
-	"userIds": [
-		"testuser1"
+	"topics": [
+		"User",
+		"Applicant",
+		"Admin",
+		"Attendee",
+		"Mentor"
 	]
 }
 ```
 
-## POST /notifications/TOPICNAME/add/
+POST /notifications/device/
+---------------------------
 
-Modifies the topic `TOPICNAME`, subscribing the users in the list `userIds`.
+Registers the specified device token to the current user.
 
 Request format:
-
 ```
 {
-	"userIds": [
-		"testuser1",
-		"testuser2"
-	]
-}
-```
-
-Response format:
-
-```
-{
-	"name": "Mentors",
-	"userIds": [
-		"testuser1"
-	]
-}
-```
-
-## POST /notifications/TOPICNAME/remove/
-
-Modifies the topic `TOPICNAME`, unsubscribing the users in the list `userIds`.
-
-Request format:
-
-```
-{
-	"userIds": [
-		"testuser1",
-	]
-}
-```
-
-Response format:
-
-```
-{
-	"name": "Mentors",
-	"userIds": [
-		"testuser2"
-	]
-}
-```
-
-## POST /notifications/device/
-
-Associates the device specified by the provided device token with the current user.
-Valid platforms are `android` and `ios`.
-
-Request format:
-
-```
-{
-	"deviceToken": "abcdef",
+	"token": "example_token",
 	"platform": "android"
 }
 ```
 
 Response format:
-
 ```
 {
-	"deviceToken": "abcdef",
-	"platform": "android"
-}
-```
-
-## POST /notifications/update/
-
-Updates a user's subscribed topics to match their user roles
-
-Request format:
-
-```
-{
-}
-```
-
-Response format:
-
-```
-{
-	"topics": [
-		  "Admin",
-		  "Attendee"
-	]
+    "devices": [
+        "arn:example139091820398"
+    ]
 }
 ```

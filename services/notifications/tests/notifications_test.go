@@ -46,8 +46,7 @@ func TestMain(m *testing.M) {
 */
 func SetupTestDB(t *testing.T) {
 	topic := models.Topic{
-		Name:    "test_topic",
-		Arn:     "arn:test",
+		ID:      "User",
 		UserIDs: []string{"test_user"},
 	}
 
@@ -57,11 +56,12 @@ func SetupTestDB(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	notification := models.PastNotification{
-		Body:      "test message",
-		Title:     "test title",
-		TopicName: "test_topic",
-		Time:      2000,
+	notification := models.Notification{
+		ID:    "test_id",
+		Title: "test title",
+		Body:  "test body",
+		Topic: "User",
+		Time:  2000,
 	}
 
 	err = db.Insert("notifications", &notification)
@@ -70,28 +70,12 @@ func SetupTestDB(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	device := models.Device{
-		UserID:        "test_user",
-		DeviceToken:   "token1",
-		DeviceArn:     "arn:device_test_1",
-		Platform:      "android",
-		Subscriptions: map[string]string{"test_topic": ""},
-	}
-	device2 := models.Device{
-		UserID:        "test_user_2",
-		DeviceToken:   "token2",
-		DeviceArn:     "arn:device_test_2",
-		Platform:      "android",
-		Subscriptions: map[string]string{},
+	user := models.User{
+		ID:      "test_user",
+		Devices: []string{"test_arn"},
 	}
 
-	err = db.Insert("devices", &device)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	err = db.Insert("devices", &device2)
+	err = db.Insert("users", &user)
 
 	if err != nil {
 		t.Fatal(err)
@@ -110,483 +94,362 @@ func CleanupTestDB(t *testing.T) {
 }
 
 /*
-	Service level test for getting all topics from db
+	Tests retrieving all topic ids
 */
-func TestGetAllTopicsSerice(t *testing.T) {
+func TestGetAllTopicIDs(t *testing.T) {
 	SetupTestDB(t)
 
-	topic := models.Topic{
-		Name:    "test_topic_2",
-		Arn:     "arn:test2",
-		UserIDs: []string{"test_user_2"},
-	}
-
-	err := db.Insert("topics", &topic)
+	topics, err := service.GetAllTopicIDs()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	actual_topic_list, err := service.GetAllTopics()
+	expected_topics := []string{"User"}
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected_topic_list := models.TopicList{
-		Topics: []string{
-			"test_topic",
-			"test_topic_2",
-		},
-	}
-
-	if !reflect.DeepEqual(actual_topic_list, &expected_topic_list) {
-		t.Errorf("Wrong topic list. Expected %v, got %v", &expected_topic_list, actual_topic_list)
+	if !reflect.DeepEqual(topics, expected_topics) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_topics, topics)
 	}
 
 	CleanupTestDB(t)
 }
 
 /*
-	Service level test for creating a notification topic
+	Tests retrieving a topic
 */
-func TestCreateTopicService(t *testing.T) {
+func TestGetTopic(t *testing.T) {
 	SetupTestDB(t)
 
-	err := service.CreateTopic("test_topic_2")
+	topic, err := service.GetTopic("User")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	actual_topic_list, err := service.GetAllTopics()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected_topic_list := models.TopicList{
-		Topics: []string{
-			"test_topic",
-			"test_topic_2",
-		},
-	}
-
-	if !reflect.DeepEqual(actual_topic_list, &expected_topic_list) {
-		t.Errorf("Wrong topic list. Expected %v, got %v", &expected_topic_list, actual_topic_list)
-	}
-
-	CleanupTestDB(t)
-}
-
-/*
-	Service level test for getting all notifications from db
-*/
-func TestGetAllNotificationsService(t *testing.T) {
-	SetupTestDB(t)
-
-	notification := models.PastNotification{
-		Body:      "test message 2",
-		Title:     "test title 2",
-		TopicName: "test_topic_2",
-		Time:      3000,
-	}
-
-	err := db.Insert("notifications", &notification)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	actual_notification_list, err := service.GetAllNotifications()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected_notification_list := models.NotificationList{
-		Notifications: []models.PastNotification{
-			{
-				Body:      "test message",
-				Title:     "test title",
-				TopicName: "test_topic",
-				Time:      2000,
-			},
-			{
-				Body:      "test message 2",
-				Title:     "test title 2",
-				TopicName: "test_topic_2",
-				Time:      3000,
-			},
-		},
-	}
-
-	if !reflect.DeepEqual(actual_notification_list, &expected_notification_list) {
-		t.Errorf("Wrong notification list. Expected %v, got %v", &expected_notification_list, actual_notification_list)
-	}
-
-	CleanupTestDB(t)
-}
-
-/*
-	Service level test for getting notifications for a specific topic from db
-*/
-func TestGetNotificationsForTopicService(t *testing.T) {
-	SetupTestDB(t)
-
-	notification := models.PastNotification{
-		Body:      "test message again",
-		Title:     "test title again",
-		TopicName: "test_topic",
-		Time:      5000,
-	}
-
-	err := db.Insert("notifications", &notification)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	notification = models.PastNotification{
-		Body:      "test message 2",
-		Title:     "test title 2",
-		TopicName: "test_topic_2",
-		Time:      3000,
-	}
-
-	err = db.Insert("notifications", &notification)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	actual_notification_list, err := service.GetNotificationsForTopic("test_topic")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected_notification_list := models.NotificationList{
-		Notifications: []models.PastNotification{
-			{
-				Body:      "test message",
-				Title:     "test title",
-				TopicName: "test_topic",
-				Time:      2000,
-			},
-			{
-				Body:      "test message again",
-				Title:     "test title again",
-				TopicName: "test_topic",
-				Time:      5000,
-			},
-		},
-	}
-
-	if !reflect.DeepEqual(actual_notification_list, &expected_notification_list) {
-		t.Errorf("Wrong notification list. Expected %v, got %v", &expected_notification_list, actual_notification_list)
-	}
-
-	CleanupTestDB(t)
-}
-
-/*
-	Service level test for deleting a topic from db
-*/
-func TestDeleteTopicService(t *testing.T) {
-	SetupTestDB(t)
-
-	topic := models.Topic{
-		Name: "test_topic_2",
-		Arn:  "arn:test2",
-	}
-
-	err := db.Insert("topics", &topic)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	err = service.DeleteTopic("test_topic_2")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	actual_topic_list, err := service.GetAllTopics()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected_topic_list := models.TopicList{
-		Topics: []string{
-			"test_topic",
-		},
-	}
-
-	if !reflect.DeepEqual(actual_topic_list, &expected_topic_list) {
-		t.Errorf("Wrong topic list. Expected %v, got %v", &expected_topic_list, actual_topic_list)
-	}
-
-	CleanupTestDB(t)
-}
-
-/*
-	Service level test for creating a notification
-*/
-func TestCreateNotificationService(t *testing.T) {
-	SetupTestDB(t)
-
-	notification := models.Notification{
-		Body:  "test message 2",
-		Title: "test title 2",
-	}
-
-	past_notification, err := service.PublishNotification("test_topic", notification)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	actual_notification_list, err := service.GetNotificationsForTopic("test_topic")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected_notification_list := models.NotificationList{
-		Notifications: []models.PastNotification{
-			{
-				Body:      "test message",
-				Title:     "test title",
-				TopicName: "test_topic",
-				Time:      2000,
-			},
-			{
-				Body:      "test message 2",
-				Title:     "test title 2",
-				TopicName: "test_topic",
-				Time:      past_notification.Time,
-			},
-		},
-	}
-
-	if !reflect.DeepEqual(actual_notification_list, &expected_notification_list) {
-		t.Errorf("Wrong notification list. Expected %v, got %v", &expected_notification_list, actual_notification_list)
-	}
-
-	CleanupTestDB(t)
-}
-
-/*
-	Service level test for getting topic info from db
-*/
-func TestGetTopicInfoService(t *testing.T) {
-	SetupTestDB(t)
-
-	actual_topic_info, err := service.GetTopicInfo("test_topic")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected_topic_info := models.Topic{
-		Name:    "test_topic",
-		Arn:     "arn:test",
+	expected_topic := models.Topic{
+		ID:      "User",
 		UserIDs: []string{"test_user"},
 	}
 
-	if !reflect.DeepEqual(actual_topic_info, &expected_topic_info) {
-		t.Errorf("Wrong topic info. Expected %v, got %v", &expected_topic_info, actual_topic_info)
+	if !reflect.DeepEqual(topic, &expected_topic) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", &expected_topic, topic)
 	}
 
 	CleanupTestDB(t)
 }
 
 /*
-	Service level test for subscribing users to a topic
+	Tests creating a topic
 */
-func TestSubscribeUserService(t *testing.T) {
+func TestCreateTopic(t *testing.T) {
 	SetupTestDB(t)
 
-	userid_list := models.UserIDList{
-		UserIDs: []string{
-			"test_user_2",
-			"test_user_3",
-		},
-	}
-
-	err := service.AddUsersToTopic("test_topic", userid_list)
+	err := service.CreateTopic("User2")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	actual_topic_info, err := service.GetTopicInfo("test_topic")
+	topic, err := service.GetTopic("User2")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected_topic_info := models.Topic{
-		Name: "test_topic",
-		Arn:  "arn:test",
-		UserIDs: []string{
-			"test_user",
-			"test_user_2",
-			"test_user_3",
-		},
-	}
-
-	if !reflect.DeepEqual(actual_topic_info, &expected_topic_info) {
-		t.Errorf("Wrong topic info. Expected %v, got %v", &expected_topic_info, actual_topic_info)
-	}
-
-	actual_devices_list, err := service.GetAllDevices()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected_devices_list := []models.Device{
-		{
-			UserID:        "test_user",
-			DeviceToken:   "token1",
-			DeviceArn:     "arn:device_test_1",
-			Platform:      "android",
-			Subscriptions: map[string]string{"test_topic": ""},
-		},
-		{
-			UserID:        "test_user_2",
-			DeviceToken:   "token2",
-			DeviceArn:     "arn:device_test_2",
-			Platform:      "android",
-			Subscriptions: map[string]string{"test_topic": ""},
-		},
-	}
-
-	if !reflect.DeepEqual(actual_devices_list, &expected_devices_list) {
-		t.Errorf("Wrong devices list. Expected %v, got %v", &expected_devices_list, actual_devices_list)
-	}
-
-	CleanupTestDB(t)
-}
-
-/*
-	Service level test for unsubscribing users from a topic
-*/
-func TestUnsubscribeUserService(t *testing.T) {
-	SetupTestDB(t)
-
-	userid_list := models.UserIDList{
-		UserIDs: []string{
-			"test_user",
-			"test_user_3",
-		},
-	}
-
-	err := service.RemoveUsersFromTopic("test_topic", userid_list)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	actual_topic_info, err := service.GetTopicInfo("test_topic")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected_topic_info := models.Topic{
-		Name:    "test_topic",
-		Arn:     "arn:test",
+	expected_topic := models.Topic{
+		ID:      "User2",
 		UserIDs: []string{},
 	}
 
-	if !reflect.DeepEqual(actual_topic_info, &expected_topic_info) {
-		t.Errorf("Wrong topic info. Expected %v, got %v", &expected_topic_info, actual_topic_info)
-	}
-
-	actual_devices_list, err := service.GetAllDevices()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected_devices_list := []models.Device{
-		{
-			UserID:        "test_user",
-			DeviceToken:   "token1",
-			DeviceArn:     "arn:device_test_1",
-			Platform:      "android",
-			Subscriptions: map[string]string{},
-		},
-		{
-			UserID:        "test_user_2",
-			DeviceToken:   "token2",
-			DeviceArn:     "arn:device_test_2",
-			Platform:      "android",
-			Subscriptions: map[string]string{},
-		},
-	}
-
-	if !reflect.DeepEqual(actual_devices_list, &expected_devices_list) {
-		t.Errorf("Wrong devices list. Expected %v, got %v", &expected_devices_list, actual_devices_list)
+	if !reflect.DeepEqual(topic, &expected_topic) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", &expected_topic, topic)
 	}
 
 	CleanupTestDB(t)
 }
 
 /*
-	Service level test for registering a device to a user
+	Tests deleting a topic
 */
-func TestRegisterDevice(t *testing.T) {
+func TestDeleteTopic(t *testing.T) {
 	SetupTestDB(t)
 
-	device_registration := models.DeviceRegistration{
-		DeviceToken: "token3",
-		Platform:    "android",
-	}
-
-	err := service.RegisterDeviceToUser("test_user", device_registration)
+	err := service.DeleteTopic("User")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	actual_devices_list, err := service.GetAllDevices()
+	_, err = service.GetTopic("User")
+
+	if err != database.ErrNotFound {
+		t.Fatal(err)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests getting all notifications for a topic
+*/
+func TestGetAllNotificationsForTopic(t *testing.T) {
+	SetupTestDB(t)
+
+	notifications, err := service.GetAllNotificationsForTopic("User")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected_devices_list := []models.Device{
+	expected_notifications := []models.Notification{
 		{
-			UserID:        "test_user",
-			DeviceToken:   "token1",
-			DeviceArn:     "arn:device_test_1",
-			Platform:      "android",
-			Subscriptions: map[string]string{"test_topic": ""},
-		},
-		{
-			UserID:        "test_user_2",
-			DeviceToken:   "token2",
-			DeviceArn:     "arn:device_test_2",
-			Platform:      "android",
-			Subscriptions: map[string]string{},
-		},
-		{
-			UserID:        "test_user",
-			DeviceToken:   "token3",
-			DeviceArn:     "",
-			Platform:      "android",
-			Subscriptions: map[string]string{"test_topic": ""},
+			ID:    "test_id",
+			Title: "test title",
+			Body:  "test body",
+			Topic: "User",
+			Time:  2000,
 		},
 	}
 
-	if !reflect.DeepEqual(actual_devices_list, &expected_devices_list) {
-		t.Errorf("Wrong devices list. Expected %v, got %v", &expected_devices_list, actual_devices_list)
+	if !reflect.DeepEqual(notifications, expected_notifications) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_notifications, notifications)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests getting all notifications for a set of topics
+*/
+func TestGetAllNotifications(t *testing.T) {
+	SetupTestDB(t)
+
+	notifications, err := service.GetAllNotifications([]string{"User"})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_notifications := []models.Notification{
+		{
+			ID:    "test_id",
+			Title: "test title",
+			Body:  "test body",
+			Topic: "User",
+			Time:  2000,
+		},
+	}
+
+	if !reflect.DeepEqual(notifications, expected_notifications) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_notifications, notifications)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests getting all public notifications
+*/
+func TestGetAllPublicNotifications(t *testing.T) {
+	SetupTestDB(t)
+
+	notifications, err := service.GetAllPublicNotifications()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_notifications := []models.Notification{
+		{
+			ID:    "test_id",
+			Title: "test title",
+			Body:  "test body",
+			Topic: "User",
+			Time:  2000,
+		},
+	}
+
+	if !reflect.DeepEqual(notifications, expected_notifications) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_notifications, notifications)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests subscriptioning user to a topic
+*/
+func TestSubscribeToTopic(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.SubscribeToTopic("test_user2", "User")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests unsubscriptioning user to a topic
+*/
+func TestUnsubscribeToTopic(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.UnsubscribeToTopic("test_user", "User")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests retrieving a user's devices
+*/
+func TestGetUserDevices(t *testing.T) {
+	SetupTestDB(t)
+
+	devices, err := service.GetUserDevices("test_user")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_devices := []string{"test_arn"}
+
+	if !reflect.DeepEqual(devices, expected_devices) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_devices, devices)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests setting a user's devices
+*/
+func TestSetUserDevices(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.SetUserDevices("test_user", []string{"test_arn", "test_arn2"})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	devices, err := service.GetUserDevices("test_user")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_devices := []string{"test_arn", "test_arn2"}
+
+	if !reflect.DeepEqual(devices, expected_devices) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_devices, devices)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests registering a device to a user
+*/
+func TestRegisterDeviceToUser(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.RegisterDeviceToUser("test_token", "android", "test_user")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	devices, err := service.GetUserDevices("test_user")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_devices := []string{"test_arn", ""}
+
+	if !reflect.DeepEqual(devices, expected_devices) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_devices, devices)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests getting the list of userids to receive a notification
+*/
+func TestGetNotificationRecipients(t *testing.T) {
+	SetupTestDB(t)
+
+	userids, err := service.GetNotificationRecipients("User")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_userids := []string{"test_user"}
+
+	if !reflect.DeepEqual(userids, expected_userids) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_userids, userids)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests getting the list of arns to send a notification to based on userids
+*/
+func TestGetNotificationRecipientArns(t *testing.T) {
+	SetupTestDB(t)
+
+	arns, err := service.GetNotificationRecipientArns([]string{"test_user"})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_arns := []string{"test_arn"}
+
+	if !reflect.DeepEqual(arns, expected_arns) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_arns, arns)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests publishing a notification
+*/
+func TestPublishNotificationToTopic(t *testing.T) {
+	SetupTestDB(t)
+
+	notification := models.Notification{
+		ID:    "test_id2",
+		Title: "test title 2",
+		Body:  "test body 2",
+		Topic: "User",
+		Time:  3000,
+	}
+
+	result, err := service.PublishNotificationToTopic(notification)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_result := models.PublishResult{
+		Success: 0,
+		Failure: 0,
+	}
+
+	if !reflect.DeepEqual(result, &expected_result) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", &expected_result, result)
 	}
 
 	CleanupTestDB(t)

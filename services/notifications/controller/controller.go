@@ -13,229 +13,229 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/", alice.New().ThenFunc(GetAllTopics)).Methods("GET")
-	router.Handle("/", alice.New().ThenFunc(CreateTopic)).Methods("POST")
-	router.Handle("/all/", alice.New().ThenFunc(GetAllNotifications)).Methods("GET")
+	router.Handle("/topic/", alice.New().ThenFunc(GetAllTopics)).Methods("GET")
+	router.Handle("/topic/", alice.New().ThenFunc(CreateTopic)).Methods("POST")
+	router.Handle("/topic/all/", alice.New().ThenFunc(GetAllNotifications)).Methods("GET")
+	router.Handle("/topic/public/", alice.New().ThenFunc(GetAllPublicNotifications)).Methods("GET")
+	router.Handle("/topic/{id}/", alice.New().ThenFunc(GetNotificationsForTopic)).Methods("GET")
+	router.Handle("/topic/{id}/", alice.New().ThenFunc(PublishNotificationToTopic)).Methods("POST")
+	router.Handle("/topic/{id}/", alice.New().ThenFunc(DeleteTopic)).Methods("DELETE")
+	router.Handle("/topic/{id}/subscribe/", alice.New().ThenFunc(SubscribeToTopic)).Methods("POST")
+	router.Handle("/topic/{id}/unsubscribe/", alice.New().ThenFunc(UnsubscribeToTopic)).Methods("POST")
 	router.Handle("/device/", alice.New().ThenFunc(RegisterDeviceToUser)).Methods("POST")
-	router.Handle("/update/", alice.New().ThenFunc(UpdateUserSubscriptions)).Methods("POST")
-	router.Handle("/{name}/", alice.New().ThenFunc(GetNotificationsForTopic)).Methods("GET")
-	router.Handle("/{name}/", alice.New().ThenFunc(DeleteTopic)).Methods("DELETE")
-	router.Handle("/{name}/", alice.New().ThenFunc(PublishNotification)).Methods("POST")
-	router.Handle("/{name}/add/", alice.New().ThenFunc(AddUsersToTopic)).Methods("POST")
-	router.Handle("/{name}/remove/", alice.New().ThenFunc(RemoveUsersFromTopic)).Methods("POST")
-	router.Handle("/{name}/info/", alice.New().ThenFunc(GetTopicInfo)).Methods("GET")
 }
 
 /*
-	Endpoint to get all SNS Topics
+	Returns all topics that notifications can be published to
 */
 func GetAllTopics(w http.ResponseWriter, r *http.Request) {
-	topics, err := service.GetAllTopics()
+	topics, err := service.GetAllTopicIDs()
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get all SNS topics."))
+		panic(errors.DatabaseError(err.Error(), "Could not retrieve topics."))
 	}
 
-	json.NewEncoder(w).Encode(topics)
+	role_topics, err := service.GetValidRoles()
+
+	if err != nil {
+		panic(errors.DatabaseError(err.Error(), "Could not retrieve role based topics."))
+	}
+
+	topics = append(topics, role_topics.Roles...)
+
+	topic_list := models.TopicList{
+		Topics: topics,
+	}
+
+	json.NewEncoder(w).Encode(topic_list)
 }
 
 /*
-	Endpoint to get all past notifications
-*/
-func GetAllNotifications(w http.ResponseWriter, r *http.Request) {
-	notifications_list, err := service.GetAllNotifications()
-
-	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get all past notifications."))
-	}
-
-	json.NewEncoder(w).Encode(notifications_list)
-}
-
-/*
-	Endpoint to create a new SNS topic
+	Creates a topic with the given id and returns it
 */
 func CreateTopic(w http.ResponseWriter, r *http.Request) {
-	var topic_name models.TopicName
-	json.NewDecoder(r.Body).Decode(&topic_name)
+	var topic models.Topic
+	json.NewDecoder(r.Body).Decode(&topic)
 
-	err := service.CreateTopic(topic_name.Name)
+	err := service.CreateTopic(topic.ID)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not create a new SNS topic."))
+		panic(errors.DatabaseError(err.Error(), "Could not create a new topic."))
 	}
 
-	json.NewEncoder(w).Encode(topic_name)
+	created_topic, err := service.GetTopic(topic.ID)
+
+	if err != nil {
+		panic(errors.DatabaseError(err.Error(), "Could not retrieve topic."))
+	}
+
+	json.NewEncoder(w).Encode(created_topic)
 }
 
 /*
-	Endpoint to delete a SNS topic
+	Returns all notifications to topics the user is subscribed to
 */
-func DeleteTopic(w http.ResponseWriter, r *http.Request) {
-	topic_name := mux.Vars(r)["name"]
+func GetAllNotifications(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
 
-	err := service.DeleteTopic(topic_name)
-
-	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not delete topic."))
-	}
-
-	topics, err := service.GetAllTopics()
+	topics, err := service.GetSubscriptions(id)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not fetch updated topics."))
+		panic(errors.DatabaseError(err.Error(), "Could not retrieve user subscriptions."))
 	}
 
-	json.NewEncoder(w).Encode(topics)
+	notifications, err := service.GetAllNotifications(topics)
+
+	if err != nil {
+		panic(errors.DatabaseError(err.Error(), "Could not retrieve notifications."))
+	}
+
+	notification_list := models.NotificationList{
+		Notifications: notifications,
+	}
+
+	json.NewEncoder(w).Encode(notification_list)
 }
 
 /*
-	Endpoint to create a new notification
+	Returns all public notifications
 */
-func PublishNotification(w http.ResponseWriter, r *http.Request) {
-	topic_name := mux.Vars(r)["name"]
+func GetAllPublicNotifications(w http.ResponseWriter, r *http.Request) {
+	notifications, err := service.GetAllPublicNotifications()
+
+	if err != nil {
+		panic(errors.DatabaseError(err.Error(), "Could not retrieve notifications."))
+	}
+
+	notification_list := models.NotificationList{
+		Notifications: notifications,
+	}
+
+	json.NewEncoder(w).Encode(notification_list)
+}
+
+/*
+	Returns all notifications for the specified topic
+*/
+func GetNotificationsForTopic(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	notifications, err := service.GetAllNotificationsForTopic(id)
+
+	if err != nil {
+		panic(errors.DatabaseError(err.Error(), "Could not retrieve notifications."))
+	}
+
+	notification_list := models.NotificationList{
+		Notifications: notifications,
+	}
+
+	json.NewEncoder(w).Encode(notification_list)
+}
+
+/*
+	Publishes a notification to the specied topic and returns the notification
+*/
+func PublishNotificationToTopic(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
 	var notification models.Notification
 	json.NewDecoder(r.Body).Decode(&notification)
 
-	past_notification, err := service.PublishNotification(topic_name, notification)
+	notification.Topic = id
+
+	result, err := service.PublishNotificationToTopic(notification)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not publish new notification."))
+		panic(errors.InternalError(err.Error(), "Could not publish notification."))
 	}
 
-	json.NewEncoder(w).Encode(past_notification)
+	json.NewEncoder(w).Encode(result)
 }
 
 /*
-	Endpoint to get all past notifications for a given Topic
+	Deletes the specified topic and returns it
 */
-func GetNotificationsForTopic(w http.ResponseWriter, r *http.Request) {
-	topic_name := mux.Vars(r)["name"]
+func DeleteTopic(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
 
-	notifications_list, err := service.GetNotificationsForTopic(topic_name)
+	err := service.DeleteTopic(id)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get all past notifications for the given topic."))
+		panic(errors.InternalError(err.Error(), "Could not publish notification."))
 	}
 
-	json.NewEncoder(w).Encode(notifications_list)
+	json.NewEncoder(w).Encode(map[string]interface{}{})
 }
 
 /*
-	Endpoint to get name, ARN for a topic
+	Subscribes a user to the specied topic and returns their updated subscriptions
 */
-func GetTopicInfo(w http.ResponseWriter, r *http.Request) {
-	topic_name := mux.Vars(r)["name"]
+func SubscribeToTopic(w http.ResponseWriter, r *http.Request) {
+	topicId := mux.Vars(r)["id"]
+	userId := r.Header.Get("HackIllinois-Identity")
 
-	topic, err := service.GetTopicInfo(topic_name)
+	err := service.SubscribeToTopic(userId, topicId)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get name / ARN for topic."))
+		panic(errors.DatabaseError(err.Error(), "Failed to subscribe user to topic."))
 	}
 
-	var topic_public models.TopicPublic
-	if topic != nil {
-		topic_public = models.TopicPublic{Name: topic.Name, UserIDs: topic.UserIDs}
+	subscriptions, err := service.GetSubscriptions(userId)
+
+	topic_list := models.TopicList{
+		Topics: subscriptions,
 	}
 
-	json.NewEncoder(w).Encode(topic_public)
+	json.NewEncoder(w).Encode(topic_list)
 }
 
 /*
-	Adds users with given userids to the specified topic
+	Unsubscribes a user to the specied topic and returns their updated subscriptions
 */
-func AddUsersToTopic(w http.ResponseWriter, r *http.Request) {
-	topic_name := mux.Vars(r)["name"]
+func UnsubscribeToTopic(w http.ResponseWriter, r *http.Request) {
+	topicId := mux.Vars(r)["id"]
+	userId := r.Header.Get("HackIllinois-Identity")
 
-	var userid_list models.UserIDList
-	json.NewDecoder(r.Body).Decode(&userid_list)
-
-	err := service.AddUsersToTopic(topic_name, userid_list)
+	err := service.UnsubscribeToTopic(userId, topicId)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not add users to specified topic."))
+		panic(errors.DatabaseError(err.Error(), "Failed to unsubscribe user to topic."))
 	}
 
-	topic, err := service.GetTopicInfo(topic_name)
+	subscriptions, err := service.GetSubscriptions(userId)
 
-	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get name / ARN for topic."))
+	topic_list := models.TopicList{
+		Topics: subscriptions,
 	}
 
-	var topic_public models.TopicPublic
-	if topic != nil {
-		topic_public = models.TopicPublic{Name: topic.Name, UserIDs: topic.UserIDs}
-	}
-
-	json.NewEncoder(w).Encode(topic_public)
+	json.NewEncoder(w).Encode(topic_list)
 }
 
 /*
-	Removes users with given userids from the specified topic
-*/
-func RemoveUsersFromTopic(w http.ResponseWriter, r *http.Request) {
-	topic_name := mux.Vars(r)["name"]
-
-	var userid_list models.UserIDList
-	json.NewDecoder(r.Body).Decode(&userid_list)
-
-	err := service.RemoveUsersFromTopic(topic_name, userid_list)
-
-	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not remove given users from topic."))
-	}
-
-	topic, err := service.GetTopicInfo(topic_name)
-
-	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get name / ARN for topic."))
-	}
-
-	var topic_public models.TopicPublic
-	if topic != nil {
-		topic_public = models.TopicPublic{Name: topic.Name, UserIDs: topic.UserIDs}
-	}
-
-	json.NewEncoder(w).Encode(topic_public)
-}
-
-/*
-	Endpoint to register a device token to a given user
+	Registered the specified device token to the user
 */
 func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
-	if id == "" {
-		panic(errors.MalformedRequestError("Must provide id to register a device token with.", "Must provide id to register a device token with."))
-	}
-
 	var device_registration models.DeviceRegistration
 	json.NewDecoder(r.Body).Decode(&device_registration)
 
-	err := service.RegisterDeviceToUser(id, device_registration)
+	err := service.RegisterDeviceToUser(device_registration.Token, device_registration.Platform, id)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not register device to user."))
+		panic(errors.InternalError(err.Error(), "Failed to register device to user."))
 	}
 
-	json.NewEncoder(w).Encode(device_registration)
-}
-
-/*
-   Subscribes a user to topics corresponding to their roles, and unsubscribes a user from all other topics
-*/
-func UpdateUserSubscriptions(w http.ResponseWriter, r *http.Request) {
-	id := r.Header.Get("HackIllinois-Identity")
-
-	if id == "" {
-		panic(errors.MalformedRequestError("Must provide id of user to update subscriptions", "Must provide id of user to update subscriptions"))
-	}
-
-	topic_list, err := service.UpdateUserSubscriptions(id)
+	devices, err := service.GetUserDevices(id)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not update user subscriptions."))
+		panic(errors.DatabaseError(err.Error(), "Failed to retrieve user's devices."))
 	}
 
-	json.NewEncoder(w).Encode(topic_list)
+	device_list := models.DeviceList{
+		Devices: devices,
+	}
+
+	json.NewEncoder(w).Encode(device_list)
 }

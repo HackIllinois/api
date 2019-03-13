@@ -67,7 +67,19 @@ make run
 ```
 
 ## API Container
-For instructions on building the API container see the `README.md` file in `container/`.
+There are also `make` targets provided for building a containerized version of the API for usage in production deployments.
+
+### Building the API Container
+Building a container requires that docker and go have already been installed. The following command should be run from the root of the api repository.
+```
+make container
+```
+
+### Running the API Container
+You can obtain all released versions and the latest version of the container from [DockerHub](https://hub.docker.com/r/hackillinois/api). The API container takes the name of the service to run as it's command arguement in the following docker run command. Ensure that the correct environment variables are set to load the configuration file and overwrite any secret configuration variables.
+```
+docker run -d --env-file env.config hackillinois/api:latest <servicename>
+```
 
 ## Contributing
 For contributing guidelines see the `CONTRIBUTING.md` file in the repository root.

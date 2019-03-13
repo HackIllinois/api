@@ -11,3 +11,5 @@ const (
 	UserRole      = "User"
 	SponsorRole   = "Sponsor"
 )
+
+var Roles []Role = []Role{AdminRole, StaffRole, MentorRole, ApplicantRole, AttendeeRole, UserRole, SponsorRole}

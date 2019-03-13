@@ -3,8 +3,8 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/notifications/config"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/aws/aws-sdk-go/aws"
@@ -14,10 +14,8 @@ import (
 	"time"
 )
 
-const APPLICATION_PROTOCOL = "application"
-const MESSAGE_STRUCTURE = "json"
-
-var ERR_DEVICE_NOT_SUBSCRIBED = errors.New("Device not subscribed to topic")
+var SNS_MESSAGE_STRUCTURE string = "json"
+var WORKER_POOL_SIZE int = 500
 
 var sess *session.Session
 var client *sns.SNS
@@ -45,9 +43,9 @@ func Initialize() error {
 }
 
 /*
-	Returns a list of available SNS Topics
+	Returns a list of all topic ids
 */
-func GetAllTopics() (*models.TopicList, error) {
+func GetAllTopicIDs() ([]string, error) {
 	var topics []models.Topic
 	err := db.FindAll("topics", nil, &topics)
 
@@ -55,59 +53,51 @@ func GetAllTopics() (*models.TopicList, error) {
 		return nil, err
 	}
 
-	var topic_list models.TopicList
-	for _, topic := range topics {
-		topic_list.Topics = append(topic_list.Topics, topic.Name)
+	topicIds := make([]string, len(topics))
+
+	for i, topic := range topics {
+		topicIds[i] = topic.ID
 	}
 
-	return &topic_list, nil
+	return topicIds, nil
 }
 
 /*
-	Returns a list of available SNS Topics
+	Returns the topic with the specified id
 */
-func GetAllNotifications() (*models.NotificationList, error) {
-	var notifications []models.PastNotification
+func GetTopic(id string) (*models.Topic, error) {
+	selector := database.QuerySelector{
+		"id": id,
+	}
 
-	err := db.FindAll("notifications", nil, &notifications)
+	var topic models.Topic
+	err := db.FindOne("topics", selector, &topic)
 
 	if err != nil {
 		return nil, err
 	}
 
-	notifications_list := models.NotificationList{
-		Notifications: notifications,
-	}
-
-	return &notifications_list, nil
+	return &topic, nil
 }
 
 /*
-	Creates an SNS Topic
+	Creates a topic
 */
-func CreateTopic(name string) error {
-	var arn string
-
-	if config.IS_PRODUCTION {
-		out, err := client.CreateTopic(&sns.CreateTopicInput{Name: &name})
-
-		if err != nil {
-			return err
-		}
-
-		arn = *out.TopicArn
-	}
-
-	_, err := GetTopicInfo(name)
+func CreateTopic(id string) error {
+	_, err := GetTopic(id)
 
 	if err != database.ErrNotFound {
 		if err != nil {
 			return err
 		}
-		return errors.New("Topic already exists")
+
+		return errors.New("Topic already exists.")
 	}
 
-	topic := models.Topic{Arn: arn, Name: name, UserIDs: nil}
+	topic := models.Topic{
+		ID:      id,
+		UserIDs: []string{},
+	}
 
 	err = db.Insert("topics", &topic)
 
@@ -119,29 +109,14 @@ func CreateTopic(name string) error {
 }
 
 /*
-	Deletes an SNS Topic
+	Deletes a topic
 */
-func DeleteTopic(name string) error {
-
-	topic, err := GetTopicInfo(name)
-
-	if err != nil {
-		return err
+func DeleteTopic(id string) error {
+	selector := database.QuerySelector{
+		"id": id,
 	}
 
-	if config.IS_PRODUCTION {
-		_, err = client.DeleteTopic(&sns.DeleteTopicInput{TopicArn: &topic.Arn})
-
-		if err != nil {
-			return err
-		}
-	}
-
-	topic_selector := database.QuerySelector{
-		"name": name,
-	}
-
-	err = db.RemoveOne("topics", topic_selector)
+	err := db.RemoveOne("topics", selector)
 
 	if err != nil {
 		return err
@@ -150,253 +125,195 @@ func DeleteTopic(name string) error {
 	return nil
 }
 
-func GetTopicInfo(name string) (*models.Topic, error) {
-	topic_selector := database.QuerySelector{
-		"name": name,
-	}
-
-	var topic models.Topic
-
-	err := db.FindOne("topics", topic_selector, &topic)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &topic, nil
-}
-
 /*
-	Dispatches a notification to a given SNS Topic
+	Returns all notification for the specified topic
 */
-func PublishNotification(topic_name string, notification models.Notification) (*models.PastNotification, error) {
-
-	topic, err := GetTopicInfo(topic_name)
-
-	if err != nil {
-		return nil, err
-	}
-
-	current_time := time.Now().Unix()
-
-	past_notification := models.PastNotification{TopicName: topic_name, Title: notification.Title, Body: notification.Body, Time: current_time}
-
-	time_selector := database.QuerySelector{
-		"time": past_notification.Time,
-	}
-
-	err = db.FindOne("notifications", time_selector, nil)
-
-	if err != database.ErrNotFound {
-		return nil, errors.New("Notification will same timestamp found")
-	}
-
-	notification_json_str, err := GenerateNotificationJson(notification, past_notification)
-
-	if err != nil {
-		return nil, err
-	}
-
-	arn := topic.Arn
-	message_structure := MESSAGE_STRUCTURE
-
-	if config.IS_PRODUCTION {
-		_, err = client.Publish(&sns.PublishInput{
-			TopicArn:         &arn,
-			Message:          notification_json_str,
-			MessageStructure: &message_structure,
-		})
-
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	err = db.Insert("notifications", &past_notification)
-
-	return &past_notification, err
-}
-
-func GetNotificationsForTopic(topic_name string) (*models.NotificationList, error) {
-	topic_name_selector := database.QuerySelector{
-		"topicname": topic_name,
-	}
-
-	var notifications []models.PastNotification
-
-	err := db.FindAll("notifications", topic_name_selector, &notifications)
-
-	if err != nil {
-		return nil, err
-	}
-
-	notifications_list := models.NotificationList{
-		Notifications: notifications,
-	}
-
-	return &notifications_list, nil
-}
-
-/*
-   Subscribes a user to topics corresponding to their roles, and unsubscribes a user from all other topics
-*/
-func UpdateUserSubscriptions(user_id string) (*models.TopicList, error) {
-	user_roles, err := GetRoles(user_id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	topics_list, err := GetAllTopics()
-
-	if err != nil {
-		return nil, err
-	}
-
-	user_list := models.UserIDList{UserIDs: []string{user_id}}
-
-	for _, topic := range topics_list.Topics {
-		err = RemoveUsersFromTopic(topic, user_list)
-		if err != nil {
-			if err == ERR_DEVICE_NOT_SUBSCRIBED {
-				continue
-			}
-			return nil, err
-		}
-	}
-
-	var topics []string
-
-	for _, role := range user_roles.Roles {
-		if topic, ok := config.GROUP_TOPIC_MAP[role]; ok {
-			topics = append(topics, topic)
-			err = AddUsersToTopic(topic, user_list)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	subscribed_topics := models.TopicList{
-		Topics: topics,
-	}
-
-	return &subscribed_topics, nil
-}
-
-/*
-	Adds the given userids to the specified topic
-*/
-func AddUsersToTopic(topic_name string, userid_list models.UserIDList) error {
+func GetAllNotificationsForTopic(topic string) ([]models.Notification, error) {
 	selector := database.QuerySelector{
-		"name": topic_name,
+		"topic": topic,
+	}
+
+	var notifications []models.Notification
+	err := db.FindAll("notifications", selector, &notifications)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return notifications, nil
+}
+
+/*
+	Returns all notifications for the specified topics
+*/
+func GetAllNotifications(topics []string) ([]models.Notification, error) {
+	notifications := make([]models.Notification, 0)
+
+	for _, topic := range topics {
+		topic_notifications, err := GetAllNotificationsForTopic(topic)
+
+		if err != nil {
+			return nil, err
+		}
+
+		notifications = append(notifications, topic_notifications...)
+	}
+
+	return notifications, nil
+}
+
+/*
+	Returns all public notifications
+*/
+func GetAllPublicNotifications() ([]models.Notification, error) {
+	return GetAllNotifications([]string{"User", "Attendee"})
+}
+
+/*
+	Returns the list of topics the user is subscribed to
+*/
+func GetSubscriptions(id string) ([]string, error) {
+	selector := database.QuerySelector{
+		"userids": database.QuerySelector{
+			"$elemMatch": database.QuerySelector{
+				"$eq": id,
+			},
+		},
+	}
+
+	var topics []models.Topic
+	err := db.FindAll("topics", selector, &topics)
+
+	if err != nil {
+		return nil, err
+	}
+
+	topicIds := make([]string, len(topics))
+
+	for i, topic := range topics {
+		topicIds[i] = topic.ID
+	}
+
+	roles, err := GetUserRoles(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	topicIds = append(topicIds, roles...)
+
+	return topicIds, nil
+}
+
+/*
+	Subscribes the user to the specified topic
+*/
+func SubscribeToTopic(userId string, topicId string) error {
+	selector := database.QuerySelector{
+		"id": topicId,
 	}
 
 	modifier := database.QuerySelector{
 		"$addToSet": database.QuerySelector{
-			"userids": database.QuerySelector{
-				"$each": userid_list.UserIDs,
-			},
+			"userids": userId,
 		},
 	}
 
-	topic_selector := database.QuerySelector{
-		"name": topic_name,
-	}
-
-	var topic models.Topic
-	err := db.FindOne("topics", topic_selector, &topic)
+	err := db.Update("topics", selector, &modifier)
 
 	if err != nil {
 		return err
 	}
 
-	// Subscribe each of the specified users' devices to this topic
-	query := database.QuerySelector{
-		"userid": database.QuerySelector{
-			"$in": userid_list.UserIDs,
-		},
-	}
-
-	var devices []models.Device
-	err = db.FindAll("devices", query, &devices)
-
-	if err != nil {
-		return err
-	}
-
-	for _, device := range devices {
-		err := SubscribeDeviceToTopic(topic, device)
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return db.Update("topics", selector, &modifier)
+	return nil
 }
 
 /*
-	Removes the given userids from the specified topic
+	Unsubscribes the user to the specified topic
 */
-func RemoveUsersFromTopic(topic_name string, userid_list models.UserIDList) error {
+func UnsubscribeToTopic(userId string, topicId string) error {
 	selector := database.QuerySelector{
-		"name": topic_name,
+		"id": topicId,
 	}
 
 	modifier := database.QuerySelector{
 		"$pull": database.QuerySelector{
-			"userids": database.QuerySelector{
-				"$in": userid_list.UserIDs,
-			},
+			"userids": userId,
 		},
 	}
 
-	topic_selector := database.QuerySelector{
-		"name": topic_name,
-	}
-
-	var topic models.Topic
-	err := db.FindOne("topics", topic_selector, &topic)
+	err := db.Update("topics", selector, &modifier)
 
 	if err != nil {
 		return err
 	}
 
-	// Unsubscribe each of the specificed users' devices from this topic
-	query := database.QuerySelector{
-		"userid": database.QuerySelector{
-			"$in": userid_list.UserIDs,
-		},
-	}
-
-	var devices []models.Device
-	err = db.FindAll("devices", query, &devices)
-
-	if err != nil {
-		return err
-	}
-
-	for _, device := range devices {
-		err = UnsubscribeDeviceFromTopic(topic, device)
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return db.Update("topics", selector, &modifier)
+	return nil
 }
 
 /*
-	Links the given device token with a user
+	Gets the list of devices registered to a user
 */
-func RegisterDeviceToUser(user_id string, device_reg models.DeviceRegistration) error {
-	var device_arn string
+func GetUserDevices(id string) ([]string, error) {
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	var user models.User
+	err := db.FindOne("users", selector, &user)
+
+	if err != nil {
+		if err == database.ErrNotFound {
+			err = db.Insert("users", &models.User{
+				ID:      id,
+				Devices: []string{},
+			})
+
+			if err != nil {
+				return nil, err
+			}
+
+			err = db.FindOne("users", selector, &user)
+
+			if err != nil {
+				return nil, err
+			}
+		}
+		return nil, err
+	}
+
+	return user.Devices, nil
+}
+
+/*
+	Sets the list of devices registered to a user
+*/
+func SetUserDevices(id string, devices []string) error {
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	user := models.User{
+		ID:      id,
+		Devices: devices,
+	}
+
+	err := db.Update("users", selector, &user)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+/*
+	Registers the device token with SNS and stores the arn with the associated user
+*/
+func RegisterDeviceToUser(token string, platform string, id string) error {
 	var platform_arn string
 
-	// Map platform (android, ios etc) to its ARN
-	switch strings.ToLower(device_reg.Platform) {
+	switch strings.ToLower(platform) {
 	case "android":
 		platform_arn = config.ANDROID_PLATFORM_ARN
 	case "ios":
@@ -405,119 +322,33 @@ func RegisterDeviceToUser(user_id string, device_reg models.DeviceRegistration) 
 		return errors.New("Invalid platform")
 	}
 
+	var device_arn string
+
 	if config.IS_PRODUCTION {
-		out, err := client.CreatePlatformEndpoint(&sns.CreatePlatformEndpointInput{CustomUserData: &user_id, Token: &device_reg.DeviceToken, PlatformApplicationArn: &platform_arn})
+		response, err := client.CreatePlatformEndpoint(
+			&sns.CreatePlatformEndpointInput{
+				CustomUserData:         &id,
+				Token:                  &token,
+				PlatformApplicationArn: &platform_arn,
+			},
+		)
 
 		if err != nil {
 			return err
 		}
 
-		device_arn = *out.EndpointArn
+		device_arn = *response.EndpointArn
 	}
 
-	subs := make(map[string]string)
-	device := models.Device{DeviceArn: device_arn, DeviceToken: device_reg.DeviceToken, Platform: device_reg.Platform, UserID: user_id, Subscriptions: subs}
-
-	err := db.Insert("devices", device)
+	devices, err := GetUserDevices(id)
 
 	if err != nil {
 		return err
 	}
 
-	// Subscribe the device to all of a user's topics
+	devices = append(devices, device_arn)
 
-	topic_selector := database.QuerySelector{
-		"userids": database.QuerySelector{
-			"$all": [1]string{user_id},
-		},
-	}
-
-	var topics []models.Topic
-	err = db.FindAll("topics", topic_selector, &topics)
-
-	if err != nil {
-		return err
-	}
-
-	for _, topic := range topics {
-		err = SubscribeDeviceToTopic(topic, device)
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-/*
-	Subscribes a given Device to a Topic, in the database and SNS
-*/
-func SubscribeDeviceToTopic(topic models.Topic, device models.Device) error {
-	app_protocol := APPLICATION_PROTOCOL
-
-	var sub_arn string
-
-	if config.IS_PRODUCTION {
-		out, err := client.Subscribe(&sns.SubscribeInput{Protocol: &app_protocol, TopicArn: &topic.Arn, Endpoint: &device.DeviceArn})
-
-		if err != nil {
-			return err
-		}
-
-		sub_arn = *out.SubscriptionArn
-	}
-
-	device_selector := database.QuerySelector{
-		"devicearn": device.DeviceArn,
-	}
-
-	set_query := fmt.Sprintf("subscriptions.%s", topic.Name)
-
-	// Keep track of subscription's ARN so we can unsubscribe later
-	device_modifier := database.QuerySelector{
-		"$set": database.QuerySelector{
-			set_query: sub_arn,
-		},
-	}
-
-	err := db.Update("devices", device_selector, &device_modifier)
-
-	return err
-}
-
-/*
-	Unsubscribes a given Device from a Topic, both in the database and SNS
-*/
-func UnsubscribeDeviceFromTopic(topic models.Topic, device models.Device) error {
-	sub_arn, ok := device.Subscriptions[topic.Name]
-
-	if !ok {
-		return ERR_DEVICE_NOT_SUBSCRIBED
-	}
-
-	if config.IS_PRODUCTION {
-		_, err := client.Unsubscribe(&sns.UnsubscribeInput{SubscriptionArn: &sub_arn})
-
-		if err != nil {
-			return err
-		}
-	}
-
-	device_selector := database.QuerySelector{
-		"devicearn": device.DeviceArn,
-	}
-
-	set_query := fmt.Sprintf("subscriptions.%s", topic.Name)
-
-	// Unset device's subscription ARN for this topic since it's no longer needed
-	device_modifier := database.QuerySelector{
-		"$unset": database.QuerySelector{
-			set_query: "",
-		},
-	}
-
-	err := db.Update("devices", device_selector, &device_modifier)
+	err = SetUserDevices(id, devices)
 
 	if err != nil {
 		return err
@@ -527,20 +358,134 @@ func UnsubscribeDeviceFromTopic(topic models.Topic, device models.Device) error 
 }
 
 /*
-	Returns a list of registered devices
+	Returns a list of userids to receive a notification to the specified topic
 */
-func GetAllDevices() (*[]models.Device, error) {
-	var devices []models.Device
-	err := db.FindAll("devices", nil, &devices)
+func GetNotificationRecipients(topicId string) ([]string, error) {
+	topic, err := GetTopic(topicId)
+
+	if err != nil {
+		if err == database.ErrNotFound {
+			usersIds, err := GetUsersByRole(topicId)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return usersIds, nil
+		}
+		return nil, err
+	}
+
+	return topic.UserIDs, nil
+}
+
+/*
+	Returns a list of arns to receive a notification
+*/
+func GetNotificationRecipientArns(userIds []string) ([]string, error) {
+	device_arns := make([]string, 0)
+
+	for _, userId := range userIds {
+		devices, err := GetUserDevices(userId)
+
+		if err != nil {
+			return nil, err
+		}
+
+		device_arns = append(device_arns, devices...)
+	}
+
+	return device_arns, nil
+}
+
+/*
+	Publishes a notification to the specified topic
+*/
+func PublishNotificationToTopic(notification models.Notification) (*models.PublishResult, error) {
+	notification.ID = slice_utils.GenerateUniqueID()
+	notification.Time = time.Now().Unix()
+
+	err := db.Insert("notifications", &notification)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &devices, nil
+	recipients, err := GetNotificationRecipients(notification.Topic)
+
+	if err != nil {
+		return nil, err
+	}
+
+	device_arns, err := GetNotificationRecipientArns(recipients)
+
+	if err != nil {
+		return nil, err
+	}
+
+	notification_payload, err := GenerateNotificationJson(notification)
+
+	if err != nil {
+		return nil, err
+	}
+
+	success_count := 0
+	failure_count := 0
+
+	if config.IS_PRODUCTION {
+		queued_devices := make(chan string, len(device_arns))
+		responses := make(chan bool, len(device_arns))
+
+		for i := 0; i < WORKER_POOL_SIZE; i++ {
+			go PublishNotificationWorker(notification_payload, queued_devices, responses)
+		}
+
+		for _, device_arn := range device_arns {
+			queued_devices <- device_arn
+		}
+
+		close(queued_devices)
+
+		for i := 0; i < len(device_arns); i++ {
+			response := <-responses
+
+			if response {
+				success_count++
+			} else {
+				failure_count++
+			}
+		}
+
+		close(responses)
+	}
+
+	result := models.PublishResult{
+		Success: success_count,
+		Failure: failure_count,
+	}
+
+	return &result, nil
 }
 
-func GenerateNotificationJson(notification models.Notification, past_notification models.PastNotification) (*string, error) {
+/*
+	Worker go routine to publish notifications
+*/
+func PublishNotificationWorker(notification string, device_arns <-chan string, responses chan<- bool) {
+	for device_arn := range device_arns {
+		_, err := client.Publish(&sns.PublishInput{
+			TargetArn:        &device_arn,
+			Message:          &notification,
+			MessageStructure: &SNS_MESSAGE_STRUCTURE,
+		})
+
+		responses <- (err == nil)
+	}
+}
+
+/*
+	Generates the notification payload for SNS
+*/
+func GenerateNotificationJson(notification models.Notification) (string, error) {
 	apns_payload := models.APNSPayload{
 		Container: models.APNSContainer{
 			Alert: models.APNSAlert{
@@ -549,7 +494,7 @@ func GenerateNotificationJson(notification models.Notification, past_notificatio
 			},
 			Sound: "default",
 		},
-		Data: past_notification,
+		Data: notification,
 	}
 
 	gcm_payload := models.GCMPayload{
@@ -562,13 +507,13 @@ func GenerateNotificationJson(notification models.Notification, past_notificatio
 	apns_payload_json, err := json.Marshal(apns_payload)
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	gcm_payload_json, err := json.Marshal(gcm_payload)
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	notification_payload := models.NotificationPayload{
@@ -581,10 +526,8 @@ func GenerateNotificationJson(notification models.Notification, past_notificatio
 	notification_json, err := json.Marshal(notification_payload)
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	notification_json_str := string(notification_json)
-
-	return &notification_json_str, nil
+	return string(notification_json), nil
 }

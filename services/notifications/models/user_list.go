@@ -1,6 +1,5 @@
 package models
 
-type Topic struct {
-	ID      string   `json:"id"`
+type UserList struct {
 	UserIDs []string `json:"userIds"`
 }

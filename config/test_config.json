@@ -9,6 +9,7 @@
 	"MAIL_SERVICE": "http://localhost:8009",
 	"EVENT_SERVICE": "http://localhost:8010",
 	"STAT_SERVICE": "http://localhost:8011",
+	"NOTIFICATIONS_SERVICE": "http://localhost:8012",
 
 	"GATEWAY_PORT": "8000",
 	"AUTH_PORT": ":8002",

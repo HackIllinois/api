@@ -34,11 +34,11 @@ func Initialize() error {
 }
 
 /*
-	Returns the event with the given name
+	Returns the event with the given id
 */
-func GetEvent(name string) (*models.Event, error) {
+func GetEvent(id string) (*models.Event, error) {
 	query := database.QuerySelector{
-		"name": name,
+		"id": id,
 	}
 
 	var event models.Event
@@ -52,22 +52,22 @@ func GetEvent(name string) (*models.Event, error) {
 }
 
 /*
-	Deletes the event with the given name.
+	Deletes the event with the given id.
 	Removes the event from event trackers and every user's tracker.
 	Returns the event that was deleted.
 */
-func DeleteEvent(name string) (*models.Event, error) {
+func DeleteEvent(id string) (*models.Event, error) {
 
 	// Gets event to be able to return it later
 
-	event, err := GetEvent(name)
+	event, err := GetEvent(id)
 
 	if err != nil {
 		return nil, err
 	}
 
 	query := database.QuerySelector{
-		"name": name,
+		"id": id,
 	}
 
 	// Remove event from events database
@@ -81,7 +81,7 @@ func DeleteEvent(name string) (*models.Event, error) {
 	// Remove from event trackers database
 
 	event_selector := database.QuerySelector{
-		"eventname": name,
+		"eventid": id,
 	}
 
 	err = db.RemoveOne("eventtrackers", event_selector)
@@ -90,12 +90,12 @@ func DeleteEvent(name string) (*models.Event, error) {
 		return nil, err
 	}
 
-	// Find all elements, and remove `name` from the Events slice
+	// Find all elements, and remove `id` from the Events slice
 	// All the updates are individually atomic
 
 	update_expression := database.QuerySelector{
 		"$pull": database.QuerySelector{
-			"events": name,
+			"events": id,
 		},
 	}
 
@@ -124,16 +124,16 @@ func GetAllEvents() (*models.EventList, error) {
 }
 
 /*
-	Creates an event with the given name
+	Creates an event with the given id
 */
-func CreateEvent(name string, event models.Event) error {
+func CreateEvent(id string, event models.Event) error {
 	err := validate.Struct(event)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = GetEvent(name)
+	_, err = GetEvent(id)
 
 	if err != database.ErrNotFound {
 		if err != nil {
@@ -149,8 +149,8 @@ func CreateEvent(name string, event models.Event) error {
 	}
 
 	event_tracker := models.EventTracker{
-		EventName: name,
-		Users:     []string{},
+		EventID: id,
+		Users:   []string{},
 	}
 
 	err = db.Insert("eventtrackers", &event_tracker)
@@ -159,9 +159,9 @@ func CreateEvent(name string, event models.Event) error {
 }
 
 /*
-	Updates the event with the given name
+	Updates the event with the given id
 */
-func UpdateEvent(name string, event models.Event) error {
+func UpdateEvent(id string, event models.Event) error {
 	err := validate.Struct(event)
 
 	if err != nil {
@@ -169,7 +169,7 @@ func UpdateEvent(name string, event models.Event) error {
 	}
 
 	selector := database.QuerySelector{
-		"name": name,
+		"id": id,
 	}
 
 	err = db.Update("events", selector, &event)
@@ -180,9 +180,9 @@ func UpdateEvent(name string, event models.Event) error {
 /*
 	Returns the event tracker for the specified event
 */
-func GetEventTracker(event_name string) (*models.EventTracker, error) {
+func GetEventTracker(event_id string) (*models.EventTracker, error) {
 	query := database.QuerySelector{
-		"eventname": event_name,
+		"eventid": event_id,
 	}
 
 	var tracker models.EventTracker
@@ -223,8 +223,8 @@ func GetUserTracker(user_id string) (*models.UserTracker, error) {
 	Returns true is the user has already been marked as attending
 	the specified event, false otherwise
 */
-func IsUserAttendingEvent(event_name string, user_id string) (bool, error) {
-	tracker, err := GetEventTracker(event_name)
+func IsUserAttendingEvent(event_id string, user_id string) (bool, error) {
+	tracker, err := GetEventTracker(event_id)
 
 	if err != nil {
 		return false, err
@@ -243,8 +243,8 @@ func IsUserAttendingEvent(event_name string, user_id string) (bool, error) {
 	Marks the specified user as attending the specified event
 	The user must not already marked as attending for this to return successfully
 */
-func MarkUserAsAttendingEvent(event_name string, user_id string) error {
-	is_attending, err := IsUserAttendingEvent(event_name, user_id)
+func MarkUserAsAttendingEvent(event_id string, user_id string) error {
+	is_attending, err := IsUserAttendingEvent(event_id, user_id)
 
 	if err != nil {
 		return err
@@ -254,7 +254,7 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 		return errors.New("User has already been marked as attending")
 	}
 
-	is_event_active, err := IsEventActive(event_name)
+	is_event_active, err := IsEventActive(event_id)
 
 	if err != nil {
 		return err
@@ -265,7 +265,7 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 	}
 
 	event_selector := database.QuerySelector{
-		"eventname": event_name,
+		"eventid": event_id,
 	}
 
 	event_modifier := database.QuerySelector{
@@ -286,7 +286,7 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 
 	user_modifier := database.QuerySelector{
 		"$addToSet": database.QuerySelector{
-			"events": event_name,
+			"events": event_id,
 		},
 	}
 
@@ -295,7 +295,7 @@ func MarkUserAsAttendingEvent(event_name string, user_id string) error {
 	if err == database.ErrNotFound {
 		user_tracker := models.UserTracker{
 			UserID: user_id,
-			Events: []string{event_name},
+			Events: []string{event_id},
 		}
 		err = db.Insert("usertrackers", &user_tracker)
 	}
@@ -310,8 +310,8 @@ const PreEventCheckinIntervalInSeconds = PreEventCheckinIntervalInMinutes * 60
 	Check if an event is active, i.e., that check-ins are allowed for the event at the current time.
 	Returns true if the current time is between `PreEventCheckinIntervalInMinutes` number of minutes before the event, and the end of event.
 */
-func IsEventActive(event_name string) (bool, error) {
-	event, err := GetEvent(event_name)
+func IsEventActive(event_id string) (bool, error) {
+	event, err := GetEvent(event_id)
 
 	if err != nil {
 		return false, err
@@ -374,7 +374,7 @@ func AddEventFavorite(id string, event string) error {
 	_, err := GetEvent(event)
 
 	if err != nil {
-		return errors.New("Could not find event with the given name.")
+		return errors.New("Could not find event with the given id.")
 	}
 
 	event_favorites, err := GetEventFavorites(id)
@@ -433,7 +433,7 @@ func GetStats() (map[string]interface{}, error) {
 	stats := make(map[string]interface{})
 
 	for _, tracker := range trackers {
-		stats[tracker.EventName] = len(tracker.Users)
+		stats[tracker.EventID] = len(tracker.Users)
 	}
 
 	return stats, nil

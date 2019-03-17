@@ -50,6 +50,7 @@ var TestTime = time.Now().Unix()
 */
 func SetupTestDB(t *testing.T) {
 	event := models.Event{
+		ID:          "testid",
 		Name:        "testname",
 		Description: "testdescription",
 		StartTime:   TestTime,
@@ -72,8 +73,8 @@ func SetupTestDB(t *testing.T) {
 	}
 
 	event_tracker := models.EventTracker{
-		EventName: "testname",
-		Users:     []string{},
+		EventID: "testid",
+		Users:   []string{},
 	}
 
 	err = db.Insert("eventtrackers", &event_tracker)
@@ -101,6 +102,7 @@ func TestGetAllEventsService(t *testing.T) {
 	SetupTestDB(t)
 
 	event := models.Event{
+		ID:          "testid2",
 		Name:        "testname2",
 		Description: "testdescription2",
 		StartTime:   TestTime,
@@ -131,6 +133,7 @@ func TestGetAllEventsService(t *testing.T) {
 	expected_event_list := models.EventList{
 		Events: []models.Event{
 			{
+				ID:          "testid",
 				Name:        "testname",
 				Description: "testdescription",
 				StartTime:   TestTime,
@@ -146,6 +149,7 @@ func TestGetAllEventsService(t *testing.T) {
 				},
 			},
 			{
+				ID:          "testid2",
 				Name:        "testname2",
 				Description: "testdescription2",
 				StartTime:   TestTime,
@@ -177,13 +181,14 @@ func TestGetAllEventsService(t *testing.T) {
 func TestGetEventService(t *testing.T) {
 	SetupTestDB(t)
 
-	event, err := service.GetEvent("testname")
+	event, err := service.GetEvent("testid")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	expected_event := models.Event{
+		ID:          "testid",
 		Name:        "testname",
 		Description: "testdescription",
 		StartTime:   TestTime,
@@ -213,6 +218,7 @@ func TestCreateEventService(t *testing.T) {
 	SetupTestDB(t)
 
 	new_event := models.Event{
+		ID:          "testid2",
 		Name:        "testname2",
 		Description: "testdescription2",
 		StartTime:   TestTime,
@@ -228,19 +234,20 @@ func TestCreateEventService(t *testing.T) {
 		},
 	}
 
-	err := service.CreateEvent("testname2", new_event)
+	err := service.CreateEvent("testid2", new_event)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	event, err := service.GetEvent("testname2")
+	event, err := service.GetEvent("testid2")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	expected_event := models.Event{
+		ID:          "testid2",
 		Name:        "testname2",
 		Description: "testdescription2",
 		StartTime:   TestTime,
@@ -269,23 +276,23 @@ func TestCreateEventService(t *testing.T) {
 func TestDeleteEventService(t *testing.T) {
 	SetupTestDB(t)
 
-	event_name := "testname"
+	event_id := "testid"
 
 	// Mark 3 users as attending the event
 
-	err := service.MarkUserAsAttendingEvent(event_name, "user0")
+	err := service.MarkUserAsAttendingEvent(event_id, "user0")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = service.MarkUserAsAttendingEvent(event_name, "user1")
+	err = service.MarkUserAsAttendingEvent(event_id, "user1")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = service.MarkUserAsAttendingEvent(event_name, "user2")
+	err = service.MarkUserAsAttendingEvent(event_id, "user2")
 
 	if err != nil {
 		t.Fatal(err)
@@ -293,21 +300,21 @@ func TestDeleteEventService(t *testing.T) {
 
 	// Try to delete the event
 
-	_, err = service.DeleteEvent(event_name)
+	_, err = service.DeleteEvent(event_id)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// Try to find the event in the events db
-	event, err := service.GetEvent(event_name)
+	event, err := service.GetEvent(event_id)
 
 	if err == nil {
 		t.Errorf("Found event %v in events database.", event)
 	}
 
 	// Try to find the event in the eventtrackers db
-	event_tracker, err := service.GetEventTracker(event_name)
+	event_tracker, err := service.GetEventTracker(event_id)
 
 	if err == nil {
 		t.Errorf("Found event in the eventtracker %v.", event_tracker)
@@ -319,7 +326,7 @@ func TestDeleteEventService(t *testing.T) {
 
 	for _, user_tracker := range user_trackers {
 		for _, event := range user_tracker.Events {
-			if event == event_name {
+			if event == event_id {
 				t.Errorf("Found event in the usertracker %v.", user_tracker)
 			}
 		}
@@ -335,6 +342,7 @@ func TestUpdateEventService(t *testing.T) {
 	SetupTestDB(t)
 
 	event := models.Event{
+		ID:          "testid",
 		Name:        "testname",
 		Description: "testdescription2",
 		StartTime:   TestTime,
@@ -350,19 +358,20 @@ func TestUpdateEventService(t *testing.T) {
 		},
 	}
 
-	err := service.UpdateEvent("testname", event)
+	err := service.UpdateEvent("testid", event)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	updated_event, err := service.GetEvent("testname")
+	updated_event, err := service.GetEvent("testid")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	expected_event := models.Event{
+		ID:          "testid",
 		Name:        "testname",
 		Description: "testdescription2",
 		StartTime:   TestTime,
@@ -391,21 +400,21 @@ func TestUpdateEventService(t *testing.T) {
 func TestMarkUserAsAttendingEventService(t *testing.T) {
 	SetupTestDB(t)
 
-	err := service.MarkUserAsAttendingEvent("testname", "testuser")
+	err := service.MarkUserAsAttendingEvent("testid", "testuser")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	event_tracker, err := service.GetEventTracker("testname")
+	event_tracker, err := service.GetEventTracker("testid")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	expected_event_tracker := models.EventTracker{
-		EventName: "testname",
-		Users:     []string{"testuser"},
+		EventID: "testid",
+		Users:   []string{"testuser"},
 	}
 
 	if !reflect.DeepEqual(event_tracker, &expected_event_tracker) {
@@ -420,7 +429,7 @@ func TestMarkUserAsAttendingEventService(t *testing.T) {
 
 	expected_user_tracker := models.UserTracker{
 		UserID: "testuser",
-		Events: []string{"testname"},
+		Events: []string{"testid"},
 	}
 
 	if !reflect.DeepEqual(user_tracker, &expected_user_tracker) {
@@ -437,27 +446,27 @@ func TestMarkUserAsAttendingEventService(t *testing.T) {
 func TestMarkUserAsAttendingEventErrorService(t *testing.T) {
 	SetupTestDB(t)
 
-	err := service.MarkUserAsAttendingEvent("testname", "testuser")
+	err := service.MarkUserAsAttendingEvent("testid", "testuser")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = service.MarkUserAsAttendingEvent("testname", "testuser")
+	err = service.MarkUserAsAttendingEvent("testid", "testuser")
 
 	if err == nil {
 		t.Fatal("User was marked as attending event twice")
 	}
 
-	event_tracker, err := service.GetEventTracker("testname")
+	event_tracker, err := service.GetEventTracker("testid")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	expected_event_tracker := models.EventTracker{
-		EventName: "testname",
-		Users:     []string{"testuser"},
+		EventID: "testid",
+		Users:   []string{"testuser"},
 	}
 
 	if !reflect.DeepEqual(event_tracker, &expected_event_tracker) {
@@ -472,7 +481,7 @@ func TestMarkUserAsAttendingEventErrorService(t *testing.T) {
 
 	expected_user_tracker := models.UserTracker{
 		UserID: "testuser",
-		Events: []string{"testname"},
+		Events: []string{"testid"},
 	}
 
 	if !reflect.DeepEqual(user_tracker, &expected_user_tracker) {
@@ -491,6 +500,7 @@ func TestIsEventActive(t *testing.T) {
 	// Creating a 30 minute long event that SHOULD NOT be active
 	const ONE_MINUTE_IN_SECONDS = 60
 	new_event := models.Event{
+		ID:          "testid3",
 		Name:        "testiseventactive",
 		Description: "testdescription2",
 		StartTime:   TestTime + ONE_MINUTE_IN_SECONDS*40,
@@ -506,9 +516,9 @@ func TestIsEventActive(t *testing.T) {
 		},
 	}
 
-	service.CreateEvent(new_event.Name, new_event)
+	service.CreateEvent(new_event.ID, new_event)
 
-	is_active, err := service.IsEventActive("testiseventactive")
+	is_active, err := service.IsEventActive("testid3")
 
 	if err != nil {
 		t.Fatal(err)
@@ -520,13 +530,14 @@ func TestIsEventActive(t *testing.T) {
 	}
 
 	// Creating a 20 minute long event that SHOULD be active
+	new_event.ID = "testid4"
 	new_event.Name = "test2iseventactive"
 	new_event.StartTime = TestTime
 	new_event.EndTime = TestTime + ONE_MINUTE_IN_SECONDS*20
 
-	service.CreateEvent(new_event.Name, new_event)
+	service.CreateEvent(new_event.ID, new_event)
 
-	is_active, err = service.IsEventActive("test2iseventactive")
+	is_active, err = service.IsEventActive("testid4")
 
 	if err != nil {
 		t.Fatal(err)
@@ -570,7 +581,7 @@ func TestGetEventFavorites(t *testing.T) {
 func TestAddEventFavorite(t *testing.T) {
 	SetupTestDB(t)
 
-	err := service.AddEventFavorite("testid", "testname")
+	err := service.AddEventFavorite("testid", "testid")
 
 	if err != nil {
 		t.Fatal(err)
@@ -584,7 +595,7 @@ func TestAddEventFavorite(t *testing.T) {
 
 	expected_event_favorites := models.EventFavorites{
 		ID:     "testid",
-		Events: []string{"testname"},
+		Events: []string{"testid"},
 	}
 
 	if !reflect.DeepEqual(event_favorites, &expected_event_favorites) {
@@ -600,13 +611,13 @@ func TestAddEventFavorite(t *testing.T) {
 func TestRemoveEventFavorite(t *testing.T) {
 	SetupTestDB(t)
 
-	err := service.AddEventFavorite("testid", "testname")
+	err := service.AddEventFavorite("testid", "testid")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = service.RemoveEventFavorite("testid", "testname")
+	err = service.RemoveEventFavorite("testid", "testid")
 
 	if err != nil {
 		t.Fatal(err)

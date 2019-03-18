@@ -1,14 +1,15 @@
 Event
 =====
 
-GET /event/EVENTNAME/
+GET /event/EVENTID/
 ---------------------
 
-Returns the event with the name of `EVENTNAME`. `EVENTNAME` should be url encoded.
+Returns the event with the id of `EVENTID`.
 
 Response format:
 ```
 {
+	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Event 10",
 	"description": "This is a description",
 	"startTime": 1532202702,
@@ -35,6 +36,7 @@ Response format:
 {
 	events: [
 		{
+			"id": "52fdfc072182654f163f5f0f9a621d72",
 			"name": "Example Event 10",
 			"description": "This is a description",
 			"startTime": 1532202702,
@@ -50,6 +52,7 @@ Response format:
 			"eventType": "WORKSHOP"
 		},
 		{
+			"id": "52fdfcab71282654f163f5f0f9a621d72",
 			"name": "Example Event 11",
 			"description": "This is another description",
 			"startTime": 1532202702,
@@ -95,6 +98,7 @@ Request format:
 Response format:
 ```
 {
+	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Event 10",
 	"description": "This is a description",
 	"startTime": 1532202702,
@@ -111,15 +115,15 @@ Response format:
 }
 ```
 
-DELETE /event/EVENTNAME/
+DELETE /event/EVENTID/
 -----------
 
-Endpoint to delete an event with name `EVENTNAME`. `EVENTNAME` should be url encoded.
-It removes the `EVENTNAME` from the event trackers, and every user's tracker.
+Endpoint to delete an event with name `EVENTID`. It removes the `EVENTID` from the event trackers, and every user's tracker.
 
 Response format:
 ```
 {
+	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Event 10",
 	"description": "This is a description",
 	"startTime": 1532202702,
@@ -139,11 +143,12 @@ Response format:
 PUT /event/
 ----------
 
-Updates the event with the name specified in the `name` field of the request. Returns the updated event.
+Updates the event with the id specified in the `id` field of the request. Returns the updated event.
 
 Request format:
 ```
 {
+	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Event 10",
 	"description": "This is a description",
 	"startTime": 1532202702,
@@ -163,6 +168,7 @@ Request format:
 Response format:
 ```
 {
+	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Event 10",
 	"description": "This is a description",
 	"startTime": 1532202702,
@@ -187,7 +193,7 @@ Marks the specified user as attending the specified event. Returns the tracker f
 Request format:
 ```
 {
-	"eventName": "Example Event",
+	"eventId": "52fdfc072182654f163f5f0f9a621d72",
 	"userId": "github0000001"
 }
 ```
@@ -196,7 +202,7 @@ Response format:
 ```
 {
 	"eventTracker": {
-		"eventName": "Example Event",
+		"eventId": "52fdfc072182654f163f5f0f9a621d72",
 		"users": [
 			"github0000001",
 		]
@@ -204,21 +210,21 @@ Response format:
 	"userTracker": {
 		"userId": "github0000001",
 		"events": [
-			"Example Event"
+			"52fdfc072182654f163f5f0f9a621d72"
 		]
 	}
 }
 ```
 
-GET /event/track/event/EVENTNAME/
+GET /event/track/event/EVENTID/
 ---------------------------------
 
-Returns the tracker for the event with the name `EVENTNAME`.
+Returns the tracker for the event with the id `EVENTID`.
 
 Response format:
 ```
 {
-	"eventName": "Example Event",
+	"eventId": "52fdfc072182654f163f5f0f9a621d72",
 	"users": [
 		"github0000001",
 	]
@@ -235,7 +241,7 @@ Response format:
 {
 	"userId": "github0000001",
 	"events": [
-		"Example Event"
+		"52fdfc072182654f163f5f0f9a621d72"
 	]
 }
 ```
@@ -250,8 +256,8 @@ Response format:
 {
 	"id": "github001",
 	"events": [
-		"Example Event 1",
-		"Example Event 2"
+		"52fdfc072182654f163f5f0f9a621d72",
+		"34edfc072182654f163f5f0f9a621d72"
 	]
 }
 ```
@@ -264,7 +270,7 @@ Adds the given event to the favorites for the current user.
 Request format:
 ```
 {
-	"eventName": "Example Event",
+	"eventId": "52fdfc072182654f163f5f0f9a621d72"
 }
 ```
 
@@ -273,9 +279,8 @@ Response format:
 {
 	"id": "github001",
 	"events": [
-		"Example Event",
-		"Example Event 1",
-		"Example Event 2"
+		"52fdfc072182654f163f5f0f9a621d72",
+		"34dffc072182654f163f5f0f9a621d72"
 	]
 }
 ```
@@ -288,7 +293,7 @@ Removes the given event from the favorites for the current user.
 Request format:
 ```
 {
-	"eventName": "Example Event 1",
+	"eventId": "52fdfc072182654f163f5f0f9a621d72",
 }
 ```
 
@@ -297,7 +302,7 @@ Response format:
 {
 	"id": "github001",
 	"events": [
-		"Example Event 2"
+		"52fdfc072182654f163f5f0f9a621d72"
 	]
 }
 ```

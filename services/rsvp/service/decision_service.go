@@ -24,12 +24,5 @@ func IsApplicantAcceptedAndActive(id string) (bool, bool, error) {
 		return false, false, errors.New("Decision service failed to return status.")
 	}
 
-	return decision.Status == "ACCEPTED" && decision.Finalized, time.Now().Unix() < decision.Timestamp+HoursToUnixSeconds(config.DECISION_EXPIRATION_HOURS), nil
-}
-
-/*
-	Converts hours to seconds for usage with unix timestamps
-*/
-func HoursToUnixSeconds(hours int) int64 {
-	return int64(hours) * 60 * 60
+	return decision.Status == "ACCEPTED" && decision.Finalized, time.Now().Unix() < decision.ExpiresAt, nil
 }

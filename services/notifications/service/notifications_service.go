@@ -402,7 +402,7 @@ func GetNotificationRecipientArns(userIds []string) ([]string, error) {
 	Publishes a notification to the specified topic
 */
 func PublishNotificationToTopic(notification models.Notification) (*models.PublishResult, error) {
-	notification.ID = slice_utils.GenerateUniqueID()
+	notification.ID = utils.GenerateUniqueID()
 	notification.Time = time.Now().Unix()
 
 	err := db.Insert("notifications", &notification)

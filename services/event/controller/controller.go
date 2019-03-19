@@ -84,7 +84,7 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	var event models.Event
 	json.NewDecoder(r.Body).Decode(&event)
 
-	event.ID = slice_utils.GenerateUniqueID()
+	event.ID = utils.GenerateUniqueID()
 
 	err := service.CreateEvent(event.ID, event)
 

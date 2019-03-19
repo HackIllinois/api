@@ -75,7 +75,7 @@ func AddUserRole(id string, role string) error {
 		return err
 	}
 
-	if !slice_utils.ContainsString(roles, role) {
+	if !utils.ContainsString(roles, role) {
 		roles = append(roles, role)
 	}
 
@@ -101,7 +101,7 @@ func RemoveUserRole(id string, role string) error {
 		return err
 	}
 
-	roles, err = slice_utils.RemoveString(roles, role)
+	roles, err = utils.RemoveString(roles, role)
 
 	if err != nil {
 		return errors.New("User does not have specified role")

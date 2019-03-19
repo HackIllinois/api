@@ -116,7 +116,7 @@ func HasDecision(id string) (bool, error) {
 
 func AssignValueType(key, value string) (interface{}, error) {
 	int_keys := []string{"wave", "timestamp", "expiresat"}
-	if slice_utils.ContainsString(int_keys, key) {
+	if utils.ContainsString(int_keys, key) {
 		return strconv.Atoi(value)
 	}
 	return value, nil

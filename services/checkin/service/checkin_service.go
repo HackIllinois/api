@@ -101,7 +101,7 @@ func CanUserCheckin(id string, user_has_override bool) (bool, error) {
 		return false, err
 	}
 
-	is_sponsor_or_mentor := slice_utils.ContainsString(user_roles.Roles, models.SponsorRole) || slice_utils.ContainsString(user_roles.Roles, models.MentorRole)
+	is_sponsor_or_mentor := utils.ContainsString(user_roles.Roles, models.SponsorRole) || utils.ContainsString(user_roles.Roles, models.MentorRole)
 
 	if is_sponsor_or_mentor {
 		return true, nil

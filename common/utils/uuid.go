@@ -1,4 +1,4 @@
-package slice_utils
+package utils
 
 import (
 	"encoding/hex"

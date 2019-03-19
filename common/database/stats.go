@@ -22,7 +22,7 @@ func GetDefaultStats() map[string]interface{} {
 */
 func AddEntryToStats(stats map[string]interface{}, entry map[string]interface{}, fields []string) error {
 	for key, v := range entry {
-		if !slice_utils.ContainsString(fields, key) {
+		if !utils.ContainsString(fields, key) {
 			continue
 		}
 

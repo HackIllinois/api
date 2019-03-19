@@ -383,7 +383,7 @@ func AddEventFavorite(id string, event string) error {
 		return err
 	}
 
-	if !slice_utils.ContainsString(event_favorites.Events, event) {
+	if !utils.ContainsString(event_favorites.Events, event) {
 		event_favorites.Events = append(event_favorites.Events, event)
 	}
 
@@ -406,7 +406,7 @@ func RemoveEventFavorite(id string, event string) error {
 		return err
 	}
 
-	event_favorites.Events, err = slice_utils.RemoveString(event_favorites.Events, event)
+	event_favorites.Events, err = utils.RemoveString(event_favorites.Events, event)
 
 	if err != nil {
 		return errors.New("User's event favorites does not have specified event")

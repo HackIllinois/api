@@ -53,6 +53,7 @@ func SetupTestDB(t *testing.T) {
 		Wave:      0,
 		Reviewer:  "reviewerid",
 		Timestamp: 1,
+		ExpiresAt: 5,
 		History: []models.Decision{
 			{
 				Finalized: false,
@@ -61,6 +62,7 @@ func SetupTestDB(t *testing.T) {
 				Wave:      0,
 				Reviewer:  "reviewerid",
 				Timestamp: 1,
+				ExpiresAt: 5,
 			},
 		},
 	})
@@ -100,6 +102,7 @@ func TestGetDecisionService(t *testing.T) {
 		Wave:      0,
 		Reviewer:  "reviewerid",
 		Timestamp: 1,
+		ExpiresAt: 5,
 		History: []models.Decision{
 			{
 				Finalized: false,
@@ -108,6 +111,7 @@ func TestGetDecisionService(t *testing.T) {
 				Wave:      0,
 				Reviewer:  "reviewerid",
 				Timestamp: 1,
+				ExpiresAt: 5,
 			},
 		},
 	}
@@ -132,6 +136,7 @@ func TestUpdateDecisionService(t *testing.T) {
 		Wave:      1,
 		Reviewer:  "reviewerid",
 		Timestamp: 2,
+		ExpiresAt: 7,
 	})
 
 	if err != nil {
@@ -151,6 +156,7 @@ func TestUpdateDecisionService(t *testing.T) {
 		Wave:      1,
 		Reviewer:  "reviewerid",
 		Timestamp: 2,
+		ExpiresAt: 7,
 		History: []models.Decision{
 			{
 				Finalized: false,
@@ -159,6 +165,7 @@ func TestUpdateDecisionService(t *testing.T) {
 				Wave:      0,
 				Reviewer:  "reviewerid",
 				Timestamp: 1,
+				ExpiresAt: 5,
 			},
 			{
 				Finalized: false,
@@ -167,6 +174,7 @@ func TestUpdateDecisionService(t *testing.T) {
 				Wave:      1,
 				Reviewer:  "reviewerid",
 				Timestamp: 2,
+				ExpiresAt: 7,
 			},
 		},
 	}
@@ -190,6 +198,7 @@ func TestGetFilteredDecisionsService(t *testing.T) {
 		Wave:      1,
 		Reviewer:  "reviewerid",
 		Timestamp: 2,
+		ExpiresAt: 7,
 		History: []models.Decision{
 			{
 				ID:        "testid2",
@@ -197,6 +206,7 @@ func TestGetFilteredDecisionsService(t *testing.T) {
 				Wave:      1,
 				Reviewer:  "reviewerid",
 				Timestamp: 2,
+				ExpiresAt: 7,
 			},
 		},
 	}

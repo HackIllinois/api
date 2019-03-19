@@ -86,6 +86,7 @@ func UpdateDecision(id string, decision models.Decision) error {
 	decision_history.History = append(decision_history.History, decision)
 	decision_history.Reviewer = decision.Reviewer
 	decision_history.Timestamp = decision.Timestamp
+	decision_history.ExpiresAt = decision.ExpiresAt
 
 	selector := database.QuerySelector{"id": id}
 
@@ -114,7 +115,7 @@ func HasDecision(id string) (bool, error) {
 }
 
 func AssignValueType(key, value string) (interface{}, error) {
-	int_keys := []string{"wave", "timestamp"}
+	int_keys := []string{"wave", "timestamp", "expiresat"}
 	if slice_utils.ContainsString(int_keys, key) {
 		return strconv.Atoi(value)
 	}

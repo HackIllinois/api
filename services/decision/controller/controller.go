@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/utils"
+	"github.com/HackIllinois/api/services/decision/config"
 	"github.com/HackIllinois/api/services/decision/models"
 	"github.com/HackIllinois/api/services/decision/service"
 	"github.com/gorilla/mux"
@@ -81,6 +83,7 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 
 	decision.Reviewer = r.Header.Get("HackIllinois-Identity")
 	decision.Timestamp = time.Now().Unix()
+	decision.ExpiresAt = decision.Timestamp + slice_utils.HoursToUnixSeconds(config.DECISION_EXPIRATION_HOURS)
 	// Finalized is always false, unless explicitly set to true via the appropriate endpoint.
 	decision.Finalized = false
 
@@ -128,6 +131,7 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	latest_decision.Wave = existing_decision_history.Wave
 	latest_decision.Reviewer = r.Header.Get("HackIllinois-Identity")
 	latest_decision.Timestamp = time.Now().Unix()
+	latest_decision.ExpiresAt = latest_decision.Timestamp + slice_utils.HoursToUnixSeconds(config.DECISION_EXPIRATION_HOURS)
 
 	err = service.UpdateDecision(id, latest_decision)
 

@@ -39,13 +39,17 @@ func GetCurrentDecision(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decision_view := models.DecisionView{
-		ID:     decision.ID,
-		Status: decision.Status,
+		ID: decision.ID,
 	}
 
-	// Masks the decision if not finalized
-	if !decision.Finalized {
-		decision_view.Status = "PENDING"
+	// Expose the decision if it has been finalized
+	if decision.Finalized {
+		decision_view.Status = decision.Status
+
+		// Expose the expiration only for finalized ACCEPTED decisions
+		if decision.Status == "ACCEPTED" {
+			decision_view.ExpiresAt = decision.ExpiresAt
+		}
 	}
 
 	json.NewEncoder(w).Encode(decision_view)

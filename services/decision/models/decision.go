@@ -7,4 +7,5 @@ type Decision struct {
 	Wave      int    `json:"wave"      validate:""`
 	Reviewer  string `json:"reviewer"  validate:"required"`
 	Timestamp int64  `json:"timestamp" validate:"required"`
+	ExpiresAt int64  `json:"expiresAt" validate:"required"`
 }

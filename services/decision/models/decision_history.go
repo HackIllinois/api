@@ -7,5 +7,6 @@ type DecisionHistory struct {
 	Wave      int        `json:"wave"`
 	Reviewer  string     `json:"reviewer"`
 	Timestamp int64      `json:"timestamp"`
+	ExpiresAt int64      `json:"expiresAt"`
 	History   []Decision `json:"history"`
 }

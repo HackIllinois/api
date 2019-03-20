@@ -69,6 +69,14 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 		panic(errors.AttributeMismatchError("Reasons for not being able to check-in include: no RSVP, no staff override (in case of no RSVP), or check-ins are not allowed at this time.", "Attendee is not allowed to check-in."))
 	}
 
+	rsvp_data, err := service.GetRsvpData(user_checkin.ID)
+
+	if err != nil {
+		panic(errors.InternalError(err.Error(), "Could not retrieve rsvp data."))
+	}
+
+	user_checkin.RsvpData = rsvp_data
+
 	err = service.CreateUserCheckin(user_checkin.ID, user_checkin)
 
 	if err != nil {
@@ -99,7 +107,15 @@ func UpdateUserCheckin(w http.ResponseWriter, r *http.Request) {
 	var user_checkin models.UserCheckin
 	json.NewDecoder(r.Body).Decode(&user_checkin)
 
-	err := service.UpdateUserCheckin(user_checkin.ID, user_checkin)
+	rsvp_data, err := service.GetRsvpData(user_checkin.ID)
+
+	if err != nil {
+		panic(errors.InternalError(err.Error(), "Could not retrieve rsvp data."))
+	}
+
+	user_checkin.RsvpData = rsvp_data
+
+	err = service.UpdateUserCheckin(user_checkin.ID, user_checkin)
 
 	if err != nil {
 		panic(errors.DatabaseError(err.Error(), "Could not update user check-in information."))

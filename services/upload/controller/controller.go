@@ -19,7 +19,7 @@ func SetupController(route *mux.Route) {
 
 	router.Handle("/blobstore/", alice.New().ThenFunc(CreateBlob)).Methods("POST")
 	router.Handle("/blobstore/", alice.New().ThenFunc(UpdateBlob)).Methods("PUT")
-	router.Handle("/blobstore/{id}", alice.New().ThenFunc(GetBlob)).Methods("GET")
+	router.Handle("/blobstore/{id}/", alice.New().ThenFunc(GetBlob)).Methods("GET")
 }
 
 /*

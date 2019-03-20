@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/services/upload/models"
 	"github.com/HackIllinois/api/services/upload/service"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
@@ -15,6 +16,10 @@ func SetupController(route *mux.Route) {
 	router.Handle("/resume/upload/", alice.New().ThenFunc(GetUpdateUserResume)).Methods("GET")
 	router.Handle("/resume/", alice.New().ThenFunc(GetCurrentUserResume)).Methods("GET")
 	router.Handle("/resume/{id}/", alice.New().ThenFunc(GetUserResume)).Methods("GET")
+
+	router.Handle("/blobstore/", alice.New().ThenFunc(CreateBlob)).Methods("POST")
+	router.Handle("/blobstore/", alice.New().ThenFunc(UpdateBlob)).Methods("PUT")
+	router.Handle("/blobstore/{id}/", alice.New().ThenFunc(GetBlob)).Methods("GET")
 }
 
 /*
@@ -60,4 +65,71 @@ func GetUpdateUserResume(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(resume)
+}
+
+/*
+	Endpoint to get a blob
+*/
+func GetBlob(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	blob, err := service.GetBlob(id)
+
+	if err != nil {
+		panic(errors.InternalError(err.Error(), "Unable to retrieve blob."))
+	}
+
+	json.NewEncoder(w).Encode(blob)
+}
+
+/*
+	Endpoint to create and store a blob
+*/
+func CreateBlob(w http.ResponseWriter, r *http.Request) {
+	var blob models.Blob
+	json.NewDecoder(r.Body).Decode(&blob)
+
+	if blob.ID == "" {
+		panic(errors.InternalError("Must set an id for the blob.", "Must set an id for the blob."))
+	}
+
+	err := service.CreateBlob(blob)
+
+	if err != nil {
+		panic(errors.InternalError(err.Error(), "Unable to create blob."))
+	}
+
+	stored_blob, err := service.GetBlob(blob.ID)
+
+	if err != nil {
+		panic(errors.InternalError(err.Error(), "Unable to retrieve blob."))
+	}
+
+	json.NewEncoder(w).Encode(stored_blob)
+}
+
+/*
+	Endpoint to update a blob
+*/
+func UpdateBlob(w http.ResponseWriter, r *http.Request) {
+	var blob models.Blob
+	json.NewDecoder(r.Body).Decode(&blob)
+
+	if blob.ID == "" {
+		panic(errors.InternalError("Must set an id for the blob.", "Must set an id for the blob."))
+	}
+
+	err := service.UpdateBlob(blob)
+
+	if err != nil {
+		panic(errors.InternalError(err.Error(), "Unable to update blob."))
+	}
+
+	stored_blob, err := service.GetBlob(blob.ID)
+
+	if err != nil {
+		panic(errors.InternalError(err.Error(), "Unable to retrieve blob."))
+	}
+
+	json.NewEncoder(w).Encode(stored_blob)
 }

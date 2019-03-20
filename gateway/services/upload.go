@@ -31,6 +31,24 @@ var UploadRoutes = arbor.RouteCollection{
 		"/upload/resume/{id}/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUploadInfo).ServeHTTP,
 	},
+	arbor.Route{
+		"CreateBlob",
+		"POST",
+		"/upload/blobstore/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(CreateBlob).ServeHTTP,
+	},
+	arbor.Route{
+		"UpdateBlob",
+		"PUT",
+		"/upload/blobstore/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateBlob).ServeHTTP,
+	},
+	arbor.Route{
+		"GetBlob",
+		"GET",
+		"/upload/blobstore/{id}/",
+		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetBlob).ServeHTTP,
+	},
 }
 
 func GetCurrentUploadInfo(w http.ResponseWriter, r *http.Request) {
@@ -42,5 +60,17 @@ func UpdateCurrentUploadInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUploadInfo(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.UPLOAD_SERVICE+r.URL.String(), InfoFormat, "", r)
+}
+
+func CreateBlob(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.UPLOAD_SERVICE+r.URL.String(), InfoFormat, "", r)
+}
+
+func UpdateBlob(w http.ResponseWriter, r *http.Request) {
+	arbor.PUT(w, config.UPLOAD_SERVICE+r.URL.String(), InfoFormat, "", r)
+}
+
+func GetBlob(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, config.UPLOAD_SERVICE+r.URL.String(), InfoFormat, "", r)
 }

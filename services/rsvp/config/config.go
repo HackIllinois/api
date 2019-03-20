@@ -12,6 +12,7 @@ var RSVP_DB_NAME string
 var RSVP_PORT string
 
 var AUTH_SERVICE string
+var REGISTRATION_SERVICE string
 var DECISION_SERVICE string
 var MAIL_SERVICE string
 
@@ -45,6 +46,12 @@ func Initialize() error {
 	}
 
 	AUTH_SERVICE, err = cfg_loader.Get("AUTH_SERVICE")
+
+	if err != nil {
+		return err
+	}
+
+	REGISTRATION_SERVICE, err = cfg_loader.Get("REGISTRATION_SERVICE")
 
 	if err != nil {
 		return err

@@ -444,6 +444,12 @@
 				"type": "string",
 				"validations": "",
 				"fields": []
+			},
+			{
+				"name": "registrationData",
+				"type": "object",
+				"validations": "",
+				"fields": []
 			}
 		]
 	}

@@ -6,4 +6,5 @@ type UserDecision struct {
 	Wave      int    `json:"wave"`
 	Finalized bool   `json:"finalized"`
 	Timestamp int64  `json:"timestamp"`
+	ExpiresAt int64  `json:"expiresAt"`
 }

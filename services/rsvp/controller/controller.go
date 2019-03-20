@@ -87,6 +87,14 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 
 	rsvp.Data["id"] = id
 
+	registration_data, err := service.GetRegistrationData(id)
+
+	if err != nil {
+		panic(errors.InternalError(err.Error(), "Could not retrieve registration data."))
+	}
+
+	rsvp.Data["registrationData"] = registration_data
+
 	err = service.CreateUserRsvp(id, rsvp)
 
 	if err != nil {
@@ -162,6 +170,14 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rsvp.Data["id"] = id
+
+	registration_data, err := service.GetRegistrationData(id)
+
+	if err != nil {
+		panic(errors.InternalError(err.Error(), "Could not retrieve registration data."))
+	}
+
+	rsvp.Data["registrationData"] = registration_data
 
 	err = service.UpdateUserRsvp(id, rsvp)
 

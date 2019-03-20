@@ -49,6 +49,7 @@ func SetupTestDB(t *testing.T) {
 		ID:              "testid",
 		HasCheckedIn:    true,
 		HasPickedUpSwag: true,
+		RsvpData:        map[string]interface{}{},
 	}
 
 	err := db.Insert("checkins", &checkin)
@@ -85,10 +86,11 @@ func TestGetUserCheckinService(t *testing.T) {
 		ID:              "testid",
 		HasCheckedIn:    true,
 		HasPickedUpSwag: true,
+		RsvpData:        map[string]interface{}{},
 	}
 
 	if !reflect.DeepEqual(checkin, &expected_checkin) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_checkin, checkin)
+		t.Errorf("Wrong user info. Expected %v, got %v", &expected_checkin, checkin)
 	}
 
 	CleanupTestDB(t)
@@ -104,6 +106,7 @@ func TestCreateUserCheckinService(t *testing.T) {
 		ID:              "testid2",
 		HasCheckedIn:    true,
 		HasPickedUpSwag: false,
+		RsvpData:        map[string]interface{}{},
 	}
 
 	err := service.CreateUserCheckin("testid2", new_checkin)
@@ -122,10 +125,11 @@ func TestCreateUserCheckinService(t *testing.T) {
 		ID:              "testid2",
 		HasCheckedIn:    true,
 		HasPickedUpSwag: false,
+		RsvpData:        map[string]interface{}{},
 	}
 
 	if !reflect.DeepEqual(checkin, &expected_checkin) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_checkin, checkin)
+		t.Errorf("Wrong user info. Expected %v, got %v", &expected_checkin, checkin)
 	}
 
 	CleanupTestDB(t)
@@ -141,6 +145,7 @@ func TestUpdateUserCheckinService(t *testing.T) {
 		ID:              "testid",
 		HasCheckedIn:    true,
 		HasPickedUpSwag: false,
+		RsvpData:        map[string]interface{}{},
 	}
 
 	err := service.UpdateUserCheckin("testid", checkin)
@@ -159,10 +164,11 @@ func TestUpdateUserCheckinService(t *testing.T) {
 		ID:              "testid",
 		HasCheckedIn:    true,
 		HasPickedUpSwag: false,
+		RsvpData:        map[string]interface{}{},
 	}
 
 	if !reflect.DeepEqual(updated_checkin, &expected_checkin) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_checkin, updated_checkin)
+		t.Errorf("Wrong user info. Expected %v, got %v", &expected_checkin, updated_checkin)
 	}
 
 	CleanupTestDB(t)
@@ -178,6 +184,7 @@ func TestGetAllCheckedInUsersService(t *testing.T) {
 		ID:              "testid2",
 		HasCheckedIn:    false,
 		HasPickedUpSwag: false,
+		RsvpData:        map[string]interface{}{},
 	}
 
 	err := service.CreateUserCheckin("testid2", new_checkin)
@@ -190,6 +197,7 @@ func TestGetAllCheckedInUsersService(t *testing.T) {
 		ID:              "testid3",
 		HasCheckedIn:    true,
 		HasPickedUpSwag: false,
+		RsvpData:        map[string]interface{}{},
 	}
 
 	err = service.CreateUserCheckin("testid3", new_checkin)

@@ -25,3 +25,21 @@ func IsAttendeeRsvped(id string) (bool, error) {
 
 	return rsvp.IsAttending, nil
 }
+
+/*
+	Retrieve rsvp data from rsvp service
+*/
+func GetRsvpData(id string) (map[string]interface{}, error) {
+	rsvp_data := make(map[string]interface{})
+	status, err := apirequest.Get(config.RSVP_SERVICE+"/rsvp/"+id+"/", &rsvp_data)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if status != http.StatusOK {
+		return nil, errors.New("Unable to retrieve data from rsvp service.")
+	}
+
+	return rsvp_data, nil
+}

@@ -359,7 +359,8 @@
 	"RSVP_STAT_FIELDS": [
 		"isAttending",
 		"diet",
-		"transportation"
+		"transportation",
+		"registrationData.attendee.school"
 	],
 
 	"RSVP_DEFINITION": {
@@ -467,6 +468,12 @@
 			{
 				"name": "osProject",
 				"type": "string",
+				"validations": "",
+				"fields": []
+			},
+			{
+				"name": "registrationData",
+				"type": "object",
 				"validations": "",
 				"fields": []
 			}

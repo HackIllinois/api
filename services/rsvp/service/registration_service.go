@@ -1,10 +1,10 @@
 package service
 
 import (
+	"errors"
 	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/rsvp/config"
 	"net/http"
-	"errors"
 )
 
 func GetRegistrationData(id string) (map[string]interface{}, error) {

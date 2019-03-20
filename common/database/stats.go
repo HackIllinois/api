@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/HackIllinois/api/common/utils"
 	"reflect"
+	"strings"
 )
 
 var ErrTypeMismatch = errors.New("Error: TYPE_MISMATCH")
@@ -22,7 +23,8 @@ func GetDefaultStats() map[string]interface{} {
 */
 func AddEntryToStats(stats map[string]interface{}, entry map[string]interface{}, fields []string) error {
 	for key, v := range entry {
-		if !utils.ContainsString(fields, key) {
+		top_level_fields := ExtractTopLevel(fields)
+		if !utils.ContainsString(top_level_fields, key) {
 			continue
 		}
 
@@ -40,7 +42,9 @@ func AddEntryToStats(stats map[string]interface{}, entry map[string]interface{},
 				return ErrTypeMismatch
 			}
 
-			AddEntryToStats(mapped_stats, value, fields)
+			stripped_fields := RemoveTopLevel(fields)
+
+			AddEntryToStats(mapped_stats, value, stripped_fields)
 		default:
 			reflect_type := reflect.TypeOf(value)
 			switch reflect_type.Kind() {
@@ -85,4 +89,36 @@ func UpdateStatsField(stats map[string]interface{}, key string, value interface{
 	mapped_stats[value_key] = mapped_stats[value_key] + 1
 
 	return nil
+}
+
+/*
+	Remove everything in each field after, and including, the first '.'
+*/
+func ExtractTopLevel(fields []string) []string {
+	top_level_fields := []string{}
+
+	for _, field := range fields {
+		split_field := strings.SplitN(field, ".", 2)
+		if len(split_field) > 0 {
+			top_level_fields = append(top_level_fields, split_field[0])
+		}
+	}
+
+	return top_level_fields
+}
+
+/*
+	Remove everything in each field before, and including, the first '.'
+*/
+func RemoveTopLevel(fields []string) []string {
+	stripped_fields := []string{}
+
+	for _, field := range fields {
+		split_field := strings.SplitN(field, ".", 2)
+		if len(split_field) > 1 {
+			stripped_fields = append(stripped_fields, split_field[1])
+		}
+	}
+
+	return stripped_fields
 }

@@ -39,3 +39,73 @@ Response format:
 	"resume": "https://bucket.s3.amazonaws.com/resume.pdf"
 }
 ```
+
+GET /upload/blobstore/ID/
+-------------------------
+
+Returns the blob stored with the `id` `ID`.
+
+Response format:
+```
+{
+	"id": "exampleblob",
+	"data": {
+		"thing1": "hi",
+		"thing2": "hello"
+	}
+}
+```
+
+POST /upload/blobstore/
+-----------------------
+
+Creates and stores a blob with the specified `id` and `data`. `data` can be a single json field or an json object.
+
+Request format:
+```
+{
+	"id": "exampleblob",
+	"data": {
+		"thing1": "hi",
+		"thing2": "hello"
+	}
+}
+```
+
+Response format:
+```
+{
+	"id": "exampleblob",
+	"data": {
+		"thing1": "hi",
+		"thing2": "hello"
+	}
+}
+```
+
+PUT /upload/blobstore/
+----------------------
+
+Updates the blob with the specified `id`. `data` can be a single json field or an json object.
+
+Request format:
+```
+{
+	"id": "exampleblob",
+	"data": {
+		"thing1": "hi",
+		"thing2": "hello"
+	}
+}
+```
+
+Response format:
+```
+{
+	"id": "exampleblob",
+	"data": {
+		"thing1": "hi",
+		"thing2": "hello"
+	}
+}
+```

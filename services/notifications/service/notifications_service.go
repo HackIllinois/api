@@ -405,7 +405,7 @@ func GetNotificationOrder(id string) (*models.NotificationOrder, error) {
 	}
 
 	var order models.NotificationOrder
-	err := db.FindOne("topics", selector, &order)
+	err := db.FindOne("orders", selector, &order)
 
 	if err != nil {
 		return nil, err

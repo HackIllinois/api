@@ -4,14 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/notifications/config"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
 	"strings"
-	"time"
 )
 
 var SNS_MESSAGE_STRUCTURE string = "json"
@@ -401,10 +399,7 @@ func GetNotificationRecipientArns(userIds []string) ([]string, error) {
 /*
 	Publishes a notification to the specified topic
 */
-func PublishNotificationToTopic(notification models.Notification) (*models.PublishResult, error) {
-	notification.ID = utils.GenerateUniqueID()
-	notification.Time = time.Now().Unix()
-
+func PublishNotificationToTopic(notification models.Notification) (*models.NotificationOrder, error) {
 	err := db.Insert("notifications", &notification)
 
 	if err != nil {
@@ -459,12 +454,20 @@ func PublishNotificationToTopic(notification models.Notification) (*models.Publi
 		close(responses)
 	}
 
-	result := models.PublishResult{
-		Success: success_count,
-		Failure: failure_count,
+	order := models.NotificationOrder{
+		ID:      notification.ID,
+		Success: 0,
+		Failure: 0,
+		Time:    notification.Time,
 	}
 
-	return &result, nil
+	err = db.Insert("orders", &order)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &order, nil
 }
 
 /*

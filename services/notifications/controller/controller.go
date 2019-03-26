@@ -3,11 +3,13 @@ package controller
 import (
 	"encoding/json"
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/HackIllinois/api/services/notifications/service"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"net/http"
+	"time"
 )
 
 func SetupController(route *mux.Route) {
@@ -143,14 +145,16 @@ func PublishNotificationToTopic(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&notification)
 
 	notification.Topic = id
+	notification.ID = utils.GenerateUniqueID()
+	notification.Time = time.Now().Unix()
 
-	result, err := service.PublishNotificationToTopic(notification)
+	order, err := service.PublishNotificationToTopic(notification)
 
 	if err != nil {
 		panic(errors.InternalError(err.Error(), "Could not publish notification."))
 	}
 
-	json.NewEncoder(w).Encode(result)
+	json.NewEncoder(w).Encode(order)
 }
 
 /*

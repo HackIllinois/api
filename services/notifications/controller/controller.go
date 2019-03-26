@@ -3,11 +3,13 @@ package controller
 import (
 	"encoding/json"
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/HackIllinois/api/services/notifications/service"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"net/http"
+	"time"
 )
 
 func SetupController(route *mux.Route) {
@@ -23,6 +25,7 @@ func SetupController(route *mux.Route) {
 	router.Handle("/topic/{id}/subscribe/", alice.New().ThenFunc(SubscribeToTopic)).Methods("POST")
 	router.Handle("/topic/{id}/unsubscribe/", alice.New().ThenFunc(UnsubscribeToTopic)).Methods("POST")
 	router.Handle("/device/", alice.New().ThenFunc(RegisterDeviceToUser)).Methods("POST")
+	router.Handle("/order/{id}/", alice.New().ThenFunc(GetNotificationOrder)).Methods("GET")
 }
 
 /*
@@ -143,14 +146,16 @@ func PublishNotificationToTopic(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&notification)
 
 	notification.Topic = id
+	notification.ID = utils.GenerateUniqueID()
+	notification.Time = time.Now().Unix()
 
-	result, err := service.PublishNotificationToTopic(notification)
+	order, err := service.PublishNotificationToTopic(notification)
 
 	if err != nil {
 		panic(errors.InternalError(err.Error(), "Could not publish notification."))
 	}
 
-	json.NewEncoder(w).Encode(result)
+	json.NewEncoder(w).Encode(order)
 }
 
 /*
@@ -238,4 +243,19 @@ func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(device_list)
+}
+
+/*
+	Returns the notification order with the specified id
+*/
+func GetNotificationOrder(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	order, err := service.GetNotificationOrder(id)
+
+	if err != nil {
+		panic(errors.DatabaseError(err.Error(), "Could not retrieve notification order."))
+	}
+
+	json.NewEncoder(w).Encode(order)
 }

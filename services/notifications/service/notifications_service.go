@@ -4,18 +4,16 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/notifications/config"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
 	"strings"
-	"time"
 )
 
 var SNS_MESSAGE_STRUCTURE string = "json"
-var WORKER_POOL_SIZE int = 500
+var WORKER_POOL_SIZE int = 128
 
 var sess *session.Session
 var client *sns.SNS
@@ -399,12 +397,27 @@ func GetNotificationRecipientArns(userIds []string) ([]string, error) {
 }
 
 /*
+	Returns the notification order with the specified id
+*/
+func GetNotificationOrder(id string) (*models.NotificationOrder, error) {
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	var order models.NotificationOrder
+	err := db.FindOne("orders", selector, &order)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &order, nil
+}
+
+/*
 	Publishes a notification to the specified topic
 */
-func PublishNotificationToTopic(notification models.Notification) (*models.PublishResult, error) {
-	notification.ID = utils.GenerateUniqueID()
-	notification.Time = time.Now().Unix()
-
+func PublishNotificationToTopic(notification models.Notification) (*models.NotificationOrder, error) {
 	err := db.Insert("notifications", &notification)
 
 	if err != nil {
@@ -429,42 +442,78 @@ func PublishNotificationToTopic(notification models.Notification) (*models.Publi
 		return nil, err
 	}
 
+	if config.IS_PRODUCTION {
+		go PublishNotification(notification.ID, notification_payload, device_arns)
+	}
+
+	order := models.NotificationOrder{
+		ID:      notification.ID,
+		Success: 0,
+		Failure: 0,
+		Time:    notification.Time,
+	}
+
+	err = db.Insert("orders", &order)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &order, nil
+}
+
+/*
+	Publishes the notification payload to all specified arns
+*/
+func PublishNotification(id string, payload string, arns []string) error {
 	success_count := 0
 	failure_count := 0
 
-	if config.IS_PRODUCTION {
-		queued_devices := make(chan string, len(device_arns))
-		responses := make(chan bool, len(device_arns))
+	queued_devices := make(chan string, len(arns))
+	responses := make(chan bool, len(arns))
 
-		for i := 0; i < WORKER_POOL_SIZE; i++ {
-			go PublishNotificationWorker(notification_payload, queued_devices, responses)
-		}
-
-		for _, device_arn := range device_arns {
-			queued_devices <- device_arn
-		}
-
-		close(queued_devices)
-
-		for i := 0; i < len(device_arns); i++ {
-			response := <-responses
-
-			if response {
-				success_count++
-			} else {
-				failure_count++
-			}
-		}
-
-		close(responses)
+	for i := 0; i < WORKER_POOL_SIZE; i++ {
+		go PublishNotificationWorker(payload, queued_devices, responses)
 	}
 
-	result := models.PublishResult{
-		Success: success_count,
-		Failure: failure_count,
+	for _, device_arn := range arns {
+		queued_devices <- device_arn
 	}
 
-	return &result, nil
+	close(queued_devices)
+
+	for i := 0; i < len(arns); i++ {
+		response := <-responses
+
+		if response {
+			success_count++
+		} else {
+			failure_count++
+		}
+	}
+
+	close(responses)
+
+	order, err := GetNotificationOrder(id)
+
+	if err != nil {
+		return err
+	}
+
+	order.Success = success_count
+	order.Failure = failure_count
+
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	err = db.Update("orders", selector, &order)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 /*

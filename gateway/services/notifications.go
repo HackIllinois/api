@@ -73,6 +73,12 @@ var NotificationsRoutes = arbor.RouteCollection{
 		"/notifications/device/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(RegisterDeviceToUser).ServeHTTP,
 	},
+	arbor.Route{
+		"GetNotificationOrder",
+		"GET",
+		"/notifications/order/{id}/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(GetNotificationOrder).ServeHTTP,
+	},
 }
 
 func GetAllTopics(w http.ResponseWriter, r *http.Request) {
@@ -113,4 +119,8 @@ func UnsubscribeToTopic(w http.ResponseWriter, r *http.Request) {
 
 func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
+}
+
+func GetNotificationOrder(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }

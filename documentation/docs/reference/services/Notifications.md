@@ -105,7 +105,7 @@ Response format:
 POST /notifications/topic/TOPICID/
 ----------------------------------
 
-Publishes a notification to the topic with the ID `TOPICID`.
+Publishes a notification to the topic with the ID `TOPICID`. The `id` in the response is the ID for the notification order which is sending the actual notifications asynchronously.
 
 Request format:
 ```
@@ -118,8 +118,10 @@ Request format:
 Response format:
 ```
 {
-	"success": 5,
-	"failure": 0
+	"id": "52fdfc072182654f163f5f0f9a621d72",
+	"success": 0,
+	"failure": 0,
+	"time": 1553564589
 }
 ```
 
@@ -186,8 +188,23 @@ Request format:
 Response format:
 ```
 {
-    "devices": [
-        "arn:example139091820398"
-    ]
+	"devices": [
+		"arn:example139091820398"
+	]
+}
+```
+
+GET /notifications/order/ID/
+----------------------------
+
+Returns the notification order with the `id` ID. This endpoint should be used to determine the status of an asynchronously published notification.
+
+Response format:
+```
+{
+	"id": "52fdfc072182654f163f5f0f9a621d72",
+	"success": 5,
+	"failure": 0,
+	"time": 1553564589
 }
 ```

@@ -397,6 +397,24 @@ func GetNotificationRecipientArns(userIds []string) ([]string, error) {
 }
 
 /*
+	Returns the notification order with the specified id
+*/
+func GetNotificationOrder(id string) (*models.NotificationOrder, error) {
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	var order models.NotificationOrder
+	err := db.FindOne("topics", selector, &order)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &order, nil
+}
+
+/*
 	Publishes a notification to the specified topic
 */
 func PublishNotificationToTopic(notification models.Notification) (*models.NotificationOrder, error) {
@@ -424,34 +442,8 @@ func PublishNotificationToTopic(notification models.Notification) (*models.Notif
 		return nil, err
 	}
 
-	success_count := 0
-	failure_count := 0
-
 	if config.IS_PRODUCTION {
-		queued_devices := make(chan string, len(device_arns))
-		responses := make(chan bool, len(device_arns))
-
-		for i := 0; i < WORKER_POOL_SIZE; i++ {
-			go PublishNotificationWorker(notification_payload, queued_devices, responses)
-		}
-
-		for _, device_arn := range device_arns {
-			queued_devices <- device_arn
-		}
-
-		close(queued_devices)
-
-		for i := 0; i < len(device_arns); i++ {
-			response := <-responses
-
-			if response {
-				success_count++
-			} else {
-				failure_count++
-			}
-		}
-
-		close(responses)
+		go PublishNotification(notification.ID, notification_payload, device_arns)
 	}
 
 	order := models.NotificationOrder{
@@ -468,6 +460,60 @@ func PublishNotificationToTopic(notification models.Notification) (*models.Notif
 	}
 
 	return &order, nil
+}
+
+/*
+	Publishes the notification payload to all specified arns
+*/
+func PublishNotification(id string, payload string, arns []string) error {
+	success_count := 0
+	failure_count := 0
+
+	queued_devices := make(chan string, len(arns))
+	responses := make(chan bool, len(arns))
+
+	for i := 0; i < WORKER_POOL_SIZE; i++ {
+		go PublishNotificationWorker(payload, queued_devices, responses)
+	}
+
+	for _, device_arn := range arns {
+		queued_devices <- device_arn
+	}
+
+	close(queued_devices)
+
+	for i := 0; i < len(arns); i++ {
+		response := <-responses
+
+		if response {
+			success_count++
+		} else {
+			failure_count++
+		}
+	}
+
+	close(responses)
+
+	order, err := GetNotificationOrder(id)
+
+	if err != nil {
+		return err
+	}
+
+	order.Success = success_count
+	order.Failure = failure_count
+
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	err = db.Update("orders", selector, &order)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 /*

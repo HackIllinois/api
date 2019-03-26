@@ -25,6 +25,7 @@ func SetupController(route *mux.Route) {
 	router.Handle("/topic/{id}/subscribe/", alice.New().ThenFunc(SubscribeToTopic)).Methods("POST")
 	router.Handle("/topic/{id}/unsubscribe/", alice.New().ThenFunc(UnsubscribeToTopic)).Methods("POST")
 	router.Handle("/device/", alice.New().ThenFunc(RegisterDeviceToUser)).Methods("POST")
+	router.Handle("/order/{id}/", alice.New().ThenFunc(GetNotificationOrder)).Methods("GET")
 }
 
 /*
@@ -242,4 +243,19 @@ func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(device_list)
+}
+
+/*
+	Returns the notification order with the specified id
+*/
+func GetNotificationOrder(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	order, err := service.GetNotificationOrder(id)
+
+	if err != nil {
+		panic(errors.DatabaseError(err.Error(), "Could not retrieve notification order."))
+	}
+
+	json.NewEncoder(w).Encode(order)
 }

@@ -437,19 +437,21 @@ func TestPublishNotificationToTopic(t *testing.T) {
 		Time:  3000,
 	}
 
-	result, err := service.PublishNotificationToTopic(notification)
+	order, err := service.PublishNotificationToTopic(notification)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected_result := models.PublishResult{
+	expected_order := models.NotificationOrder{
+		ID:      "test_id2",
 		Success: 0,
 		Failure: 0,
+		Time:    3000,
 	}
 
-	if !reflect.DeepEqual(result, &expected_result) {
-		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", &expected_result, result)
+	if !reflect.DeepEqual(order, &expected_order) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", &expected_order, order)
 	}
 
 	CleanupTestDB(t)

@@ -22,6 +22,12 @@ ifeq ($(strip $(TAG)),)
 	override TAG := latest
 endif
 
+# Downloads the API
+.PHONY: download
+download:
+	@echo 'Downloading API'
+	@go get $(BASE_PACKAGE)
+
 # Builds the API binary and all utilities
 .PHONY: all
 all: api utilities
@@ -29,7 +35,7 @@ all: api utilities
 # Builds the API binary
 .PHONY: api
 api:
-	@echo 'Building api'
+	@echo 'Building API'
 	@mkdir -p $(REPO_ROOT)/bin
 	@go build -o $(REPO_ROOT)/bin/hackillinois-api $(BASE_PACKAGE)
 
@@ -48,9 +54,9 @@ utilities:
 	@mkdir -p $(REPO_ROOT)/bin
 	@$(foreach utility,$(UTILITIES),go build -o $(REPO_ROOT)/bin/hackillinois-utility-$(utility) $(BASE_PACKAGE)/utilities/$(utility);)
 
-# Builds the API binary, all utilities, and then sets up an admin account
+# Downloads and builds the API binary, all utilities, and then sets up an admin account
 .PHONY: setup
-setup: all
+setup: download all
 	@echo 'Generating API admin account'
 	@export HI_CONFIG=file://$(REPO_ROOT)/config/dev_config.json; \
 	$(REPO_ROOT)/bin/hackillinois-utility-accountgen
@@ -76,7 +82,7 @@ fmt:
 # Builds a docker container with the API binary
 .PHONY: container
 container: api
-	@echo 'Builing API container'
+	@echo 'Building API container'
 	@mkdir -p $(REPO_ROOT)/build
 	@cp $(REPO_ROOT)/bin/hackillinois-api $(REPO_ROOT)/build/hackillinois-api
 	@cp $(REPO_ROOT)/container/Dockerfile $(REPO_ROOT)/build/Dockerfile

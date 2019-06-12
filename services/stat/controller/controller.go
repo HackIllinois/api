@@ -26,7 +26,8 @@ func GetStat(w http.ResponseWriter, r *http.Request) {
 	stat, err := service.GetAggregatedStats(name)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Failed to get statistics for service "+name+"."))
+		errors.WriteError(w, errors.InternalError(err.Error(), "Failed to get statistics for service "+name+"."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(stat)
@@ -39,7 +40,8 @@ func GetAllStat(w http.ResponseWriter, r *http.Request) {
 	all_stat, err := service.GetAllAggregatedStats()
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Failed to aggregate statistics."))
+		errors.WriteError(w, errors.InternalError(err.Error(), "Failed to aggregate statistics."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(all_stat)

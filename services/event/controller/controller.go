@@ -9,27 +9,26 @@ import (
 	"github.com/HackIllinois/api/services/event/models"
 	"github.com/HackIllinois/api/services/event/service"
 	"github.com/gorilla/mux"
-	"github.com/justinas/alice"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/favorite/", alice.New().ThenFunc(GetEventFavorites)).Methods("GET")
-	router.Handle("/favorite/add/", alice.New().ThenFunc(AddEventFavorite)).Methods("POST")
-	router.Handle("/favorite/remove/", alice.New().ThenFunc(RemoveEventFavorite)).Methods("POST")
+	router.HandleFunc("/favorite/", GetEventFavorites).Methods("GET")
+	router.HandleFunc("/favorite/add/", AddEventFavorite).Methods("POST")
+	router.HandleFunc("/favorite/remove/", RemoveEventFavorite).Methods("POST")
 
-	router.Handle("/{id}/", alice.New().ThenFunc(GetEvent)).Methods("GET")
-	router.Handle("/{id}/", alice.New().ThenFunc(DeleteEvent)).Methods("DELETE")
-	router.Handle("/", alice.New().ThenFunc(CreateEvent)).Methods("POST")
-	router.Handle("/", alice.New().ThenFunc(UpdateEvent)).Methods("PUT")
-	router.Handle("/", alice.New().ThenFunc(GetAllEvents)).Methods("GET")
+	router.HandleFunc("/{id}/", GetEvent).Methods("GET")
+	router.HandleFunc("/{id}/", DeleteEvent).Methods("DELETE")
+	router.HandleFunc("/", CreateEvent).Methods("POST")
+	router.HandleFunc("/", UpdateEvent).Methods("PUT")
+	router.HandleFunc("/", GetAllEvents).Methods("GET")
 
-	router.Handle("/track/", alice.New().ThenFunc(MarkUserAsAttendingEvent)).Methods("POST")
-	router.Handle("/track/event/{id}/", alice.New().ThenFunc(GetEventTrackingInfo)).Methods("GET")
-	router.Handle("/track/user/{id}/", alice.New().ThenFunc(GetUserTrackingInfo)).Methods("GET")
+	router.HandleFunc("/track/", MarkUserAsAttendingEvent).Methods("POST")
+	router.HandleFunc("/track/event/{id}/", GetEventTrackingInfo).Methods("GET")
+	router.HandleFunc("/track/user/{id}/", GetUserTrackingInfo).Methods("GET")
 
-	router.Handle("/internal/stats/", alice.New().ThenFunc(GetStats)).Methods("GET")
+	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
 }
 
 /*

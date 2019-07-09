@@ -33,7 +33,13 @@ func LogError(id string, error_message interface{}) {
 		Error: error_message,
 	}
 
-	error_log_message, err := json.MarshalIndent(log_entry, "", "    ")
+	var error_log_message []byte
+	var err error
+	if config.DEBUG_MODE {
+		error_log_message, err = json.MarshalIndent(log_entry, "", "    ")
+	} else {
+		error_log_message, err = json.Marshal(log_entry)
+	}
 
 	if err != nil {
 		fmt.Printf("Failed to marshal error for id: %v\n", id)

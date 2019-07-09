@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/HackIllinois/api/common/config"
 	"net/http"
+	"runtime/debug"
 )
 
 /**
@@ -25,12 +26,14 @@ type ApiError struct {
 type ErrorLogEntry struct {
 	ID    string
 	Error interface{}
+	Stack string
 }
 
 func LogError(id string, error_message interface{}) {
 	log_entry := ErrorLogEntry{
 		ID:    id,
 		Error: error_message,
+		Stack: string(debug.Stack()),
 	}
 
 	var error_log_message []byte

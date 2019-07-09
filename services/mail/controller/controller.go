@@ -33,7 +33,7 @@ func SendMail(w http.ResponseWriter, r *http.Request) {
 	mail_status, err := service.SendMailByID(mail_order)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not send email by ID."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not send email by ID."))
 		return
 	}
 
@@ -51,7 +51,7 @@ func SendMailList(w http.ResponseWriter, r *http.Request) {
 	mail_status, err := service.SendMailByList(mail_order_list)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not send email by list."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not send email by list."))
 		return
 	}
 
@@ -68,14 +68,14 @@ func CreateMailList(w http.ResponseWriter, r *http.Request) {
 	err := service.CreateMailList(mail_list)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not create the specified mail list."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not create the specified mail list."))
 		return
 	}
 
 	created_list, err := service.GetMailList(mail_list.ID)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get mail list."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get mail list."))
 		return
 	}
 
@@ -92,14 +92,14 @@ func AddToMailList(w http.ResponseWriter, r *http.Request) {
 	err := service.AddToMailList(mail_list)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not add user to mail list."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not add user to mail list."))
 		return
 	}
 
 	modified_list, err := service.GetMailList(mail_list.ID)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get modified mail list."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get modified mail list."))
 		return
 	}
 
@@ -116,14 +116,14 @@ func RemoveFromMailList(w http.ResponseWriter, r *http.Request) {
 	err := service.RemoveFromMailList(mail_list)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not remove user from mailing list."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not remove user from mailing list."))
 		return
 	}
 
 	modified_list, err := service.GetMailList(mail_list.ID)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get modified mail list."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get modified mail list."))
 		return
 	}
 
@@ -139,7 +139,7 @@ func GetMailList(w http.ResponseWriter, r *http.Request) {
 	mail_list, err := service.GetMailList(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get mail list."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get mail list."))
 		return
 	}
 
@@ -153,7 +153,7 @@ func GetAllMailLists(w http.ResponseWriter, r *http.Request) {
 	mail_lists, err := service.GetAllMailLists()
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get all mail lists."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get all mail lists."))
 		return
 	}
 

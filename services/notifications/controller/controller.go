@@ -35,14 +35,14 @@ func GetAllTopics(w http.ResponseWriter, r *http.Request) {
 	topics, err := service.GetAllTopicIDs()
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not retrieve topics."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve topics."))
 		return
 	}
 
 	role_topics, err := service.GetValidRoles()
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not retrieve role based topics."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve role based topics."))
 		return
 	}
 
@@ -65,14 +65,14 @@ func CreateTopic(w http.ResponseWriter, r *http.Request) {
 	err := service.CreateTopic(topic.ID)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not create a new topic."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not create a new topic."))
 		return
 	}
 
 	created_topic, err := service.GetTopic(topic.ID)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not retrieve topic."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve topic."))
 		return
 	}
 
@@ -88,14 +88,14 @@ func GetAllNotifications(w http.ResponseWriter, r *http.Request) {
 	topics, err := service.GetSubscriptions(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not retrieve user subscriptions."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve user subscriptions."))
 		return
 	}
 
 	notifications, err := service.GetAllNotifications(topics)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not retrieve notifications."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve notifications."))
 		return
 	}
 
@@ -113,7 +113,7 @@ func GetAllPublicNotifications(w http.ResponseWriter, r *http.Request) {
 	notifications, err := service.GetAllPublicNotifications()
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not retrieve notifications."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve notifications."))
 		return
 	}
 
@@ -133,7 +133,7 @@ func GetNotificationsForTopic(w http.ResponseWriter, r *http.Request) {
 	notifications, err := service.GetAllNotificationsForTopic(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not retrieve notifications."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve notifications."))
 		return
 	}
 
@@ -160,7 +160,7 @@ func PublishNotificationToTopic(w http.ResponseWriter, r *http.Request) {
 	order, err := service.PublishNotificationToTopic(notification)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not publish notification."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not publish notification."))
 		return
 	}
 
@@ -176,7 +176,7 @@ func DeleteTopic(w http.ResponseWriter, r *http.Request) {
 	err := service.DeleteTopic(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not publish notification."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not publish notification."))
 		return
 	}
 
@@ -193,7 +193,7 @@ func SubscribeToTopic(w http.ResponseWriter, r *http.Request) {
 	err := service.SubscribeToTopic(userId, topicId)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Failed to subscribe user to topic."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to subscribe user to topic."))
 		return
 	}
 
@@ -216,7 +216,7 @@ func UnsubscribeToTopic(w http.ResponseWriter, r *http.Request) {
 	err := service.UnsubscribeToTopic(userId, topicId)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Failed to unsubscribe user to topic."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to unsubscribe user to topic."))
 		return
 	}
 
@@ -241,14 +241,14 @@ func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
 	err := service.RegisterDeviceToUser(device_registration.Token, device_registration.Platform, id)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Failed to register device to user."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Failed to register device to user."))
 		return
 	}
 
 	devices, err := service.GetUserDevices(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Failed to retrieve user's devices."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to retrieve user's devices."))
 		return
 	}
 
@@ -268,7 +268,7 @@ func GetNotificationOrder(w http.ResponseWriter, r *http.Request) {
 	order, err := service.GetNotificationOrder(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not retrieve notification order."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve notification order."))
 		return
 	}
 

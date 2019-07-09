@@ -35,7 +35,7 @@ func GetCurrentDecision(w http.ResponseWriter, r *http.Request) {
 	decision, err := service.GetDecision(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get current user's decision."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get current user's decision."))
 		return
 	}
 
@@ -65,14 +65,14 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&decision)
 
 	if decision.ID == "" {
-		errors.WriteError(w, errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
 		return
 	}
 
 	has_decision, err := service.HasDecision(decision.ID)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not determine user's decision."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not determine user's decision."))
 		return
 	}
 
@@ -80,12 +80,12 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 		existing_decision_history, err := service.GetDecision(decision.ID)
 
 		if err != nil {
-			errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get current user's existing decision history."))
+			errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get current user's existing decision history."))
 			return
 		}
 
 		if existing_decision_history.Finalized {
-			errors.WriteError(w, errors.AttributeMismatchError("Cannot modify finalized decisions.", "Cannot modify finalized decisions."))
+			errors.WriteError(w, r, errors.AttributeMismatchError("Cannot modify finalized decisions.", "Cannot modify finalized decisions."))
 			return
 		}
 	}
@@ -99,14 +99,14 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	err = service.UpdateDecision(decision.ID, decision)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not update decision."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not update decision."))
 		return
 	}
 
 	updated_decision, err := service.GetDecision(decision.ID)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not fetch updated decision."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated decision."))
 		return
 	}
 
@@ -124,7 +124,7 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	id := decision_finalized.ID
 
 	if id == "" {
-		errors.WriteError(w, errors.MalformedRequestError("Must provide id parameter to retrieve current decision.", "Must provide id parameter to retrieve current decision."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id parameter to retrieve current decision.", "Must provide id parameter to retrieve current decision."))
 		return
 	}
 
@@ -133,7 +133,7 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 
 	// It is an error to finalize a finalized decision, or unfinalize an unfinalized decision.
 	if existing_decision_history.Finalized == decision_finalized.Finalized {
-		errors.WriteError(w, errors.AttributeMismatchError("Superfluous request. Existing decision already at desired state of finalization.", "Superfluous request. Existing decision already at desired state of finalization."))
+		errors.WriteError(w, r, errors.AttributeMismatchError("Superfluous request. Existing decision already at desired state of finalization.", "Superfluous request. Existing decision already at desired state of finalization."))
 		return
 	}
 
@@ -149,14 +149,14 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	err = service.UpdateDecision(id, latest_decision)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Error updating the decision, in an attempt to alter its finalized status."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Error updating the decision, in an attempt to alter its finalized status."))
 		return
 	}
 
 	updated_decision, err := service.GetDecision(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not fetch updated decision."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated decision."))
 		return
 	}
 
@@ -164,14 +164,14 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 		err = service.AddUserToMailList(id, updated_decision)
 
 		if err != nil {
-			errors.WriteError(w, errors.InternalError(err.Error(), "Could not add user to mail list."))
+			errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not add user to mail list."))
 			return
 		}
 	} else {
 		err = service.RemoveUserFromMailList(id, updated_decision)
 
 		if err != nil {
-			errors.WriteError(w, errors.InternalError(err.Error(), "Could not remove user from mail list."))
+			errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not remove user from mail list."))
 			return
 		}
 	}
@@ -187,7 +187,7 @@ func GetFilteredDecisions(w http.ResponseWriter, r *http.Request) {
 	decisions, err := service.GetFilteredDecisions(parameters)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not retrieve filtered decisions."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve filtered decisions."))
 		return
 	}
 
@@ -203,7 +203,7 @@ func GetDecision(w http.ResponseWriter, r *http.Request) {
 	decision, err := service.GetDecision(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get decision for the specified user."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get decision for the specified user."))
 		return
 	}
 
@@ -217,7 +217,7 @@ func GetStats(w http.ResponseWriter, r *http.Request) {
 	stats, err := service.GetStats()
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not get decision service statistics."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not get decision service statistics."))
 		return
 	}
 

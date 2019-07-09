@@ -41,14 +41,14 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 	oauth_provider, err := service.GetOAuthProvider(provider)
 
 	if err != nil {
-		errors.WriteError(w, errors.MalformedRequestError(err.Error(), "Invalid OAuth provider."))
+		errors.WriteError(w, r, errors.MalformedRequestError(err.Error(), "Invalid OAuth provider."))
 		return
 	}
 
 	oauth_authorization_url, err := oauth_provider.GetAuthorizationRedirect(client_application_url)
 
 	if err != nil {
-		errors.WriteError(w, errors.AuthorizationError(err.Error(), "Could not retrieve OAuth provider authorization code URL."))
+		errors.WriteError(w, r, errors.AuthorizationError(err.Error(), "Could not retrieve OAuth provider authorization code URL."))
 		return
 	}
 
@@ -74,28 +74,28 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	oauth_provider, err := service.GetOAuthProvider(provider)
 
 	if err != nil {
-		errors.WriteError(w, errors.MalformedRequestError(err.Error(), "Invalid OAuth provider."))
+		errors.WriteError(w, r, errors.MalformedRequestError(err.Error(), "Invalid OAuth provider."))
 		return
 	}
 
 	err = oauth_provider.Authorize(oauth_code.Code, client_application_url)
 
 	if err != nil {
-		errors.WriteError(w, errors.AuthorizationError(err.Error(), "Could not get OAuth token."))
+		errors.WriteError(w, r, errors.AuthorizationError(err.Error(), "Could not get OAuth token."))
 		return
 	}
 
 	user_info, err := oauth_provider.GetUserInfo()
 
 	if err != nil {
-		errors.WriteError(w, errors.AuthorizationError(err.Error(), "Could not fetch user's info from OAuth provider."))
+		errors.WriteError(w, r, errors.AuthorizationError(err.Error(), "Could not fetch user's info from OAuth provider."))
 		return
 	}
 
 	roles, err := service.GetUserRoles(user_info.ID, true)
 
 	if err != nil {
-		errors.WriteError(w, errors.AuthorizationError(err.Error(), "Could not fetch user's API roles."))
+		errors.WriteError(w, r, errors.AuthorizationError(err.Error(), "Could not fetch user's API roles."))
 		return
 	}
 
@@ -103,14 +103,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		err = service.AddAutomaticRoleGrants(user_info.ID, user_info.Email)
 
 		if err != nil {
-			errors.WriteError(w, errors.AuthorizationError(err.Error(), "Could not automatically grant roles to user (based on verified email domain)."))
+			errors.WriteError(w, r, errors.AuthorizationError(err.Error(), "Could not automatically grant roles to user (based on verified email domain)."))
 			return
 		}
 
 		roles, err = service.GetUserRoles(user_info.ID, false)
 
 		if err != nil {
-			errors.WriteError(w, errors.AuthorizationError(err.Error(), "Could not determine user roles, after automatic role grants."))
+			errors.WriteError(w, r, errors.AuthorizationError(err.Error(), "Could not determine user roles, after automatic role grants."))
 			return
 		}
 	}
@@ -118,14 +118,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	signed_token, err := service.MakeToken(user_info, roles)
 
 	if err != nil {
-		errors.WriteError(w, errors.AuthorizationError(err.Error(), "Could not create HackIllinois API JWT for user."))
+		errors.WriteError(w, r, errors.AuthorizationError(err.Error(), "Could not create HackIllinois API JWT for user."))
 		return
 	}
 
 	err = service.SendUserInfo(user_info)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not send user information to user service."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not send user information to user service."))
 		return
 	}
 
@@ -143,14 +143,14 @@ func GetRoles(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
 	if id == "" {
-		errors.WriteError(w, errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
 		return
 	}
 
 	roles, err := service.GetUserRoles(id, false)
 
 	if err != nil {
-		errors.WriteError(w, errors.AuthorizationError(err.Error(), "Could not get user's roles."))
+		errors.WriteError(w, r, errors.AuthorizationError(err.Error(), "Could not get user's roles."))
 		return
 	}
 
@@ -169,14 +169,14 @@ func GetCurrentUserRoles(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		errors.WriteError(w, errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
 		return
 	}
 
 	roles, err := service.GetUserRoles(id, false)
 
 	if err != nil {
-		errors.WriteError(w, errors.AuthorizationError(err.Error(), "Could not get user's roles."))
+		errors.WriteError(w, r, errors.AuthorizationError(err.Error(), "Could not get user's roles."))
 		return
 	}
 
@@ -196,21 +196,21 @@ func AddRole(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&role_modification)
 
 	if role_modification.ID == "" {
-		errors.WriteError(w, errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
 		return
 	}
 
 	err := service.AddUserRole(role_modification.ID, role_modification.Role)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not add user role."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not add user role."))
 		return
 	}
 
 	roles, err := service.GetUserRoles(role_modification.ID, false)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not get user's roles."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not get user's roles."))
 		return
 	}
 
@@ -230,21 +230,21 @@ func RemoveRole(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&role_modification)
 
 	if role_modification.ID == "" {
-		errors.WriteError(w, errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
 		return
 	}
 
 	err := service.RemoveUserRole(role_modification.ID, role_modification.Role)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not remove user's user role."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not remove user's user role."))
 		return
 	}
 
 	roles, err := service.GetUserRoles(role_modification.ID, false)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not fetch user's roles."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not fetch user's roles."))
 		return
 	}
 
@@ -268,7 +268,7 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 	user_info, err := service.GetUserInfo(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not fetch user info."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch user info."))
 		return
 	}
 
@@ -277,7 +277,7 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 	roles, err := service.GetUserRoles(id, false)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not fetch user roles."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not fetch user roles."))
 		return
 	}
 
@@ -286,7 +286,7 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 	signed_token, err := service.MakeToken(user_info, roles)
 
 	if err != nil {
-		errors.WriteError(w, errors.AuthorizationError(err.Error(), "Could not make a new JWT for the user."))
+		errors.WriteError(w, r, errors.AuthorizationError(err.Error(), "Could not make a new JWT for the user."))
 		return
 	}
 
@@ -319,7 +319,7 @@ func GetUserListByRole(w http.ResponseWriter, r *http.Request) {
 	userids, err := service.GetUsersByRole(role)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not retrieve list of users with requested role."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve list of users with requested role."))
 		return
 	}
 

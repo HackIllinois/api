@@ -32,7 +32,7 @@ func GetUserRsvp(w http.ResponseWriter, r *http.Request) {
 	rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Cannot get user's RSVP status."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Cannot get user's RSVP status."))
 		return
 	}
 
@@ -48,7 +48,7 @@ func GetCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Cannot get user's RSVP status."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Cannot get user's RSVP status."))
 		return
 	}
 
@@ -63,24 +63,24 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		errors.WriteError(w, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 		return
 	}
 
 	isAccepted, isActive, err := service.IsApplicantAcceptedAndActive(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not determine status of applicant decision, which is needed to create an RSVP for the user."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not determine status of applicant decision, which is needed to create an RSVP for the user."))
 		return
 	}
 
 	if !isAccepted {
-		errors.WriteError(w, errors.AttributeMismatchError("Applicant not accepted.", "Applicant must be accepted to RSVP."))
+		errors.WriteError(w, r, errors.AttributeMismatchError("Applicant not accepted.", "Applicant must be accepted to RSVP."))
 		return
 	}
 
 	if !isActive {
-		errors.WriteError(w, errors.AttributeMismatchError("Applicant decision has expired.", "Applicant decision has expired."))
+		errors.WriteError(w, r, errors.AttributeMismatchError("Applicant decision has expired.", "Applicant decision has expired."))
 		return
 	}
 
@@ -88,7 +88,7 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	err = json.NewDecoder(r.Body).Decode(&rsvp)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not decode user rsvp information. Failure in JSON validation or incorrect rsvp definition."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not decode user rsvp information. Failure in JSON validation or incorrect rsvp definition."))
 		return
 	}
 
@@ -97,7 +97,7 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	registration_data, err := service.GetRegistrationData(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not retrieve registration data."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not retrieve registration data."))
 		return
 	}
 
@@ -106,14 +106,14 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	err = service.CreateUserRsvp(id, rsvp)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not create an RSVP for the user."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not create an RSVP for the user."))
 		return
 	}
 
 	isAttending, ok := rsvp.Data["isAttending"].(bool)
 
 	if !ok {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Failure in parsing user rsvp"))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Failure in parsing user rsvp"))
 		return
 	}
 
@@ -121,7 +121,7 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		err = service.AddAttendeeRole(id)
 
 		if err != nil {
-			errors.WriteError(w, errors.AuthorizationError(err.Error(), "Could not add Attendee role to applicant."))
+			errors.WriteError(w, r, errors.AuthorizationError(err.Error(), "Could not add Attendee role to applicant."))
 			return
 		}
 	}
@@ -129,7 +129,7 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	updated_rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get user's RSVP."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's RSVP."))
 		return
 	}
 
@@ -137,7 +137,7 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	err = service.SendUserMail(id, mail_template)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not send user RSVP confirmation mail."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not send user RSVP confirmation mail."))
 		return
 	}
 
@@ -152,31 +152,31 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		errors.WriteError(w, errors.MalformedRequestError("Must provide id in request.", "Must provide id in the request."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in the request."))
 		return
 	}
 
 	isAccepted, isActive, err := service.IsApplicantAcceptedAndActive(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not determine if applicant was accepted and/or decision expiration status."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not determine if applicant was accepted and/or decision expiration status."))
 		return
 	}
 
 	if !isAccepted {
-		errors.WriteError(w, errors.AttributeMismatchError("Applicant must be accepted to modify RSVP.", "Applicant must be accepted to modify RSVP."))
+		errors.WriteError(w, r, errors.AttributeMismatchError("Applicant must be accepted to modify RSVP.", "Applicant must be accepted to modify RSVP."))
 		return
 	}
 
 	if !isActive {
-		errors.WriteError(w, errors.AttributeMismatchError("Cannot modify RSVP, applicant decision has expired.", "Cannot modify RSVP, applicant decision has expired."))
+		errors.WriteError(w, r, errors.AttributeMismatchError("Cannot modify RSVP, applicant decision has expired.", "Cannot modify RSVP, applicant decision has expired."))
 		return
 	}
 
 	original_rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get user's RSVP status."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's RSVP status."))
 		return
 	}
 
@@ -184,7 +184,7 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	err = json.NewDecoder(r.Body).Decode(&rsvp)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not decode user rsvp information. Failure in JSON validation or incorrect rsvp definition."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not decode user rsvp information. Failure in JSON validation or incorrect rsvp definition."))
 		return
 	}
 
@@ -193,7 +193,7 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	registration_data, err := service.GetRegistrationData(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not retrieve registration data."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not retrieve registration data."))
 		return
 	}
 
@@ -202,21 +202,21 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	err = service.UpdateUserRsvp(id, rsvp)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not update user RSVP."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update user RSVP."))
 		return
 	}
 
 	wasAttending, ok := original_rsvp.Data["isAttending"].(bool)
 
 	if !ok {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Failure in parsing user rsvp"))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Failure in parsing user rsvp"))
 		return
 	}
 
 	isAttending, ok := rsvp.Data["isAttending"].(bool)
 
 	if !ok {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Failure in parsing user rsvp"))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Failure in parsing user rsvp"))
 		return
 	}
 
@@ -224,14 +224,14 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 		err = service.AddAttendeeRole(id)
 
 		if err != nil {
-			errors.WriteError(w, errors.AuthorizationError(err.Error(), "Could not add Attendee role to user."))
+			errors.WriteError(w, r, errors.AuthorizationError(err.Error(), "Could not add Attendee role to user."))
 			return
 		}
 	} else if wasAttending && !isAttending {
 		err = service.RemoveAttendeeRole(id)
 
 		if err != nil {
-			errors.WriteError(w, errors.InternalError(err.Error(), "Could not remove Attendee role from user."))
+			errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not remove Attendee role from user."))
 			return
 		}
 	}
@@ -239,7 +239,7 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	updated_rsvp, err := service.GetUserRsvp(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get updated RSVP for user."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated RSVP for user."))
 		return
 	}
 
@@ -247,7 +247,7 @@ func UpdateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	err = service.SendUserMail(id, mail_template)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not send user confirmation mail for RSVP update."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not send user confirmation mail for RSVP update."))
 		return
 	}
 
@@ -262,7 +262,7 @@ func GetFilteredRsvps(w http.ResponseWriter, r *http.Request) {
 	rsvps, err := service.GetFilteredRsvps(parameters)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not fetch filtered list of rsvps."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch filtered list of rsvps."))
 		return
 	}
 
@@ -276,7 +276,7 @@ func GetStats(w http.ResponseWriter, r *http.Request) {
 	stats, err := service.GetStats()
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not get RSVP service statistics."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not get RSVP service statistics."))
 		return
 	}
 

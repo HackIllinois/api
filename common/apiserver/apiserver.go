@@ -19,7 +19,6 @@ func StartServer(address string, router *mux.Router, name string, initialize fun
 		return err
 	}
 
-	router.Use(middleware.ErrorMiddleware)
 	router.Use(middleware.ContentTypeMiddleware)
 
 	stats_middleware := stats.New()

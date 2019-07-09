@@ -81,7 +81,7 @@ func GetCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	user_registration, err := service.GetUserRegistration(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get current user's registration."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get current user's registration."))
 		return
 	}
 
@@ -96,7 +96,7 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		errors.WriteError(w, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 		return
 	}
 
@@ -104,7 +104,7 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&user_registration)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not decode user registration information. Possible failure in JSON validation, or invalid registration format."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not decode user registration information. Possible failure in JSON validation, or invalid registration format."))
 		return
 	}
 
@@ -113,7 +113,7 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	user_info, err := service.GetUserInfo(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not get user info."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not get user info."))
 		return
 	}
 
@@ -128,28 +128,28 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	err = service.CreateUserRegistration(id, user_registration)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not create user registration."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not create user registration."))
 		return
 	}
 
 	err = service.AddApplicantRole(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not add applicant role."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not add applicant role."))
 		return
 	}
 
 	err = service.AddInitialDecision(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not add initial decision."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not add initial decision."))
 		return
 	}
 
 	updated_registration, err := service.GetUserRegistration(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get user registration."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user registration."))
 		return
 	}
 
@@ -158,7 +158,7 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	err = service.AddUserToMailList(id, mail_list)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not add user to registered users mailing list."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not add user to registered users mailing list."))
 		return
 	}
 
@@ -167,7 +167,7 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	err = service.SendUserMail(id, mail_template)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not send registration confirmation email."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not send registration confirmation email."))
 		return
 	}
 
@@ -182,7 +182,7 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		errors.WriteError(w, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 		return
 	}
 
@@ -190,7 +190,7 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&user_registration)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not decode user registration information. Possible failure in JSON validation, or invalid registration format."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not decode user registration information. Possible failure in JSON validation, or invalid registration format."))
 		return
 	}
 
@@ -199,14 +199,14 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	user_info, err := service.GetUserInfo(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not get user info."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not get user info."))
 		return
 	}
 
 	original_registration, err := service.GetUserRegistration(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get user's original registration."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's original registration."))
 		return
 	}
 
@@ -221,14 +221,14 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	err = service.UpdateUserRegistration(id, user_registration)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not update user's registration."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not update user's registration."))
 		return
 	}
 
 	updated_registration, err := service.GetUserRegistration(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not fetch user's updated registration."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch user's updated registration."))
 		return
 	}
 
@@ -236,7 +236,7 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	err = service.SendUserMail(id, mail_template)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not send registration update email."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not send registration update email."))
 		return
 	}
 
@@ -251,7 +251,7 @@ func GetFilteredUserRegistrations(w http.ResponseWriter, r *http.Request) {
 	user_registrations, err := service.GetFilteredUserRegistrations(parameters)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get filtered user registrations."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get filtered user registrations."))
 		return
 	}
 
@@ -267,7 +267,7 @@ func GetCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	mentor_registration, err := service.GetMentorRegistration(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get mentor registration."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get mentor registration."))
 		return
 	}
 
@@ -281,7 +281,7 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		errors.WriteError(w, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 		return
 	}
 
@@ -289,7 +289,7 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&mentor_registration)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not decode mentor registration information. Possible failure in JSON validation, or invalid registration format."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not decode mentor registration information. Possible failure in JSON validation, or invalid registration format."))
 		return
 	}
 
@@ -298,7 +298,7 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	user_info, err := service.GetUserInfo(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get mentor's user info."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get mentor's user info."))
 		return
 	}
 
@@ -313,21 +313,21 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	err = service.CreateMentorRegistration(id, mentor_registration)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not create mentor registration."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not create mentor registration."))
 		return
 	}
 
 	err = service.AddMentorRole(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not add mentor role."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not add mentor role."))
 		return
 	}
 
 	updated_registration, err := service.GetMentorRegistration(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get updated mentor registration."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated mentor registration."))
 		return
 	}
 
@@ -341,7 +341,7 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {
-		errors.WriteError(w, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 		return
 	}
 
@@ -349,7 +349,7 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&mentor_registration)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not decode mentor registration information. Possible failure in JSON validation, or invalid registration format."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not decode mentor registration information. Possible failure in JSON validation, or invalid registration format."))
 		return
 	}
 
@@ -358,14 +358,14 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	user_info, err := service.GetUserInfo(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get mentor's user info."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get mentor's user info."))
 		return
 	}
 
 	original_registration, err := service.GetMentorRegistration(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get mentor registration."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get mentor registration."))
 		return
 	}
 
@@ -380,14 +380,14 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	err = service.UpdateMentorRegistration(id, mentor_registration)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not update mentor registration."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not update mentor registration."))
 		return
 	}
 
 	updated_registration, err := service.GetMentorRegistration(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get updated mentor registration."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated mentor registration."))
 		return
 	}
 
@@ -403,7 +403,7 @@ func GetUserRegistration(w http.ResponseWriter, r *http.Request) {
 	user_registration, err := service.GetUserRegistration(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get user registration."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user registration."))
 		return
 	}
 
@@ -419,7 +419,7 @@ func GetMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	mentor_registration, err := service.GetMentorRegistration(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not get mentor registration."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get mentor registration."))
 		return
 	}
 
@@ -433,7 +433,7 @@ func GetStats(w http.ResponseWriter, r *http.Request) {
 	stats, err := service.GetStats()
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not fetch registration service statistics."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not fetch registration service statistics."))
 		return
 	}
 

@@ -34,7 +34,7 @@ func GetCurrentUserInfo(w http.ResponseWriter, r *http.Request) {
 	user_info, err := service.GetUserInfo(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not fetch user info by ID."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch user info by ID."))
 		return
 	}
 
@@ -49,21 +49,21 @@ func SetUserInfo(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&user_info)
 
 	if user_info.ID == "" {
-		errors.WriteError(w, errors.MalformedRequestError("Must provide user id in request.", "Must provide user id in request."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide user id in request.", "Must provide user id in request."))
 		return
 	}
 
 	err := service.SetUserInfo(user_info.ID, user_info)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not upsert user info."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not upsert user info."))
 		return
 	}
 
 	updated_info, err := service.GetUserInfo(user_info.ID)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not fetch user info by ID."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch user info by ID."))
 		return
 	}
 
@@ -78,7 +78,7 @@ func GetFilteredUserInfo(w http.ResponseWriter, r *http.Request) {
 	user_info, err := service.GetFilteredUserInfo(parameters)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not fetch filtered list of users."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch filtered list of users."))
 		return
 	}
 
@@ -94,7 +94,7 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	user_info, err := service.GetUserInfo(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not fetch user information by user id."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch user information by user id."))
 		return
 	}
 
@@ -110,7 +110,7 @@ func GetCurrentQrCodeInfo(w http.ResponseWriter, r *http.Request) {
 	uri, err := service.GetQrInfo(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not parse QR code URI."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not parse QR code URI."))
 		return
 	}
 
@@ -131,7 +131,7 @@ func GetQrCodeInfo(w http.ResponseWriter, r *http.Request) {
 	uri, err := service.GetQrInfo(id)
 
 	if err != nil {
-		errors.WriteError(w, errors.DatabaseError(err.Error(), "Could not parse QR code URI."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not parse QR code URI."))
 		return
 	}
 
@@ -150,7 +150,7 @@ func GetStats(w http.ResponseWriter, r *http.Request) {
 	stats, err := service.GetStats()
 
 	if err != nil {
-		errors.WriteError(w, errors.InternalError(err.Error(), "Could not retrieve user service statistics."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not retrieve user service statistics."))
 		return
 	}
 

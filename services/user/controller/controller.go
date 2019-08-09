@@ -6,23 +6,22 @@ import (
 	"github.com/HackIllinois/api/services/user/models"
 	"github.com/HackIllinois/api/services/user/service"
 	"github.com/gorilla/mux"
-	"github.com/justinas/alice"
 	"net/http"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/", alice.New().ThenFunc(GetCurrentUserInfo)).Methods("GET")
-	router.Handle("/", alice.New().ThenFunc(SetUserInfo)).Methods("POST")
-	router.Handle("/filter/", alice.New().ThenFunc(GetFilteredUserInfo)).Methods("GET")
+	router.HandleFunc("/", GetCurrentUserInfo).Methods("GET")
+	router.HandleFunc("/", SetUserInfo).Methods("POST")
+	router.HandleFunc("/filter/", GetFilteredUserInfo).Methods("GET")
 
-	router.Handle("/qr/", alice.New().ThenFunc(GetCurrentQrCodeInfo)).Methods("GET")
-	router.Handle("/qr/{id}/", alice.New().ThenFunc(GetQrCodeInfo)).Methods("GET")
+	router.HandleFunc("/qr/", GetCurrentQrCodeInfo).Methods("GET")
+	router.HandleFunc("/qr/{id}/", GetQrCodeInfo).Methods("GET")
 
-	router.Handle("/{id}/", alice.New().ThenFunc(GetUserInfo)).Methods("GET")
+	router.HandleFunc("/{id}/", GetUserInfo).Methods("GET")
 
-	router.Handle("/internal/stats/", alice.New().ThenFunc(GetStats)).Methods("GET")
+	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
 }
 
 /*

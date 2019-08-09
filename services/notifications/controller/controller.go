@@ -7,7 +7,6 @@ import (
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/HackIllinois/api/services/notifications/service"
 	"github.com/gorilla/mux"
-	"github.com/justinas/alice"
 	"net/http"
 	"time"
 )
@@ -15,17 +14,17 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/topic/", alice.New().ThenFunc(GetAllTopics)).Methods("GET")
-	router.Handle("/topic/", alice.New().ThenFunc(CreateTopic)).Methods("POST")
-	router.Handle("/topic/all/", alice.New().ThenFunc(GetAllNotifications)).Methods("GET")
-	router.Handle("/topic/public/", alice.New().ThenFunc(GetAllPublicNotifications)).Methods("GET")
-	router.Handle("/topic/{id}/", alice.New().ThenFunc(GetNotificationsForTopic)).Methods("GET")
-	router.Handle("/topic/{id}/", alice.New().ThenFunc(PublishNotificationToTopic)).Methods("POST")
-	router.Handle("/topic/{id}/", alice.New().ThenFunc(DeleteTopic)).Methods("DELETE")
-	router.Handle("/topic/{id}/subscribe/", alice.New().ThenFunc(SubscribeToTopic)).Methods("POST")
-	router.Handle("/topic/{id}/unsubscribe/", alice.New().ThenFunc(UnsubscribeToTopic)).Methods("POST")
-	router.Handle("/device/", alice.New().ThenFunc(RegisterDeviceToUser)).Methods("POST")
-	router.Handle("/order/{id}/", alice.New().ThenFunc(GetNotificationOrder)).Methods("GET")
+	router.HandleFunc("/topic/", GetAllTopics).Methods("GET")
+	router.HandleFunc("/topic/", CreateTopic).Methods("POST")
+	router.HandleFunc("/topic/all/", GetAllNotifications).Methods("GET")
+	router.HandleFunc("/topic/public/", GetAllPublicNotifications).Methods("GET")
+	router.HandleFunc("/topic/{id}/", GetNotificationsForTopic).Methods("GET")
+	router.HandleFunc("/topic/{id}/", PublishNotificationToTopic).Methods("POST")
+	router.HandleFunc("/topic/{id}/", DeleteTopic).Methods("DELETE")
+	router.HandleFunc("/topic/{id}/subscribe/", SubscribeToTopic).Methods("POST")
+	router.HandleFunc("/topic/{id}/unsubscribe/", UnsubscribeToTopic).Methods("POST")
+	router.HandleFunc("/device/", RegisterDeviceToUser).Methods("POST")
+	router.HandleFunc("/order/{id}/", GetNotificationOrder).Methods("GET")
 }
 
 /*

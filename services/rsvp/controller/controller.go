@@ -7,20 +7,19 @@ import (
 	"github.com/HackIllinois/api/services/rsvp/config"
 	"github.com/HackIllinois/api/services/rsvp/service"
 	"github.com/gorilla/mux"
-	"github.com/justinas/alice"
 	"net/http"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/filter/", alice.New().ThenFunc(GetFilteredRsvps)).Methods("GET")
-	router.Handle("/{id}/", alice.New().ThenFunc(GetUserRsvp)).Methods("GET")
-	router.Handle("/", alice.New().ThenFunc(GetCurrentUserRsvp)).Methods("GET")
-	router.Handle("/", alice.New().ThenFunc(CreateCurrentUserRsvp)).Methods("POST")
-	router.Handle("/", alice.New().ThenFunc(UpdateCurrentUserRsvp)).Methods("PUT")
+	router.HandleFunc("/filter/", GetFilteredRsvps).Methods("GET")
+	router.HandleFunc("/{id}/", GetUserRsvp).Methods("GET")
+	router.HandleFunc("/", GetCurrentUserRsvp).Methods("GET")
+	router.HandleFunc("/", CreateCurrentUserRsvp).Methods("POST")
+	router.HandleFunc("/", UpdateCurrentUserRsvp).Methods("PUT")
 
-	router.Handle("/internal/stats/", alice.New().ThenFunc(GetStats)).Methods("GET")
+	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
 }
 
 /*

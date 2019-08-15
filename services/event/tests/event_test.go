@@ -171,6 +171,22 @@ func TestGetAllEventsService(t *testing.T) {
 		t.Errorf("Wrong event list. Expected %v, got %v", expected_event_list, actual_event_list)
 	}
 
+	db.RemoveAll("events", nil)
+
+	actual_event_list, err = service.GetAllEvents()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_list = models.EventList{
+		Events: []models.Event{},
+	}
+
+	if !reflect.DeepEqual(actual_event_list, &expected_event_list) {
+		t.Errorf("Wrong event list. Expected %v, got %v", expected_event_list, actual_event_list)
+	}
+
 	CleanupTestDB(t)
 
 }

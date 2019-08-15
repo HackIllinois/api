@@ -9,21 +9,20 @@ import (
 	"github.com/HackIllinois/api/services/auth/models"
 	"github.com/HackIllinois/api/services/auth/service"
 	"github.com/gorilla/mux"
-	"github.com/justinas/alice"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/roles/", alice.New().ThenFunc(GetCurrentUserRoles)).Methods("GET")
-	router.Handle("/roles/list/", alice.New().ThenFunc(GetRolesLists)).Methods("GET")
-	router.Handle("/roles/list/{role}/", alice.New().ThenFunc(GetUserListByRole)).Methods("GET")
-	router.Handle("/{provider}/", alice.New().ThenFunc(Authorize)).Methods("GET")
-	router.Handle("/code/{provider}/", alice.New().ThenFunc(Login)).Methods("POST")
-	router.Handle("/roles/{id}/", alice.New().ThenFunc(GetRoles)).Methods("GET")
-	router.Handle("/roles/add/", alice.New().ThenFunc(AddRole)).Methods("PUT")
-	router.Handle("/roles/remove/", alice.New().ThenFunc(RemoveRole)).Methods("PUT")
-	router.Handle("/token/refresh/", alice.New().ThenFunc(RefreshToken)).Methods("GET")
+	router.HandleFunc("/roles/", GetCurrentUserRoles).Methods("GET")
+	router.HandleFunc("/roles/list/", GetRolesLists).Methods("GET")
+	router.HandleFunc("/roles/list/{role}/", GetUserListByRole).Methods("GET")
+	router.HandleFunc("/{provider}/", Authorize).Methods("GET")
+	router.HandleFunc("/code/{provider}/", Login).Methods("POST")
+	router.HandleFunc("/roles/{id}/", GetRoles).Methods("GET")
+	router.HandleFunc("/roles/add/", AddRole).Methods("PUT")
+	router.HandleFunc("/roles/remove/", RemoveRole).Methods("PUT")
+	router.HandleFunc("/token/refresh/", RefreshToken).Methods("GET")
 }
 
 /*

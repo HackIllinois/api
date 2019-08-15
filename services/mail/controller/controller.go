@@ -6,20 +6,19 @@ import (
 	"github.com/HackIllinois/api/services/mail/models"
 	"github.com/HackIllinois/api/services/mail/service"
 	"github.com/gorilla/mux"
-	"github.com/justinas/alice"
 	"net/http"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/send/", alice.New().ThenFunc(SendMail)).Methods("POST")
-	router.Handle("/send/list/", alice.New().ThenFunc(SendMailList)).Methods("POST")
-	router.Handle("/list/", alice.New().ThenFunc(GetAllMailLists)).Methods("GET")
-	router.Handle("/list/create/", alice.New().ThenFunc(CreateMailList)).Methods("POST")
-	router.Handle("/list/add/", alice.New().ThenFunc(AddToMailList)).Methods("POST")
-	router.Handle("/list/remove/", alice.New().ThenFunc(RemoveFromMailList)).Methods("POST")
-	router.Handle("/list/{id}/", alice.New().ThenFunc(GetMailList)).Methods("GET")
+	router.HandleFunc("/send/", SendMail).Methods("POST")
+	router.HandleFunc("/send/list/", SendMailList).Methods("POST")
+	router.HandleFunc("/list/", GetAllMailLists).Methods("GET")
+	router.HandleFunc("/list/create/", CreateMailList).Methods("POST")
+	router.HandleFunc("/list/add/", AddToMailList).Methods("POST")
+	router.HandleFunc("/list/remove/", RemoveFromMailList).Methods("POST")
+	router.HandleFunc("/list/{id}/", GetMailList).Methods("GET")
 }
 
 /*

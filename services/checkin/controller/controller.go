@@ -6,20 +6,19 @@ import (
 	"github.com/HackIllinois/api/services/checkin/models"
 	"github.com/HackIllinois/api/services/checkin/service"
 	"github.com/gorilla/mux"
-	"github.com/justinas/alice"
 	"net/http"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/", alice.New().ThenFunc(CreateUserCheckin)).Methods("POST")
-	router.Handle("/", alice.New().ThenFunc(UpdateUserCheckin)).Methods("PUT")
-	router.Handle("/", alice.New().ThenFunc(GetCurrentUserCheckin)).Methods("GET")
-	router.Handle("/list/", alice.New().ThenFunc(GetAllCheckedInUsers)).Methods("GET")
-	router.Handle("/{id}/", alice.New().ThenFunc(GetUserCheckin)).Methods("GET")
+	router.HandleFunc("/", CreateUserCheckin).Methods("POST")
+	router.HandleFunc("/", UpdateUserCheckin).Methods("PUT")
+	router.HandleFunc("/", GetCurrentUserCheckin).Methods("GET")
+	router.HandleFunc("/list/", GetAllCheckedInUsers).Methods("GET")
+	router.HandleFunc("/{id}/", GetUserCheckin).Methods("GET")
 
-	router.Handle("/internal/stats/", alice.New().ThenFunc(GetStats)).Methods("GET")
+	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
 }
 
 /*

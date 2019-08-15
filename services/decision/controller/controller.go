@@ -11,19 +11,18 @@ import (
 	"github.com/HackIllinois/api/services/decision/models"
 	"github.com/HackIllinois/api/services/decision/service"
 	"github.com/gorilla/mux"
-	"github.com/justinas/alice"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/", alice.New().ThenFunc(GetCurrentDecision)).Methods("GET")
-	router.Handle("/", alice.New().ThenFunc(UpdateDecision)).Methods("POST")
-	router.Handle("/finalize/", alice.New().ThenFunc(FinalizeDecision)).Methods("POST")
-	router.Handle("/filter/", alice.New().ThenFunc(GetFilteredDecisions)).Methods("GET")
-	router.Handle("/{id}/", alice.New().ThenFunc(GetDecision)).Methods("GET")
+	router.HandleFunc("/", GetCurrentDecision).Methods("GET")
+	router.HandleFunc("/", UpdateDecision).Methods("POST")
+	router.HandleFunc("/finalize/", FinalizeDecision).Methods("POST")
+	router.HandleFunc("/filter/", GetFilteredDecisions).Methods("GET")
+	router.HandleFunc("/{id}/", GetDecision).Methods("GET")
 
-	router.Handle("/internal/stats/", alice.New().ThenFunc(GetStats)).Methods("GET")
+	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
 }
 
 /*

@@ -6,20 +6,19 @@ import (
 	"github.com/HackIllinois/api/services/upload/models"
 	"github.com/HackIllinois/api/services/upload/service"
 	"github.com/gorilla/mux"
-	"github.com/justinas/alice"
 	"net/http"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/resume/upload/", alice.New().ThenFunc(GetUpdateUserResume)).Methods("GET")
-	router.Handle("/resume/", alice.New().ThenFunc(GetCurrentUserResume)).Methods("GET")
-	router.Handle("/resume/{id}/", alice.New().ThenFunc(GetUserResume)).Methods("GET")
+	router.HandleFunc("/resume/upload/", GetUpdateUserResume).Methods("GET")
+	router.HandleFunc("/resume/", GetCurrentUserResume).Methods("GET")
+	router.HandleFunc("/resume/{id}/", GetUserResume).Methods("GET")
 
-	router.Handle("/blobstore/", alice.New().ThenFunc(CreateBlob)).Methods("POST")
-	router.Handle("/blobstore/", alice.New().ThenFunc(UpdateBlob)).Methods("PUT")
-	router.Handle("/blobstore/{id}/", alice.New().ThenFunc(GetBlob)).Methods("GET")
+	router.HandleFunc("/blobstore/", CreateBlob).Methods("POST")
+	router.HandleFunc("/blobstore/", UpdateBlob).Methods("PUT")
+	router.HandleFunc("/blobstore/{id}/", GetBlob).Methods("GET")
 }
 
 /*

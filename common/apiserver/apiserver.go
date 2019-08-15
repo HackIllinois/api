@@ -6,7 +6,6 @@ import (
 	"github.com/HackIllinois/api/common/config"
 	"github.com/HackIllinois/api/common/middleware"
 	"github.com/gorilla/mux"
-	"github.com/justinas/alice"
 	"github.com/thoas/stats"
 	"net/http"
 	"time"
@@ -24,8 +23,8 @@ func StartServer(address string, router *mux.Router, name string, initialize fun
 	stats_middleware := stats.New()
 	router.Use(stats_middleware.Handler)
 
-	router.Handle(fmt.Sprintf("/%s/internal/healthstats/", name), alice.New().ThenFunc(GetHealthStats(stats_middleware))).Methods("GET")
-	router.Handle(fmt.Sprintf("/%s/internal/reload/", name), alice.New().ThenFunc(Reload(initialize))).Methods("GET")
+	router.HandleFunc(fmt.Sprintf("/%s/internal/healthstats/", name), GetHealthStats(stats_middleware)).Methods("GET")
+	router.HandleFunc(fmt.Sprintf("/%s/internal/reload/", name), Reload(initialize)).Methods("GET")
 
 	server := &http.Server{
 		Handler:      router,

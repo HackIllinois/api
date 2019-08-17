@@ -118,8 +118,6 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 
 	user_registration.Data["github"] = user_info.Username
 	user_registration.Data["email"] = user_info.Email
-	user_registration.Data["firstName"] = user_info.FirstName
-	user_registration.Data["lastName"] = user_info.LastName
 
 	user_registration.Data["createdAt"] = time.Now().Unix()
 	user_registration.Data["updatedAt"] = time.Now().Unix()

@@ -1,5 +1,13 @@
 package errors
 
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/HackIllinois/api/common/config"
+	"net/http"
+	"runtime/debug"
+)
+
 /**
 * Status - the HTTP error code to be sent to the client - should be set by constructor
 * Type - the broad category - e.g. DatabaseError, AuthorizationError, InternalError
@@ -13,4 +21,47 @@ type ApiError struct {
 	Type     string `json:"type"`
 	Message  string `json:"message"`
 	RawError string `json:"raw_error,omitempty"`
+}
+
+type ErrorLogEntry struct {
+	ID    string
+	Error interface{}
+	Stack string
+}
+
+func LogError(id string, error_message interface{}) {
+	log_entry := ErrorLogEntry{
+		ID:    id,
+		Error: error_message,
+		Stack: string(debug.Stack()),
+	}
+
+	var error_log_message []byte
+	var err error
+	if config.DEBUG_MODE {
+		error_log_message, err = json.MarshalIndent(log_entry, "", "    ")
+	} else {
+		error_log_message, err = json.Marshal(log_entry)
+	}
+
+	if err != nil {
+		fmt.Printf("Failed to marshal error for id: %v\n", id)
+		return
+	}
+
+	fmt.Printf("ERROR: %v\n", string(error_log_message))
+}
+
+// Writes the given error to the passed HTTP response
+func WriteError(w http.ResponseWriter, r *http.Request, err ApiError) {
+	LogError(r.Header.Get("HackIllinois-Identity"), err)
+
+	// Strip the raw error string if we're not in debug mode
+	if !config.DEBUG_MODE {
+		err.RawError = ""
+	}
+
+	w.WriteHeader(err.Status)
+
+	json.NewEncoder(w).Encode(err)
 }

@@ -37,7 +37,7 @@
 	"NOTIFICATIONS_DB_NAME": "notifications",
 
 	"S3_REGION": "us-east-1",
-	"S3_BUCKET": "hackillinois-upload-2019",
+	"S3_BUCKET": "hackillinois-upload",
 
 	"SNS_REGION": "us-east-1",
 

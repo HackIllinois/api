@@ -108,7 +108,7 @@ func DeleteEvent(id string) (*models.Event, error) {
 	Returns all the events
 */
 func GetAllEvents() (*models.EventList, error) {
-	var events []models.Event
+	events := []models.Event{}
 	// nil implies there are no filters on the query, therefore everything in the "events" collection is returned.
 	err := db.FindAll("events", nil, &events)
 

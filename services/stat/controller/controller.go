@@ -5,15 +5,14 @@ import (
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/stat/service"
 	"github.com/gorilla/mux"
-	"github.com/justinas/alice"
 	"net/http"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/{name}/", alice.New().ThenFunc(GetStat)).Methods("GET")
-	router.Handle("/", alice.New().ThenFunc(GetAllStat)).Methods("GET")
+	router.HandleFunc("/{name}/", GetStat).Methods("GET")
+	router.HandleFunc("/", GetAllStat).Methods("GET")
 
 }
 
@@ -26,7 +25,8 @@ func GetStat(w http.ResponseWriter, r *http.Request) {
 	stat, err := service.GetAggregatedStats(name)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Failed to get statistics for service "+name+"."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Failed to get statistics for service "+name+"."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(stat)
@@ -39,7 +39,8 @@ func GetAllStat(w http.ResponseWriter, r *http.Request) {
 	all_stat, err := service.GetAllAggregatedStats()
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Failed to aggregate statistics."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Failed to aggregate statistics."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(all_stat)

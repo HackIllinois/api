@@ -9,27 +9,26 @@ import (
 	"github.com/HackIllinois/api/services/event/models"
 	"github.com/HackIllinois/api/services/event/service"
 	"github.com/gorilla/mux"
-	"github.com/justinas/alice"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/favorite/", alice.New().ThenFunc(GetEventFavorites)).Methods("GET")
-	router.Handle("/favorite/add/", alice.New().ThenFunc(AddEventFavorite)).Methods("POST")
-	router.Handle("/favorite/remove/", alice.New().ThenFunc(RemoveEventFavorite)).Methods("POST")
+	router.HandleFunc("/favorite/", GetEventFavorites).Methods("GET")
+	router.HandleFunc("/favorite/add/", AddEventFavorite).Methods("POST")
+	router.HandleFunc("/favorite/remove/", RemoveEventFavorite).Methods("POST")
 
-	router.Handle("/{id}/", alice.New().ThenFunc(GetEvent)).Methods("GET")
-	router.Handle("/{id}/", alice.New().ThenFunc(DeleteEvent)).Methods("DELETE")
-	router.Handle("/", alice.New().ThenFunc(CreateEvent)).Methods("POST")
-	router.Handle("/", alice.New().ThenFunc(UpdateEvent)).Methods("PUT")
-	router.Handle("/", alice.New().ThenFunc(GetAllEvents)).Methods("GET")
+	router.HandleFunc("/{id}/", GetEvent).Methods("GET")
+	router.HandleFunc("/{id}/", DeleteEvent).Methods("DELETE")
+	router.HandleFunc("/", CreateEvent).Methods("POST")
+	router.HandleFunc("/", UpdateEvent).Methods("PUT")
+	router.HandleFunc("/", GetAllEvents).Methods("GET")
 
-	router.Handle("/track/", alice.New().ThenFunc(MarkUserAsAttendingEvent)).Methods("POST")
-	router.Handle("/track/event/{id}/", alice.New().ThenFunc(GetEventTrackingInfo)).Methods("GET")
-	router.Handle("/track/user/{id}/", alice.New().ThenFunc(GetUserTrackingInfo)).Methods("GET")
+	router.HandleFunc("/track/", MarkUserAsAttendingEvent).Methods("POST")
+	router.HandleFunc("/track/event/{id}/", GetEventTrackingInfo).Methods("GET")
+	router.HandleFunc("/track/user/{id}/", GetUserTrackingInfo).Methods("GET")
 
-	router.Handle("/internal/stats/", alice.New().ThenFunc(GetStats)).Methods("GET")
+	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
 }
 
 /*
@@ -41,7 +40,8 @@ func GetEvent(w http.ResponseWriter, r *http.Request) {
 	event, err := service.GetEvent(id)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not fetch the event details."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch the event details."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(event)
@@ -58,7 +58,8 @@ func DeleteEvent(w http.ResponseWriter, r *http.Request) {
 	event, err := service.DeleteEvent(id)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not delete either the event, event trackers, or user trackers, or an intermediary subroutine failed."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not delete either the event, event trackers, or user trackers, or an intermediary subroutine failed."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(event)
@@ -71,7 +72,8 @@ func GetAllEvents(w http.ResponseWriter, r *http.Request) {
 	event_list, err := service.GetAllEvents()
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get all events."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get all events."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(event_list)
@@ -89,13 +91,15 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	err := service.CreateEvent(event.ID, event)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not create new event."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not create new event."))
+		return
 	}
 
 	updated_event, err := service.GetEvent(event.ID)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get updated event."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated event."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(updated_event)
@@ -111,13 +115,15 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	err := service.UpdateEvent(event.ID, event)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not update the event."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the event."))
+		return
 	}
 
 	updated_event, err := service.GetEvent(event.ID)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get updated event details."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated event details."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(updated_event)
@@ -132,7 +138,8 @@ func GetEventTrackingInfo(w http.ResponseWriter, r *http.Request) {
 	tracker, err := service.GetEventTracker(id)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get event tracker."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get event tracker."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(tracker)
@@ -147,7 +154,8 @@ func GetUserTrackingInfo(w http.ResponseWriter, r *http.Request) {
 	tracker, err := service.GetUserTracker(id)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get user tracker."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user tracker."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(tracker)
@@ -163,29 +171,34 @@ func MarkUserAsAttendingEvent(w http.ResponseWriter, r *http.Request) {
 	is_checkedin, err := service.IsUserCheckedIn(tracking_info.UserID)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not determine check-in status of user."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not determine check-in status of user."))
+		return
 	}
 
 	if !is_checkedin {
-		panic(errors.AttributeMismatchError("User must be checked-in to attend event.", "User must be checked-in to attend event."))
+		errors.WriteError(w, r, errors.AttributeMismatchError("User must be checked-in to attend event.", "User must be checked-in to attend event."))
+		return
 	}
 
 	err = service.MarkUserAsAttendingEvent(tracking_info.EventID, tracking_info.UserID)
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not mark user as attending the event."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not mark user as attending the event."))
+		return
 	}
 
 	event_tracker, err := service.GetEventTracker(tracking_info.EventID)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get event trackers."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get event trackers."))
+		return
 	}
 
 	user_tracker, err := service.GetUserTracker(tracking_info.UserID)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get user trackers."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user trackers."))
+		return
 	}
 
 	tracking_status := &models.TrackingStatus{
@@ -205,7 +218,8 @@ func GetEventFavorites(w http.ResponseWriter, r *http.Request) {
 	favorites, err := service.GetEventFavorites(id)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get user's event favourites."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's event favourites."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(favorites)
@@ -223,13 +237,15 @@ func AddEventFavorite(w http.ResponseWriter, r *http.Request) {
 	err := service.AddEventFavorite(id, event_favorite_modification.EventID)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not add an event favorite for the current user."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not add an event favorite for the current user."))
+		return
 	}
 
 	favorites, err := service.GetEventFavorites(id)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not get updated user event favorites."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated user event favorites."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(favorites)
@@ -247,13 +263,15 @@ func RemoveEventFavorite(w http.ResponseWriter, r *http.Request) {
 	err := service.RemoveEventFavorite(id, event_favorite_modification.EventID)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not remove an event favorite for the current user."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not remove an event favorite for the current user."))
+		return
 	}
 
 	favorites, err := service.GetEventFavorites(id)
 
 	if err != nil {
-		panic(errors.DatabaseError(err.Error(), "Could not fetch updated event favourites for the user (post-removal)."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated event favourites for the user (post-removal)."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(favorites)
@@ -266,7 +284,8 @@ func GetStats(w http.ResponseWriter, r *http.Request) {
 	stats, err := service.GetStats()
 
 	if err != nil {
-		panic(errors.InternalError(err.Error(), "Could not fetch event service statistics."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not fetch event service statistics."))
+		return
 	}
 
 	json.NewEncoder(w).Encode(stats)

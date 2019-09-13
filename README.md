@@ -40,7 +40,9 @@ After downloading the API source code you will want to build the entire reposito
 ```
 make setup
 ```
-You should see your `Admin` token near the bottom of the output.
+You should see your `Admin` token near the bottom of the output. If this process hangs, ensure that `mongod` is running.
+
+This `Admin` JWT should be passed as the `Authorization` header when making a request via `curl`, `Postman`, or a similar tool.
 
 #### Useful tools for development
 There are a couple other useful but not necessary tools for working on the API. The first is a GUI tool for viewing and modifying the database. There are many options including [MongoDB Compass](https://www.mongodb.com/products/compass) and [Robo 3T](https://robomongo.org/). You will also want to install [Postman](https://www.getpostman.com/) for making requests to the API when testing.

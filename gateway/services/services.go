@@ -2,10 +2,11 @@ package services
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 var ServiceLocations map[string]string
@@ -38,7 +39,7 @@ var Routes = arbor.RouteCollection{
 }
 
 func Gateway(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "The API Gateway Lives")
+	fmt.Fprintf(w, "The API Gateway Lives (found by the king)")
 }
 
 func RegisterAPIs() arbor.RouteCollection {

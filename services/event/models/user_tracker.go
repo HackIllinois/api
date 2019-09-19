@@ -2,5 +2,5 @@ package models
 
 type UserTracker struct {
 	UserID string   `json:"userId"`
-	Events []string `json:"events"`
+	Events map[string]int `json:"events"`
 }

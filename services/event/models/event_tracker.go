@@ -2,5 +2,5 @@ package models
 
 type EventTracker struct {
 	EventID string   `json:"eventId"`
-	Users   []string `json:"users"`
+	Users   map[string]int `json:"users"`
 }

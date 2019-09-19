@@ -2,15 +2,16 @@ package tests
 
 import (
 	"fmt"
-	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/event/config"
-	"github.com/HackIllinois/api/services/event/models"
-	"github.com/HackIllinois/api/services/event/service"
 	"math"
 	"os"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/services/event/config"
+	"github.com/HackIllinois/api/services/event/models"
+	"github.com/HackIllinois/api/services/event/service"
 )
 
 var db database.Database
@@ -74,7 +75,7 @@ func SetupTestDB(t *testing.T) {
 
 	event_tracker := models.EventTracker{
 		EventID: "testid",
-		Users:   []string{},
+		Users:   map[string]int{},
 	}
 
 	err = db.Insert("eventtrackers", &event_tracker)
@@ -341,7 +342,7 @@ func TestDeleteEventService(t *testing.T) {
 	db.FindAll("usertrackers", nil, &user_trackers)
 
 	for _, user_tracker := range user_trackers {
-		for _, event := range user_tracker.Events {
+		for event, _ := range user_tracker.Events {
 			if event == event_id {
 				t.Errorf("Found event in the usertracker %v.", user_tracker)
 			}
@@ -430,7 +431,7 @@ func TestMarkUserAsAttendingEventService(t *testing.T) {
 
 	expected_event_tracker := models.EventTracker{
 		EventID: "testid",
-		Users:   []string{"testuser"},
+		Users:   map[string]int{"testuser": int(time.Now().Unix())},
 	}
 
 	if !reflect.DeepEqual(event_tracker, &expected_event_tracker) {
@@ -445,7 +446,7 @@ func TestMarkUserAsAttendingEventService(t *testing.T) {
 
 	expected_user_tracker := models.UserTracker{
 		UserID: "testuser",
-		Events: []string{"testid"},
+		Events: map[string]int{"testid": int(time.Now().Unix())},
 	}
 
 	if !reflect.DeepEqual(user_tracker, &expected_user_tracker) {
@@ -482,7 +483,7 @@ func TestMarkUserAsAttendingEventErrorService(t *testing.T) {
 
 	expected_event_tracker := models.EventTracker{
 		EventID: "testid",
-		Users:   []string{"testuser"},
+		Users:   map[string]int{"testuser": int(time.Now().Unix())},
 	}
 
 	if !reflect.DeepEqual(event_tracker, &expected_event_tracker) {
@@ -497,7 +498,7 @@ func TestMarkUserAsAttendingEventErrorService(t *testing.T) {
 
 	expected_user_tracker := models.UserTracker{
 		UserID: "testuser",
-		Events: []string{"testid"},
+		Events: map[string]int{"testid": int(time.Now().Unix())},
 	}
 
 	if !reflect.DeepEqual(user_tracker, &expected_user_tracker) {

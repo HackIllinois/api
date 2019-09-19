@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/HackIllinois/api/common/database"
@@ -94,8 +95,8 @@ func DeleteEvent(id string) (*models.Event, error) {
 	// All the updates are individually atomic
 
 	update_expression := database.QuerySelector{
-		"$pull": database.QuerySelector{
-			"events": id,
+		"$unset": database.QuerySelector{
+			"events": fmt.Sprintf("events.%s", id),
 		},
 	}
 
@@ -150,7 +151,7 @@ func CreateEvent(id string, event models.Event) error {
 
 	event_tracker := models.EventTracker{
 		EventID: id,
-		Users:   []string{},
+		Users:   map[string]int{},
 	}
 
 	err = db.Insert("eventtrackers", &event_tracker)
@@ -191,7 +192,7 @@ func GetEventTracker(event_id string) (*models.EventTracker, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println(tracker.EventID, tracker.Users)
 	return &tracker, nil
 }
 
@@ -210,12 +211,12 @@ func GetUserTracker(user_id string) (*models.UserTracker, error) {
 		if err == database.ErrNotFound {
 			return &models.UserTracker{
 				UserID: user_id,
-				Events: []string{},
+				Events: map[string]int{},
 			}, nil
 		}
 		return nil, err
 	}
-
+	fmt.Println(tracker.UserID, tracker.Events)
 	return &tracker, nil
 }
 
@@ -230,7 +231,7 @@ func IsUserAttendingEvent(event_id string, user_id string) (bool, error) {
 		return false, err
 	}
 
-	for _, id := range tracker.Users {
+	for id, _ := range tracker.Users {
 		if user_id == id {
 			return true, nil
 		}
@@ -263,14 +264,15 @@ func MarkUserAsAttendingEvent(event_id string, user_id string) error {
 	if !is_event_active {
 		return errors.New("People cannot be checked-in for the event at this time.")
 	}
-
+	//get the current time of check-in
+	current_time := time.Now().Unix()
 	event_selector := database.QuerySelector{
 		"eventid": event_id,
 	}
-
+	//update event tracker check-in list with (user_id, current_time)
 	event_modifier := database.QuerySelector{
-		"$addToSet": database.QuerySelector{
-			"users": user_id,
+		"$set": database.QuerySelector{
+			fmt.Sprintf("users.%s", user_id): current_time,
 		},
 	}
 
@@ -283,19 +285,19 @@ func MarkUserAsAttendingEvent(event_id string, user_id string) error {
 	user_selector := database.QuerySelector{
 		"userid": user_id,
 	}
-
+	//update user tracker list of check-ins with (event_id, current_time)
 	user_modifier := database.QuerySelector{
-		"$addToSet": database.QuerySelector{
-			"events": event_id,
+		"$set": database.QuerySelector{
+			fmt.Sprintf("events.%s", event_id): current_time,
 		},
 	}
 
 	err = db.Update("usertrackers", user_selector, &user_modifier)
-
+	// if there is no previous usertracker, create new one initialized with new event
 	if err == database.ErrNotFound {
 		user_tracker := models.UserTracker{
 			UserID: user_id,
-			Events: []string{event_id},
+			Events: map[string]int{event_id: int(current_time)},
 		}
 		err = db.Insert("usertrackers", &user_tracker)
 	}

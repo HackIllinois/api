@@ -2,12 +2,13 @@ package service
 
 import (
 	"errors"
+	"strconv"
+	"strings"
+
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 	"gopkg.in/go-playground/validator.v9"
-	"strconv"
-	"strings"
 )
 
 var validate *validator.Validate
@@ -84,6 +85,21 @@ func UpdateUserRegistration(id string, user_registration models.UserRegistration
 
 	selector := database.QuerySelector{"id": id}
 
+	err = db.Update("attendees", selector, &user_registration)
+
+	return err
+}
+
+// ADDED, gets called by the controller.
+func PatchUserRegistration(id string, user_registration models.UserRegistration) error {
+	err := user_registration.Validate()
+
+	if err != nil {
+		return err
+	}
+
+	selector := database.QuerySelector{"id": id}
+	// ?? Is it correct to use Update to update only some of the fields
 	err = db.Update("attendees", selector, &user_registration)
 
 	return err

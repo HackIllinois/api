@@ -2,14 +2,16 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 	"github.com/HackIllinois/api/services/registration/service"
 	"github.com/gorilla/mux"
-	"net/http"
-	"time"
 )
 
 func SetupController(route *mux.Route) {
@@ -20,6 +22,8 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/attendee/", GetCurrentUserRegistration).Methods("GET")
 	router.HandleFunc("/attendee/", CreateCurrentUserRegistration).Methods("POST")
 	router.HandleFunc("/attendee/", UpdateCurrentUserRegistration).Methods("PUT")
+	// ADDED
+	router.HandleFunc("/attendee/", PatchCurrentUserRegistration).Methods("PATCH")
 	router.HandleFunc("/filter/", GetFilteredUserRegistrations).Methods("GET")
 
 	router.HandleFunc("/mentor/", GetCurrentMentorRegistration).Methods("GET")
@@ -238,6 +242,78 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_registration)
+}
+
+func PatchCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("Testing !")
+	id := r.Header.Get("HackIllinois-Identity")
+
+	if id == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		return
+	}
+
+	// Create variable where user data are to be stored.
+	// ?? Do I need to create new data store, or just modify the values in the current data store?
+	user_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
+	// Decode http request and write into user_registration
+	err := json.NewDecoder(r.Body).Decode(&user_registration)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not decode user registration information. Possible failure in JSON validation, or invalid registration format."))
+		return
+	}
+	// ?? What happens to original entry in the database? deleted?
+	user_registration.Data["id"] = id
+
+	// ?? Retrieve new user info?
+	user_info, err := service.GetUserInfo(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not get user info."))
+		return
+	}
+
+	original_registration, err := service.GetUserRegistration(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's original registration."))
+		return
+	}
+
+	// ?? What happens if the field doesn't exist
+	user_registration.Data["github"] = user_info.Username
+	user_registration.Data["email"] = user_info.Email
+	user_registration.Data["firstName"] = user_info.FirstName
+	user_registration.Data["lastName"] = user_info.LastName
+
+	user_registration.Data["createdAt"] = original_registration.Data["createdAt"]
+	user_registration.Data["updatedAt"] = time.Now().Unix()
+
+	err = service.PatchUserRegistration(id, user_registration)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not update user's registration."))
+		return
+	}
+
+	updated_registration, err := service.GetUserRegistration(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch user's updated registration."))
+		return
+	}
+
+	mail_template := "registration_update"
+	err = service.SendUserMail(id, mail_template)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not send registration update email."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(updated_registration)
+	return
 }
 
 /*

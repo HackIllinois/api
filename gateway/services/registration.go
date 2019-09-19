@@ -1,12 +1,14 @@
 package services
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
 	"github.com/HackIllinois/api/gateway/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 const RegistrationFormat string = "JSON"
@@ -29,6 +31,12 @@ var RegistrationRoutes = arbor.RouteCollection{
 		"POST",
 		"/registration/attendee/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(CreateRegistration).ServeHTTP,
+	},
+	arbor.Route{
+		"PatchCurrentUserRegistration",
+		"PATCH",
+		"/registration/attendee/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(PatchRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentUserRegistration",
@@ -90,4 +98,10 @@ func CreateRegistration(w http.ResponseWriter, r *http.Request) {
 
 func UpdateRegistration(w http.ResponseWriter, r *http.Request) {
 	arbor.PUT(w, config.REGISTRATION_SERVICE+r.URL.String(), RegistrationFormat, "", r)
+}
+
+// ADDED THIS
+func PatchRegistration(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("Made it to gateway")
+	arbor.PATCH(w, config.REGISTRATION_SERVICE+r.URL.String(), RegistrationFormat, "", r)
 }

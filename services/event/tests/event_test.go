@@ -341,7 +341,7 @@ func TestDeleteEventService(t *testing.T) {
 	db.FindAll("usertrackers", nil, &user_trackers)
 
 	for _, user_tracker := range user_trackers {
-		for event, _ := range user_tracker.Events {
+		for event := range user_tracker.Events {
 			if event == event_id {
 				t.Errorf("Found event in the usertracker %v.", user_tracker)
 			}

@@ -229,7 +229,7 @@ func IsUserAttendingEvent(event_id string, user_id string) (bool, error) {
 		return false, err
 	}
 
-	for id, _ := range tracker.Users {
+	for id := range tracker.Users {
 		if user_id == id {
 			return true, nil
 		}

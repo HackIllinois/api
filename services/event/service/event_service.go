@@ -192,7 +192,6 @@ func GetEventTracker(event_id string) (*models.EventTracker, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(tracker.EventID, tracker.Users)
 	return &tracker, nil
 }
 
@@ -216,7 +215,6 @@ func GetUserTracker(user_id string) (*models.UserTracker, error) {
 		}
 		return nil, err
 	}
-	fmt.Println(tracker.UserID, tracker.Events)
 	return &tracker, nil
 }
 

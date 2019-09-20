@@ -416,6 +416,8 @@ func TestUpdateEventService(t *testing.T) {
 func TestMarkUserAsAttendingEventService(t *testing.T) {
 	SetupTestDB(t)
 
+	// add tolerance to comparing checkin times
+	var TestTimestampTolerance = 2
 	err := service.MarkUserAsAttendingEvent("testid", "testuser")
 
 	if err != nil {
@@ -430,11 +432,21 @@ func TestMarkUserAsAttendingEventService(t *testing.T) {
 
 	expected_event_tracker := models.EventTracker{
 		EventID: "testid",
-		Users:   map[string]int{"testuser": int(time.Now().Unix())},
+		Users:   map[string]int{"testuser": int(TestTime)},
 	}
 
-	if !reflect.DeepEqual(event_tracker, &expected_event_tracker) {
-		t.Errorf("Wrong tracker info. Expected %v, got %v", expected_event_tracker, event_tracker)
+	if !(event_tracker.EventID == expected_event_tracker.EventID) {
+		t.Errorf("Wrong tracker event. Expected %s, got %s", expected_event_tracker.EventID, event_tracker.EventID)
+	}
+
+	for id, timestamp := range event_tracker.Users {
+		expected_timestamp, err := expected_event_tracker.Users[id]
+		if !err {
+			t.Errorf("Wrong tracker info. ID %s does not exist in expected", id)
+		}
+		if expected_timestamp-timestamp > TestTimestampTolerance {
+			t.Errorf("Wrong tracker info. Expected timestamp %d, got %d", expected_timestamp, timestamp)
+		}
 	}
 
 	user_tracker, err := service.GetUserTracker("testuser")
@@ -445,11 +457,21 @@ func TestMarkUserAsAttendingEventService(t *testing.T) {
 
 	expected_user_tracker := models.UserTracker{
 		UserID: "testuser",
-		Events: map[string]int{"testid": int(time.Now().Unix())},
+		Events: map[string]int{"testid": int(TestTime)},
 	}
 
-	if !reflect.DeepEqual(user_tracker, &expected_user_tracker) {
-		t.Errorf("Wrong tracker info. Expected %v, got %v", expected_user_tracker, user_tracker)
+	if !(user_tracker.UserID == expected_user_tracker.UserID) {
+		t.Errorf("Wrong tracker user. Expected %s, got %s", expected_user_tracker.UserID, user_tracker.UserID)
+	}
+
+	for id, timestamp := range user_tracker.Events {
+		expected_timestamp, err := expected_user_tracker.Events[id]
+		if !err {
+			t.Errorf("Wrong tracker info. ID %s does not exist in expected", id)
+		}
+		if expected_timestamp-timestamp > TestTimestampTolerance {
+			t.Errorf("Wrong tracker info. Expected timestamp %d, got %d", expected_timestamp, timestamp)
+		}
 	}
 
 	CleanupTestDB(t)

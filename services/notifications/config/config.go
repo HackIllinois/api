@@ -17,6 +17,8 @@ var SNS_REGION string
 var ANDROID_PLATFORM_ARN string
 var IOS_PLATFORM_ARN string
 
+var PLATFORM_ARNS map[string]string
+
 var AUTH_SERVICE string
 
 func Initialize() error {
@@ -50,13 +52,7 @@ func Initialize() error {
 		return err
 	}
 
-	ANDROID_PLATFORM_ARN, err = cfg_loader.Get("ANDROID_PLATFORM_ARN")
-
-	if err != nil {
-		return err
-	}
-
-	IOS_PLATFORM_ARN, err = cfg_loader.Get("IOS_PLATFORM_ARN")
+	err = cfg_loader.ParseInto("PLATFORM_ARNS", &PLATFORM_ARNS)
 
 	if err != nil {
 		return err

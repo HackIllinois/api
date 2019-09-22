@@ -311,12 +311,9 @@ func SetUserDevices(id string, devices []string) error {
 func RegisterDeviceToUser(token string, platform string, id string) error {
 	var platform_arn string
 
-	switch strings.ToLower(platform) {
-	case "android":
-		platform_arn = config.ANDROID_PLATFORM_ARN
-	case "ios":
-		platform_arn = config.IOS_PLATFORM_ARN
-	default:
+	platform_arn, exists := config.PLATFORM_ARNS[strings.ToLower(platform)]
+
+	if !exists {
 		return errors.New("Invalid platform")
 	}
 

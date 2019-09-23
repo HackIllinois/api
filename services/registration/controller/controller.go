@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"reflect"
 	"time"
 
 	"github.com/HackIllinois/api/common/datastore"
@@ -254,40 +255,55 @@ func PatchCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create variable where user data are to be stored.
-	// ?? Do I need to create new data store, or just modify the values in the current data store?
 	user_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
+
 	// Decode http request and write into user_registration
 	err := json.NewDecoder(r.Body).Decode(&user_registration)
+
+	// DEBUG Print out decoded values.
+	fmt.Printf("\nuser_registration: %+v\n", user_registration.Data)
+	fmt.Println()
+
+	fmt.Printf("NAME: %v\n", user_registration.Data["firstName"])
+
+	fmt.Printf("type of github entry: %v\n", reflect.TypeOf(user_registration.Data["github"]))
+	if len(user_registration.Data["github"].(string)) > 0 {
+		fmt.Printf("GITHUB: %v\n", user_registration.Data["github"])
+	} else {
+		fmt.Printf("Github entry string has length 0!\n")
+	}
 
 	if err != nil {
 		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not decode user registration information. Possible failure in JSON validation, or invalid registration format."))
 		return
 	}
-	// ?? What happens to original entry in the database? deleted?
+
 	user_registration.Data["id"] = id
 
-	// ?? Retrieve new user info?
-	user_info, err := service.GetUserInfo(id)
+	// I think the following lines are not required for our patch method.
+	// user_info, err := service.GetUserInfo(id)
 
-	if err != nil {
-		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not get user info."))
-		return
-	}
+	// // DEBUG: Print out user info
+	// fmt.Printf("\nuser_info: %+v\n", user_info)
 
-	original_registration, err := service.GetUserRegistration(id)
+	// if err != nil {
+	// 	errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not get user info."))
+	// 	return
+	// }
 
-	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's original registration."))
-		return
-	}
+	// original_registration, err := service.GetUserRegistration(id)
 
-	// ?? What happens if the field doesn't exist
-	user_registration.Data["github"] = user_info.Username
-	user_registration.Data["email"] = user_info.Email
-	user_registration.Data["firstName"] = user_info.FirstName
-	user_registration.Data["lastName"] = user_info.LastName
+	// if err != nil {
+	// 	errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's original registration."))
+	// 	return
+	// }
 
-	user_registration.Data["createdAt"] = original_registration.Data["createdAt"]
+	// user_registration.Data["github"] = user_info.Username
+	// user_registration.Data["email"] = user_info.Email
+	// user_registration.Data["firstName"] = user_info.FirstName
+	// user_registration.Data["lastName"] = user_info.LastName
+
+	// user_registration.Data["createdAt"] = original_registration.Data["createdAt"]
 	user_registration.Data["updatedAt"] = time.Now().Unix()
 
 	err = service.PatchUserRegistration(id, user_registration)

@@ -2,7 +2,9 @@ package database
 
 import (
 	"crypto/tls"
+	"fmt"
 	"net"
+	"reflect"
 	"time"
 
 	"github.com/HackIllinois/api/common/config"
@@ -176,12 +178,19 @@ func (db *MongoDatabase) Upsert(collection_name string, selector interface{}, up
 	Finds an item based on the given selector and updates it with the data in update
 */
 func (db *MongoDatabase) Update(collection_name string, selector interface{}, update interface{}) error {
+	// DEBUG
+	fmt.Println("db.Update gets called!")
 	current_session := db.GetSession()
 	defer current_session.Close()
 
 	collection := current_session.DB(db.name).C(collection_name)
 
+	fmt.Println("About to set new firstName")
+	fmt.Println("type of update: ", reflect.TypeOf(update))
+	fmt.Println("Update: ", update)
 	err := collection.Update(selector, update)
+	// Not working
+	// err := collection.Update(selector, "{ $set: { firstName: \"NewName!!!\" }}")
 
 	return convertMgoError(err)
 }

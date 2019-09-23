@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -99,7 +100,31 @@ func PatchUserRegistration(id string, user_registration models.UserRegistration)
 	}
 
 	selector := database.QuerySelector{"id": id}
-	// ?? Is it correct to use Update to update only some of the fields
+
+	fmt.Println("Before deleting: ")
+	for k, v := range user_registration.Data {
+		fmt.Println("k:", k, " v:", v)
+	}
+
+	for k, v := range user_registration.Data {
+		v_as_string, ok := v.(string)
+		if ok && len(v_as_string) == 0 {
+			delete(user_registration.Data, k)
+		}
+	}
+	fmt.Println("After deleting empty entries: ")
+	for k, v := range user_registration.Data {
+		fmt.Println("k:", k, " v:", v)
+	}
+
+	// jsonString, err := json.Marshal(user_registration.Data)
+	// if err != nil {
+	// 	fmt.Println("Cannot convert registration info into json string.")
+	// } else {
+	// 	fmt.Println("jsonString:", string(jsonString))
+	// }
+	// jsonString_string := string(jsonString)
+
 	err = db.Update("attendees", selector, &user_registration)
 
 	return err

@@ -32,6 +32,8 @@ github.com/thoas/stats v0.0.0-20181218120333-e97827ebd7ca h1:Ju3LQGLQHCUv1yB2WwB
 github.com/thoas/stats v0.0.0-20181218120333-e97827ebd7ca/go.mod h1:GkZsNBOco11YY68OnXUARbSl26IOXXAeYf6ZKmSZR2M=
 golang.org/x/net v0.0.0-20171004034648-a04bdaca5b32 h1:NjAulLPqFTaOxQu5S4qUMqscSu+mQdu+wMY0nfqSkuk=
 golang.org/x/net v0.0.0-20171004034648-a04bdaca5b32/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+gopkg.in/go-playground/assert.v1 v1.2.1 h1:xoYuJVE7KT85PYWrN730RguIQO0ePzVRfFMXadIrXTM=
+gopkg.in/go-playground/assert.v1 v1.2.1/go.mod h1:9RXL0bg/zibRAgZUYszZSwO/z8Y/a8bDuhia5mkpMnE=
 gopkg.in/go-playground/validator.v9 v9.25.0 h1:Q3c4LgUofOEtz0wCE18Q2qwDkATLHLBUOmTvqjNCWkM=
 gopkg.in/go-playground/validator.v9 v9.25.0/go.mod h1:+c9/zcJMFNgbLvly1L1V+PpxWdVbfP1avr/N00E2vyQ=
 gopkg.in/jarcoal/httpmock.v1 v1.0.0-20180719183105-8007e27cdb32/go.mod h1:d3R+NllX3X5e0zlG1Rful3uLvsGC/Q3OHut5464DEQw=

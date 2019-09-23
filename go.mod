@@ -12,6 +12,7 @@ require (
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/levigross/grequests v0.0.0-20181123014746-f3f67e7783bb
 	github.com/thoas/stats v0.0.0-20181218120333-e97827ebd7ca
+	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.25.0
 	gopkg.in/mgo.v2 v2.0.0-20180705113604-9856a29383ce
 )

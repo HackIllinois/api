@@ -245,7 +245,7 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 }
 
 func PatchCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Testing !")
+	fmt.Printf("Gets to the controller")
 	id := r.Header.Get("HackIllinois-Identity")
 
 	if id == "" {

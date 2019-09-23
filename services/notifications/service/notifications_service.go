@@ -396,7 +396,7 @@ func UnregisterDeviceFromUser(token string, platform string, id string) error {
 
 	for i := 0; i < len(devices); i++ {
 	    if devices[i] == device_arn {
-	        devices = devices[:i, i+1:]
+	        devices = append(devices[:i], devices[i+1:]...)
 	    }
 	}
 

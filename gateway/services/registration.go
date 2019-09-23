@@ -39,7 +39,7 @@ var RegistrationRoutes = arbor.RouteCollection{
 	arbor.Route{
 		"GetFilteredUserRegistrations",
 		"GET",
-		"/registration/filter/",
+		"/registration/attendee/filter/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetRegistration).ServeHTTP,
 	},
 	arbor.Route{

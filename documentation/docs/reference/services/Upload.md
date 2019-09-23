@@ -109,3 +109,19 @@ Response format:
 	}
 }
 ```
+
+DELETE /upload/blobstore/ID/
+-----------
+
+Endpoint to delete the blob with name `ID`. It removes the `id` `ID` from the event trackers, and every user's tracker.
+
+Response format:
+```
+{
+	"id": "exampleblob",
+	"data": {
+		"thing1": "hi",
+		"thing2": "hello"
+	}
+}
+```

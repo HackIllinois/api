@@ -50,6 +50,12 @@ var EventRoutes = arbor.RouteCollection{
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserTrackingInfo).ServeHTTP,
 	},
 	arbor.Route{
+		"GetFilteredEvents",
+		"GET",
+		"/event/filter/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetEvent).ServeHTTP,
+	},
+	arbor.Route{
 		"GetEvent",
 		"GET",
 		"/event/{name}/",
@@ -119,4 +125,8 @@ func AddEventFavorite(w http.ResponseWriter, r *http.Request) {
 
 func RemoveEventFavorite(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
+}
+
+func GetFilteredEvents(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }

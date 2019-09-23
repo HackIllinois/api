@@ -9,6 +9,9 @@ import (
 	"github.com/HackIllinois/api/services/event/config"
 	"github.com/HackIllinois/api/services/event/models"
 	"gopkg.in/go-playground/validator.v9"
+	"strings"
+	"encoding/json"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var validate *validator.Validate
@@ -102,6 +105,39 @@ func DeleteEvent(id string) (*models.Event, error) {
 	_, err = db.UpdateAll("usertrackers", nil, &update_expression)
 
 	return event, err
+}
+
+func GetFilteredEvents(parameters map[string][]string) (*models.FilteredEvents, error) {
+	query := make(map[string]interface{})
+	for key, values := range parameters {
+		if len(values) > 1 {
+			return nil, errors.New("Multiple usage of key " + key)
+		}
+
+		key = strings.ToLower(key)
+	
+		if key == "starttimegt" {
+
+			var bsonMap bson. M
+			filter := `{"startTime" : {"$gt" : values[0]}}`
+			err := json. Unmarshal([]byte(filter), &bsonMap)
+			if (err == nil) {
+				return nil, errors.New("JSON error")
+			}
+			query[key] = bsonMap
+		} else {
+			query[key] = database.QuerySelector{"$in": strings.Split(values[0], ",")}
+		}
+	}
+
+	var filtered_events models.FilteredEvents
+	err := db.FindAll("events", query, &filtered_events.Events)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &filtered_events, nil
 }
 
 /*

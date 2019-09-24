@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -91,7 +90,9 @@ func UpdateUserRegistration(id string, user_registration models.UserRegistration
 	return err
 }
 
-// ADDED, gets called by the controller.
+/*
+	Patches the registration associated with the given user id
+*/
 func PatchUserRegistration(id string, user_registration models.UserRegistration) error {
 	err := user_registration.Validate()
 
@@ -101,31 +102,15 @@ func PatchUserRegistration(id string, user_registration models.UserRegistration)
 
 	selector := database.QuerySelector{"id": id}
 
-	fmt.Println("Before deleting: ")
-	for k, v := range user_registration.Data {
-		fmt.Println("k:", k, " v:", v)
-	}
-
+	// Delete fields the user didn't fill in.
 	for k, v := range user_registration.Data {
 		v_as_string, ok := v.(string)
 		if ok && len(v_as_string) == 0 {
 			delete(user_registration.Data, k)
 		}
 	}
-	fmt.Println("After deleting empty entries: ")
-	for k, v := range user_registration.Data {
-		fmt.Println("k:", k, " v:", v)
-	}
 
-	// jsonString, err := json.Marshal(user_registration.Data)
-	// if err != nil {
-	// 	fmt.Println("Cannot convert registration info into json string.")
-	// } else {
-	// 	fmt.Println("jsonString:", string(jsonString))
-	// }
-	// jsonString_string := string(jsonString)
-
-	err = db.Update("attendees", selector, &user_registration)
+	err = db.Update("attendees", selector, &user_registration.Data)
 
 	return err
 }

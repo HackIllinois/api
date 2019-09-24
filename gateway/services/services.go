@@ -39,7 +39,7 @@ var Routes = arbor.RouteCollection{
 }
 
 func Gateway(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "The API Gateway Lives (found by the king)")
+	fmt.Fprintf(w, "The API Gateway Lives")
 }
 
 func RegisterAPIs() arbor.RouteCollection {

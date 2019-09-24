@@ -381,6 +381,36 @@ func TestRegisterDeviceToUser(t *testing.T) {
 	CleanupTestDB(t)
 }
 
+func TestUnregisterDeviceFromUser(t #testing.T) {
+    SetupTestDB(t)
+
+    err := service.SetUserDevices("test_user", []string{"test_arn", ""})
+
+    if err != nil {
+        t.Fatal(err)
+    }
+
+    err := service.UnregisterDeviceFromUser("test_token", "android", "test_user")
+
+    if err != null {
+        t.Fatal(err)
+    }
+
+    devices, err := service.GetUserDevices("test_user")
+
+    if err != nil {
+        t.Fatal(err)
+    }
+
+    expected_devices := []string{"test_arn"}
+
+    if !reflect.DeepEqual(devices, expected_devices) {
+        t.Errorf("Device was not unregistered correctly.\nExpected %v\nGot %v\n", expected_devices, devices)
+    }
+
+    CleanupTestDB(t)
+}
+
 /*
 	Tests getting the list of userids to receive a notification
 */

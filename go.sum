@@ -8,6 +8,8 @@ github.com/go-playground/locales v0.12.1 h1:2FITxuFt/xuCNP1Acdhv62OzaCiviiE4kotf
 github.com/go-playground/locales v0.12.1/go.mod h1:IUMDtCfWo/w/mtMfIE/IG2K+Ey3ygWanZIBtBW0W2TM=
 github.com/go-playground/universal-translator v0.16.0 h1:X++omBR/4cE2MNg91AoC3rmGrCjJ8eAeUP/K/EKx4DM=
 github.com/go-playground/universal-translator v0.16.0/go.mod h1:1AnU7NaIRDWWzGEKwgtJRd2xk99HeFyHw3yid4rvQIY=
+github.com/go-stack/stack v1.8.0 h1:5SgMzNM5HxrEjV0ww2lTmX6E2Izsfxas4+YHWRs3Lsk=
+github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
 github.com/golang/snappy v0.0.0-20170215233205-553a64147049 h1:K9KHZbXKpGydfDN0aZrsoHpLJlZsBrGMFWbgLDGnPZk=
 github.com/golang/snappy v0.0.0-20170215233205-553a64147049/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
 github.com/google/go-querystring v1.0.0 h1:Xkwi/a1rcvNg1PPYe5vI8GbeBY/jrVuDX5ASuANWTrk=
@@ -30,6 +32,8 @@ github.com/syndtr/goleveldb v0.0.0-20170725064836-b89cc31ef797 h1:eDCldGfZxcrXnT
 github.com/syndtr/goleveldb v0.0.0-20170725064836-b89cc31ef797/go.mod h1:Z4AUp2Km+PwemOoO/VB5AOx9XSsIItzFjoJlOSiYmn0=
 github.com/thoas/stats v0.0.0-20181218120333-e97827ebd7ca h1:Ju3LQGLQHCUv1yB2WwB1/uXHL+8SfF4E8qm/iSCQV0Q=
 github.com/thoas/stats v0.0.0-20181218120333-e97827ebd7ca/go.mod h1:GkZsNBOco11YY68OnXUARbSl26IOXXAeYf6ZKmSZR2M=
+go.mongodb.org/mongo-driver v1.1.1 h1:Sq1fR+0c58RME5EoqKdjkiQAmPjmfHlZOoRI6fTUOcs=
+go.mongodb.org/mongo-driver v1.1.1/go.mod h1:u7ryQJ+DOzQmeO7zB6MHyr8jkEQvC8vH7qLUO4lqsUM=
 golang.org/x/net v0.0.0-20171004034648-a04bdaca5b32 h1:NjAulLPqFTaOxQu5S4qUMqscSu+mQdu+wMY0nfqSkuk=
 golang.org/x/net v0.0.0-20171004034648-a04bdaca5b32/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 gopkg.in/go-playground/validator.v9 v9.25.0 h1:Q3c4LgUofOEtz0wCE18Q2qwDkATLHLBUOmTvqjNCWkM=

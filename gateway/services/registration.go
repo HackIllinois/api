@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/HackIllinois/api/gateway/config"
@@ -100,8 +99,6 @@ func UpdateRegistration(w http.ResponseWriter, r *http.Request) {
 	arbor.PUT(w, config.REGISTRATION_SERVICE+r.URL.String(), RegistrationFormat, "", r)
 }
 
-// ADDED THIS
 func PatchRegistration(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Made it to gateway")
 	arbor.PATCH(w, config.REGISTRATION_SERVICE+r.URL.String(), RegistrationFormat, "", r)
 }

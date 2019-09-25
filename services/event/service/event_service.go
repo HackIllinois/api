@@ -4,14 +4,14 @@ import (
 	"errors"
 	"time"
 
+	"encoding/json"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/event/config"
 	"github.com/HackIllinois/api/services/event/models"
+	"go.mongodb.org/mongo-driver/bson"
 	"gopkg.in/go-playground/validator.v9"
 	"strings"
-	"encoding/json"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 var validate *validator.Validate
@@ -115,13 +115,13 @@ func GetFilteredEvents(parameters map[string][]string) (*models.FilteredEvents, 
 		}
 
 		key = strings.ToLower(key)
-	
+
 		if key == "starttimegt" {
 
-			var bsonMap bson. M
+			var bsonMap bson.M
 			filter := `{"startTime" : {"$gt" : values[0]}}`
-			err := json. Unmarshal([]byte(filter), &bsonMap)
-			if (err == nil) {
+			err := json.Unmarshal([]byte(filter), &bsonMap)
+			if err == nil {
 				return nil, errors.New("JSON error")
 			}
 			query[key] = bsonMap

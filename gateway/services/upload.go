@@ -1,12 +1,13 @@
 package services
 
 import (
+	"net/http"
+
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
 	"github.com/HackIllinois/api/gateway/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 const UploadFormat string = "RAW"
@@ -49,6 +50,12 @@ var UploadRoutes = arbor.RouteCollection{
 		"/upload/blobstore/{id}/",
 		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetBlob).ServeHTTP,
 	},
+	arbor.Route{
+		"DeleteBlob",
+		"DELETE",
+		"/upload/blobstore/{name}/", // ?? Is it correct to use {name}?
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(DeleteBlob).ServeHTTP,
+	},
 }
 
 func GetCurrentUploadInfo(w http.ResponseWriter, r *http.Request) {
@@ -73,4 +80,8 @@ func UpdateBlob(w http.ResponseWriter, r *http.Request) {
 
 func GetBlob(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, config.UPLOAD_SERVICE+r.URL.String(), InfoFormat, "", r)
+}
+
+func DeleteBlob(w http.ResponseWriter, r *http.Request) {
+	arbor.DELETE(w, config.UPLOAD_SERVICE+r.URL.String(), InfoFormat, "", r)
 }

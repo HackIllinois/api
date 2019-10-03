@@ -2,13 +2,14 @@ package service
 
 import (
 	"errors"
+	"time"
+
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/upload/config"
 	"github.com/HackIllinois/api/services/upload/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"time"
 )
 
 var db database.Database
@@ -144,4 +145,24 @@ func UpdateBlob(blob models.Blob) error {
 	err := db.Update("blobstore", selector, &blob)
 
 	return err
+}
+
+/*
+Deletes the blob with the given id
+Returns the blob that was deleted
+*/
+func DeleteBlob(id string) (*models.Blob, error) {
+	blob, err := GetBlob(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	err = db.RemoveOne("blobstore", selector)
+
+	return blob, err
 }

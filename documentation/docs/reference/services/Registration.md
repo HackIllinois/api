@@ -614,5 +614,36 @@ Response format:
 		}
 	]
 }
+```
+
+GET /registration/mentor/filter/?key=value
+-----------------------------------
+
+Returns the mentor registrations, filtered with the given key-value pairs
+
+Response format:
+```
+{
+	"registrations": [
+		{
+			"id": "github0000001"
+			"firstName": "John",
+			"lastName": "Smith",
+			"email": "john@gmail.com",
+			"shirtSize": "M",
+			"github": "JSmith",
+			"linkedin": "john-smith"
+		},
+		{
+			"id": "github0000002"
+			"firstName": "John",
+			"lastName": "Doe",
+			"email": "jdoe@gmail.com",
+			"shirtSize": "M",
+			"github": "JDoe",
+			"linkedin": "john-doe"
+		}
+	]
+}
 
 ```

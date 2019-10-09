@@ -25,6 +25,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/mentor/", GetCurrentMentorRegistration).Methods("GET")
 	router.HandleFunc("/mentor/", CreateCurrentMentorRegistration).Methods("POST")
 	router.HandleFunc("/mentor/", UpdateCurrentMentorRegistration).Methods("PUT")
+	router.HandleFunc("/mentor/filter/", GetFilteredMentorRegistrations).Methods("GET");
 
 	router.HandleFunc("/{id}/", GetAllRegistrations).Methods("GET")
 	router.HandleFunc("/attendee/{id}/", GetUserRegistration).Methods("GET")
@@ -241,7 +242,7 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Endpoint to get registrations based on filters
+	Endpoint to get user registrations based on filters
 */
 func GetFilteredUserRegistrations(w http.ResponseWriter, r *http.Request) {
 	parameters := r.URL.Query()
@@ -389,6 +390,21 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_registration)
+}
+
+/*
+	Endpoint to get mentor registrations based on filters
+*/
+func GetFilteredMentorRegistrations(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+	mentor_registrations, err := service.GetFilteredMentorRegistrations(parameters)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get filtered mentor registrations."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(mentor_registrations)
 }
 
 /*

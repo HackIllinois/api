@@ -5,9 +5,10 @@ import (
 	"github.com/HackIllinois/api/gateway/middleware"
 	"github.com/HackIllinois/api/gateway/models"
 
+	"net/http"
+
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 const NotificationsFormat string = "JSON"
@@ -74,6 +75,12 @@ var NotificationsRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(RegisterDeviceToUser).ServeHTTP,
 	},
 	arbor.Route{
+		"UnregisterDeviceToUser",
+		"DELETE",
+		"/notifications/device/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(UnregisterDeviceToUser).ServeHTTP,
+	},
+	arbor.Route{
 		"GetNotificationOrder",
 		"GET",
 		"/notifications/order/{id}/",
@@ -118,6 +125,10 @@ func UnsubscribeToTopic(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
+}
+
+func UnregisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }
 

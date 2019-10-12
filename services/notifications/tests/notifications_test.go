@@ -1,14 +1,16 @@
 package tests
 
 import (
+	"errors"
 	"fmt"
+	"os"
+	"reflect"
+	"testing"
+
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/notifications/config"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/HackIllinois/api/services/notifications/service"
-	"os"
-	"reflect"
-	"testing"
 )
 
 var db database.Database
@@ -376,6 +378,53 @@ func TestRegisterDeviceToUser(t *testing.T) {
 
 	if !reflect.DeepEqual(devices, expected_devices) {
 		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_devices, devices)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests unregistering a device for a user
+*/
+func TestUnregisterDeviceToUser(t *testing.T) {
+	SetupTestDB(t)
+
+	// unregister known device
+	err := service.SetUserDevices("test_user", []string{"test_arn", "", "test_arn2"})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = service.UnregisterDeviceFromUser("test_token", "android", "test_user")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	devices, err := service.GetUserDevices("test_user")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_devices := []string{"test_arn", "test_arn2"}
+
+	if !reflect.DeepEqual(devices, expected_devices) {
+		t.Errorf("Wrong devices.\nExpected %v\ngot %v\n", expected_devices, devices)
+	}
+
+	// unregister unknown device
+	err = service.UnregisterDeviceFromUser("test_token", "android", "test_user")
+	fmt.Printf("got error: %v\n", err)
+
+	expected_error := errors.New("Value to remove not found")
+
+	if err == nil {
+		t.Errorf("Wrong error.\nExpected %v\ngot %v\n", expected_error, nil)
+	}
+
+	if err.Error() != expected_error.Error() {
+		t.Errorf("Wrong error.\nExpected %v\ngot %v\n", expected_error.Error(), err.Error())
 	}
 
 	CleanupTestDB(t)

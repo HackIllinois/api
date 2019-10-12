@@ -194,6 +194,26 @@ Response format:
 }
 ```
 
+DELETE /notifications/device/
+---------------------------
+
+Unregisters the specified device token from the current user.
+
+Request format:
+```
+{
+	"token": "example_token",
+	"platform": "android"
+}
+```
+
+Response format:
+```
+{
+	"devices": []
+}
+```
+
 GET /notifications/order/ID/
 ----------------------------
 

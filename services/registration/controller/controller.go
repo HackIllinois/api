@@ -169,6 +169,25 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Update user's name (if needed) using registration info
+	is_user_nameless := user_info.FirstName == "" || user_info.LastName == ""
+
+	if is_user_nameless {
+		first_name, first_ok := user_registration.Data["firstName"].(string)
+		last_name, last_ok := user_registration.Data["lastName"].(string)
+
+		if first_ok && last_ok {
+			user_info.FirstName = first_name
+			user_info.LastName = last_name
+			err = service.SetUserInfo(user_info)
+
+			if err != nil {
+				errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not set user's name."))
+				return
+			}
+		}
+	}
+
 	json.NewEncoder(w).Encode(updated_registration)
 }
 

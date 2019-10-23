@@ -53,7 +53,7 @@ var UploadRoutes = arbor.RouteCollection{
 	arbor.Route{
 		"DeleteBlob",
 		"DELETE",
-		"/upload/blobstore/{name}/", // ?? Is it correct to use {name}?
+		"/upload/blobstore/{id}/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(DeleteBlob).ServeHTTP,
 	},
 }

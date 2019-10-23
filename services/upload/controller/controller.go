@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/upload/models"
 	"github.com/HackIllinois/api/services/upload/service"

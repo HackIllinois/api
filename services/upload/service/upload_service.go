@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/upload/config"
 	"github.com/HackIllinois/api/services/upload/models"

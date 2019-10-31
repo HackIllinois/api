@@ -12,6 +12,7 @@ script:
     - "[ $(make fmt | wc -l) == 0 ]"
     - make all
     - make test
+    - bash ./scripts/travis-doc-check.sh
 before_deploy:
     - make docs
     - make container TAG=$TRAVIS_TAG

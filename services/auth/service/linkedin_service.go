@@ -2,8 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
 	"github.com/levigross/grequests"
@@ -28,7 +26,7 @@ func (provider *LinkedInOAuthProvider) GetAuthorizationRedirect(redirect_uri str
 	return ConstructSafeURL("https", "www.linkedin.com", "oauth/v2/authorization",
 		map[string]string{
 			"client_id":     config.LINKEDIN_CLIENT_ID,
-			"scope":         "r_liteprofile r_emailaddress", // changed from r_basicprofile to r_liteprofile
+			"scope":         "r_liteprofile r_emailaddress",
 			"response_type": "code",
 			"redirect_uri":  redirect_uri,
 		},
@@ -94,9 +92,6 @@ func (provider *LinkedInOAuthProvider) GetUserInfo() (*models.UserInfo, error) {
 
 	var linkedin_user_info models.LinkedinUserInfo
 	err = request.JSON(&linkedin_user_info)
-	fmt.Printf("User_info response: %s\n", request.String())
-
-	fmt.Printf("USER_INFO: %+v\n", linkedin_user_info)
 
 	if err != nil {
 		return nil, err
@@ -116,7 +111,7 @@ func (provider *LinkedInOAuthProvider) GetUserInfo() (*models.UserInfo, error) {
 		user_info.LastName = linkedin_user_info.LastName.Localized[preferred_locale]
 		user_info.Username = linkedin_user_info.FirstName.Localized[preferred_locale] + " " + linkedin_user_info.LastName.Localized[preferred_locale]
 	} else {
-		// preferred locale is not provided, try getting en_US first. If failed, pick an arbitrary locale.
+		// preferred locale is not provided, try en_US first. If failed, pick an arbitrary locale.
 		if linkedin_user_info.FirstName.Localized["en_US"] != "" && linkedin_user_info.LastName.Localized["en_US"] != "" {
 			user_info.FirstName = linkedin_user_info.FirstName.Localized["en_US"]
 			user_info.LastName = linkedin_user_info.LastName.Localized["en_US"]
@@ -132,7 +127,6 @@ func (provider *LinkedInOAuthProvider) GetUserInfo() (*models.UserInfo, error) {
 		}
 	}
 
-	// In LinkedIn API v2, a seperate request is required to retrieve the email address
 	request, err = grequests.Get("https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))", &grequests.RequestOptions{
 		Headers: map[string]string{
 			"Authorization": "Bearer " + provider.token,
@@ -145,11 +139,8 @@ func (provider *LinkedInOAuthProvider) GetUserInfo() (*models.UserInfo, error) {
 		return nil, err
 	}
 
-	fmt.Printf("Email response: %s\n", request.String())
-
 	var email models.LinkedinEmail
 	err = request.JSON(&email)
-	fmt.Printf("EMAIL: %+v\n", email)
 
 	user_info.Email = email.Elements[0].Handle.Email
 	provider.isVerifiedUser = true

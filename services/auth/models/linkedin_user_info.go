@@ -1,6 +1,5 @@
 package models
 
-// ISSUE: formattedName no longer available in API v2
 type LinkedinUserInfo struct {
 	ID        string `json:"id"`
 	Email     string `json:"emailAddress"`
@@ -19,12 +18,3 @@ type LinkedinUserInfo struct {
 		} `json:"preferredLocale"`
 	} `json:"lastName"`
 }
-
-// Response format for FirstName and LastName is in MultiLocaleString
-// "localized":{
-// 	"en_US":"2029 Stierlin Ct, Mountain View, CA 94043"
-// },
-// "preferredLocale":{
-// 	"country":"US",
-// 	"language":"en"
-// }

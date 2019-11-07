@@ -2,7 +2,6 @@ package models
 
 type LinkedinUserInfo struct {
 	ID        string `json:"id"`
-	Email     string `json:"emailAddress"`
 	FirstName struct {
 		Localized       map[string]string `json:"localized"`
 		PreferredLocale struct {

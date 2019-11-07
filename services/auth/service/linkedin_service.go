@@ -142,7 +142,12 @@ func (provider *LinkedInOAuthProvider) GetUserInfo() (*models.UserInfo, error) {
 	var email models.LinkedinEmail
 	err = request.JSON(&email)
 
+	if err != nil {
+		return nil, err
+	}
+
 	user_info.Email = email.Elements[0].Handle.Email
+
 	provider.isVerifiedUser = true
 
 	return &user_info, nil

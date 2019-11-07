@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
@@ -79,16 +80,7 @@ func (provider *LinkedInOAuthProvider) Authorize(code string, redirect_uri strin
 func (provider *LinkedInOAuthProvider) GetUserInfo() (*models.UserInfo, error) {
 	var user_info models.UserInfo
 
-	// request, err := grequests.Get("https://api.linkedin.com/v1/people/~:(id,formatted-name,email-address,first-name,last-name)", &grequests.RequestOptions{
-	// 	Headers: map[string]string{
-	// 		"Authorization": "Bearer " + provider.token,
-	// 		"Content-Type":  "application/json",
-	// 		"x-li-format":   "json",
-	// 	},
-	// })
-
-	// ISSUE: The formatted-name field is no longer available
-	request, err := grequests.Get("https://api.linkedin.com/v2/me?projection=(id,firstName?fields=id,bar,baz,lastName)", &grequests.RequestOptions{
+	request, err := grequests.Get("https://api.linkedin.com/v2/me?projection=(id,firstName,lastName)", &grequests.RequestOptions{
 		Headers: map[string]string{
 			"Authorization": "Bearer " + provider.token,
 			"Content-Type":  "application/json",
@@ -102,6 +94,9 @@ func (provider *LinkedInOAuthProvider) GetUserInfo() (*models.UserInfo, error) {
 
 	var linkedin_user_info models.LinkedinUserInfo
 	err = request.JSON(&linkedin_user_info)
+	fmt.Printf("User_info response: %s\n", request.String())
+
+	fmt.Printf("USER_INFO: %+v\n", linkedin_user_info)
 
 	if err != nil {
 		return nil, err
@@ -116,29 +111,28 @@ func (provider *LinkedInOAuthProvider) GetUserInfo() (*models.UserInfo, error) {
 	preferred_country := linkedin_user_info.FirstName.PreferredLocale.Country
 	preferred_language := linkedin_user_info.FirstName.PreferredLocale.Language
 	if preferred_country != "" && preferred_language != "" {
-		// preferred local is provided
 		preferred_locale := preferred_language + "_" + preferred_country
 		user_info.FirstName = linkedin_user_info.FirstName.Localized[preferred_locale]
 		user_info.LastName = linkedin_user_info.LastName.Localized[preferred_locale]
 		user_info.Username = linkedin_user_info.FirstName.Localized[preferred_locale] + " " + linkedin_user_info.LastName.Localized[preferred_locale]
 	} else {
-		// preferred local is not provided, try getting en_US first, if failed, pick an arbitrary one
+		// preferred locale is not provided, try getting en_US first. If failed, pick an arbitrary locale.
 		if linkedin_user_info.FirstName.Localized["en_US"] != "" && linkedin_user_info.LastName.Localized["en_US"] != "" {
 			user_info.FirstName = linkedin_user_info.FirstName.Localized["en_US"]
 			user_info.LastName = linkedin_user_info.LastName.Localized["en_US"]
-			user_info.Username = linkedin_user_info.FirstName.Localized["en_US"] + "_" + linkedin_user_info.LastName.Localized["en_US"]
+			user_info.Username = linkedin_user_info.FirstName.Localized["en_US"] + " " + linkedin_user_info.LastName.Localized["en_US"]
 		} else {
 			for locale, _ := range linkedin_user_info.FirstName.Localized {
 				arbitrary_locale := locale
 				user_info.FirstName = linkedin_user_info.FirstName.Localized[arbitrary_locale]
 				user_info.LastName = linkedin_user_info.LastName.Localized[arbitrary_locale]
-				user_info.Username = linkedin_user_info.FirstName.Localized[arbitrary_locale] + "_" + linkedin_user_info.LastName.Localized[arbitrary_locale]
+				user_info.Username = linkedin_user_info.FirstName.Localized[arbitrary_locale] + " " + linkedin_user_info.LastName.Localized[arbitrary_locale]
 				break
 			}
 		}
 	}
 
-	// In API v2, a seperate request is required to retrieve the email address
+	// In LinkedIn API v2, a seperate request is required to retrieve the email address
 	request, err = grequests.Get("https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))", &grequests.RequestOptions{
 		Headers: map[string]string{
 			"Authorization": "Bearer " + provider.token,
@@ -151,11 +145,13 @@ func (provider *LinkedInOAuthProvider) GetUserInfo() (*models.UserInfo, error) {
 		return nil, err
 	}
 
+	fmt.Printf("Email response: %s\n", request.String())
+
 	var email models.LinkedinEmail
 	err = request.JSON(&email)
+	fmt.Printf("EMAIL: %+v\n", email)
 
-	user_info.Email = email.Email
-
+	user_info.Email = email.Elements[0].Handle.Email
 	provider.isVerifiedUser = true
 
 	return &user_info, nil

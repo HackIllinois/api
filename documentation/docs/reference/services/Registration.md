@@ -13,46 +13,31 @@ Response format:
 ```
 {
 	"attendee": {
-		"id": "github0000001"
+		"id": "github0000001",
+		"email": "john@gmail.com",
+		"github": "jsmith",
+		"createdAt": 0000000001,
+		"updatedAt": 0000000002,
 		"firstName": "John",
 		"lastName": "Smith",
-		"email": "john@gmail.com",
-		"shirtSize": "M",
-		"diet": "NONE",
-		"age": 19,
-		"graduationYear": 2019,
-		"transportation": "NONE",
+		"gender": "MALE",
 		"school": "University of Illinois at Urbana-Champaign",
 		"major": "Computer Science",
-		"gender": "MALE",
-		"professionalInterest": "INTERNSHIP",
-		"github": "JSmith",
-		"linkedin": "john-smith",
-		"interests": "Software",
-		"isNovice": false,
-		"isPrivate": false,
-		"phoneNumber": "555-555-5555",
-		"longforms": [
-			{
-				"response": "This is a longform."
-			}
-		],
-		"extraInfos": [
-			{
-				"response": "This is an extra info."
-			}
-		],
-		"osContributors": [
-			{
-				"name": "Tom",
-				"contactInfo": "tom@gmail.com"
-			}
-		],
-		"collaborators": [
-			{
-				"github": "collabgithub"
-			}
-		]
+		"degreePursued": "Bachelor’s",
+		"graduationYear": 2020,
+		"careerInterest": ["INTERNSHIP"],
+		"resumeFilename": "resume.pdf",
+		"programmingYears": 10,
+		"programmingAbility": 7,
+		"isOSContributor": true,
+		"categoryInterests": ["Systems", "Web"],
+		"languageInterests": ["JavaScript", "Python"],
+		"needsBus": false,
+		"hasAttended": true,
+		"howDiscovered": ["Peer"],
+		"shirtSize": "L",
+		"dietaryRestrictions": ["NONE"],
+		"hasDisability": false
 	},
 	"mentor": {
 		"id": "github0000001"
@@ -76,46 +61,31 @@ Response format:
 ```
 {
 	"attendee": {
-		"id": "github0000001"
+		"id": "github0000001",
+		"email": "john@gmail.com",
+		"github": "jsmith",
+		"createdAt": 0000000001,
+		"updatedAt": 0000000002,
 		"firstName": "John",
 		"lastName": "Smith",
-		"email": "john@gmail.com",
-		"shirtSize": "M",
-		"diet": "NONE",
-		"age": 19,
-		"graduationYear": 2019,
-		"transportation": "NONE",
+		"gender": "MALE",
 		"school": "University of Illinois at Urbana-Champaign",
 		"major": "Computer Science",
-		"gender": "MALE",
-		"professionalInterest": "INTERNSHIP",
-		"github": "JSmith",
-		"linkedin": "john-smith",
-		"interests": "Software",
-		"isNovice": false,
-		"isPrivate": false,
-		"phoneNumber": "555-555-5555",
-		"longforms": [
-			{
-				"response": "This is a longform."
-			}
-		],
-		"extraInfos": [
-			{
-				"response": "This is an extra info."
-			}
-		],
-		"osContributors": [
-			{
-				"name": "Tom",
-				"contactInfo": "tom@gmail.com"
-			}
-		],
-		"collaborators": [
-			{
-				"github": "collabgithub"
-			}
-		]
+		"degreePursued": "Bachelor’s",
+		"graduationYear": 2020,
+		"careerInterest": ["INTERNSHIP"],
+		"resumeFilename": "resume.pdf",
+		"programmingYears": 10,
+		"programmingAbility": 7,
+		"isOSContributor": true,
+		"categoryInterests": ["Systems", "Web"],
+		"languageInterests": ["JavaScript", "Python"],
+		"needsBus": false,
+		"hasAttended": true,
+		"howDiscovered": ["Peer"],
+		"shirtSize": "L",
+		"dietaryRestrictions": ["NONE"],
+		"hasDisability": false
 	},
 	"mentor": {
 		"id": "github0000001"
@@ -137,46 +107,31 @@ Returns the user registration stored for the user with the `id` `USERID`.
 Response format:
 ```
 {
-	"id": "github0000001"
+	"id": "github0000001",
+	"email": "john@gmail.com",
+	"github": "jsmith",
+	"createdAt": 0000000001,
+	"updatedAt": 0000000002,
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"diet": "NONE",
-	"age": 19,
-	"graduationYear": 2019,
-	"transportation": "NONE",
+	"gender": "MALE",
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
-	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
-	"github": "JSmith",
-	"linkedin": "john-smith",
-	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
-	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
-	]
+	"degreePursued": "Bachelor’s",
+	"graduationYear": 2020,
+	"careerInterest": ["INTERNSHIP"],
+	"resumeFilename": "resume.pdf",
+	"programmingYears": 10,
+	"programmingAbility": 7,
+	"isOSContributor": true,
+	"categoryInterests": ["Systems", "Web"],
+	"languageInterests": ["JavaScript", "Python"],
+	"needsBus": false,
+	"hasAttended": true,
+	"howDiscovered": ["Peer"],
+	"shirtSize": "L",
+	"dietaryRestrictions": ["NONE"],
+	"hasDisability": false
 }
 ```
 
@@ -188,46 +143,31 @@ Returns the user registration stored for the user with the `id` stored in the gi
 Response format:
 ```
 {
-	"id": "github0000001"
+	"id": "github0000001",
+	"email": "john@gmail.com",
+	"github": "jsmith",
+	"createdAt": 0000000001,
+	"updatedAt": 0000000002,
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"diet": "NONE",
-	"age": 19,
-	"graduationYear": 2019,
-	"transportation": "NONE",
+	"gender": "MALE",
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
-	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
-	"github": "JSmith",
-	"linkedin": "john-smith",
-	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
-	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
-	]
+	"degreePursued": "Bachelor’s",
+	"graduationYear": 2020,
+	"careerInterest": ["INTERNSHIP"],
+	"resumeFilename": "resume.pdf",
+	"programmingYears": 10,
+	"programmingAbility": 7,
+	"isOSContributor": true,
+	"categoryInterests": ["Systems", "Web"],
+	"languageInterests": ["JavaScript", "Python"],
+	"needsBus": false,
+	"hasAttended": true,
+	"howDiscovered": ["Peer"],
+	"shirtSize": "L",
+	"dietaryRestrictions": ["NONE"],
+	"hasDisability": false
 }
 ```
 
@@ -239,91 +179,59 @@ Creates a registration for the user with the `id` in the JWT token provided in t
 Request format:
 ```
 {
+	"email": "john@gmail.com",
+	"github": "jsmith",
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"diet": "NONE",
-	"age": 19,
-	"graduationYear": 2019,
-	"transportation": "NONE",
+	"gender": "MALE",
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
-	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
-	"github": "JSmith",
-	"linkedin": "john-smith",
-	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
-	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
-	]
+	"degreePursued": "Bachelor’s",
+	"graduationYear": 2020,
+	"careerInterest": ["INTERNSHIP"],
+	"resumeFilename": "resume.pdf",
+	"programmingYears": 10,
+	"programmingAbility": 7,
+	"isOSContributor": true,
+	"categoryInterests": ["Systems", "Web"],
+	"languageInterests": ["JavaScript", "Python"],
+	"needsBus": false,
+	"hasAttended": true,
+	"howDiscovered": ["Peer"],
+	"shirtSize": "L",
+	"dietaryRestrictions": ["NONE"],
+	"hasDisability": false
 }
 ```
 
 Response format:
 ```
 {
-	"id": "github0000001"
+	"id": "github0000001",
+	"email": "john@gmail.com",
+	"github": "jsmith",
+	"createdAt": 0000000001,
+	"updatedAt": 0000000002,
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"diet": "NONE",
-	"age": 19,
-	"graduationYear": 2019,
-	"transportation": "NONE",
+	"gender": "MALE",
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
-	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
-	"github": "JSmith",
-	"linkedin": "john-smith",
-	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
-	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
-	]
+	"degreePursued": "Bachelor’s",
+	"graduationYear": 2020,
+	"careerInterest": ["INTERNSHIP"],
+	"resumeFilename": "resume.pdf",
+	"programmingYears": 10,
+	"programmingAbility": 7,
+	"isOSContributor": true,
+	"categoryInterests": ["Systems", "Web"],
+	"languageInterests": ["JavaScript", "Python"],
+	"needsBus": false,
+	"hasAttended": true,
+	"howDiscovered": ["Peer"],
+	"shirtSize": "L",
+	"dietaryRestrictions": ["NONE"],
+	"hasDisability": false
 }
 ```
 
@@ -335,91 +243,59 @@ Updated the registration for the user with the `id` in the JWT token provided in
 Request format:
 ```
 {
+	"email": "john@gmail.com",
+	"github": "jsmith",
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"diet": "NONE",
-	"age": 19,
-	"graduationYear": 2019,
-	"transportation": "NONE",
+	"gender": "MALE",
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
-	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
-	"github": "JSmith",
-	"linkedin": "john-smith",
-	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
-	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
-	]
+	"degreePursued": "Bachelor’s",
+	"graduationYear": 2020,
+	"careerInterest": ["INTERNSHIP"],
+	"resumeFilename": "resume.pdf",
+	"programmingYears": 10,
+	"programmingAbility": 7,
+	"isOSContributor": true,
+	"categoryInterests": ["Systems", "Web"],
+	"languageInterests": ["JavaScript", "Python"],
+	"needsBus": false,
+	"hasAttended": true,
+	"howDiscovered": ["Peer"],
+	"shirtSize": "L",
+	"dietaryRestrictions": ["NONE"],
+	"hasDisability": false
 }
 ```
 
 Response format:
 ```
 {
-	"id": "github0000001"
+	"id": "github0000001",
+	"email": "john@gmail.com",
+	"github": "jsmith",
+	"createdAt": 0000000001,
+	"updatedAt": 0000000002,
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"diet": "NONE",
-	"age": 19,
-	"graduationYear": 2019,
-	"transportation": "NONE",
+	"gender": "MALE",
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
-	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
-	"github": "JSmith",
-	"linkedin": "john-smith",
-	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
-	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
-	]
+	"degreePursued": "Bachelor’s",
+	"graduationYear": 2020,
+	"careerInterest": ["INTERNSHIP"],
+	"resumeFilename": "resume.pdf",
+	"programmingYears": 10,
+	"programmingAbility": 7,
+	"isOSContributor": true,
+	"categoryInterests": ["Systems", "Web"],
+	"languageInterests": ["JavaScript", "Python"],
+	"needsBus": false,
+	"hasAttended": true,
+	"howDiscovered": ["Peer"],
+	"shirtSize": "L",
+	"dietaryRestrictions": ["NONE"],
+	"hasDisability": false
 }
 ```
 
@@ -529,88 +405,58 @@ Response format:
 {
 	"registrations": [
 		{
-			"id": "github0000001"
+			"id": "github0000001",
+			"email": "john@gmail.com",
+			"github": "jsmith",
+			"createdAt": 0000000001,
+			"updatedAt": 0000000002,
 			"firstName": "John",
 			"lastName": "Smith",
-			"email": "john@gmail.com",
-			"shirtSize": "M",
-			"diet": "NONE",
-			"age": 19,
-			"graduationYear": 2019,
-			"transportation": "NONE",
+			"gender": "MALE",
 			"school": "University of Illinois at Urbana-Champaign",
 			"major": "Computer Science",
-			"gender": "MALE",
-			"professionalInterest": "INTERNSHIP",
-			"github": "JSmith",
-			"linkedin": "john-smith",
-			"interests": "Software",
-			"isNovice": false,
-			"isPrivate": false,
-			"phoneNumber": "555-555-5555",
-			"longforms": [
-				{
-					"response": "This is a longform."
-				}
-			],
-			"extraInfos": [
-				{
-					"response": "This is an extra info."
-				}
-			],
-			"osContributors": [
-				{
-					"name": "Tom",
-					"contactInfo": "tom@gmail.com"
-				}
-			],
-			"collaborators": [
-				{
-					"github": "collabgithub"
-				}
-			]
+			"degreePursued": "Bachelor’s",
+			"graduationYear": 2020,
+			"careerInterest": ["INTERNSHIP"],
+			"resumeFilename": "resume.pdf",
+			"programmingYears": 10,
+			"programmingAbility": 7,
+			"isOSContributor": true,
+			"categoryInterests": ["Systems", "Web"],
+			"languageInterests": ["JavaScript", "Python"],
+			"needsBus": false,
+			"hasAttended": true,
+			"howDiscovered": ["Peer"],
+			"shirtSize": "L",
+			"dietaryRestrictions": ["NONE"],
+			"hasDisability": false
 		},
 		{
-			"id": "github0000002"
+			"id": "github0000001",
+			"email": "john@gmail.com",
+			"github": "jsmith",
+			"createdAt": 0000000001,
+			"updatedAt": 0000000002,
 			"firstName": "John",
-			"lastName": "Doe",
-			"email": "jdoe@gmail.com",
-			"shirtSize": "M",
-			"diet": "NONE",
-			"age": 19,
-			"graduationYear": 2019,
-			"transportation": "NONE",
-			"school": "Purdue",
-			"major": "Computer Science",
+			"lastName": "Smith",
 			"gender": "MALE",
-			"professionalInterest": "INTERNSHIP",
-			"github": "JDoe",
-			"linkedin": "john-doe",
-			"interests": "Software",
-			"isNovice": false,
-			"isPrivate": false,
-			"phoneNumber": "666-666-6666",
-			"longforms": [
-				{
-					"response": "This is a longform."
-				}
-			],
-			"extraInfos": [
-				{
-					"response": "This is an extra info."
-				}
-			],
-			"osContributors": [
-				{
-					"name": "Tom",
-					"contactInfo": "tom@gmail.com"
-				}
-			],
-			"collaborators": [
-				{
-					"github": "collabgithub"
-				}
-			]
+			"school": "University of Illinois at Urbana-Champaign",
+			"major": "Computer Science",
+			"degreePursued": "Bachelor’s",
+			"graduationYear": 2020,
+			"careerInterest": ["INTERNSHIP"],
+			"resumeFilename": "resume.pdf",
+			"programmingYears": 10,
+			"programmingAbility": 7,
+			"isOSContributor": true,
+			"categoryInterests": ["Systems", "Web"],
+			"languageInterests": ["JavaScript", "Python"],
+			"needsBus": false,
+			"hasAttended": true,
+			"howDiscovered": ["Peer"],
+			"shirtSize": "L",
+			"dietaryRestrictions": ["NONE"],
+			"hasDisability": false
 		}
 	]
 }
@@ -645,5 +491,4 @@ Response format:
 		}
 	]
 }
-
 ```

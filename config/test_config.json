@@ -90,24 +90,12 @@
 	],
 
 	"REGISTRATION_DEFINITION": {
-		"name": "mentor_registration",
+		"name": "user_registration",
 		"type": "object",
 		"validations": "required",
 		"fields": [
 			{
 				"name": "id",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "firstName",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "lastName",
 				"type": "string",
 				"validations": "required",
 				"fields": []
@@ -119,26 +107,8 @@
 				"fields": []
 			},
 			{
-				"name": "shirtSize",
-				"type": "string",
-				"validations": "required,oneof=S M L XL",
-				"fields": []
-			},
-			{
 				"name": "github",
 				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "linkedin",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "age",
-				"type": "int",
 				"validations": "required",
 				"fields": []
 			},
@@ -152,6 +122,126 @@
 				"name": "updatedAt",
 				"type": "int",
 				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "firstName",
+				"type": "string",
+				"validations": "",
+				"fields": []
+			},
+			{
+				"name": "lastName",
+				"type": "string",
+				"validations": "",
+				"fields": []
+			},
+			{
+				"name": "gender",
+				"type": "string",
+				"validations": "required,oneof=MALE FEMALE NONBINARY OTHER NOANSWER",
+				"fields": []
+			},
+			{
+				"name": "school",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "major",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "degreePursued",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "graduationYear",
+				"type": "int",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "careerInterest",
+				"type": "[]string",
+				"validations": "required,dive,oneof=INTERNSHIP FULLTIME",
+				"fields": []
+			},
+			{
+				"name": "resumeFilename",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "programmingYears",
+				"type": "int",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "programmingAbility",
+				"type": "int",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "isOSContributor",
+				"type": "boolean",
+				"validations": "required|isdefault",
+				"fields": []
+			},
+			{
+				"name": "categoryInterests",
+				"type": "[]string",
+				"validations": "required,dive,oneof=Systems Web",
+				"fields": []
+			},
+			{
+				"name": "languageInterests",
+				"type": "[]string",
+				"validations": "required,dive,oneof=JavaScript Python",
+				"fields": []
+			},
+			{
+				"name": "needsBus",
+				"type": "boolean",
+				"validations": "required|isdefault",
+				"fields": []
+			},
+			{
+				"name": "hasAttended",
+				"type": "boolean",
+				"validations": "required|isdefault",
+				"fields": []
+			},
+			{
+				"name": "howDiscovered",
+				"type": "[]string",
+				"validations": "required,dive,oneof=Peer",
+				"fields": []
+			},
+			{
+				"name": "shirtSize",
+				"type": "string",
+				"validations": "required,oneof=S M L XL",
+				"fields": []
+			},
+			{
+				"name": "dietaryRestrictions",
+				"type": "[]string",
+				"validations": "required,dive,oneof=NONE VEGAN VEGETARIAN NOPEANUT NOGLUTEN",
+				"fields": []
+			},
+			{
+				"name": "hasDisability",
+				"type": "boolean",
+				"validations": "required|isdefault",
 				"fields": []
 			}
 		]

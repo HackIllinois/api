@@ -124,123 +124,15 @@
 				"fields": []
 			},
 			{
-				"name": "firstName",
-				"type": "string",
-				"validations": "",
-				"fields": []
-			},
-			{
-				"name": "lastName",
-				"type": "string",
-				"validations": "",
-				"fields": []
-			},
-			{
 				"name": "email",
 				"type": "string",
 				"validations": "required,email",
 				"fields": []
 			},
 			{
-				"name": "shirtSize",
-				"type": "string",
-				"validations": "required,oneof=S M L XL",
-				"fields": []
-			},
-			{
-				"name": "diet",
-				"type": "[]string",
-				"validations": "required,dive,oneof=NONE VEGAN VEGETARIAN NOPEANUT NOGLUTEN",
-				"fields": []
-			},
-			{
-				"name": "age",
-				"type": "int",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "graduationYear",
-				"type": "int",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "transportation",
-				"type": "string",
-				"validations": "required,oneof=NONE BUS",
-				"fields": []
-			},
-			{
-				"name": "school",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "major",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "gender",
-				"type": "string",
-				"validations": "required,oneof=MALE FEMALE NONBINARY OTHER NOANSWER",
-				"fields": []
-			},
-			{
-				"name": "interests",
-				"type": "[]string",
-				"validations": "dive,oneof=INTERNSHIP FULLTIME",
-				"fields": []
-			},
-			{
 				"name": "github",
 				"type": "string",
 				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "linkedin",
-				"type": "string",
-				"validations": "",
-				"fields": []
-			},
-			{
-				"name": "isBeginner",
-				"type": "boolean",
-				"validations": "required|isdefault",
-				"fields": []
-			},
-			{
-				"name": "priorAttendance",
-				"type": "boolean",
-				"validations": "required|isdefault",
-				"fields": []
-			},
-			{
-				"name": "phone",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "skills",
-				"type": "[]string",
-				"validations": "",
-				"fields": []
-			},
-			{
-				"name": "extraInfo",
-				"type": "string",
-				"validations": "",
-				"fields": []
-			},
-			{
-				"name": "teamMembers",
-				"type": "[]string",
-				"validations": "",
 				"fields": []
 			},
 			{
@@ -256,38 +148,121 @@
 				"fields": []
 			},
 			{
-				"name": "beginnerInfo",
-				"type": "object",
+				"name": "firstName",
+				"type": "string",
+				"validations": "",
+				"fields": []
+			},
+			{
+				"name": "lastName",
+				"type": "string",
+				"validations": "",
+				"fields": []
+			},
+			{
+				"name": "gender",
+				"type": "string",
+				"validations": "required,oneof=MALE FEMALE NONBINARY OTHER NOANSWER",
+				"fields": []
+			},
+			{
+				"name": "school",
+				"type": "string",
 				"validations": "required",
-				"fields": [
-					{
-						"name": "versionControl",
-						"type": "int",
-						"validations": "required",
-						"fields": []
-					},
-					{
-						"name": "pullRequest",
-						"type": "int",
-						"validations": "required",
-						"fields": []
-					},
-					{
-						"name": "yearsExperience",
-						"type": "int",
-						"validations": "",
-						"fields": []
-					},
-					{
-						"name": "technicalSkills",
-						"type": "[]string",
-						"validations": "",
-						"fields": []
-					}
-				]
+				"fields": []
+			},
+			{
+				"name": "major",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "degreePursued",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "graduationYear",
+				"type": "int",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "careerInterest",
+				"type": "[]string",
+				"validations": "required,dive,oneof=INTERNSHIP FULLTIME",
+				"fields": []
+			},
+			{
+				"name": "resumeFilename",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "programmingYears",
+				"type": "int",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "programmingAbility",
+				"type": "int",
+				"validations": "required",
+				"fields": []
 			},
 			{
 				"name": "isOSContributor",
+				"type": "boolean",
+				"validations": "required|isdefault",
+				"fields": []
+			},
+			{
+				"name": "categoryInterests",
+				"type": "[]string",
+				"validations": "required,dive,oneof=Systems Web",
+				"fields": []
+			},
+			{
+				"name": "languageInterests",
+				"type": "[]string",
+				"validations": "required,dive,oneof=JavaScript Python",
+				"fields": []
+			},
+			{
+				"name": "needsBus",
+				"type": "boolean",
+				"validations": "required|isdefault",
+				"fields": []
+			},
+			{
+				"name": "hasAttended",
+				"type": "boolean",
+				"validations": "required|isdefault",
+				"fields": []
+			},
+			{
+				"name": "howDiscovered",
+				"type": "[]string",
+				"validations": "required,dive,oneof=Peer",
+				"fields": []
+			},
+			{
+				"name": "shirtSize",
+				"type": "string",
+				"validations": "required,oneof=S M L XL",
+				"fields": []
+			},
+			{
+				"name": "dietaryRestrictions",
+				"type": "[]string",
+				"validations": "required,dive,oneof=NONE VEGAN VEGETARIAN NOPEANUT NOGLUTEN",
+				"fields": []
+			},
+			{
+				"name": "hasDisability",
 				"type": "boolean",
 				"validations": "required|isdefault",
 				"fields": []

@@ -109,3 +109,26 @@ Response format:
 	}
 }
 ```
+
+DELETE /upload/blobstore/ID
+----------------------
+
+Deletes the blob with the specified `id`.
+
+Request format:
+```
+{
+	"id": "exampleblob",
+}
+```
+
+Response format:
+```
+{
+	"id": "exampleblob",
+	"data": {
+		"thing1": "hi",
+		"thing2": "hello"
+	}
+}
+```

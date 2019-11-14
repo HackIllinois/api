@@ -1,5 +1,5 @@
 package models
 
-type FilteredRegistrations struct {
+type FilteredUserRegistrations struct {
 	Registrations []UserRegistration `json:"registrations"`
 }

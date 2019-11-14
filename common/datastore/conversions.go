@@ -44,7 +44,7 @@ func toObject(raw_data interface{}, definition DataStoreDefinition) (interface{}
 	unfiltered_data, ok := raw_data.(map[string]interface{})
 
 	if !ok {
-		return nil, NewErrTypeMismatch(raw_data, "[]interface{}")
+		return nil, NewErrTypeMismatch(raw_data, "map[string]interface{}")
 	}
 
 	data := make(map[string]interface{})

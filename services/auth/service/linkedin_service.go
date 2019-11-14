@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
 	"github.com/levigross/grequests"
@@ -111,13 +112,13 @@ func (provider *LinkedInOAuthProvider) GetUserInfo() (*models.UserInfo, error) {
 		user_info.LastName = linkedin_user_info.LastName.Localized[preferred_locale]
 		user_info.Username = linkedin_user_info.FirstName.Localized[preferred_locale] + " " + linkedin_user_info.LastName.Localized[preferred_locale]
 	} else {
-		// preferred locale is not provided, try en_US first. If failed, pick an arbitrary locale.
+		// Preferred locale is not provided, try en_US first. If failed, pick an arbitrary locale.
 		if linkedin_user_info.FirstName.Localized["en_US"] != "" && linkedin_user_info.LastName.Localized["en_US"] != "" {
 			user_info.FirstName = linkedin_user_info.FirstName.Localized["en_US"]
 			user_info.LastName = linkedin_user_info.LastName.Localized["en_US"]
 			user_info.Username = linkedin_user_info.FirstName.Localized["en_US"] + " " + linkedin_user_info.LastName.Localized["en_US"]
 		} else {
-			for locale, _ := range linkedin_user_info.FirstName.Localized {
+			for locale := range linkedin_user_info.FirstName.Localized {
 				arbitrary_locale := locale
 				user_info.FirstName = linkedin_user_info.FirstName.Localized[arbitrary_locale]
 				user_info.LastName = linkedin_user_info.LastName.Localized[arbitrary_locale]

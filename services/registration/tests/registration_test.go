@@ -276,7 +276,7 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registrations := models.FilteredRegistrations{
+	expected_registrations := models.FilteredUserRegistrations{
 		[]models.UserRegistration{
 			registration_1,
 		},
@@ -299,7 +299,7 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registrations = models.FilteredRegistrations{
+	expected_registrations = models.FilteredUserRegistrations{
 		[]models.UserRegistration{
 			registration_1,
 			registration_2,
@@ -324,7 +324,7 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_registrations = models.FilteredRegistrations{
+	expected_registrations = models.FilteredUserRegistrations{
 		[]models.UserRegistration{
 			registration_1,
 			registration_2,
@@ -337,6 +337,72 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 
 	if !reflect.DeepEqual(user_registrations.Registrations[1].Data["firstName"], expected_registrations.Registrations[1].Data["firstName"]) {
 		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations.Registrations[1].Data["firstName"], user_registrations.Registrations[1].Data["firstName"])
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for filtering mentor registrations in the db
+*/
+func TestGetFilteredMentorRegistrationsService(t *testing.T) {
+	SetupTestDB(t)
+
+	registration_1 := getBaseMentorRegistration()
+
+	registration_2 := getBaseMentorRegistration()
+	registration_2.Data["id"] = "testid2"
+
+	err := service.CreateMentorRegistration(registration_2.Data["id"].(string), registration_2)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Test single value and one keys
+	parameters := map[string][]string{
+		"id": {"testid"},
+	}
+	mentor_registrations, err := service.GetFilteredMentorRegistrations(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_registrations := models.FilteredMentorRegistrations{
+		[]models.MentorRegistration{
+			registration_1,
+		},
+	}
+
+	if len(mentor_registrations.Registrations) != len(expected_registrations.Registrations) {
+		t.Errorf("Wrong number of registrations.\nExpected %v\ngot %v\n", len(expected_registrations.Registrations), len(mentor_registrations.Registrations))
+	}
+
+	if !reflect.DeepEqual(mentor_registrations.Registrations[0].Data["firstName"], expected_registrations.Registrations[0].Data["firstName"]) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations.Registrations[0].Data["firstName"], mentor_registrations.Registrations[0].Data["firstName"])
+	}
+
+	// Test multiple values
+	parameters = map[string][]string{
+		"id": {"testid,testid2"},
+	}
+	mentor_registrations, err = service.GetFilteredMentorRegistrations(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_registrations = models.FilteredMentorRegistrations{
+		[]models.MentorRegistration{
+			registration_1,
+			registration_2,
+		},
+	}
+
+	if len(mentor_registrations.Registrations) != len(expected_registrations.Registrations) {
+		t.Errorf("Wrong number of registrations.\nExpected %v\ngot %v\n", len(expected_registrations.Registrations), len(mentor_registrations.Registrations))
+	}
+
+	if !reflect.DeepEqual(mentor_registrations.Registrations[1].Data["firstName"], expected_registrations.Registrations[1].Data["firstName"]) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registrations.Registrations[1].Data["firstName"], mentor_registrations.Registrations[1].Data["firstName"])
 	}
 
 	CleanupTestDB(t)

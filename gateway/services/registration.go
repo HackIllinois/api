@@ -39,7 +39,7 @@ var RegistrationRoutes = arbor.RouteCollection{
 	arbor.Route{
 		"GetFilteredUserRegistrations",
 		"GET",
-		"/registration/filter/",
+		"/registration/attendee/filter/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetRegistration).ServeHTTP,
 	},
 	arbor.Route{
@@ -59,6 +59,12 @@ var RegistrationRoutes = arbor.RouteCollection{
 		"PUT",
 		"/registration/mentor/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateRegistration).ServeHTTP,
+	},
+	arbor.Route{
+		"GetFilteredMentorRegistrations",
+		"GET",
+		"/registration/mentor/filter/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUserRegistration",

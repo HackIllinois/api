@@ -6,7 +6,7 @@ import api
 from helper import options_menu, dict_flatten
 
 def registration_download():
-	data, success = api.make_request('GET', '/registration/filter/')
+	data, success = api.make_request('GET', '/registration/attendee/filter/')
 
 	if not success:
 		print('Failed to download registrations')

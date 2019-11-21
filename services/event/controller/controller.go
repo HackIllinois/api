@@ -18,6 +18,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/favorite/add/", AddEventFavorite).Methods("POST")
 	router.HandleFunc("/favorite/remove/", RemoveEventFavorite).Methods("POST")
 
+	router.HandleFunc("/filter/", GetFilteredEvents).Methods("GET")
 	router.HandleFunc("/{id}/", GetEvent).Methods("GET")
 	router.HandleFunc("/{id}/", DeleteEvent).Methods("DELETE")
 	router.HandleFunc("/", CreateEvent).Methods("POST")
@@ -77,6 +78,21 @@ func GetAllEvents(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(event_list)
+}
+
+/*
+	Endpoint to get events based on filters
+*/
+func GetFilteredEvents(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+	event, err := service.GetFilteredEvents(parameters)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch filtered list of events."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(event)
 }
 
 /*

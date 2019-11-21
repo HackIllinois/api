@@ -21,13 +21,13 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/attendee/", GetCurrentUserRegistration).Methods("GET")
 	router.HandleFunc("/attendee/", CreateCurrentUserRegistration).Methods("POST")
 	router.HandleFunc("/attendee/", UpdateCurrentUserRegistration).Methods("PUT")
-	// ADDED
 	router.HandleFunc("/attendee/", PatchCurrentUserRegistration).Methods("PATCH")
-	router.HandleFunc("/filter/", GetFilteredUserRegistrations).Methods("GET")
+	router.HandleFunc("/attendee/filter/", GetFilteredUserRegistrations).Methods("GET")
 
 	router.HandleFunc("/mentor/", GetCurrentMentorRegistration).Methods("GET")
 	router.HandleFunc("/mentor/", CreateCurrentMentorRegistration).Methods("POST")
 	router.HandleFunc("/mentor/", UpdateCurrentMentorRegistration).Methods("PUT")
+	router.HandleFunc("/mentor/filter/", GetFilteredMentorRegistrations).Methods("GET")
 
 	router.HandleFunc("/{id}/", GetAllRegistrations).Methods("GET")
 	router.HandleFunc("/attendee/{id}/", GetUserRegistration).Methods("GET")
@@ -171,6 +171,25 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Update user's name (if needed) using registration info
+	is_user_nameless := user_info.FirstName == "" || user_info.LastName == ""
+
+	if is_user_nameless {
+		first_name, first_ok := user_registration.Data["firstName"].(string)
+		last_name, last_ok := user_registration.Data["lastName"].(string)
+
+		if first_ok && last_ok {
+			user_info.FirstName = first_name
+			user_info.LastName = last_name
+			err = service.SetUserInfo(user_info)
+
+			if err != nil {
+				errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not set user's name."))
+				return
+			}
+		}
+	}
+
 	json.NewEncoder(w).Encode(updated_registration)
 }
 
@@ -296,7 +315,7 @@ func PatchCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Endpoint to get registrations based on filters
+	Endpoint to get user registrations based on filters
 */
 func GetFilteredUserRegistrations(w http.ResponseWriter, r *http.Request) {
 	parameters := r.URL.Query()
@@ -444,6 +463,21 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_registration)
+}
+
+/*
+	Endpoint to get mentor registrations based on filters
+*/
+func GetFilteredMentorRegistrations(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+	mentor_registrations, err := service.GetFilteredMentorRegistrations(parameters)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get filtered mentor registrations."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(mentor_registrations)
 }
 
 /*

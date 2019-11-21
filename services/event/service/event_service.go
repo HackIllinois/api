@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/HackIllinois/api/common/database"
@@ -121,6 +122,32 @@ func GetAllEvents() (*models.EventList, error) {
 	}
 
 	return &event_list, nil
+}
+
+/*
+	Returns all the events
+*/
+func GetFilteredEvents(parameters map[string][]string) (*models.EventList, error) {
+	query := make(map[string]interface{})
+
+	for key, values := range parameters {
+		if len(values) > 1 {
+			return nil, errors.New("Multiple usage of key " + key)
+		}
+
+		key = strings.ToLower(key)
+		query[key] = database.QuerySelector{"$in": strings.Split(values[0], ",")}
+	}
+
+	events := []models.Event{}
+	filtered_events := models.EventList{Events: events}
+	err := db.FindAll("events", query, &filtered_events.Events)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &filtered_events, nil
 }
 
 /*

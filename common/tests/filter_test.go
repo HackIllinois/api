@@ -43,7 +43,7 @@ type TestStruct2 struct {
 func TestFilterCasting(t *testing.T) {
 
 	params := map[string][]string{
-		"hackValueLt":   {"foo,bar"},
+		"hackValue":   {"foo,bar"},
 		"illinoisValue": {"55,63"},
 		"testValue":     {"true,false,true"},
 	}

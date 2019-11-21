@@ -1,5 +1,9 @@
 package datastore
 
+import (
+	"fmt"
+)
+
 func toInt(raw_data interface{}, definition DataStoreDefinition) (interface{}, error) {
 	data, ok := raw_data.(float64)
 
@@ -60,7 +64,12 @@ func toObject(raw_data interface{}, definition DataStoreDefinition) (interface{}
 				return nil, err
 			}
 		} else {
-			data[field.Name] = getDefaultValue(field.Type)
+			if len(field.Fields) == 0 {
+				fmt.Print("Omitting ", field.Name, " field")
+			} else {
+				fmt.Printf("field name: %s type: %s content: %s len is 0:%t\n", field.Name, field.Type, field.Fields, len(field.Fields) == 0)
+				data[field.Name] = getDefaultValue(field.Type)
+			}
 		}
 	}
 

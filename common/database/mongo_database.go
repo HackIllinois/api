@@ -173,6 +173,29 @@ func (db *MongoDatabase) Upsert(collection_name string, selector interface{}, up
 	return &change_results, convertMgoError(err)
 }
 
+// /*
+// 	Finds an item based on the given selector and updates it with the data in update
+// */
+// func (db *MongoDatabase) Update(collection_name string, selector interface{}, update interface{}) error {
+// 	current_session := db.GetSession()
+// 	defer current_session.Close()
+
+// 	collection := current_session.DB(db.name).C(collection_name)
+
+// 	// Check the variable type of update .
+// 	// If it's a map, it's passed by the patch method, so we only update certain fields.
+// 	// If it's not a map, it's passed by other methods, and we update all fields.
+// 	update_as_map, ok := update.(*map[string]interface{})
+// 	if ok {
+// 		// Use the mongodb set operation to update only given fields.
+// 		err := collection.Update(selector, bson.M{"$set": update_as_map})
+// 		return convertMgoError(err)
+// 	} else {
+// 		err := collection.Update(selector, update)
+// 		return convertMgoError(err)
+// 	}
+// }
+
 /*
 	Finds an item based on the given selector and updates it with the data in update
 */
@@ -182,18 +205,23 @@ func (db *MongoDatabase) Update(collection_name string, selector interface{}, up
 
 	collection := current_session.DB(db.name).C(collection_name)
 
-	// Check the variable type of update .
-	// If it's a map, it's passed by the patch method, so we only update certain fields.
-	// If it's not a map, it's passed by other methods, and we update all fields.
-	update_as_map, ok := update.(*map[string]interface{})
-	if ok {
-		// Use the mongodb set operation to update only given fields.
-		err := collection.Update(selector, bson.M{"$set": update_as_map})
-		return convertMgoError(err)
-	} else {
-		err := collection.Update(selector, update)
-		return convertMgoError(err)
-	}
+	err := collection.Update(selector, update)
+
+	return convertMgoError(err)
+}
+
+/*
+	Finds an item based on the given selector and patches it with the data in update
+*/
+func (db *MongoDatabase) Patch(collection_name string, selector interface{}, update *map[string]interface{}) error {
+	current_session := db.GetSession()
+	defer current_session.Close()
+
+	collection := current_session.DB(db.name).C(collection_name)
+
+	// Use the mongodb set operation to update only the given fields.
+	err := collection.Update(selector, bson.M{"$set": update})
+	return convertMgoError(err)
 }
 
 /*

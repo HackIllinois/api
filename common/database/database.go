@@ -14,6 +14,7 @@ type Database interface {
 	Upsert(collection_name string, selector interface{}, update interface{}) (*ChangeResults, error)
 	Update(collection_name string, selector interface{}, update interface{}) error
 	UpdateAll(collection_name string, selector interface{}, update interface{}) (*ChangeResults, error)
+	Patch(collection_name string, selector interface{}, update *map[string]interface{}) error
 	DropDatabase() error
 	GetStats(collection_name string, fields []string) (map[string]interface{}, error)
 }

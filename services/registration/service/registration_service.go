@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -94,23 +95,31 @@ func UpdateUserRegistration(id string, user_registration models.UserRegistration
 	Patches the registration associated with the given user id
 */
 func PatchUserRegistration(id string, user_registration models.UserRegistration) error {
-	err := user_registration.Validate()
+	// err := user_registration.Validate()
 
-	if err != nil {
-		return err
-	}
+	// if err != nil {
+	// 	return err
+	// }
 
 	selector := database.QuerySelector{"id": id}
 
 	// Delete fields the user didn't fill in.
 	for k, v := range user_registration.Data {
-		v_as_string, ok := v.(string)
-		if ok && len(v_as_string) == 0 {
+		// v_as_string, ok := v.(string)
+		// if (ok && len(v_as_string) == 0) || v == nil {
+		if v == nil {
+			fmt.Printf("Deleting empty fields: %s\n", k)
 			delete(user_registration.Data, k)
+		} else {
+			// fmt.Printf("Not deleting the field, the key is: %s the value is: %s\n", k, v_as_string)
 		}
+		// if v == nil {
+		// 	fmt.Printf("Deleting empty fields, key: %s, value: %s\n", k, v)
+		// 	delete(user_registration.Data, k)
+		// }
 	}
 
-	err = db.Update("attendees", selector, &user_registration.Data)
+	err := db.Patch("attendees", selector, &user_registration.Data)
 
 	return err
 }

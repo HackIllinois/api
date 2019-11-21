@@ -5,10 +5,10 @@ import (
 )
 
 type DataStoreDefinition struct {
-	Name        string                `json:"name"`
-	Type        string                `json:"type"`
-	Validations string                `json:"validations"`
-	Fields      []DataStoreDefinition `json:"fields"`
+	Name        string                `json:"name,omitempty"`
+	Type        string                `json:"type,omitempty"`
+	Validations string                `json:"validations,omitempty"`
+	Fields      []DataStoreDefinition `json:"fields,omitempty"`
 }
 
 type DataStore struct {

@@ -23,7 +23,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/attendee/", PatchCurrentUserRegistration).Methods("PATCH")
 	router.HandleFunc("/attendee/filter/", GetFilteredUserRegistrations).Methods("GET")
   
-  router.HandleFunc("/mentor/", GetCurrentMentorRegistration).Methods("GET")
+ 	router.HandleFunc("/mentor/", GetCurrentMentorRegistration).Methods("GET")
 	router.HandleFunc("/mentor/", CreateCurrentMentorRegistration).Methods("POST")
 	router.HandleFunc("/mentor/", UpdateCurrentMentorRegistration).Methods("PUT")
 	router.HandleFunc("/mentor/filter/", GetFilteredMentorRegistrations).Methods("GET")

@@ -447,11 +447,11 @@ func PublishNotificationToTopic(notification models.Notification) (*models.Notif
 	}
 
 	order := models.NotificationOrder{
-		ID:            notification.ID,
-		NumRecipients: len(device_arns),
-		Success:       0,
-		Failure:       0,
-		Time:          notification.Time,
+		ID:         notification.ID,
+		Recipients: len(device_arns),
+		Success:    0,
+		Failure:    0,
+		Time:       notification.Time,
 	}
 
 	err = db.Insert("orders", &order)

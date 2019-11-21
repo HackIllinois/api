@@ -3,7 +3,6 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
-
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/services/registration/config"

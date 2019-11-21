@@ -3,15 +3,15 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"reflect"
-	"testing"
 
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 	"github.com/HackIllinois/api/services/registration/service"
+	"os"
+	"reflect"
+	"testing"
 )
 
 var db database.Database

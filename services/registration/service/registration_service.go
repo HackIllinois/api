@@ -90,6 +90,24 @@ func UpdateUserRegistration(id string, user_registration models.UserRegistration
 }
 
 /*
+	Patches the registration associated with the given user id
+*/
+func PatchUserRegistration(id string, user_registration models.UserRegistration) error {
+	selector := database.QuerySelector{"id": id}
+
+	// Delete fields that weren't provided
+	for k, v := range user_registration.Data {
+		if v == nil {
+			delete(user_registration.Data, k)
+		}
+	}
+
+	err := db.Patch("attendees", selector, &user_registration.Data)
+
+	return err
+}
+
+/*
 	Returns the registrations associated with the given parameters
 */
 func GetFilteredUserRegistrations(parameters map[string][]string) (*models.FilteredRegistrations, error) {

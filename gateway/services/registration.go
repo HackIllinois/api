@@ -37,6 +37,12 @@ var RegistrationRoutes = arbor.RouteCollection{
 		alice.New(middleware.AuthMiddleware([]models.Role{models.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateRegistration).ServeHTTP,
 	},
 	arbor.Route{
+		"PatchCurrentUserRegistration",
+		"PATCH",
+		"/registration/attendee/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(PatchRegistration).ServeHTTP,
+	},
+	arbor.Route{
 		"GetFilteredUserRegistrations",
 		"GET",
 		"/registration/filter/",
@@ -90,4 +96,8 @@ func CreateRegistration(w http.ResponseWriter, r *http.Request) {
 
 func UpdateRegistration(w http.ResponseWriter, r *http.Request) {
 	arbor.PUT(w, config.REGISTRATION_SERVICE+r.URL.String(), RegistrationFormat, "", r)
+}
+
+func PatchRegistration(w http.ResponseWriter, r *http.Request) {
+	arbor.PATCH(w, config.REGISTRATION_SERVICE+r.URL.String(), RegistrationFormat, "", r)
 }

@@ -20,6 +20,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/attendee/", GetCurrentUserRegistration).Methods("GET")
 	router.HandleFunc("/attendee/", CreateCurrentUserRegistration).Methods("POST")
 	router.HandleFunc("/attendee/", UpdateCurrentUserRegistration).Methods("PUT")
+	router.HandleFunc("/attendee/", PatchCurrentUserRegistration).Methods("PATCH")
 	router.HandleFunc("/filter/", GetFilteredUserRegistrations).Methods("GET")
 
 	router.HandleFunc("/mentor/", GetCurrentMentorRegistration).Methods("GET")
@@ -238,6 +239,58 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_registration)
+}
+
+/*
+	Endpoint to patch the registration for the current user.
+	On successful patch, sends the user a confirmation mail.
+*/
+func PatchCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	if id == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		return
+	}
+
+	user_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
+
+	// Decode http request and write into user_registration
+	err := json.NewDecoder(r.Body).Decode(&user_registration)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not decode user registration information. Possible failure in JSON validation, or invalid registration format."))
+		return
+	}
+
+	user_registration.Data["id"] = id
+
+	user_registration.Data["updatedAt"] = time.Now().Unix()
+
+	err = service.PatchUserRegistration(id, user_registration)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not update user's registration."))
+		return
+	}
+
+	updated_registration, err := service.GetUserRegistration(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch user's updated registration."))
+		return
+	}
+
+	mail_template := "registration_update"
+	err = service.SendUserMail(id, mail_template)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not send registration update email."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(updated_registration)
+	return
 }
 
 /*

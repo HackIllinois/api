@@ -108,9 +108,9 @@ func PatchUserRegistration(id string, user_registration models.UserRegistration)
 }
 
 /*
-	Returns the registrations associated with the given parameters
+  Returns db search query based on given parameters
 */
-func GetFilteredUserRegistrations(parameters map[string][]string) (*models.FilteredRegistrations, error) {
+func getFilterQuery(parameters map[string][]string) (map[string]interface{}, error) {
 	query := make(map[string]interface{})
 	for key, values := range parameters {
 		if len(values) == 1 {
@@ -131,8 +131,20 @@ func GetFilteredUserRegistrations(parameters map[string][]string) (*models.Filte
 		}
 	}
 
-	var filtered_registrations models.FilteredRegistrations
-	err := db.FindAll("attendees", query, &filtered_registrations.Registrations)
+	return query, nil
+}
+
+/*
+	Returns the user registrations associated with the given parameters
+*/
+func GetFilteredUserRegistrations(parameters map[string][]string) (*models.FilteredUserRegistrations, error) {
+	query, err := getFilterQuery(parameters)
+	if err != nil {
+		return nil, err
+	}
+
+	var filtered_registrations models.FilteredUserRegistrations
+	err = db.FindAll("attendees", query, &filtered_registrations.Registrations)
 	if err != nil {
 		return nil, err
 	}
@@ -218,6 +230,24 @@ func UpdateMentorRegistration(id string, mentor_registration models.MentorRegist
 	err = db.Update("mentors", selector, &mentor_registration)
 
 	return err
+}
+
+/*
+	Returns the mentor registrations associated with the given parameters
+*/
+func GetFilteredMentorRegistrations(parameters map[string][]string) (*models.FilteredMentorRegistrations, error) {
+	query, err := getFilterQuery(parameters)
+	if err != nil {
+		return nil, err
+	}
+
+	var filtered_registrations models.FilteredMentorRegistrations
+	err = db.FindAll("mentors", query, &filtered_registrations.Registrations)
+	if err != nil {
+		return nil, err
+	}
+
+	return &filtered_registrations, nil
 }
 
 /*

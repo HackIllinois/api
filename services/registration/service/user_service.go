@@ -25,3 +25,20 @@ func GetUserInfo(id string) (*models.UserInfo, error) {
 
 	return &user_info, nil
 }
+
+/*
+	Update basic user info in user service
+*/
+func SetUserInfo(user_info *models.UserInfo) error {
+	status, err := apirequest.Post(config.USER_SERVICE+"/user/", user_info, nil)
+
+	if err != nil {
+		return err
+	}
+
+	if status != http.StatusOK {
+		return errors.New("User service failed to update information")
+	}
+
+	return nil
+}

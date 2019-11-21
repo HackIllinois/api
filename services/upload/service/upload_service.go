@@ -145,3 +145,23 @@ func UpdateBlob(blob models.Blob) error {
 
 	return err
 }
+
+/*
+Deletes the blob with the given id
+Returns the blob that was deleted
+*/
+func DeleteBlob(id string) (*models.Blob, error) {
+	blob, err := GetBlob(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	err = db.RemoveOne("blobstore", selector)
+
+	return blob, err
+}

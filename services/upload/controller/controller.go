@@ -19,6 +19,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/blobstore/", CreateBlob).Methods("POST")
 	router.HandleFunc("/blobstore/", UpdateBlob).Methods("PUT")
 	router.HandleFunc("/blobstore/{id}/", GetBlob).Methods("GET")
+	router.HandleFunc("/blobstore/{id}/", DeleteBlob).Methods("DELETE")
 }
 
 /*
@@ -141,4 +142,20 @@ func UpdateBlob(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(stored_blob)
+}
+
+/*
+	Endpoint to delete a blob
+*/
+func DeleteBlob(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	blob, err := service.DeleteBlob(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Unable to delete blob."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(blob)
 }

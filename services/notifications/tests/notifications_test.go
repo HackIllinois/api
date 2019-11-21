@@ -444,11 +444,11 @@ func TestPublishNotificationToTopic(t *testing.T) {
 	}
 
 	expected_order := models.NotificationOrder{
-		ID:            "test_id2",
-		NumRecipients: 1,
-		Success:       0,
-		Failure:       0,
-		Time:          3000,
+		ID:         "test_id2",
+		Recipients: 1,
+		Success:    0,
+		Failure:    0,
+		Time:       3000,
 	}
 	if !reflect.DeepEqual(order, &expected_order) {
 		t.Errorf("Wrong order.\nExpected %v\ngot %v\n", &expected_order, order)
@@ -480,11 +480,11 @@ func TestPublishNotificationToTopic(t *testing.T) {
 	}
 
 	expected_order = models.NotificationOrder{
-		ID:            "test_id2",
-		NumRecipients: 3,
-		Success:       0,
-		Failure:       0,
-		Time:          3000,
+		ID:         "test_id2",
+		Recipients: 3,
+		Success:    0,
+		Failure:    0,
+		Time:       3000,
 	}
 
 	if !reflect.DeepEqual(order, &expected_order) {

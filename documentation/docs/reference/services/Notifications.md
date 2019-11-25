@@ -119,6 +119,7 @@ Response format:
 ```
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
+	"recipients": 5,
 	"success": 0,
 	"failure": 0,
 	"time": 1553564589
@@ -203,6 +204,7 @@ Response format:
 ```
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
+	"recipients": 5,
 	"success": 5,
 	"failure": 0,
 	"time": 1553564589

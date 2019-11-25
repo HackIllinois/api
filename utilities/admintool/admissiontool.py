@@ -18,7 +18,7 @@ def get_pending_applicants():
 	return [decision['id'] for decision in data['decisions']]
 
 def get_registrations():
-	data, success = api.make_request('GET', '/registration/filter/')
+	data, success = api.make_request('GET', '/registration/attendee/filter/')
 
 	if not success:
 		print('Failed to retreive registrations')

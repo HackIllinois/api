@@ -18,36 +18,46 @@ Response format:
 		"github": "jsmith",
 		"createdAt": 0000000001,
 		"updatedAt": 0000000002,
+
 		"firstName": "John",
 		"lastName": "Smith",
 		"gender": "MALE",
+
 		"school": "University of Illinois at Urbana-Champaign",
-		"major": "Computer Science",
-		"degreePursued": "Bachelor’s",
+		"major": "CS",
+		"degreePursued": "BACHELOR",
 		"graduationYear": 2020,
 		"careerInterest": ["INTERNSHIP"],
 		"resumeFilename": "resume.pdf",
+
 		"programmingYears": 10,
 		"programmingAbility": 7,
 		"isOSContributor": true,
-		"categoryInterests": ["Systems", "Web"],
+		"categoryInterests": ["SYSTEMS", "WEBDEV"],
 		"languageInterests": ["JavaScript", "Python"],
+
 		"needsBus": false,
 		"hasAttended": true,
-		"howDiscovered": ["Peer"],
-		"shirtSize": "L",
-		"dietaryRestrictions": ["NONE"],
-		"hasDisability": false
+		"howDiscovered": ["FRIEND"]
 	},
 	"mentor": {
-		"id": "github0000001"
+		"id": "github0000001",
+		"email": "john@gmail.com",
+		"github": "JSmith",
+		"createdAt": 0000000001,
+		"updatedAt": 0000000002,
+
 		"firstName": "John",
 		"lastName": "Smith",
-		"email": "john@gmail.com",
+		"photoFilename": "profile.jpg",
+		"biography": "I write code.",
+		"projectName": "HackIllinois",
+		"projectDescription": "The best hackathon ever!",
+
 		"shirtSize": "M",
-		"github": "JSmith",
-		"linkedin": "john-smith"
-	} 
+		"dietaryRestrictions": ["NONE"],
+		"hasDisability": false
+	}
 }
 ```
 
@@ -66,35 +76,45 @@ Response format:
 		"github": "jsmith",
 		"createdAt": 0000000001,
 		"updatedAt": 0000000002,
+
 		"firstName": "John",
 		"lastName": "Smith",
 		"gender": "MALE",
+
 		"school": "University of Illinois at Urbana-Champaign",
-		"major": "Computer Science",
-		"degreePursued": "Bachelor’s",
+		"major": "CS",
+		"degreePursued": "BACHELOR",
 		"graduationYear": 2020,
 		"careerInterest": ["INTERNSHIP"],
 		"resumeFilename": "resume.pdf",
+
 		"programmingYears": 10,
 		"programmingAbility": 7,
 		"isOSContributor": true,
-		"categoryInterests": ["Systems", "Web"],
+		"categoryInterests": ["SYSTEMS", "WEBDEV"],
 		"languageInterests": ["JavaScript", "Python"],
+
 		"needsBus": false,
 		"hasAttended": true,
-		"howDiscovered": ["Peer"],
-		"shirtSize": "L",
-		"dietaryRestrictions": ["NONE"],
-		"hasDisability": false
+		"howDiscovered": ["FRIEND"]
 	},
 	"mentor": {
-		"id": "github0000001"
+		"id": "github0000001",
+		"email": "john@gmail.com",
+		"github": "JSmith",
+		"createdAt": 0000000001,
+		"updatedAt": 0000000002,
+
 		"firstName": "John",
 		"lastName": "Smith",
-		"email": "john@gmail.com",
+		"photoFilename": "profile.jpg",
+		"biography": "I write code.",
+		"projectName": "HackIllinois",
+		"projectDescription": "The best hackathon ever!",
+
 		"shirtSize": "M",
-		"github": "JSmith",
-		"linkedin": "john-smith"
+		"dietaryRestrictions": ["NONE"],
+		"hasDisability": false
 	}
 }
 ```
@@ -112,26 +132,27 @@ Response format:
 	"github": "jsmith",
 	"createdAt": 0000000001,
 	"updatedAt": 0000000002,
+
 	"firstName": "John",
 	"lastName": "Smith",
 	"gender": "MALE",
+
 	"school": "University of Illinois at Urbana-Champaign",
-	"major": "Computer Science",
-	"degreePursued": "Bachelor’s",
+	"major": "CS",
+	"degreePursued": "BACHELOR",
 	"graduationYear": 2020,
 	"careerInterest": ["INTERNSHIP"],
 	"resumeFilename": "resume.pdf",
+
 	"programmingYears": 10,
 	"programmingAbility": 7,
 	"isOSContributor": true,
-	"categoryInterests": ["Systems", "Web"],
+	"categoryInterests": ["SYSTEMS", "WEBDEV"],
 	"languageInterests": ["JavaScript", "Python"],
+
 	"needsBus": false,
 	"hasAttended": true,
-	"howDiscovered": ["Peer"],
-	"shirtSize": "L",
-	"dietaryRestrictions": ["NONE"],
-	"hasDisability": false
+	"howDiscovered": ["FRIEND"]
 }
 ```
 
@@ -148,26 +169,27 @@ Response format:
 	"github": "jsmith",
 	"createdAt": 0000000001,
 	"updatedAt": 0000000002,
+
 	"firstName": "John",
 	"lastName": "Smith",
 	"gender": "MALE",
+
 	"school": "University of Illinois at Urbana-Champaign",
-	"major": "Computer Science",
-	"degreePursued": "Bachelor’s",
+	"major": "CS",
+	"degreePursued": "BACHELOR",
 	"graduationYear": 2020,
 	"careerInterest": ["INTERNSHIP"],
 	"resumeFilename": "resume.pdf",
+
 	"programmingYears": 10,
 	"programmingAbility": 7,
 	"isOSContributor": true,
-	"categoryInterests": ["Systems", "Web"],
+	"categoryInterests": ["SYSTEMS", "WEBDEV"],
 	"languageInterests": ["JavaScript", "Python"],
+
 	"needsBus": false,
 	"hasAttended": true,
-	"howDiscovered": ["Peer"],
-	"shirtSize": "L",
-	"dietaryRestrictions": ["NONE"],
-	"hasDisability": false
+	"howDiscovered": ["FRIEND"]
 }
 ```
 
@@ -179,28 +201,26 @@ Creates a registration for the user with the `id` in the JWT token provided in t
 Request format:
 ```
 {
-	"email": "john@gmail.com",
-	"github": "jsmith",
 	"firstName": "John",
 	"lastName": "Smith",
 	"gender": "MALE",
+
 	"school": "University of Illinois at Urbana-Champaign",
-	"major": "Computer Science",
-	"degreePursued": "Bachelor’s",
+	"major": "CS",
+	"degreePursued": "BACHELOR",
 	"graduationYear": 2020,
 	"careerInterest": ["INTERNSHIP"],
 	"resumeFilename": "resume.pdf",
+
 	"programmingYears": 10,
 	"programmingAbility": 7,
 	"isOSContributor": true,
-	"categoryInterests": ["Systems", "Web"],
+	"categoryInterests": ["SYSTEMS", "WEBDEV"],
 	"languageInterests": ["JavaScript", "Python"],
+
 	"needsBus": false,
 	"hasAttended": true,
-	"howDiscovered": ["Peer"],
-	"shirtSize": "L",
-	"dietaryRestrictions": ["NONE"],
-	"hasDisability": false
+	"howDiscovered": ["FRIEND"]
 }
 ```
 
@@ -212,26 +232,27 @@ Response format:
 	"github": "jsmith",
 	"createdAt": 0000000001,
 	"updatedAt": 0000000002,
+
 	"firstName": "John",
 	"lastName": "Smith",
 	"gender": "MALE",
+
 	"school": "University of Illinois at Urbana-Champaign",
-	"major": "Computer Science",
-	"degreePursued": "Bachelor’s",
+	"major": "CS",
+	"degreePursued": "BACHELOR",
 	"graduationYear": 2020,
 	"careerInterest": ["INTERNSHIP"],
 	"resumeFilename": "resume.pdf",
+
 	"programmingYears": 10,
 	"programmingAbility": 7,
 	"isOSContributor": true,
-	"categoryInterests": ["Systems", "Web"],
+	"categoryInterests": ["SYSTEMS", "WEBDEV"],
 	"languageInterests": ["JavaScript", "Python"],
+
 	"needsBus": false,
 	"hasAttended": true,
-	"howDiscovered": ["Peer"],
-	"shirtSize": "L",
-	"dietaryRestrictions": ["NONE"],
-	"hasDisability": false
+	"howDiscovered": ["FRIEND"]
 }
 ```
 
@@ -243,28 +264,26 @@ Updated the registration for the user with the `id` in the JWT token provided in
 Request format:
 ```
 {
-	"email": "john@gmail.com",
-	"github": "jsmith",
 	"firstName": "John",
 	"lastName": "Smith",
 	"gender": "MALE",
+
 	"school": "University of Illinois at Urbana-Champaign",
-	"major": "Computer Science",
-	"degreePursued": "Bachelor’s",
+	"major": "CS",
+	"degreePursued": "BACHELOR",
 	"graduationYear": 2020,
 	"careerInterest": ["INTERNSHIP"],
 	"resumeFilename": "resume.pdf",
+
 	"programmingYears": 10,
 	"programmingAbility": 7,
 	"isOSContributor": true,
-	"categoryInterests": ["Systems", "Web"],
+	"categoryInterests": ["SYSTEMS", "WEBDEV"],
 	"languageInterests": ["JavaScript", "Python"],
+
 	"needsBus": false,
 	"hasAttended": true,
-	"howDiscovered": ["Peer"],
-	"shirtSize": "L",
-	"dietaryRestrictions": ["NONE"],
-	"hasDisability": false
+	"howDiscovered": ["FRIEND"]
 }
 ```
 
@@ -276,26 +295,27 @@ Response format:
 	"github": "jsmith",
 	"createdAt": 0000000001,
 	"updatedAt": 0000000002,
+
 	"firstName": "John",
 	"lastName": "Smith",
 	"gender": "MALE",
+
 	"school": "University of Illinois at Urbana-Champaign",
-	"major": "Computer Science",
-	"degreePursued": "Bachelor’s",
+	"major": "CS",
+	"degreePursued": "BACHELOR",
 	"graduationYear": 2020,
 	"careerInterest": ["INTERNSHIP"],
 	"resumeFilename": "resume.pdf",
+
 	"programmingYears": 10,
 	"programmingAbility": 7,
 	"isOSContributor": true,
-	"categoryInterests": ["Systems", "Web"],
+	"categoryInterests": ["SYSTEMS", "WEBDEV"],
 	"languageInterests": ["JavaScript", "Python"],
+
 	"needsBus": false,
 	"hasAttended": true,
-	"howDiscovered": ["Peer"],
-	"shirtSize": "L",
-	"dietaryRestrictions": ["NONE"],
-	"hasDisability": false
+	"howDiscovered": ["FRIEND"]
 }
 ```
 
@@ -307,13 +327,22 @@ Returns the mentor registration stored for the mentor with the `id` `USERID`.
 Response format:
 ```
 {
-	"id": "github0000001"
+	"id": "github0000001",
+	"email": "john@gmail.com",
+	"github": "JSmith",
+	"createdAt": 0000000001,
+	"updatedAt": 0000000002,
+
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
+	"photoFilename": "profile.jpg",
+	"biography": "I write code.",
+	"projectName": "HackIllinois",
+	"projectDescription": "The best hackathon ever!",
+
 	"shirtSize": "M",
-	"github": "JSmith",
-	"linkedin": "john-smith"
+	"dietaryRestrictions": ["NONE"],
+	"hasDisability": false
 }
 ```
 
@@ -325,13 +354,22 @@ Returns the mentor registration stored for the mentor with the `id` stored in th
 Response format:
 ```
 {
-	"id": "github0000001"
+	"id": "github0000001",
+	"email": "john@gmail.com",
+	"github": "JSmith",
+	"createdAt": 0000000001,
+	"updatedAt": 0000000002,
+
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
+	"photoFilename": "profile.jpg",
+	"biography": "I write code.",
+	"projectName": "HackIllinois",
+	"projectDescription": "The best hackathon ever!",
+
 	"shirtSize": "M",
-	"github": "JSmith",
-	"linkedin": "john-smith"
+	"dietaryRestrictions": ["NONE"],
+	"hasDisability": false
 }
 ```
 
@@ -345,23 +383,36 @@ Request format:
 {
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
+	"photoFilename": "profile.jpg",
+	"biography": "I write code.",
+	"projectName": "HackIllinois",
+	"projectDescription": "The best hackathon ever!",
+
 	"shirtSize": "M",
-	"github": "JSmith",
-	"linkedin": "john-smith"
+	"dietaryRestrictions": ["NONE"],
+	"hasDisability": false
 }
 ```
 
 Response format:
 ```
 {
-	"id": "github0000001"
+	"id": "github0000001",
+	"email": "john@gmail.com",
+	"github": "JSmith",
+	"createdAt": 0000000001,
+	"updatedAt": 0000000002,
+
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
+	"photoFilename": "profile.jpg",
+	"biography": "I write code.",
+	"projectName": "HackIllinois",
+	"projectDescription": "The best hackathon ever!",
+
 	"shirtSize": "M",
-	"github": "JSmith",
-	"linkedin": "john-smith"
+	"dietaryRestrictions": ["NONE"],
+	"hasDisability": false
 }
 ```
 
@@ -375,23 +426,36 @@ Request format:
 {
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
+	"photoFilename": "profile.jpg",
+	"biography": "I write code.",
+	"projectName": "HackIllinois",
+	"projectDescription": "The best hackathon ever!",
+
 	"shirtSize": "M",
-	"github": "JSmith",
-	"linkedin": "john-smith"
+	"dietaryRestrictions": ["NONE"],
+	"hasDisability": false
 }
 ```
 
 Response format:
 ```
 {
-	"id": "github0000001"
+	"id": "github0000001",
+	"email": "john@gmail.com",
+	"github": "JSmith",
+	"createdAt": 0000000001,
+	"updatedAt": 0000000002,
+
 	"firstName": "John",
 	"lastName": "Smith",
-	"email": "john@gmail.com",
+	"photoFilename": "profile.jpg",
+	"biography": "I write code.",
+	"projectName": "HackIllinois",
+	"projectDescription": "The best hackathon ever!",
+
 	"shirtSize": "M",
-	"github": "JSmith",
-	"linkedin": "john-smith"
+	"dietaryRestrictions": ["NONE"],
+	"hasDisability": false
 }
 ```
 
@@ -410,53 +474,55 @@ Response format:
 			"github": "jsmith",
 			"createdAt": 0000000001,
 			"updatedAt": 0000000002,
+
 			"firstName": "John",
 			"lastName": "Smith",
 			"gender": "MALE",
+
 			"school": "University of Illinois at Urbana-Champaign",
-			"major": "Computer Science",
-			"degreePursued": "Bachelor’s",
+			"major": "CS",
+			"degreePursued": "BACHELOR",
 			"graduationYear": 2020,
 			"careerInterest": ["INTERNSHIP"],
 			"resumeFilename": "resume.pdf",
+
 			"programmingYears": 10,
 			"programmingAbility": 7,
 			"isOSContributor": true,
-			"categoryInterests": ["Systems", "Web"],
+			"categoryInterests": ["SYSTEMS", "WEBDEV"],
 			"languageInterests": ["JavaScript", "Python"],
+
 			"needsBus": false,
 			"hasAttended": true,
-			"howDiscovered": ["Peer"],
-			"shirtSize": "L",
-			"dietaryRestrictions": ["NONE"],
-			"hasDisability": false
+			"howDiscovered": ["FRIEND"]
 		},
 		{
-			"id": "github0000001",
-			"email": "john@gmail.com",
-			"github": "jsmith",
+			"id": "github0000002",
+			"email": "john2@gmail.com",
+			"github": "jsmith2",
 			"createdAt": 0000000001,
 			"updatedAt": 0000000002,
-			"firstName": "John",
-			"lastName": "Smith",
+
+			"firstName": "John2",
+			"lastName": "Smith2",
 			"gender": "MALE",
+
 			"school": "University of Illinois at Urbana-Champaign",
-			"major": "Computer Science",
-			"degreePursued": "Bachelor’s",
+			"major": "CS",
+			"degreePursued": "BACHELOR",
 			"graduationYear": 2020,
 			"careerInterest": ["INTERNSHIP"],
 			"resumeFilename": "resume.pdf",
+
 			"programmingYears": 10,
 			"programmingAbility": 7,
 			"isOSContributor": true,
-			"categoryInterests": ["Systems", "Web"],
+			"categoryInterests": ["SYSTEMS", "WEBDEV"],
 			"languageInterests": ["JavaScript", "Python"],
+
 			"needsBus": false,
 			"hasAttended": true,
-			"howDiscovered": ["Peer"],
-			"shirtSize": "L",
-			"dietaryRestrictions": ["NONE"],
-			"hasDisability": false
+			"howDiscovered": ["FRIEND"]
 		}
 	]
 }
@@ -472,22 +538,40 @@ Response format:
 {
 	"registrations": [
 		{
-			"id": "github0000001"
+			"id": "github0000001",
+			"email": "john@gmail.com",
+			"github": "JSmith",
+			"createdAt": 0000000001,
+			"updatedAt": 0000000002,
+
 			"firstName": "John",
 			"lastName": "Smith",
-			"email": "john@gmail.com",
+			"photoFilename": "profile.jpg",
+			"biography": "I write code.",
+			"projectName": "HackIllinois",
+			"projectDescription": "The best hackathon ever!",
+
 			"shirtSize": "M",
-			"github": "JSmith",
-			"linkedin": "john-smith"
+			"dietaryRestrictions": ["NONE"],
+			"hasDisability": false
 		},
 		{
-			"id": "github0000002"
-			"firstName": "John",
-			"lastName": "Doe",
-			"email": "jdoe@gmail.com",
+			"id": "github0000002",
+			"email": "john2@gmail.com",
+			"github": "JSmith2",
+			"createdAt": 0000000001,
+			"updatedAt": 0000000002,
+
+			"firstName": "John2",
+			"lastName": "Smith2",
+			"photoFilename": "profile2.jpg",
+			"biography": "I write code.",
+			"projectName": "HackIllinois",
+			"projectDescription": "The best hackathon ever!",
+
 			"shirtSize": "M",
-			"github": "JDoe",
-			"linkedin": "john-doe"
+			"dietaryRestrictions": ["NONE"],
+			"hasDisability": false
 		}
 	]
 }

@@ -316,8 +316,8 @@ func TestGetFilteredUserRegistrationsService(t *testing.T) {
 
 	// Test type casting
 	parameters = map[string][]string{
-		"firstName": {"first"},
-		"age":       {"20"},
+		"firstName":      {"first"},
+		"graduationYear": {"2022"},
 	}
 	user_registrations, err = service.GetFilteredUserRegistrations(parameters)
 	if err != nil {
@@ -422,20 +422,23 @@ func getBaseUserRegistration() datastore.DataStore {
 */
 func getBaseMentorRegistration() datastore.DataStore {
 	base_mentor_registration := datastore.NewDataStore(config.MENTOR_REGISTRATION_DEFINITION)
-	json.Unmarshal([]byte(user_registration_data), &base_mentor_registration)
+	json.Unmarshal([]byte(mentor_registration_data), &base_mentor_registration)
 	return base_mentor_registration
 }
 
 var user_registration_data string = `
 {
 	"id": "testid",
+	"email": "test@gmail.com",
 	"firstName": "first",
 	"lastName": "last",
-	"email": "test@gmail.com",
-	"shirtSize": "M",
 	"github": "githubusername",
-	"linkedin": "linkedinusername",
-	"age": 20,
+	"school": "UIUC",
+	"major": "CS",
+	"degreePursued": "BACHELOR",
+	"graduationYear": 2022,
+	"programmingYears": 1,
+	"programmingAbility": 10,
 	"createdAt": 10,
 	"updatedAt": 15
 }
@@ -444,12 +447,15 @@ var user_registration_data string = `
 var mentor_registration_data string = `
 {
 	"id": "testid",
+	"email": "test@gmail.com",
 	"firstName": "first",
 	"lastName": "last",
-	"email": "test@gmail.com",
-	"shirtSize": "M",
 	"github": "githubusername",
-	"linkedin": "linkedinusername",
+	"projectName": "project1",
+	"projectDescription": "description1",
+	"shirtSize": "M",
+	"dietaryRestrictions": ["VEGAN"],
+	"hasDisability": false,
 	"createdAt": 10,
 	"updatedAt": 15
 }

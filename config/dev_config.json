@@ -150,19 +150,19 @@
 			{
 				"name": "firstName",
 				"type": "string",
-				"validations": "",
+				"validations": "required",
 				"fields": []
 			},
 			{
 				"name": "lastName",
 				"type": "string",
-				"validations": "",
+				"validations": "required",
 				"fields": []
 			},
 			{
 				"name": "gender",
 				"type": "string",
-				"validations": "required,oneof=MALE FEMALE NONBINARY OTHER NOANSWER",
+				"validations": "omitempty,oneof=MALE FEMALE NONBINARY",
 				"fields": []
 			},
 			{
@@ -174,13 +174,13 @@
 			{
 				"name": "major",
 				"type": "string",
-				"validations": "required",
+				"validations": "required,oneof=CS CE EE ENGINEERING BUSINESS LIBERALARTS OTHER",
 				"fields": []
 			},
 			{
 				"name": "degreePursued",
 				"type": "string",
-				"validations": "required",
+				"validations": "required,oneof=ASSOCIATE BACHELOR MASTER PHD",
 				"fields": []
 			},
 			{
@@ -192,25 +192,25 @@
 			{
 				"name": "careerInterest",
 				"type": "[]string",
-				"validations": "required,dive,oneof=INTERNSHIP FULLTIME",
+				"validations": "omitempty,dive,oneof=INTERNSHIP FULLTIME",
 				"fields": []
 			},
 			{
 				"name": "resumeFilename",
 				"type": "string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			},
 			{
 				"name": "programmingYears",
 				"type": "int",
-				"validations": "required",
+				"validations": "min=0,max=100",
 				"fields": []
 			},
 			{
 				"name": "programmingAbility",
 				"type": "int",
-				"validations": "required",
+				"validations": "min=1,max=10",
 				"fields": []
 			},
 			{
@@ -222,13 +222,13 @@
 			{
 				"name": "categoryInterests",
 				"type": "[]string",
-				"validations": "required,dive,oneof=Systems Web",
+				"validations": "omitempty,dive,oneof=LANGUAGES DATASCIENCE WEBDEV SYSTEMS APPDEV HARDWARE DEVTOOLS",
 				"fields": []
 			},
 			{
 				"name": "languageInterests",
 				"type": "[]string",
-				"validations": "required,dive,oneof=JavaScript Python",
+				"validations": "omitempty,dive,oneof=C C++ C# Clojure Go Haskell HTML/CSS Java JavaScript Kotlin Lisp Perl PHP Python Ruby R Rust Scala SQL Swift Verilog x86",
 				"fields": []
 			},
 			{
@@ -246,29 +246,12 @@
 			{
 				"name": "howDiscovered",
 				"type": "[]string",
-				"validations": "required,dive,oneof=Peer",
-				"fields": []
-			},
-			{
-				"name": "shirtSize",
-				"type": "string",
-				"validations": "required,oneof=S M L XL",
-				"fields": []
-			},
-			{
-				"name": "dietaryRestrictions",
-				"type": "[]string",
-				"validations": "required,dive,oneof=NONE VEGAN VEGETARIAN NOPEANUT NOGLUTEN",
-				"fields": []
-			},
-			{
-				"name": "hasDisability",
-				"type": "boolean",
-				"validations": "required|isdefault",
+				"validations": "omitempty,dive,oneof=FRIEND SOCIALMEDIA OTHER",
 				"fields": []
 			}
 		]
 	},
+
 	"MENTOR_REGISTRATION_DEFINITION": {
 		"name": "mentor_registration",
 		"type": "object",
@@ -277,6 +260,30 @@
 			{
 				"name": "id",
 				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "email",
+				"type": "string",
+				"validations": "required,email",
+				"fields": []
+			},
+			{
+				"name": "github",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "createdAt",
+				"type": "int",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "updatedAt",
+				"type": "int",
 				"validations": "required",
 				"fields": []
 			},
@@ -293,39 +300,45 @@
 				"fields": []
 			},
 			{
-				"name": "email",
+				"name": "photoFilename",
 				"type": "string",
-				"validations": "required,email",
+				"validations": "",
+				"fields": []
+			},
+			{
+				"name": "biography",
+				"type": "string",
+				"validations": "",
+				"fields": []
+			},
+			{
+				"name": "projectName",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "projectDescription",
+				"type": "string",
+				"validations": "required",
 				"fields": []
 			},
 			{
 				"name": "shirtSize",
 				"type": "string",
-				"validations": "required,oneof=S M L XL",
+				"validations": "required,oneof=S M L XL XXL XXXL",
 				"fields": []
 			},
 			{
-				"name": "github",
-				"type": "string",
-				"validations": "required",
+				"name": "dietaryRestrictions",
+				"type": "[]string",
+				"validations": "required,dive,oneof=NONE VEGAN VEGETARIAN NOPEANUT NOGLUTEN",
 				"fields": []
 			},
 			{
-				"name": "linkedin",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "createdAt",
-				"type": "int",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "updatedAt",
-				"type": "int",
-				"validations": "required",
+				"name": "hasDisability",
+				"type": "boolean",
+				"validations": "required|isdefault",
 				"fields": []
 			}
 		]
@@ -356,94 +369,21 @@
 				"fields": []
 			},
 			{
-				"name": "phone",
+				"name": "shirtSize",
 				"type": "string",
-				"validations": "required",
+				"validations": "required,oneof=S M L XL XXL XXXL",
 				"fields": []
 			},
 			{
-				"name": "diet",
+				"name": "dietaryRestrictions",
 				"type": "[]string",
 				"validations": "required,dive,oneof=NONE VEGAN VEGETARIAN NOPEANUT NOGLUTEN",
 				"fields": []
 			},
 			{
-				"name": "transportation",
-				"type": "string",
-				"validations": "required,oneof=NONE BUS",
-				"fields": []
-			},
-			{
-				"name": "lightningInterest",
+				"name": "hasDisability",
 				"type": "boolean",
 				"validations": "required|isdefault",
-				"fields": []
-			},
-			{
-				"name": "lightningTopic",
-				"type": "string",
-				"validations": "",
-				"fields": []
-			},
-			{
-				"name": "programmingExperience",
-				"type": "object",
-				"validations": "required",
-				"fields": [
-					{
-						"name": "python",
-						"type": "int",
-						"validations": "",
-						"fields": []
-					},
-					{
-						"name": "javascript",
-						"type": "int",
-						"validations": "",
-						"fields": []
-					},
-					{
-						"name": "java",
-						"type": "int",
-						"validations": "",
-						"fields": []
-					},
-					{
-						"name": "cc++",
-						"type": "int",
-						"validations": "",
-						"fields": []
-					},
-					{
-						"name": "go",
-						"type": "int",
-						"validations": "",
-						"fields": []
-					},
-					{
-						"name": "ruby",
-						"type": "int",
-						"validations": "",
-						"fields": []
-					},
-					{
-						"name": "rust",
-						"type": "int",
-						"validations": "",
-						"fields": []
-					}
-				]
-			},
-			{
-				"name": "techInterests",
-				"type": "[]string",
-				"validations": "required,dive,oneof=DATASCIENCE WEBDEV SYSTEMS APPDEV HARDWARE DEVTOOLS",
-				"fields": []
-			},
-			{
-				"name": "osProject",
-				"type": "string",
-				"validations": "",
 				"fields": []
 			},
 			{

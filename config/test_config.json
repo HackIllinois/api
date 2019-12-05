@@ -151,13 +151,13 @@
 			{
 				"name": "major",
 				"type": "string",
-				"validations": "required,oneof=CS CE EE ENGINEERING BUSINESS LIBERALARTS OTHER",
+				"validations": "required,oneof=CS CE EE ENG BUS LAS OTHER",
 				"fields": []
 			},
 			{
 				"name": "degreePursued",
 				"type": "string",
-				"validations": "required,oneof=ASSOCIATE BACHELOR MASTER PHD",
+				"validations": "required,oneof=ASSOCIATES BACHELORS MASTERS PHD",
 				"fields": []
 			},
 			{

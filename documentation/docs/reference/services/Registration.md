@@ -25,7 +25,7 @@ Response format:
 
 		"school": "University of Illinois at Urbana-Champaign",
 		"major": "CS",
-		"degreePursued": "BACHELOR",
+		"degreePursued": "BACHELORS",
 		"graduationYear": 2020,
 		"careerInterest": ["INTERNSHIP"],
 		"resumeFilename": "resume.pdf",
@@ -83,7 +83,7 @@ Response format:
 
 		"school": "University of Illinois at Urbana-Champaign",
 		"major": "CS",
-		"degreePursued": "BACHELOR",
+		"degreePursued": "BACHELORS",
 		"graduationYear": 2020,
 		"careerInterest": ["INTERNSHIP"],
 		"resumeFilename": "resume.pdf",
@@ -139,7 +139,7 @@ Response format:
 
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "CS",
-	"degreePursued": "BACHELOR",
+	"degreePursued": "BACHELORS",
 	"graduationYear": 2020,
 	"careerInterest": ["INTERNSHIP"],
 	"resumeFilename": "resume.pdf",
@@ -176,7 +176,7 @@ Response format:
 
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "CS",
-	"degreePursued": "BACHELOR",
+	"degreePursued": "BACHELORS",
 	"graduationYear": 2020,
 	"careerInterest": ["INTERNSHIP"],
 	"resumeFilename": "resume.pdf",
@@ -207,7 +207,7 @@ Request format:
 
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "CS",
-	"degreePursued": "BACHELOR",
+	"degreePursued": "BACHELORS",
 	"graduationYear": 2020,
 	"careerInterest": ["INTERNSHIP"],
 	"resumeFilename": "resume.pdf",
@@ -239,7 +239,7 @@ Response format:
 
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "CS",
-	"degreePursued": "BACHELOR",
+	"degreePursued": "BACHELORS",
 	"graduationYear": 2020,
 	"careerInterest": ["INTERNSHIP"],
 	"resumeFilename": "resume.pdf",
@@ -270,7 +270,7 @@ Request format:
 
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "CS",
-	"degreePursued": "BACHELOR",
+	"degreePursued": "BACHELORS",
 	"graduationYear": 2020,
 	"careerInterest": ["INTERNSHIP"],
 	"resumeFilename": "resume.pdf",
@@ -302,7 +302,7 @@ Response format:
 
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "CS",
-	"degreePursued": "BACHELOR",
+	"degreePursued": "BACHELORS",
 	"graduationYear": 2020,
 	"careerInterest": ["INTERNSHIP"],
 	"resumeFilename": "resume.pdf",
@@ -481,7 +481,7 @@ Response format:
 
 			"school": "University of Illinois at Urbana-Champaign",
 			"major": "CS",
-			"degreePursued": "BACHELOR",
+			"degreePursued": "BACHELORS",
 			"graduationYear": 2020,
 			"careerInterest": ["INTERNSHIP"],
 			"resumeFilename": "resume.pdf",
@@ -509,7 +509,7 @@ Response format:
 
 			"school": "University of Illinois at Urbana-Champaign",
 			"major": "CS",
-			"degreePursued": "BACHELOR",
+			"degreePursued": "BACHELORS",
 			"graduationYear": 2020,
 			"careerInterest": ["INTERNSHIP"],
 			"resumeFilename": "resume.pdf",

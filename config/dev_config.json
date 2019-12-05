@@ -10,6 +10,7 @@
 	"EVENT_SERVICE": "http://localhost:8010",
 	"STAT_SERVICE": "http://localhost:8011",
 	"NOTIFICATIONS_SERVICE": "http://localhost:8012",
+	"PROJECT_SERVICE": "http://localhost:8013",
 
 	"GATEWAY_PORT": "8000",
 	"AUTH_PORT": ":8002",
@@ -23,6 +24,7 @@
 	"EVENT_PORT": ":8010",
 	"STAT_PORT": ":8011",
 	"NOTIFICATIONS_PORT": ":8012",
+	"PROJECT_PORT": ":8013",
 
 	"AUTH_DB_HOST": "localhost",
 	"USER_DB_HOST": "localhost",
@@ -35,6 +37,7 @@
 	"EVENT_DB_HOST": "localhost",
 	"STAT_DB_HOST": "localhost",
 	"NOTIFICATIONS_DB_HOST": "localhost",
+	"PROJECT_DB_HOST": "localhost",
 
 	"AUTH_DB_NAME": "auth",
 	"USER_DB_NAME": "user",
@@ -47,6 +50,7 @@
 	"EVENT_DB_NAME": "event",
 	"STAT_DB_NAME": "stat",
 	"NOTIFICATIONS_DB_NAME": "notifications",
+	"PROJECT_DB_NAME": "project",
 
 	"S3_REGION": "us-east-1",
 	"S3_BUCKET": "hackillinois-upload-2019",

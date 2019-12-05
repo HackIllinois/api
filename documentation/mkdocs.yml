@@ -21,6 +21,7 @@ nav:
       - 'Event': 'reference/services/Event.md'
       - 'Mail': 'reference/services/Mail.md'
       - 'Notifications': 'reference/services/Notifications.md'
+      - 'Project': 'reference/services/Project.md'
       - 'RSVP': 'reference/services/RSVP.md'
       - 'Registration': 'reference/services/Registration.md'
       - 'Statistics': 'reference/services/Statistics.md'

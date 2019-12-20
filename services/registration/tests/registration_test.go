@@ -435,7 +435,7 @@ var user_registration_data string = `
 	"github": "githubusername",
 	"school": "UIUC",
 	"major": "CS",
-	"degreePursued": "BACHELOR",
+	"degreePursued": "BACHELORS",
 	"graduationYear": 2022,
 	"programmingYears": 1,
 	"programmingAbility": 10,

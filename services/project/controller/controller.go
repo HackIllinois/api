@@ -14,12 +14,84 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
+	router.HandleFunc("/favorite/", GetProjectFavorites).Methods("GET")
+	router.HandleFunc("/favorite/add/", AddProjectFavorite).Methods("POST")
+	router.HandleFunc("/favorite/remove/", RemoveProjectFavorite).Methods("POST")
+
 	router.HandleFunc("/filter/", GetFilteredProjects).Methods("GET")
 	router.HandleFunc("/{id}/", GetProject).Methods("GET")
 	router.HandleFunc("/{id}/", DeleteProject).Methods("DELETE")
 	router.HandleFunc("/", CreateProject).Methods("POST")
 	router.HandleFunc("/", UpdateProject).Methods("PUT")
 	router.HandleFunc("/", GetAllProjects).Methods("GET")
+}
+
+/*
+	Endpoint to get the current user's project favorites
+*/
+func GetProjectFavorites(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	favorites, err := service.GetProjectFavorites(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's project favourites."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(favorites)
+}
+
+/*
+	Endpoint to add a project favorite for the current user
+*/
+func AddProjectFavorite(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	var project_favorite_modification models.ProjectFavoriteModification
+	json.NewDecoder(r.Body).Decode(&project_favorite_modification)
+
+	err := service.AddProjectFavorite(id, project_favorite_modification.ProjectID)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not add a project favorite for the current user."))
+		return
+	}
+
+	favorites, err := service.GetProjectFavorites(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated user project favorites."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(favorites)
+}
+
+/*
+	Endpoint to remove a project favorite for the current user
+*/
+func RemoveProjectFavorite(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	var project_favorite_modification models.ProjectFavoriteModification
+	json.NewDecoder(r.Body).Decode(&project_favorite_modification)
+
+	err := service.RemoveProjectFavorite(id, project_favorite_modification.ProjectID)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not remove a project favorite for the current user."))
+		return
+	}
+
+	favorites, err := service.GetProjectFavorites(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated project favourites for the user (post-removal)."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(favorites)
 }
 
 /*
@@ -56,9 +128,6 @@ func DeleteProject(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-/*
-	Endpoint to get all projects
-*/
 func GetAllProjects(w http.ResponseWriter, r *http.Request) {
 	project_list, err := service.GetAllProjects()
 
@@ -85,9 +154,6 @@ func GetFilteredProjects(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-/*
-	Endpoint to create a project
-*/
 func CreateProject(w http.ResponseWriter, r *http.Request) {
 	var project models.Project
 	json.NewDecoder(r.Body).Decode(&project)
@@ -111,9 +177,6 @@ func CreateProject(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(updated_project)
 }
 
-/*
-	Endpoint to update a project
-*/
 func UpdateProject(w http.ResponseWriter, r *http.Request) {
 	var project models.Project
 	json.NewDecoder(r.Body).Decode(&project)

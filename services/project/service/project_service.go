@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/project/config"
 	"github.com/HackIllinois/api/services/project/models"
 	"gopkg.in/go-playground/validator.v9"
@@ -164,6 +165,95 @@ func UpdateProject(id string, project models.Project) error {
 	}
 
 	err = db.Update("projects", selector, &project)
+
+	return err
+}
+
+/*
+	Returns the project favorites for the user with the given id
+*/
+func GetProjectFavorites(id string) (*models.ProjectFavorites, error) {
+	query := database.QuerySelector{
+		"id": id,
+	}
+
+	var project_favorites models.ProjectFavorites
+	err := db.FindOne("favorites", query, &project_favorites)
+
+	if err != nil {
+		if err == database.ErrNotFound {
+			err = db.Insert("favorites", &models.ProjectFavorites{
+				ID:       id,
+				Projects: []string{},
+			})
+
+			if err != nil {
+				return nil, err
+			}
+
+			err = db.FindOne("favorites", query, &project_favorites)
+
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, err
+		}
+	}
+
+	return &project_favorites, nil
+}
+
+/*
+	Adds the given project to the favorites for the user with the given id
+*/
+func AddProjectFavorite(id string, project string) error {
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	_, err := GetProject(project)
+
+	if err != nil {
+		return errors.New("Could not find project with the given id.")
+	}
+
+	project_favorites, err := GetProjectFavorites(id)
+
+	if err != nil {
+		return err
+	}
+
+	if !utils.ContainsString(project_favorites.Projects, project) {
+		project_favorites.Projects = append(project_favorites.Projects, project)
+	}
+
+	err = db.Update("favorites", selector, project_favorites)
+
+	return err
+}
+
+/*
+	Removes the given project from the favorites of the user with the given id
+*/
+func RemoveProjectFavorite(id string, project string) error {
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	project_favorites, err := GetProjectFavorites(id)
+
+	if err != nil {
+		return err
+	}
+
+	project_favorites.Projects, err = utils.RemoveString(project_favorites.Projects, project)
+
+	if err != nil {
+		return errors.New("User's project favorites does not have specified project")
+	}
+
+	err = db.Update("favorites", selector, project_favorites)
 
 	return err
 }

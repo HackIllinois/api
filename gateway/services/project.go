@@ -14,6 +14,24 @@ const ProjectFormat string = "JSON"
 
 var ProjectRoutes = arbor.RouteCollection{
 	arbor.Route{
+		"GetProjectFavorites",
+		"GET",
+		"/project/favorite/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetProjectFavorites).ServeHTTP,
+	},
+	arbor.Route{
+		"AddProjectFavorite",
+		"POST",
+		"/project/favorite/add/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(AddProjectFavorite).ServeHTTP,
+	},
+	arbor.Route{
+		"RemoveProjectFavorite",
+		"POST",
+		"/project/favorite/remove/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveProjectFavorite).ServeHTTP,
+	},
+	arbor.Route{
 		"GetFilteredProjects",
 		"GET",
 		"/project/filter/",
@@ -69,4 +87,16 @@ func CreateProject(w http.ResponseWriter, r *http.Request) {
 
 func UpdateProject(w http.ResponseWriter, r *http.Request) {
 	arbor.PUT(w, config.PROJECT_SERVICE+r.URL.String(), ProjectFormat, "", r)
+}
+
+func GetProjectFavorites(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.PROJECT_SERVICE+r.URL.String(), ProjectFormat, "", r)
+}
+
+func AddProjectFavorite(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.PROJECT_SERVICE+r.URL.String(), ProjectFormat, "", r)
+}
+
+func RemoveProjectFavorite(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.PROJECT_SERVICE+r.URL.String(), ProjectFormat, "", r)
 }

@@ -2,14 +2,15 @@ package tests
 
 import (
 	"fmt"
-	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/project/config"
-	"github.com/HackIllinois/api/services/project/models"
-	"github.com/HackIllinois/api/services/project/service"
 	"os"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/services/project/config"
+	"github.com/HackIllinois/api/services/project/models"
+	"github.com/HackIllinois/api/services/project/service"
 )
 
 var db database.Database
@@ -49,16 +50,13 @@ var TestTime = time.Now().Unix()
 */
 func SetupTestDB(t *testing.T) {
 	project := models.Project{
-		ID:      "testid",
-		Name:    "testname",
-		Mentors: []string{"testmentor"},
-		Code:    "testcode",
-		Tags:    []string{"tag1", "tag2"},
-		Location: models.ProjectLocation{
-			Description: "testlocationdescription",
-			Latitude:    123.456,
-			Longitude:   123.456,
-		},
+		ID:          "testid",
+		Name:        "testname",
+		Description: "testdesc",
+		Mentors:     []string{"testmentor"},
+		Number:      1,
+		Tags:        []string{"tag1", "tag2"},
+		Room:        "testroom",
 	}
 
 	err := db.Insert("projects", &project)
@@ -86,16 +84,13 @@ func TestGetAllProjectsService(t *testing.T) {
 	SetupTestDB(t)
 
 	project := models.Project{
-		ID:      "testid2",
-		Name:    "testname2",
-		Mentors: []string{"testmentor2"},
-		Code:    "testcode2",
-		Tags:    []string{"tag2"},
-		Location: models.ProjectLocation{
-			Description: "testlocationdescription2",
-			Latitude:    423.456,
-			Longitude:   777.777,
-		},
+		ID:          "testid2",
+		Name:        "testname2",
+		Description: "testdesc2",
+		Mentors:     []string{"testmentor2"},
+		Number:      2,
+		Tags:        []string{"tag2"},
+		Room:        "testroom2",
 	}
 
 	err := db.Insert("projects", &project)
@@ -113,28 +108,22 @@ func TestGetAllProjectsService(t *testing.T) {
 	expected_project_list := models.ProjectList{
 		Projects: []models.Project{
 			{
-				ID:      "testid",
-				Name:    "testname",
-				Mentors: []string{"testmentor"},
-				Code:    "testcode",
-				Tags:    []string{"tag1", "tag2"},
-				Location: models.ProjectLocation{
-					Description: "testlocationdescription",
-					Latitude:    123.456,
-					Longitude:   123.456,
-				},
+				ID:          "testid",
+				Name:        "testname",
+				Description: "testdesc",
+				Mentors:     []string{"testmentor"},
+				Number:      1,
+				Tags:        []string{"tag1", "tag2"},
+				Room:        "testroom",
 			},
 			{
-				ID:      "testid2",
-				Name:    "testname2",
-				Mentors: []string{"testmentor2"},
-				Code:    "testcode2",
-				Tags:    []string{"tag2"},
-				Location: models.ProjectLocation{
-					Description: "testlocationdescription2",
-					Latitude:    423.456,
-					Longitude:   777.777,
-				},
+				ID:          "testid2",
+				Name:        "testname2",
+				Description: "testdesc2",
+				Mentors:     []string{"testmentor2"},
+				Number:      2,
+				Tags:        []string{"tag2"},
+				Room:        "testroom2",
 			},
 		},
 	}
@@ -170,16 +159,13 @@ func TestGetFilteredProjectsService(t *testing.T) {
 	SetupTestDB(t)
 
 	project := models.Project{
-		ID:      "testid2",
-		Name:    "testname2",
-		Mentors: []string{"testmentor2"},
-		Code:    "testcode2",
-		Tags:    []string{"tag2"},
-		Location: models.ProjectLocation{
-			Description: "testlocationdescription2",
-			Latitude:    423.456,
-			Longitude:   777.777,
-		},
+		ID:          "testid2",
+		Name:        "testname2",
+		Description: "testdesc2",
+		Mentors:     []string{"testmentor2"},
+		Number:      2,
+		Tags:        []string{"tag2"},
+		Room:        "testroom2",
 	}
 
 	err := db.Insert("projects", &project)
@@ -201,16 +187,13 @@ func TestGetFilteredProjectsService(t *testing.T) {
 	expected_project_list := models.ProjectList{
 		Projects: []models.Project{
 			{
-				ID:      "testid2",
-				Name:    "testname2",
-				Mentors: []string{"testmentor2"},
-				Code:    "testcode2",
-				Tags:    []string{"tag2"},
-				Location: models.ProjectLocation{
-					Description: "testlocationdescription2",
-					Latitude:    423.456,
-					Longitude:   777.777,
-				},
+				ID:          "testid2",
+				Name:        "testname2",
+				Description: "testdesc2",
+				Mentors:     []string{"testmentor2"},
+				Number:      2,
+				Tags:        []string{"tag2"},
+				Room:        "testroom2",
 			},
 		},
 	}
@@ -230,28 +213,22 @@ func TestGetFilteredProjectsService(t *testing.T) {
 	expected_project_list = models.ProjectList{
 		Projects: []models.Project{
 			{
-				ID:      "testid",
-				Name:    "testname",
-				Mentors: []string{"testmentor"},
-				Code:    "testcode",
-				Tags:    []string{"tag1", "tag2"},
-				Location: models.ProjectLocation{
-					Description: "testlocationdescription",
-					Latitude:    123.456,
-					Longitude:   123.456,
-				},
+				ID:          "testid",
+				Name:        "testname",
+				Description: "testdesc",
+				Mentors:     []string{"testmentor"},
+				Number:      1,
+				Tags:        []string{"tag1", "tag2"},
+				Room:        "testroom",
 			},
 			{
-				ID:      "testid2",
-				Name:    "testname2",
-				Mentors: []string{"testmentor2"},
-				Code:    "testcode2",
-				Tags:    []string{"tag2"},
-				Location: models.ProjectLocation{
-					Description: "testlocationdescription2",
-					Latitude:    423.456,
-					Longitude:   777.777,
-				},
+				ID:          "testid2",
+				Name:        "testname2",
+				Description: "testdesc2",
+				Mentors:     []string{"testmentor2"},
+				Number:      2,
+				Tags:        []string{"tag2"},
+				Room:        "testroom2",
 			},
 		},
 	}
@@ -294,16 +271,13 @@ func TestGetProjectService(t *testing.T) {
 	}
 
 	expected_project := models.Project{
-		ID:      "testid",
-		Name:    "testname",
-		Mentors: []string{"testmentor"},
-		Code:    "testcode",
-		Tags:    []string{"tag1", "tag2"},
-		Location: models.ProjectLocation{
-			Description: "testlocationdescription",
-			Latitude:    123.456,
-			Longitude:   123.456,
-		},
+		ID:          "testid",
+		Name:        "testname",
+		Description: "testdesc",
+		Mentors:     []string{"testmentor"},
+		Number:      1,
+		Tags:        []string{"tag1", "tag2"},
+		Room:        "testroom",
 	}
 
 	if !reflect.DeepEqual(project, &expected_project) {
@@ -320,16 +294,13 @@ func TestCreateProjectService(t *testing.T) {
 	SetupTestDB(t)
 
 	new_project := models.Project{
-		ID:      "testid2",
-		Name:    "testname2",
-		Mentors: []string{"testmentor2"},
-		Code:    "testcode2",
-		Tags:    []string{"tag2"},
-		Location: models.ProjectLocation{
-			Description: "testlocationdescription2",
-			Latitude:    423.456,
-			Longitude:   777.777,
-		},
+		ID:          "testid2",
+		Name:        "testname2",
+		Description: "testdesc2",
+		Mentors:     []string{"testmentor2"},
+		Number:      5,
+		Tags:        []string{"tag2"},
+		Room:        "testroom2",
 	}
 
 	err := service.CreateProject("testid2", new_project)
@@ -345,16 +316,13 @@ func TestCreateProjectService(t *testing.T) {
 	}
 
 	expected_project := models.Project{
-		ID:      "testid2",
-		Name:    "testname2",
-		Mentors: []string{"testmentor2"},
-		Code:    "testcode2",
-		Tags:    []string{"tag2"},
-		Location: models.ProjectLocation{
-			Description: "testlocationdescription2",
-			Latitude:    423.456,
-			Longitude:   777.777,
-		},
+		ID:          "testid2",
+		Name:        "testname2",
+		Description: "testdesc2",
+		Mentors:     []string{"testmentor2"},
+		Number:      5,
+		Tags:        []string{"tag2"},
+		Room:        "testroom2",
 	}
 
 	if !reflect.DeepEqual(project, &expected_project) {
@@ -397,16 +365,13 @@ func TestUpdateProjectService(t *testing.T) {
 	SetupTestDB(t)
 
 	project := models.Project{
-		ID:      "testid",
-		Name:    "testname2",
-		Mentors: []string{"testmentor", "testmentor2"},
-		Code:    "testcode2",
-		Tags:    []string{"tag1", "tag3"},
-		Location: models.ProjectLocation{
-			Description: "testlocationdescription2",
-			Latitude:    444.456,
-			Longitude:   123.456,
-		},
+		ID:          "testid",
+		Name:        "testname2",
+		Description: "testdesc2",
+		Mentors:     []string{"testmentor", "testmentor2"},
+		Number:      3,
+		Tags:        []string{"tag1", "tag3"},
+		Room:        "testroom2",
 	}
 
 	err := service.UpdateProject("testid", project)
@@ -422,20 +387,107 @@ func TestUpdateProjectService(t *testing.T) {
 	}
 
 	expected_project := models.Project{
-		ID:      "testid",
-		Name:    "testname2",
-		Mentors: []string{"testmentor", "testmentor2"},
-		Code:    "testcode2",
-		Tags:    []string{"tag1", "tag3"},
-		Location: models.ProjectLocation{
-			Description: "testlocationdescription2",
-			Latitude:    444.456,
-			Longitude:   123.456,
-		},
+		ID:          "testid",
+		Name:        "testname2",
+		Description: "testdesc2",
+		Mentors:     []string{"testmentor", "testmentor2"},
+		Number:      3,
+		Tags:        []string{"tag1", "tag3"},
+		Room:        "testroom2",
 	}
 
 	if !reflect.DeepEqual(updated_project, &expected_project) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_project, updated_project)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests that getting project favorites works correctly at the service level
+*/
+func TestGetProjectFavorites(t *testing.T) {
+	SetupTestDB(t)
+
+	project_favorites, err := service.GetProjectFavorites("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_project_favorites := models.ProjectFavorites{
+		ID:       "testid",
+		Projects: []string{},
+	}
+
+	if !reflect.DeepEqual(project_favorites, &expected_project_favorites) {
+		t.Errorf("Wrong tracker info. Expected %v, got %v", &expected_project_favorites, project_favorites)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests that adding project favorites works correctly at the service level
+*/
+func TestAddProjectFavorite(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.AddProjectFavorite("testid", "testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	project_favorites, err := service.GetProjectFavorites("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_project_favorites := models.ProjectFavorites{
+		ID:       "testid",
+		Projects: []string{"testid"},
+	}
+
+	if !reflect.DeepEqual(project_favorites, &expected_project_favorites) {
+		t.Errorf("Wrong tracker info. Expected %v, got %v", &expected_project_favorites, project_favorites)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests that removing project favorites works correctly at the service level
+*/
+func TestRemoveProjectFavorite(t *testing.T) {
+	SetupTestDB(t)
+
+	err := service.AddProjectFavorite("testid", "testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = service.RemoveProjectFavorite("testid", "testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	project_favorites, err := service.GetProjectFavorites("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_project_favorites := models.ProjectFavorites{
+		ID:       "testid",
+		Projects: []string{},
+	}
+
+	if !reflect.DeepEqual(project_favorites, &expected_project_favorites) {
+		t.Errorf("Wrong tracker info. Expected %v, got %v", &expected_project_favorites, project_favorites)
 	}
 
 	CleanupTestDB(t)

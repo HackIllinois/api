@@ -11,14 +11,11 @@ Response format:
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Project 10",
+	"description": "Example Project Description",
 	"mentors": ["Jane Doe", "John Smith"],
-	"location": {
-		"description": "Example Location",
-		"latitude": 40.1138,
-		"longitude": -88.2249
-	}
+	"room": "Siebel 1440",
 	"tags": ["BACKEND", "FRONTEND"],
-	"code": "A1"
+	"number": "23"
 }
 ```
 
@@ -34,26 +31,20 @@ Response format:
 		{
 			"id": "52fdfc072182654f163f5f0f9a621d72",
 			"name": "Example Project 10",
+			"description": "Example Project Description",
 			"mentors": ["Jane Doe", "John Smith"],
-			"location": {
-				"description": "Example Location",
-				"latitude": 40.1138,
-				"longitude": -88.2249
-			}
+			"room": "Siebel 1440",
 			"tags": ["BACKEND", "FRONTEND"],
-			"code": "A1"
+			"number": "23"
 		},
 		{
 			"id": "52fdfcab71282654f163f5f0f9a621d72",
 			"name": "Example Project 11",
+			"description": "Example Project Description",
 			"mentors": ["Ann O. Nymous", "Joe Bloggs"],
-			"location": {
-				"description": "Example Location",
-				"latitude": 77.1238,
-				"longitude": -84.3249
-			}
+			"room": "Siebel 1310",
 			"tags": ["SYSTEMS"],
-			"code": "B2"
+			"number": "33"
 		}
 	]
 }
@@ -71,26 +62,20 @@ Response format:
 		{
 			"id": "52fdfc072182654f163f5f0f9a621d72",
 			"name": "Example Project 10",
+			"description": "Example Project Description",
 			"mentors": ["Jane Doe", "John Smith"],
-			"location": {
-				"description": "Example Location",
-				"latitude": 40.1138,
-				"longitude": -88.2249
-			}
+			"room": "Siebel 1440",
 			"tags": ["BACKEND", "FRONTEND"],
-			"code": "A1"
+			"number": "23"
 		},
 		{
 			"id": "52fdfcab71282654f163f5f0f9a621d72",
 			"name": "Example Project 11",
+			"description": "Example Project Description",
 			"mentors": ["Ann O. Nymous", "Joe Bloggs"],
-			"location": {
-				"description": "Example Location",
-				"latitude": 77.1238,
-				"longitude": -84.3249
-			}
+			"room": "Siebel 1310",
 			"tags": ["SYSTEMS"],
-			"code": "B2"
+			"number": "33"
 		}
 	]
 }
@@ -105,14 +90,11 @@ Request format:
 ```
 {
 	"name": "Example Project 10",
+	"description": "Example Project Description",
 	"mentors": ["Jane Doe", "John Smith"],
-	"location": {
-		"description": "Example Location",
-		"latitude": 40.1138,
-		"longitude": -88.2249
-	}
+	"room": "Siebel 1440",
 	"tags": ["BACKEND", "FRONTEND"],
-	"code": "A1"
+	"number": "23"
 }
 ```
 
@@ -121,14 +103,11 @@ Response format:
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Project 10",
+	"description": "Example Project Description",
 	"mentors": ["Jane Doe", "John Smith"],
-	"location": {
-		"description": "Example Location",
-		"latitude": 40.1138,
-		"longitude": -88.2249
-	}
+	"room": "Siebel 1440",
 	"tags": ["BACKEND", "FRONTEND"],
-	"code": "A1"
+	"number": "23"
 }
 ```
 
@@ -142,14 +121,11 @@ Response format:
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Project 10",
+	"description": "Example Project Description",
 	"mentors": ["Jane Doe", "John Smith"],
-	"location": {
-		"description": "Example Location",
-		"latitude": 40.1138,
-		"longitude": -88.2249
-	}
+	"room": "Siebel 1440",
 	"tags": ["BACKEND", "FRONTEND"],
-	"code": "A1"
+	"number": "23"
 }
 ```
 
@@ -163,14 +139,11 @@ Request format:
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Project 10",
+	"description": "Example Project Description",
 	"mentors": ["Jane Doe", "John Smith"],
-	"location": {
-		"description": "Example Location",
-		"latitude": 40.1138,
-		"longitude": -88.2249
-	}
+	"room": "Siebel 1440",
 	"tags": ["BACKEND", "FRONTEND"],
-	"code": "A1"
+	"number": "23"
 }
 ```
 
@@ -179,13 +152,71 @@ Response format:
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Project 10",
+	"description": "Example Project Description",
 	"mentors": ["Jane Doe", "John Smith"],
-	"location": {
-		"description": "Example Location",
-		"latitude": 40.1138,
-		"longitude": -88.2249
-	}
+	"room": "Siebel 1440",
 	"tags": ["BACKEND", "FRONTEND"],
-	"code": "A1"
+	"number": "23"
+}
+```
+
+GET /project/favorite/
+--------------------
+
+Returns the project favorites for the current user.
+
+Response format:
+```
+{
+	"id": "github001",
+	"projects": [
+		"52fdfc072182654f163f5f0f9a621d72",
+		"34edfc072182654f163f5f0f9a621d72"
+	]
+}
+```
+
+POST /project/favorite/add/
+-------------------------
+
+Adds the given project to the favorites for the current user.
+
+Request format:
+```
+{
+	"projectId": "52fdfc072182654f163f5f0f9a621d72"
+}
+```
+
+Response format:
+```
+{
+	"id": "github001",
+	"projects": [
+		"52fdfc072182654f163f5f0f9a621d72",
+		"34dffc072182654f163f5f0f9a621d72"
+	]
+}
+```
+
+POST /project/favorite/remove/
+----------------------------
+
+Removes the given project from the favorites for the current user.
+
+Request format:
+```
+{
+	"projectId": "52fdfc072182654f163f5f0f9a621d72",
+}
+```
+
+Response format:
+```
+{
+	"id": "github001",
+	"projects": [
+		"52fdfc072182654f163f5f0f9a621d72"
+	]
 }
 ```

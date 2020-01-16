@@ -34,19 +34,19 @@ var UserRoutes = arbor.RouteCollection{
 		"GetQrCodeInfo",
 		"GET",
 		"/user/qr/{id}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetQrCodeInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetQrCodeInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetFilteredUserInfo",
 		"GET",
 		"/user/filter/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUserInfo",
 		"GET",
 		"/user/{id}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserInfo).ServeHTTP,
 	},
 }
 

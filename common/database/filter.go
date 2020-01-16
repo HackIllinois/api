@@ -11,7 +11,7 @@ import (
 	Returns a map for the given model, where each key is the JSON field name and
 	each value is a string representation of that field's type.
 
-	For example, a struct which holds a string Name value has types["nane"] = "string"
+	For example, a struct which holds a string Name value has types["name"] = "string"
 */
 func GetFieldTypes(model interface{}) map[string]string {
 	expected_types := make(map[string]string)

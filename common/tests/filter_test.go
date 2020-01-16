@@ -30,7 +30,28 @@ func TestFilterBasic(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(query, expected_query) {
-		t.Errorf("Wrong order.\nExpected %v\ngot %v\n", expected_query, query)
+		t.Errorf("Incorrect query.\nExpected %v\ngot %v\n", expected_query, query)
+	}
+}
+
+func TestFilterMissing(t *testing.T) {
+
+	// value2 missing
+	params := map[string][]string{
+		"value1": {"test1,test2,test3"},
+	}
+
+	expected_query := map[string]interface{}{
+		"value1": database.QuerySelector{"$in": []string{"test1", "test2", "test3"}},
+	}
+
+	query, err := database.CreateFilterQuery(params, TestStruct{})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(query, expected_query) {
+		t.Errorf("Incorrect query.\nExpected %v\ngot %v\n", expected_query, query)
 	}
 }
 
@@ -60,6 +81,6 @@ func TestFilterCasting(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(query, expected_query) {
-		t.Errorf("Wrong order.\nExpected %v\ngot %v\n", expected_query, query)
+		t.Errorf("Incorrect query.\nExpected %v\ngot %v\n", expected_query, query)
 	}
 }

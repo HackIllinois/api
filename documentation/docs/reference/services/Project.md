@@ -15,7 +15,7 @@ Response format:
 	"mentors": ["Jane Doe", "John Smith"],
 	"room": "Siebel 1440",
 	"tags": ["BACKEND", "FRONTEND"],
-	"number": "23"
+	"number": 23
 }
 ```
 
@@ -35,7 +35,7 @@ Response format:
 			"mentors": ["Jane Doe", "John Smith"],
 			"room": "Siebel 1440",
 			"tags": ["BACKEND", "FRONTEND"],
-			"number": "23"
+			"number": 23
 		},
 		{
 			"id": "52fdfcab71282654f163f5f0f9a621d72",
@@ -44,7 +44,7 @@ Response format:
 			"mentors": ["Ann O. Nymous", "Joe Bloggs"],
 			"room": "Siebel 1310",
 			"tags": ["SYSTEMS"],
-			"number": "33"
+			"number": 33
 		}
 	]
 }
@@ -66,7 +66,7 @@ Response format:
 			"mentors": ["Jane Doe", "John Smith"],
 			"room": "Siebel 1440",
 			"tags": ["BACKEND", "FRONTEND"],
-			"number": "23"
+			"number": 23
 		},
 		{
 			"id": "52fdfcab71282654f163f5f0f9a621d72",
@@ -75,7 +75,7 @@ Response format:
 			"mentors": ["Ann O. Nymous", "Joe Bloggs"],
 			"room": "Siebel 1310",
 			"tags": ["SYSTEMS"],
-			"number": "33"
+			"number": 33
 		}
 	]
 }
@@ -94,7 +94,7 @@ Request format:
 	"mentors": ["Jane Doe", "John Smith"],
 	"room": "Siebel 1440",
 	"tags": ["BACKEND", "FRONTEND"],
-	"number": "23"
+	"number": 23
 }
 ```
 
@@ -107,7 +107,7 @@ Response format:
 	"mentors": ["Jane Doe", "John Smith"],
 	"room": "Siebel 1440",
 	"tags": ["BACKEND", "FRONTEND"],
-	"number": "23"
+	"number": 23
 }
 ```
 
@@ -125,7 +125,7 @@ Response format:
 	"mentors": ["Jane Doe", "John Smith"],
 	"room": "Siebel 1440",
 	"tags": ["BACKEND", "FRONTEND"],
-	"number": "23"
+	"number": 23
 }
 ```
 
@@ -143,7 +143,7 @@ Request format:
 	"mentors": ["Jane Doe", "John Smith"],
 	"room": "Siebel 1440",
 	"tags": ["BACKEND", "FRONTEND"],
-	"number": "23"
+	"number": 23
 }
 ```
 
@@ -156,7 +156,7 @@ Response format:
 	"mentors": ["Jane Doe", "John Smith"],
 	"room": "Siebel 1440",
 	"tags": ["BACKEND", "FRONTEND"],
-	"number": "23"
+	"number": 23
 }
 ```
 

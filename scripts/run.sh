@@ -3,7 +3,6 @@
 trap cleanup INT
 
 function cleanup {
-	echo "Cleaning up services"
 	pgrep "hackillinois" | xargs kill
 	rm -rf log/
 	exit 0
@@ -31,4 +30,6 @@ $REPO_ROOT/bin/hackillinois-api --service project &
 
 $REPO_ROOT/bin/hackillinois-api --service gateway &
 
-sleep infinity
+while true
+	do sleep 60
+done

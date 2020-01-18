@@ -3,6 +3,7 @@
 trap cleanup INT
 
 function cleanup {
+  echo "Stopping services"
 	pgrep "hackillinois" | xargs kill
 	rm -rf log/
 	exit 0

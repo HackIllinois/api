@@ -23,19 +23,19 @@ var StatRoutes = arbor.RouteCollection{
 		"GetService",
 		"GET",
 		"/stat/service/{name}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetService).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetService).ServeHTTP,
 	},
 	arbor.Route{
 		"GetStat",
 		"GET",
 		"/stat/{name}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetStat).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetStat).ServeHTTP,
 	},
 	arbor.Route{
 		"GetAllStats",
 		"GET",
 		"/stat/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetAllStats).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetAllStats).ServeHTTP,
 	},
 }
 

@@ -23,7 +23,7 @@ func validateField(data interface{}, definition DataStoreDefinition, validate *v
 		mapped_data, ok := data.(map[string]interface{})
 
 		if !ok {
-			return ErrTypeMismatch
+			return NewErrTypeMismatch(data, "map[string]interface{}")
 		}
 
 		return validateFieldArray(mapped_data, definition, validate)
@@ -31,7 +31,7 @@ func validateField(data interface{}, definition DataStoreDefinition, validate *v
 		data_array, ok := data.([]map[string]interface{})
 
 		if !ok {
-			return ErrTypeMismatch
+			return NewErrTypeMismatch(data, "[]map[string]interface{}")
 		}
 
 		for _, mapped_data := range data_array {

@@ -319,8 +319,6 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 
 	mentor_registration.Data["github"] = user_info.Username
 	mentor_registration.Data["email"] = user_info.Email
-	mentor_registration.Data["firstName"] = user_info.FirstName
-	mentor_registration.Data["lastName"] = user_info.LastName
 
 	mentor_registration.Data["createdAt"] = time.Now().Unix()
 	mentor_registration.Data["updatedAt"] = time.Now().Unix()
@@ -386,8 +384,6 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 
 	mentor_registration.Data["github"] = user_info.Username
 	mentor_registration.Data["email"] = user_info.Email
-	mentor_registration.Data["firstName"] = user_info.FirstName
-	mentor_registration.Data["lastName"] = user_info.LastName
 
 	mentor_registration.Data["createdAt"] = original_registration.Data["createdAt"]
 	mentor_registration.Data["updatedAt"] = time.Now().Unix()

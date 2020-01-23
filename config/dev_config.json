@@ -10,6 +10,7 @@
 	"EVENT_SERVICE": "http://localhost:8010",
 	"STAT_SERVICE": "http://localhost:8011",
 	"NOTIFICATIONS_SERVICE": "http://localhost:8012",
+	"PROJECT_SERVICE": "http://localhost:8013",
 
 	"GATEWAY_PORT": "8000",
 	"AUTH_PORT": ":8002",
@@ -23,6 +24,7 @@
 	"EVENT_PORT": ":8010",
 	"STAT_PORT": ":8011",
 	"NOTIFICATIONS_PORT": ":8012",
+	"PROJECT_PORT": ":8013",
 
 	"AUTH_DB_HOST": "localhost",
 	"USER_DB_HOST": "localhost",
@@ -47,9 +49,10 @@
 	"EVENT_DB_NAME": "event",
 	"STAT_DB_NAME": "stat",
 	"NOTIFICATIONS_DB_NAME": "notifications",
+	"PROJECT_DB_NAME": "project",
 
 	"S3_REGION": "us-east-1",
-	"S3_BUCKET": "hackillinois-upload-2019",
+	"S3_BUCKET": "hackillinois-upload",
 
 	"SNS_REGION": "us-east-1",
 
@@ -87,29 +90,28 @@
 		"event": "http://localhost:8010/event/internal/stats/"
 	},
 
-        "GROUP_TOPIC_MAP": {
-                "Admin": "Admin",
-                "Staff": "Staff",
-                "Mentor": "Mentor",
-                "Applicant": "Applicant",
-                "Attendee": "Attendee",
-                "User": "User",
-                "Sponsor": "Sponsor"
-        },
-
+	"GROUP_TOPIC_MAP": {
+			"Admin": "Admin",
+			"Staff": "Staff",
+			"Mentor": "Mentor",
+			"Applicant": "Applicant",
+			"Attendee": "Attendee",
+			"User": "User",
+			"Sponsor": "Sponsor"
+	},
 
 	"REGISTRATION_STAT_FIELDS": [
+		"gender",
 		"major",
 		"school",
-		"shirtSize",
-		"diet",
-		"age",
 		"graduationYear",
-		"transportation",
-		"gender",
-		"interests",
-		"isBeginner",
-		"priorAttendance"
+		"degreePursued",
+		"careerInterests",
+		"categoryInterests",
+		"languageInterests",
+		"needsBus",
+		"hasAttended",
+		"howDiscovered"
 	],
 
 	"REGISTRATION_DEFINITION": {
@@ -147,6 +149,7 @@
 				"validations": "required",
 				"fields": []
 			},
+
 			{
 				"name": "firstName",
 				"type": "string",
@@ -165,6 +168,7 @@
 				"validations": "omitempty,oneof=MALE FEMALE NONBINARY",
 				"fields": []
 			},
+
 			{
 				"name": "school",
 				"type": "string",
@@ -189,12 +193,7 @@
 				"validations": "required",
 				"fields": []
 			},
-			{
-				"name": "careerInterest",
-				"type": "[]string",
-				"validations": "omitempty,dive,oneof=INTERNSHIP FULLTIME",
-				"fields": []
-			},
+
 			{
 				"name": "resumeFilename",
 				"type": "string",
@@ -202,15 +201,22 @@
 				"fields": []
 			},
 			{
+				"name": "careerInterest",
+				"type": "[]string",
+				"validations": "omitempty,dive,oneof=INTERNSHIP FULLTIME",
+				"fields": []
+			},
+
+			{
 				"name": "programmingYears",
 				"type": "int",
-				"validations": "min=0,max=100",
+				"validations": "required,min=0,max=10",
 				"fields": []
 			},
 			{
 				"name": "programmingAbility",
 				"type": "int",
-				"validations": "min=1,max=10",
+				"validations": "required,min=1,max=10",
 				"fields": []
 			},
 			{
@@ -240,7 +246,7 @@
 			{
 				"name": "hasAttended",
 				"type": "boolean",
-				"validations": "required|isdefault",
+				"validations": "",
 				"fields": []
 			},
 			{
@@ -251,6 +257,12 @@
 			}
 		]
 	},
+
+	"MENTOR_REGISTRATION_STAT_FIELDS": [
+		"shirtSize",
+		"dietaryRestrictions",
+		"hasDisability"
+	],
 
 	"MENTOR_REGISTRATION_DEFINITION": {
 		"name": "mentor_registration",
@@ -287,6 +299,7 @@
 				"validations": "required",
 				"fields": []
 			},
+
 			{
 				"name": "firstName",
 				"type": "string",
@@ -302,27 +315,41 @@
 			{
 				"name": "photoFilename",
 				"type": "string",
-				"validations": "",
+				"validations": "required",
 				"fields": []
 			},
 			{
 				"name": "biography",
 				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+
+			{
+				"name": "organization",
+				"type": "string",
 				"validations": "",
 				"fields": []
 			},
 			{
-				"name": "projectName",
+				"name": "project",
 				"type": "string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			},
 			{
 				"name": "projectDescription",
 				"type": "string",
-				"validations": "required",
+				"validations": "",
 				"fields": []
 			},
+			{
+				"name": "categories",
+				"type": "[]string",
+				"validations": "omitempty,dive,oneof=LANGUAGES DATASCIENCE WEBDEV SYSTEMS APPDEV HARDWARE DEVTOOLS",
+				"fields": []
+			},
+
 			{
 				"name": "shirtSize",
 				"type": "string",
@@ -332,7 +359,7 @@
 			{
 				"name": "dietaryRestrictions",
 				"type": "[]string",
-				"validations": "required,dive,oneof=NONE VEGAN VEGETARIAN NOPEANUT NOGLUTEN",
+				"validations": "omitempty,dive,oneof=VEGAN VEGETARIAN NUTALLERGY GLUTENFREE",
 				"fields": []
 			},
 			{
@@ -346,9 +373,9 @@
 
 	"RSVP_STAT_FIELDS": [
 		"isAttending",
-		"diet",
-		"transportation",
-		"registrationData.attendee.school"
+		"shirtSize",
+		"dietaryRestrictions",
+		"hasDisability"
 	],
 
 	"RSVP_DEFINITION": {
@@ -377,7 +404,7 @@
 			{
 				"name": "dietaryRestrictions",
 				"type": "[]string",
-				"validations": "required,dive,oneof=NONE VEGAN VEGETARIAN NOPEANUT NOGLUTEN",
+				"validations": "omitempty,dive,oneof=VEGAN VEGETARIAN NUTALLERGY GLUTENFREE",
 				"fields": []
 			},
 			{

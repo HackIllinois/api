@@ -107,7 +107,8 @@ func (db *MongoDatabase) FindAll(collection_name string, query interface{}, resu
 }
 
 /*
-	Find all elements matching the given query parameters
+	Find all elements matching the given query parameters, and sorts them based on given sort fields
+        The first sort field is highest priority, each subsequent field breaks ties
 */
 func (db *MongoDatabase) FindAllSorted(collection_name string, query interface{}, sort_fields []SortField, result interface{}) error {
 	current_session := db.GetSession()

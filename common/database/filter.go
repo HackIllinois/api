@@ -90,7 +90,6 @@ func UpdateQuerySelectorStringSlice(qs QuerySelector, query_type QueryType, cast
 	return qs, nil
 }
 
-
 func ParseQueryType(key string) (QueryType, string) {
 	query_type := In
 

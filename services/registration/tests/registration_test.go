@@ -440,7 +440,8 @@ var user_registration_data string = `
 	"programmingYears": 1,
 	"programmingAbility": 10,
 	"createdAt": 10,
-	"updatedAt": 15
+	"updatedAt": 15,
+	"photoFilename": "profile.jpg"
 }
 `
 
@@ -457,6 +458,8 @@ var mentor_registration_data string = `
 	"dietaryRestrictions": ["VEGAN"],
 	"hasDisability": false,
 	"createdAt": 10,
-	"updatedAt": 15
+	"updatedAt": 15,
+	"photoFilename": "profile.jpg",
+	"biography": "1337 haxor"
 }
 `

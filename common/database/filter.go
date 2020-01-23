@@ -30,7 +30,7 @@ func GetFieldTypes(model interface{}) map[string]string {
 		field := v.Field(i)
 
 		json_name := strings.ToLower(field.Tag.Get("json"))
-		expected_types[json_name] = field.Type.Name()
+		expected_types[json_name] = field.Type.String()
 	}
 
 	return expected_types
@@ -79,6 +79,17 @@ func UpdateQuerySelectorBool(qs QuerySelector, query_type QueryType, cast_values
 	}
 	return qs, nil
 }
+
+func UpdateQuerySelectorStringSlice(qs QuerySelector, query_type QueryType, cast_values []string) (QuerySelector, error) {
+	switch query_type {
+	case In:
+		qs["$all"] = cast_values
+	default:
+		return nil, errors.New("Invalid operation on string slices")
+	}
+	return qs, nil
+}
+
 
 func ParseQueryType(key string) (QueryType, string) {
 	query_type := In
@@ -133,6 +144,9 @@ func CreateFilterQuery(
 
 		// We must specifically handle each data type
 		switch to_type {
+		case "[]string":
+			qs, err = UpdateQuerySelectorStringSlice(qs, query_type, values)
+			query[key] = qs
 		case "string":
 			qs, err = UpdateQuerySelectorString(qs, query_type, values)
 			query[key] = qs

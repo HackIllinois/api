@@ -20,6 +20,7 @@ var REGISTRATION_DEFINITION datastore.DataStoreDefinition
 var MENTOR_REGISTRATION_DEFINITION datastore.DataStoreDefinition
 
 var REGISTRATION_STAT_FIELDS []string
+var MENTOR_REGISTRATION_STAT_FIELDS []string
 
 func Initialize() error {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
@@ -83,6 +84,12 @@ func Initialize() error {
 	}
 
 	err = cfg_loader.ParseInto("REGISTRATION_STAT_FIELDS", &REGISTRATION_STAT_FIELDS)
+
+	if err != nil {
+		return err
+	}
+
+	err = cfg_loader.ParseInto("MENTOR_REGISTRATION_STAT_FIELDS", &MENTOR_REGISTRATION_STAT_FIELDS)
 
 	if err != nil {
 		return err

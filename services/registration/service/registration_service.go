@@ -242,7 +242,7 @@ func GetStats() (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	mentor_stats, err := db.GetStats("mentors", []string{})
+	mentor_stats, err := db.GetStats("mentors", config.MENTOR_REGISTRATION_STAT_FIELDS)
 
 	if err != nil {
 		return nil, err

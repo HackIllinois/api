@@ -17,6 +17,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/roles/", GetCurrentUserRoles).Methods("GET")
 	router.HandleFunc("/roles/list/", GetRolesLists).Methods("GET")
 	router.HandleFunc("/roles/list/{role}/", GetUserListByRole).Methods("GET")
+	router.HandleFunc("/roles/stats/", GetStats).Methods("GET")
 	router.HandleFunc("/{provider}/", Authorize).Methods("GET")
 	router.HandleFunc("/code/{provider}/", Login).Methods("POST")
 	router.HandleFunc("/roles/{id}/", GetRoles).Methods("GET")
@@ -327,4 +328,18 @@ func GetUserListByRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(user_list)
+}
+
+/*
+	Endpoint to get role stats
+*/
+func GetStats(w http.ResponseWriter, r *http.Request) {
+	stats, err := service.GetStats()
+
+	if err != nil {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not fetch registration service statistics."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(stats)
 }

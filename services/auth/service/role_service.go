@@ -180,3 +180,21 @@ func GetUsersByRole(role models.Role) ([]string, error) {
 
 	return userids, nil
 }
+
+/*
+	Returns role stats
+*/
+func GetStats() (map[string]interface{}, error) {
+	stats := make(map[string]interface{})
+	roles := GetValidRoles()
+	for _, role := range roles {
+		users_with_role, err := GetUsersByRole(role)
+		if err != nil {
+			return nil, err
+		}
+
+		stats[role] = map[string]int{"count": len(users_with_role)}
+	}
+
+	return stats, nil
+}

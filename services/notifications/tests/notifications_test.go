@@ -2,13 +2,14 @@ package tests
 
 import (
 	"fmt"
+	"os"
+	"reflect"
+	"testing"
+
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/notifications/config"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/HackIllinois/api/services/notifications/service"
-	"os"
-	"reflect"
-	"testing"
 )
 
 var db database.Database
@@ -373,6 +374,25 @@ func TestRegisterDeviceToUser(t *testing.T) {
 	}
 
 	expected_devices := []string{"test_arn", ""}
+
+	if !reflect.DeepEqual(devices, expected_devices) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_devices, devices)
+	}
+
+	// Test deduplication
+	err = service.RegisterDeviceToUser("test_token", "android", "test_user")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	devices, err = service.GetUserDevices("test_user")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_devices = []string{"test_arn", ""}
 
 	if !reflect.DeepEqual(devices, expected_devices) {
 		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_devices, devices)

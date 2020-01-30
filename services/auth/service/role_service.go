@@ -189,5 +189,5 @@ func GetStats() (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	return stats, err
+	return stats, nil
 }

@@ -17,7 +17,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/roles/", GetCurrentUserRoles).Methods("GET")
 	router.HandleFunc("/roles/list/", GetRolesLists).Methods("GET")
 	router.HandleFunc("/roles/list/{role}/", GetUserListByRole).Methods("GET")
-	router.HandleFunc("/roles/stats/", GetStats).Methods("GET")
+	router.HandleFunc("/roles/internal/stats/", GetStats).Methods("GET")
 	router.HandleFunc("/{provider}/", Authorize).Methods("GET")
 	router.HandleFunc("/code/{provider}/", Login).Methods("POST")
 	router.HandleFunc("/roles/{id}/", GetRoles).Methods("GET")

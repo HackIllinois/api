@@ -13,7 +13,7 @@ type Event struct {
 
 type EventLocation struct {
 	Description string   `json:"description" validate:"required"`
-	Tags        []string `json:"tags"        validate:"required,dive,oneof=SIEBEL0 SIEBEL1 SIEBEL2 SIEBEL3 SIEBEL4 ECEB1 ECEB2 ECEB3 ECEB4 ECEB5 KENNEY DCL"`
+	Tags        []string `json:"tags"        validate:"required"`
 	Latitude    float64  `json:"latitude"    validate:"required"`
 	Longitude   float64  `json:"longitude"   validate:"required"`
 }

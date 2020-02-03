@@ -7,5 +7,5 @@ type Project struct {
 	Mentors     []string `json:"mentors"`
 	Room        string   `json:"room"`
 	Tags        []string `json:"tags"`
-	Number      int32    `json:"number"`
+	Number      int64    `json:"number"`
 }

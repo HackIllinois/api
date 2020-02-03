@@ -2,11 +2,11 @@ package service
 
 import (
 	"errors"
+	"net/url"
+
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
-	"net/url"
-	"strings"
 )
 
 var db database.Database
@@ -67,19 +67,14 @@ func SetUserInfo(id string, user_info models.UserInfo) error {
 	Returns the users associated with the given parameters
 */
 func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers, error) {
-	query := make(map[string]interface{})
+	query, err := database.CreateFilterQuery(parameters, models.UserInfo{})
 
-	for key, values := range parameters {
-		if len(values) > 1 {
-			return nil, errors.New("Multiple usage of key " + key)
-		}
-
-		key = strings.ToLower(key)
-		query[key] = database.QuerySelector{"$in": strings.Split(values[0], ",")}
+	if err != nil {
+		return nil, err
 	}
 
 	var filtered_users models.FilteredUsers
-	err := db.FindAll("info", query, &filtered_users.Users)
+	err = db.FindAll("info", query, &filtered_users.Users)
 
 	if err != nil {
 		return nil, err

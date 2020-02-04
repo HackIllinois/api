@@ -2,15 +2,16 @@ package tests
 
 import (
 	"fmt"
-	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/event/config"
-	"github.com/HackIllinois/api/services/event/models"
-	"github.com/HackIllinois/api/services/event/service"
 	"math"
 	"os"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/services/event/config"
+	"github.com/HackIllinois/api/services/event/models"
+	"github.com/HackIllinois/api/services/event/service"
 )
 
 var db database.Database
@@ -60,6 +61,7 @@ func SetupTestDB(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"ECEB1"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},
@@ -112,6 +114,7 @@ func TestGetAllEventsService(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL0", "ECEB1"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},
@@ -143,8 +146,10 @@ func TestGetAllEventsService(t *testing.T) {
 				Locations: []models.EventLocation{
 					{
 						Description: "testlocationdescription",
-						Latitude:    123.456,
-						Longitude:   123.456,
+						Tags:        []string{"ECEB1"},
+
+						Latitude:  123.456,
+						Longitude: 123.456,
 					},
 				},
 			},
@@ -159,8 +164,10 @@ func TestGetAllEventsService(t *testing.T) {
 				Locations: []models.EventLocation{
 					{
 						Description: "testlocationdescription",
-						Latitude:    123.456,
-						Longitude:   123.456,
+						Tags:        []string{"SIEBEL0", "ECEB1"},
+
+						Latitude:  123.456,
+						Longitude: 123.456,
 					},
 				},
 			},
@@ -208,8 +215,10 @@ func TestGetFilteredEventsService(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
-				Latitude:    123.456,
-				Longitude:   123.456,
+				Tags:        []string{"SIEBEL0", "ECEB1"},
+
+				Latitude:  123.456,
+				Longitude: 123.456,
 			},
 		},
 	}
@@ -243,8 +252,10 @@ func TestGetFilteredEventsService(t *testing.T) {
 				Locations: []models.EventLocation{
 					{
 						Description: "testlocationdescription",
-						Latitude:    123.456,
-						Longitude:   123.456,
+						Tags:        []string{"SIEBEL0", "ECEB1"},
+
+						Latitude:  123.456,
+						Longitude: 123.456,
 					},
 				},
 			},
@@ -278,8 +289,10 @@ func TestGetFilteredEventsService(t *testing.T) {
 				Locations: []models.EventLocation{
 					{
 						Description: "testlocationdescription",
-						Latitude:    123.456,
-						Longitude:   123.456,
+						Tags:        []string{"ECEB1"},
+
+						Latitude:  123.456,
+						Longitude: 123.456,
 					},
 				},
 			},
@@ -294,8 +307,10 @@ func TestGetFilteredEventsService(t *testing.T) {
 				Locations: []models.EventLocation{
 					{
 						Description: "testlocationdescription",
-						Latitude:    123.456,
-						Longitude:   123.456,
+						Tags:        []string{"SIEBEL0", "ECEB1"},
+
+						Latitude:  123.456,
+						Longitude: 123.456,
 					},
 				},
 			},
@@ -350,6 +365,7 @@ func TestGetEventService(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"ECEB1"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},
@@ -380,6 +396,7 @@ func TestCreateEventService(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL0", "ECEB1"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},
@@ -409,6 +426,7 @@ func TestCreateEventService(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL0", "ECEB1"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},
@@ -504,6 +522,7 @@ func TestUpdateEventService(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL3", "ECEB2"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},
@@ -533,6 +552,7 @@ func TestUpdateEventService(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL3", "ECEB2"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},
@@ -662,6 +682,7 @@ func TestIsEventActive(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL3", "ECEB2"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},

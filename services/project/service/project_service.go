@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"strings"
 
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/utils"
@@ -104,20 +103,15 @@ func GetAllProjects() (*models.ProjectList, error) {
 	Returns all the projects
 */
 func GetFilteredProjects(parameters map[string][]string) (*models.ProjectList, error) {
-	query := make(map[string]interface{})
+	query, err := database.CreateFilterQuery(parameters, models.Project{})
 
-	for key, values := range parameters {
-		if len(values) > 1 {
-			return nil, errors.New("Multiple usage of key " + key)
-		}
-
-		key = strings.ToLower(key)
-		query[key] = database.QuerySelector{"$in": strings.Split(values[0], ",")}
+	if err != nil {
+		return nil, err
 	}
 
 	projects := []models.Project{}
 	filtered_projects := models.ProjectList{Projects: projects}
-	err := db.FindAll("projects", query, &filtered_projects.Projects)
+	err = db.FindAll("projects", query, &filtered_projects.Projects)
 
 	if err != nil {
 		return nil, err

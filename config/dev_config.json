@@ -88,7 +88,8 @@
 		"rsvp": "http://localhost:8006/rsvp/internal/stats/",
 		"checkin": "http://localhost:8007/checkin/internal/stats/",
 		"user": "http://localhost:8003/user/internal/stats/",
-		"event": "http://localhost:8010/event/internal/stats/"
+		"event": "http://localhost:8010/event/internal/stats/",
+		"auth": "http://localhost:8002/auth/internal/stats/"
 	},
 
         "GROUP_TOPIC_MAP": {

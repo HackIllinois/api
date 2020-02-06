@@ -180,3 +180,14 @@ func GetUsersByRole(role models.Role) ([]string, error) {
 
 	return userids, nil
 }
+
+/*
+	Returns role stats
+*/
+func GetStats() (map[string]interface{}, error) {
+	stats, err := db.GetStats("roles", []string{"roles"})
+	if err != nil {
+		return nil, err
+	}
+	return stats, nil
+}

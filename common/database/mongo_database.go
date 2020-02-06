@@ -2,6 +2,7 @@ package database
 
 import (
 	"crypto/tls"
+	"fmt"
 	"net"
 	"time"
 
@@ -101,6 +102,30 @@ func (db *MongoDatabase) FindAll(collection_name string, query interface{}, resu
 	collection := current_session.DB(db.name).C(collection_name)
 
 	err := collection.Find(query).All(result)
+
+	return convertMgoError(err)
+}
+
+/*
+	Find all elements matching the given query parameters, and sorts them based on given sort fields
+        The first sort field is highest priority, each subsequent field breaks ties
+*/
+func (db *MongoDatabase) FindAllSorted(collection_name string, query interface{}, sort_fields []SortField, result interface{}) error {
+	current_session := db.GetSession()
+	defer current_session.Close()
+
+	sort_fields_mgo := make([]string, len(sort_fields))
+	for i, field := range sort_fields {
+		if field.Reversed {
+			sort_fields_mgo[i] = fmt.Sprintf("-%s", field.Name)
+		} else {
+			sort_fields_mgo[i] = field.Name
+		}
+	}
+
+	collection := current_session.DB(db.name).C(collection_name)
+
+	err := collection.Find(query).Sort(sort_fields_mgo...).All(result)
 
 	return convertMgoError(err)
 }

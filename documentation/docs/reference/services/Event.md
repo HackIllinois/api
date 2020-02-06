@@ -17,6 +17,7 @@ Response format:
 	"locations": [
 		{
 			"description": "Example Location",
+			"tags": ["SIEBEL0", "ECEB1"],
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}
@@ -44,6 +45,7 @@ Response format:
 			"locations": [
 				{
 					"description": "Example Location",
+					"tags": ["SIEBEL0", "ECEB1"],
 					"latitude": 40.1138,
 					"longitude": -88.2249
 				}
@@ -60,6 +62,7 @@ Response format:
 			"locations": [
 				{
 					"description": "Example Location",
+					"tags": ["SIEBEL3"],
 					"latitude": 40.1138,
 					"longitude": -88.2249
 				}
@@ -89,6 +92,7 @@ Response format:
             "locations": [
                 {
                     "description": "Example Location",
+					"tags": ["SIEBEL0", "ECEB1"],
                     "latitude": 40.1138,
                     "longitude": -88.2249
                 }
@@ -105,6 +109,7 @@ Response format:
             "locations": [
                 {
                     "description": "Example Location",
+					"tags": ["SIEBEL3"],
                     "latitude": 40.1138,
                     "longitude": -88.2249
                 }
@@ -133,6 +138,7 @@ Request format:
 	"locations": [
 		{
 			"description": "Example Location",
+			"tags": ["SIEBEL0", "ECEB1"],
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}
@@ -151,6 +157,7 @@ Response format:
 	"locations": [
 		{
 			"description": "Example Location",
+			"tags": ["SIEBEL0", "ECEB1"],
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}
@@ -176,6 +183,7 @@ Response format:
 	"locations": [
 		{
 			"description": "Example Location",
+			"tags": ["SIEBEL0", "ECEB1"],
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}
@@ -203,6 +211,7 @@ Request format:
 	"locations": [
 		{
 			"description": "Example Location",
+			"tags": ["SIEBEL0", "ECEB1"],
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}
@@ -221,6 +230,7 @@ Response format:
 	"locations": [
 		{
 			"description": "Example Location",
+			"tags": ["SIEBEL0", "ECEB1"],
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}

@@ -202,6 +202,34 @@ func TestGetFilteredProjectsService(t *testing.T) {
 		t.Errorf("Wrong project list. Expected %v, got %v", expected_project_list, actual_project_list)
 	}
 
+	// Filter to one project using number
+	parameters = map[string][]string{
+		"number": {"2"},
+	}
+	actual_project_list, err = service.GetFilteredProjects(parameters)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_project_list = models.ProjectList{
+		Projects: []models.Project{
+			{
+				ID:          "testid2",
+				Name:        "testname2",
+				Description: "testdesc2",
+				Mentors:     []string{"testmentor2"},
+				Number:      2,
+				Tags:        []string{"tag2"},
+				Room:        "testroom2",
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(actual_project_list, &expected_project_list) {
+		t.Errorf("Wrong project list. Expected %v, got %v", expected_project_list, actual_project_list)
+	}
+
 	// Filter to multiple (all) projects
 	parameters = map[string][]string{}
 	actual_project_list, err = service.GetFilteredProjects(parameters)

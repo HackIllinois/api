@@ -61,18 +61,43 @@ type TestStruct2 struct {
 	Test     bool   `json:"testValue"`
 }
 
+func TestFilterRangeQueries(t *testing.T) {
+
+	params := map[string][]string{
+		"hackValueLt":     {"foo"},
+		"hackValueGt":     {"bar"},
+		"illinoisValueLt": {"55"},
+		"illinoisValueGt": {"33"},
+		"testValueNot":    {"true"},
+	}
+
+	query, err := database.CreateFilterQuery(params, TestStruct2{})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_query := map[string]interface{}{
+		"hackvalue":     database.QuerySelector{"$lt": "foo", "$gt": "bar"},
+		"illinoisvalue": database.QuerySelector{"$lt": int64(55), "$gt": int64(33)},
+		"testvalue":     database.QuerySelector{"$nin": []bool{true}},
+	}
+	if !reflect.DeepEqual(query, expected_query) {
+		t.Errorf("Incorrect query.\nExpected %v\ngot %v\n", expected_query, query)
+	}
+}
+
 func TestFilterCasting(t *testing.T) {
 
 	params := map[string][]string{
 		"hackValue":     {"foo,bar"},
 		"illinoisValue": {"55,63"},
-		"testValue":     {"true,false,true"},
+		"testValue":     {"true"},
 	}
 
 	expected_query := map[string]interface{}{
 		"hackvalue":     database.QuerySelector{"$in": []string{"foo", "bar"}},
 		"illinoisvalue": database.QuerySelector{"$in": []int64{55, 63}},
-		"testvalue":     database.QuerySelector{"$in": []bool{true, false, true}},
+		"testvalue":     database.QuerySelector{"$in": []bool{true}},
 	}
 
 	query, err := database.CreateFilterQuery(params, TestStruct2{})
@@ -82,5 +107,14 @@ func TestFilterCasting(t *testing.T) {
 
 	if !reflect.DeepEqual(query, expected_query) {
 		t.Errorf("Incorrect query.\nExpected %v\ngot %v\n", expected_query, query)
+	}
+
+	params = map[string][]string{
+		"testValueLt": {"true"},
+	}
+	_, err = database.CreateFilterQuery(params, TestStruct2{})
+
+	if err == nil {
+		t.Errorf("Expected less than operation to fail on boolean value")
 	}
 }

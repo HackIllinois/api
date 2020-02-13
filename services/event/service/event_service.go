@@ -275,14 +275,16 @@ func MarkUserAsAttendingEvent(event_id string, user_id string) error {
 		return errors.New("User has already been marked as attending")
 	}
 
-	is_event_active, err := IsEventActive(event_id)
+	if config.EVENT_CHECKIN_TIME_RESTRICTED {
+		is_event_active, err := IsEventActive(event_id)
 
-	if err != nil {
-		return err
-	}
+		if err != nil {
+			return err
+		}
 
-	if !is_event_active {
-		return errors.New("People cannot be checked-in for the event at this time.")
+		if !is_event_active {
+			return errors.New("People cannot be checked-in for the event at this time.")
+		}
 	}
 
 	event_selector := database.QuerySelector{

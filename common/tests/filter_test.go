@@ -118,3 +118,36 @@ func TestFilterCasting(t *testing.T) {
 		t.Errorf("Expected less than operation to fail on boolean value")
 	}
 }
+
+type TestStruct3 struct {
+	Tags []string `json:"tags"`
+}
+
+func TestFilterSliceQuery(t *testing.T) {
+	params := map[string][]string{
+		"tags": {"foo,bar,baz"},
+	}
+
+	expected_query := map[string]interface{}{
+		"tags": database.QuerySelector{"$all": []string{"foo", "bar", "baz"}},
+	}
+
+	query, err := database.CreateFilterQuery(params, TestStruct3{})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(query, expected_query) {
+		t.Errorf("Incorrect query.\nExpected %v\ngot %v\n", expected_query, query)
+	}
+
+	params = map[string][]string{
+		"tagsLt": {"foo"},
+	}
+
+	_, err = database.CreateFilterQuery(params, TestStruct3{})
+
+	if err == nil {
+		t.Errorf("Expected less than operation to fail on slice value")
+	}
+}

@@ -64,7 +64,11 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 	can_user_checkin, err := service.CanUserCheckin(user_checkin.ID, user_checkin.Override)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.InternalError(err.Error(), "Unable to determine user's check-in permissions."))
+		if err.Error() == "User is not registered." {
+			errors.WriteError(w, r, errors.AttributeMismatchError("User is not registered.", "User is not registered."))
+		} else {
+			errors.WriteError(w, r, errors.InternalError(err.Error(), "Unable to determine user's check-in permissions."))
+		}
 		return
 	}
 

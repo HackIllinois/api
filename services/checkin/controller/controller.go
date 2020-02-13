@@ -2,11 +2,12 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/checkin/models"
 	"github.com/HackIllinois/api/services/checkin/service"
 	"github.com/gorilla/mux"
-	"net/http"
 )
 
 func SetupController(route *mux.Route) {
@@ -63,12 +64,16 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 	can_user_checkin, err := service.CanUserCheckin(user_checkin.ID, user_checkin.Override)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.InternalError(err.Error(), "Unable to determine user's check-in permissions."))
+		if err.Error() == "User is not registered." {
+			errors.WriteError(w, r, errors.AttributeMismatchError("User is not registered.", "User is not registered."))
+		} else {
+			errors.WriteError(w, r, errors.InternalError(err.Error(), "Unable to determine user's check-in permissions."))
+		}
 		return
 	}
 
 	if !can_user_checkin {
-		errors.WriteError(w, r, errors.AttributeMismatchError("Reasons for not being able to check-in include: no RSVP, no staff override (in case of no RSVP), or check-ins are not allowed at this time.", "Attendee is not allowed to check-in."))
+		errors.WriteError(w, r, errors.AttributeMismatchError("Reasons for not being able to check-in include: no RSVP, no staff override (in case of no RSVP), or check-ins are not allowed at this time.", "Attendee has not RSVPed."))
 		return
 	}
 
@@ -84,7 +89,11 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 	err = service.CreateUserCheckin(user_checkin.ID, user_checkin)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not create user check-in."))
+		if err.Error() == "Checkin already exists" {
+			errors.WriteError(w, r, errors.AttributeMismatchError("User has already checked in.", "User has already checked in."))
+		} else {
+			errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not create user check-in."))
+		}
 		return
 	}
 

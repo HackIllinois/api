@@ -86,7 +86,7 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		if err.Error() == "Checkin already exists" {
-			errors.WriteError(w, r, errors.AttributeMismatchError("", "User has already checked in."))
+			errors.WriteError(w, r, errors.AttributeMismatchError("User has already checked in.", "User has already checked in."))
 		} else {
 			errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not create user check-in."))
 		}

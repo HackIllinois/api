@@ -199,7 +199,13 @@ func MarkUserAsAttendingEvent(w http.ResponseWriter, r *http.Request) {
 	err = service.MarkUserAsAttendingEvent(tracking_info.EventID, tracking_info.UserID)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not mark user as attending the event."))
+		if err.Error() == "User has already been marked as attending" {
+			errors.WriteError(w, r, errors.AttributeMismatchError("User has already checked in.", "User has already checked in."))
+		} else if err.Error() == "People cannot be checked-in for the event at this time." {
+			errors.WriteError(w, r, errors.AttributeMismatchError("Event is not open for check-in at this time.", "Event is not open for check-in at this time."))
+		} else {
+			errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not mark user as attending the event."))
+		}
 		return
 	}
 

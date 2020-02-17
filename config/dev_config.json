@@ -82,6 +82,8 @@
 
 	"DECISION_EXPIRATION_HOURS": "48",
 
+	"EVENT_CHECKIN_TIME_RESTRICTED": "true",
+
 	"STAT_ENDPOINTS": {
 		"registration": "http://localhost:8004/registration/internal/stats/",
 		"decision": "http://localhost:8005/decision/internal/stats/",

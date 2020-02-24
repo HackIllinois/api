@@ -77,14 +77,23 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rsvp_data, err := service.GetRsvpData(user_checkin.ID)
+	is_rsvped, err := service.IsAttendeeRsvped(user_checkin.ID)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not retrieve rsvp data."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not retrieve rsvp status."))
 		return
 	}
 
-	user_checkin.RsvpData = rsvp_data
+	if is_rsvped {
+		rsvp_data, err := service.GetRsvpData(user_checkin.ID)
+
+		if err != nil {
+			errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not retrieve rsvp data."))
+			return
+		}
+
+		user_checkin.RsvpData = rsvp_data
+	}
 
 	err = service.CreateUserCheckin(user_checkin.ID, user_checkin)
 

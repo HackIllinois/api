@@ -63,7 +63,8 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 
 	can_user_checkin, err := service.CanUserCheckin(user_checkin.ID, user_checkin.Override)
 
-	if err != nil {
+	// Ignore the error caused when a user hasn't been accepted (no RSVP status)
+	if err != nil && err.Error() != "Rsvp service failed to return status" {
 		if err.Error() == "User is not registered." {
 			errors.WriteError(w, r, errors.AttributeMismatchError("User is not registered.", "User is not registered."))
 		} else {
@@ -79,7 +80,8 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 
 	is_rsvped, err := service.IsAttendeeRsvped(user_checkin.ID)
 
-	if err != nil {
+	// Ignore the error caused when a user hasn't been accepted
+	if err != nil && err.Error() != "Rsvp service failed to return status" {
 		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not retrieve rsvp status."))
 		return
 	}

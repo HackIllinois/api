@@ -48,7 +48,6 @@ func SetupTestDB(t *testing.T) {
 	checkin := models.UserCheckin{
 		ID:              "testid",
 		HasCheckedIn:    true,
-		HasPickedUpSwag: true,
 		RsvpData:        map[string]interface{}{},
 	}
 
@@ -85,7 +84,6 @@ func TestGetUserCheckinService(t *testing.T) {
 	expected_checkin := models.UserCheckin{
 		ID:              "testid",
 		HasCheckedIn:    true,
-		HasPickedUpSwag: true,
 		RsvpData:        map[string]interface{}{},
 	}
 
@@ -105,7 +103,6 @@ func TestCreateUserCheckinService(t *testing.T) {
 	new_checkin := models.UserCheckin{
 		ID:              "testid2",
 		HasCheckedIn:    true,
-		HasPickedUpSwag: false,
 		RsvpData:        map[string]interface{}{},
 	}
 
@@ -124,7 +121,6 @@ func TestCreateUserCheckinService(t *testing.T) {
 	expected_checkin := models.UserCheckin{
 		ID:              "testid2",
 		HasCheckedIn:    true,
-		HasPickedUpSwag: false,
 		RsvpData:        map[string]interface{}{},
 	}
 
@@ -144,7 +140,6 @@ func TestUpdateUserCheckinService(t *testing.T) {
 	checkin := models.UserCheckin{
 		ID:              "testid",
 		HasCheckedIn:    true,
-		HasPickedUpSwag: false,
 		RsvpData:        map[string]interface{}{},
 	}
 
@@ -163,7 +158,6 @@ func TestUpdateUserCheckinService(t *testing.T) {
 	expected_checkin := models.UserCheckin{
 		ID:              "testid",
 		HasCheckedIn:    true,
-		HasPickedUpSwag: false,
 		RsvpData:        map[string]interface{}{},
 	}
 
@@ -183,7 +177,6 @@ func TestGetAllCheckedInUsersService(t *testing.T) {
 	new_checkin := models.UserCheckin{
 		ID:              "testid2",
 		HasCheckedIn:    false,
-		HasPickedUpSwag: false,
 		RsvpData:        map[string]interface{}{},
 	}
 
@@ -196,7 +189,6 @@ func TestGetAllCheckedInUsersService(t *testing.T) {
 	new_checkin = models.UserCheckin{
 		ID:              "testid3",
 		HasCheckedIn:    true,
-		HasPickedUpSwag: false,
 		RsvpData:        map[string]interface{}{},
 	}
 

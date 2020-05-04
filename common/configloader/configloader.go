@@ -3,19 +3,20 @@ package configloader
 import (
 	"encoding/json"
 	"errors"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
-var ErrNotSet = errors.New("The value for the given key was not set")
-var ErrDecodeFailed = errors.New("The value for the given key could not be decoded")
-var ErrLoadFailed = errors.New("Unable to load config")
+var KeyNotSet = "The value for the given key was not set: "
+var KeyDecodeFailed = "The value for the given key could not be decoded: "
+var ConfigLoadFailed = "Unable to load config: "
 
 /*
 	Used to load a key value configuration
@@ -32,8 +33,10 @@ type ConfigLoader struct {
 func Load(config_path string) (*ConfigLoader, error) {
 	uri, err := url.Parse(config_path)
 
+	load_error := errors.New(ConfigLoadFailed + config_path)
+
 	if err != nil {
-		return nil, ErrLoadFailed
+		return nil, load_error
 	}
 
 	var config_contents []byte
@@ -46,11 +49,11 @@ func Load(config_path string) (*ConfigLoader, error) {
 	case "https":
 		config_contents, err = loadFromHttps(config_path)
 	default:
-		return nil, ErrLoadFailed
+		return nil, load_error
 	}
 
 	if err != nil {
-		return nil, ErrLoadFailed
+		return nil, load_error
 	}
 
 	loader := ConfigLoader{
@@ -60,7 +63,7 @@ func Load(config_path string) (*ConfigLoader, error) {
 	err = json.Unmarshal(config_contents, &loader.parsedConfig)
 
 	if err != nil {
-		return nil, ErrLoadFailed
+		return nil, load_error
 	}
 
 	return &loader, nil
@@ -80,13 +83,15 @@ func (loader *ConfigLoader) Get(key string) (string, error) {
 	raw_value, exists := loader.parsedConfig[key]
 
 	if !exists {
-		return "", ErrNotSet
+		key_error := errors.New(KeyNotSet + key)
+		return "", key_error
 	}
 
 	err := json.Unmarshal(*raw_value, &value)
 
 	if err != nil {
-		return "", ErrDecodeFailed
+		decode_error := errors.New(KeyDecodeFailed + key)
+		return "", decode_error
 	}
 
 	return value, nil
@@ -106,7 +111,8 @@ func (loader *ConfigLoader) ParseInto(key string, out interface{}) error {
 	raw_value, exists := loader.parsedConfig[key]
 
 	if !exists {
-		return ErrNotSet
+		key_error := errors.New(KeyNotSet + key)
+		return key_error
 	}
 
 	return json.Unmarshal(*raw_value, out)

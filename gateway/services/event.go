@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/HackIllinois/api/gateway/config"
@@ -88,6 +89,8 @@ var EventRoutes = arbor.RouteCollection{
 }
 
 func GetEvent(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Yeaa, uh huh uh huh")
+	fmt.Println("Hello, %v", r.URL.String())
 	arbor.GET(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }
 

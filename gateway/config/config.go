@@ -24,6 +24,8 @@ var EVENT_SERVICE string
 var STAT_SERVICE string
 var NOTIFICATIONS_SERVICE string
 var PROJECT_SERVICE string
+var RECOGNITION_SERVICE string
+
 
 func Initialize() error {
 
@@ -106,6 +108,12 @@ func Initialize() error {
 	}
 
 	PROJECT_SERVICE, err = cfg_loader.Get("PROJECT_SERVICE")
+
+	if err != nil {
+		return err
+	}
+
+	RECOGNITION_SERVICE, err = cfg_loader.Get("RECOGNITION_SERVICE")
 
 	if err != nil {
 		return err

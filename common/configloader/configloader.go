@@ -3,19 +3,16 @@ package configloader
 import (
 	"encoding/json"
 	"errors"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
-)
 
-var ErrNotSet = errors.New("The value for the given key was not set")
-var ErrDecodeFailed = errors.New("The value for the given key could not be decoded")
-var ErrLoadFailed = errors.New("Unable to load config")
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+)
 
 /*
 	Used to load a key value configuration
@@ -33,7 +30,7 @@ func Load(config_path string) (*ConfigLoader, error) {
 	uri, err := url.Parse(config_path)
 
 	if err != nil {
-		return nil, ErrLoadFailed
+		return nil, errors.New("Unable to parse '" + config_path + "' into URI structure")
 	}
 
 	var config_contents []byte
@@ -41,16 +38,24 @@ func Load(config_path string) (*ConfigLoader, error) {
 	switch uri.Scheme {
 	case "s3":
 		config_contents, err = loadFromS3(config_path)
+
+		if err != nil {
+			return nil, errors.New("Unable to load '" + config_path + "' as s3")
+		}
 	case "file":
 		config_contents, err = loadFromFile(config_path)
+
+		if err != nil {
+			return nil, errors.New("Unable to load '" + config_path + "' as file")
+		}
 	case "https":
 		config_contents, err = loadFromHttps(config_path)
-	default:
-		return nil, ErrLoadFailed
-	}
 
-	if err != nil {
-		return nil, ErrLoadFailed
+		if err != nil {
+			return nil, errors.New("Unable to load '" + config_path + "' as https")
+		}
+	default:
+		return nil, errors.New("URI scheme of '" + config_path + "' unsupported. Must be s3, file, or https")
 	}
 
 	loader := ConfigLoader{
@@ -60,7 +65,7 @@ func Load(config_path string) (*ConfigLoader, error) {
 	err = json.Unmarshal(config_contents, &loader.parsedConfig)
 
 	if err != nil {
-		return nil, ErrLoadFailed
+		return nil, errors.New("Unable to load contents of '" + config_path + "' into json")
 	}
 
 	return &loader, nil
@@ -80,13 +85,13 @@ func (loader *ConfigLoader) Get(key string) (string, error) {
 	raw_value, exists := loader.parsedConfig[key]
 
 	if !exists {
-		return "", ErrNotSet
+		return "", errors.New("Value for key '" + key + "' not set")
 	}
 
 	err := json.Unmarshal(*raw_value, &value)
 
 	if err != nil {
-		return "", ErrDecodeFailed
+		return "", errors.New("Value for key '" + key + "' couldn't be decoded")
 	}
 
 	return value, nil
@@ -106,7 +111,7 @@ func (loader *ConfigLoader) ParseInto(key string, out interface{}) error {
 	raw_value, exists := loader.parsedConfig[key]
 
 	if !exists {
-		return ErrNotSet
+		return errors.New("Value for key '" + key + "' not set")
 	}
 
 	return json.Unmarshal(*raw_value, out)

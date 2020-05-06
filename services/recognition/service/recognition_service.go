@@ -49,6 +49,45 @@ func GetRecognition(id string) (*models.Recognition, error) {
 	return &recognition, nil
 }
 
+/*
+	Deletes the recognition with the given id.
+	Removes the recognition from recognition trackers and every user's tracker.
+	Returns the recognition that was deleted.
+*/
+func DeleteRecognition(id string) (*models.Recognition, error) {
+
+	// Gets recognition to be able to return it later
+
+	recognition, err := GetRecognition(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	query := database.QuerySelector{
+		"id": id,
+	}
+
+	// Remove recognition from recognitions database
+	err = db.RemoveOne("recognitions", query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Find all elements, and remove `id` from the Recognitions slice
+	// All the updates are individually atomic
+	update_expression := database.QuerySelector {
+		"$pull": database.QuerySelector{
+			"recognitions": id,
+		},
+	}
+
+	_, err = db.UpdateAll("usertrackers", nil, &update_expression)
+
+	return recognition, err
+}
+
 
 /*
 	Returns all the recognitions

@@ -16,6 +16,26 @@ func SetupController(route *mux.Route) {
 
 	router.HandleFunc("/", CreateRecognition).Methods("POST")
 	router.HandleFunc("/", GetAllRecognitions).Methods("GET")
+
+	router.HandleFunc("/{id}/", DeleteRecognition).Methods("DELETE")
+}
+
+/*
+	Endpoint to delete an event with the specified id.
+	It removes the event from the event trackers, and every user's tracker.
+	On successful deletion, it returns the event that was deleted.
+*/
+func DeleteRecognition(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	event, err := service.DeleteRecognition(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not delete either the event, event trackers, or user trackers, or an intermediary subroutine failed."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(event)
 }
 
 /*

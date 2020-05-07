@@ -17,25 +17,26 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/", CreateRecognition).Methods("POST")
 	router.HandleFunc("/", GetAllRecognitions).Methods("GET")
 
+	router.HandleFunc("/filter/", GetFilteredRecognitions).Methods("GET")
 	router.HandleFunc("/{id}/", DeleteRecognition).Methods("DELETE")
 }
 
 /*
-	Endpoint to delete an event with the specified id.
-	It removes the event from the event trackers, and every user's tracker.
-	On successful deletion, it returns the event that was deleted.
+	Endpoint to delete an recognition with the specified id.
+	It removes the recognition from the recognition trackers, and every user's tracker.
+	On successful deletion, it returns the recognition that was deleted.
 */
 func DeleteRecognition(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
-	event, err := service.DeleteRecognition(id)
+	recognition, err := service.DeleteRecognition(id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not delete either the event, event trackers, or user trackers, or an intermediary subroutine failed."))
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not delete either the recognition"))
 		return
 	}
 
-	json.NewEncoder(w).Encode(event)
+	json.NewEncoder(w).Encode(recognition)
 }
 
 /*
@@ -76,4 +77,20 @@ func CreateRecognition(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_recognition)
+}
+
+
+/*
+	Endpoint to get recognitions based on filters
+*/
+func GetFilteredRecognitions(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+	recognition, err := service.GetFilteredRecognitions(parameters)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch filtered list of recognitions."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(recognition)
 }

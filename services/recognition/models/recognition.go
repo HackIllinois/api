@@ -11,6 +11,6 @@ type Recognition struct {
 }
 
 type Recepient struct {
-	Type        string `json:"type" validate:"required,oneof=ALL INDIVIDUAL"`
-	UserID      string `json:"userId"`
+	Type        string `json:"type" validate:"required,oneof=ALL INDIVIDUAL PROJECT"`
+	TypeID      string `json:"typeId"`
 }

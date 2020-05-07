@@ -110,6 +110,28 @@ func GetAllRecognitions() (*models.RecognitionList, error) {
 
 
 /*
+	Returns filtered recognitions
+*/
+func GetFilteredRecognitions(parameters map[string][]string) (*models.RecognitionList, error) {
+	query, err := database.CreateFilterQuery(parameters, models.Recognition{})
+
+	if err != nil {
+		return nil, err
+	}
+
+	recognitions := []models.Recognition{}
+	filtered_recognitions := models.RecognitionList{Recognitions: recognitions}
+	err = db.FindAll("recognitions", query, &filtered_recognitions.Recognitions)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &filtered_recognitions, nil
+}
+
+
+/*
 	Creates an recognition with the given id
 */
 func CreateRecognition(id string, recognition models.Recognition) error {

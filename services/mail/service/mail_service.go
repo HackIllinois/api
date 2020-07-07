@@ -69,8 +69,8 @@ func SendMailByID(mail_order models.MailOrder) (*models.MailStatus, error) {
 			return nil, err
 		}
 
-		var reg_data *models.RegistrationInfo = nil
-		var Email, FirstName, LastName string
+		var reg_data *models.RegistrationInfo
+		var email, first_name, last_name string
 
 		if registration.Attendee != nil {
 			reg_data = registration.Attendee
@@ -85,17 +85,17 @@ func SendMailByID(mail_order models.MailOrder) (*models.MailStatus, error) {
 				return nil, err
 			}
 
-			Email, FirstName, LastName = user_data.Email, user_data.FirstName, user_data.LastName
+			email, first_name, last_name = user_data.Email, user_data.FirstName, user_data.LastName
 		} else {
-			Email, FirstName, LastName = reg_data.Email, reg_data.FirstName, reg_data.LastName
+			email, first_name, last_name = reg_data.Email, reg_data.FirstName, reg_data.LastName
 		}
 
 		mail_info.Recipients[i].Address = models.Address{
-			Email: Email,
-			Name:  fmt.Sprintf("%s %s", FirstName, LastName),
+			Email: email,
+			Name:  fmt.Sprintf("%s %s", first_name, last_name),
 		}
 		mail_info.Recipients[i].Substitutions = models.Substitutions{
-			"name": FirstName,
+			"name": first_name,
 		}
 	}
 

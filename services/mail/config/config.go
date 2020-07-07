@@ -16,6 +16,7 @@ var SPARKPOST_API string
 var SPARKPOST_APIKEY string
 
 var USER_SERVICE string
+var REGISTRATION_SERVICE string
 
 func Initialize() error {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
@@ -55,6 +56,12 @@ func Initialize() error {
 	}
 
 	USER_SERVICE, err = cfg_loader.Get("USER_SERVICE")
+
+	if err != nil {
+		return err
+	}
+
+	REGISTRATION_SERVICE, err = cfg_loader.Get("REGISTRATION_SERVICE")
 
 	if err != nil {
 		return err

@@ -29,7 +29,7 @@ func SetupController(route *mux.Route) {
 
 	router.HandleFunc("/{id}/", GetAllRegistrations).Methods("GET")
 	router.HandleFunc("/attendee/{id}/", GetUserRegistration).Methods("GET")
-	router.HandleFunc("/mentor/{id}", GetMentorRegistration).Methods("GET")
+	router.HandleFunc("/mentor/{id}/", GetMentorRegistration).Methods("GET")
 
 	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
 }
@@ -118,7 +118,6 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user_registration.Data["github"] = user_info.Username
-	user_registration.Data["email"] = user_info.Email
 
 	user_registration.Data["createdAt"] = time.Now().Unix()
 	user_registration.Data["updatedAt"] = time.Now().Unix()
@@ -228,7 +227,6 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user_registration.Data["github"] = user_info.Username
-	user_registration.Data["email"] = user_info.Email
 
 	user_registration.Data["createdAt"] = original_registration.Data["createdAt"]
 	user_registration.Data["updatedAt"] = time.Now().Unix()
@@ -318,7 +316,6 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mentor_registration.Data["github"] = user_info.Username
-	mentor_registration.Data["email"] = user_info.Email
 
 	mentor_registration.Data["createdAt"] = time.Now().Unix()
 	mentor_registration.Data["updatedAt"] = time.Now().Unix()
@@ -383,7 +380,6 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mentor_registration.Data["github"] = user_info.Username
-	mentor_registration.Data["email"] = user_info.Email
 
 	mentor_registration.Data["createdAt"] = original_registration.Data["createdAt"]
 	mentor_registration.Data["updatedAt"] = time.Now().Unix()

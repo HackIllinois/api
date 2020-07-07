@@ -77,7 +77,7 @@ func SendMailByID(mail_order models.MailOrder) (*models.MailStatus, error) {
 		} else if registration.Mentor != nil {
 			reg_data = registration.Mentor
 		}
-		
+
 		if reg_data == nil {
 			user_data, err := GetUserInfo(id)
 

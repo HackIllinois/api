@@ -9,4 +9,5 @@ const (
 	ApplicantRole = "Applicant"
 	AttendeeRole  = "Attendee"
 	UserRole      = "User"
+	BlobstoreRole = "Blobstore"
 )

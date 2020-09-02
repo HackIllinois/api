@@ -2,9 +2,10 @@ package service
 
 import (
 	"errors"
+	"fmt"
+	"github.com/levigross/grequests"
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
-	"github.com/levigross/grequests"
 )
 
 type GoogleOAuthProvider struct {
@@ -54,6 +55,7 @@ func (provider *GoogleOAuthProvider) Authorize(code string, redirect_uri string)
 		return err
 	}
 
+	response_status := fmt.Sprintf("%s", request.String())
 	var oauth_token models.GoogleOauthToken
 	err = request.JSON(&oauth_token)
 
@@ -62,7 +64,7 @@ func (provider *GoogleOAuthProvider) Authorize(code string, redirect_uri string)
 	}
 
 	if oauth_token.Token == "" {
-		return errors.New("Invalid oauth code. Response: " + request.String())
+		return errors.New("Invalid oauth code. Response: " + response_status)
 	}
 
 	provider.token = oauth_token.Token

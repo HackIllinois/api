@@ -62,7 +62,7 @@ func (provider *GoogleOAuthProvider) Authorize(code string, redirect_uri string)
 	}
 
 	if oauth_token.Token == "" {
-		return errors.New("Invalid oauth code. Response: ", request.String())
+		return errors.New("Invalid oauth code. Response: " + request.String())
 	}
 
 	provider.token = oauth_token.Token

@@ -51,7 +51,8 @@ func SendMailByList(mail_order_list models.MailOrderList) (*models.MailStatus, e
 
 /*
 	Send mail the the users with the given ids, using the provided template
-	Substitution will be generated based on user info
+	Substitution will be generated based on registration info,
+	or User info if there is no registration data
 */
 func SendMailByID(mail_order models.MailOrder) (*models.MailStatus, error) {
 	var mail_info models.MailInfo
@@ -62,18 +63,39 @@ func SendMailByID(mail_order models.MailOrder) (*models.MailStatus, error) {
 
 	mail_info.Recipients = make([]models.Recipient, len(mail_order.IDs))
 	for i, id := range mail_order.IDs {
-		user_info, err := GetUserInfo(id)
+		registration, err := GetRegistrationInfo(id)
 
 		if err != nil {
 			return nil, err
 		}
 
+		var reg_data *models.RegistrationInfo
+		var email, first_name, last_name string
+
+		if registration.Attendee != nil {
+			reg_data = registration.Attendee
+		} else if registration.Mentor != nil {
+			reg_data = registration.Mentor
+		}
+
+		if reg_data == nil {
+			user_data, err := GetUserInfo(id)
+
+			if err != nil {
+				return nil, err
+			}
+
+			email, first_name, last_name = user_data.Email, user_data.FirstName, user_data.LastName
+		} else {
+			email, first_name, last_name = reg_data.Email, reg_data.FirstName, reg_data.LastName
+		}
+
 		mail_info.Recipients[i].Address = models.Address{
-			Email: user_info.Email,
-			Name:  fmt.Sprintf("%s %s", user_info.FirstName, user_info.LastName),
+			Email: email,
+			Name:  fmt.Sprintf("%s %s", first_name, last_name),
 		}
 		mail_info.Recipients[i].Substitutions = models.Substitutions{
-			"name": user_info.FirstName,
+			"name": first_name,
 		}
 	}
 

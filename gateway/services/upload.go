@@ -53,13 +53,13 @@ var UploadRoutes = arbor.RouteCollection{
 		"CreateBlob",
 		"POST",
 		"/upload/blobstore/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(CreateBlob).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole, models.BlobstoreRole}), middleware.IdentificationMiddleware).ThenFunc(CreateBlob).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateBlob",
 		"PUT",
 		"/upload/blobstore/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateBlob).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole, models.BlobstoreRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateBlob).ServeHTTP,
 	},
 	arbor.Route{
 		"GetBlob",

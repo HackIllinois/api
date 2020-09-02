@@ -56,6 +56,7 @@ func (provider *GoogleOAuthProvider) Authorize(code string, redirect_uri string)
 	}
 
 	response_status := fmt.Sprintf("%s", request.String())
+	
 	var oauth_token models.GoogleOauthToken
 	err = request.JSON(&oauth_token)
 

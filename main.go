@@ -18,6 +18,7 @@ import (
 	"github.com/HackIllinois/api/services/stat"
 	"github.com/HackIllinois/api/services/upload"
 	"github.com/HackIllinois/api/services/user"
+	"github.com/HackIllinois/api/services/recognition"
 )
 
 var SERVICE_ENTRYPOINTS = map[string](func()){
@@ -34,6 +35,7 @@ var SERVICE_ENTRYPOINTS = map[string](func()){
 	"stat":          stat.Entry,
 	"notifications": notifications.Entry,
 	"project":       project.Entry,
+	"recognition":   recognition.Entry,
 }
 
 func StartAll() {

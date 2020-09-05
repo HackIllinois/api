@@ -48,7 +48,7 @@ This `Admin` JWT should be passed as the `Authorization` header when making a re
 There are a couple other useful but not necessary tools for working on the API. The first is a GUI tool for viewing and modifying the database. There are many options including [MongoDB Compass](https://www.mongodb.com/products/compass) and [Robo 3T](https://robomongo.org/). You will also want to install [Postman](https://www.getpostman.com/) for making requests to the API when testing.
 
 ## Building, Testing, and Running the API
-In order to simply API development `make` is used for building, testing, and running the API. All `make` commands can be run from the root of the repository and they will properly find and operate on all of the services.
+In order to simplify API development `make` is used for building, testing, and running the API. All `make` commands can be run from the root of the repository and they will properly find and operate on all of the services.
 
 ### Building the API
 Run the following command from the root of the repository. The gateway and all services will be built into `bin`.

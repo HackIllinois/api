@@ -2,13 +2,14 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+	"time"
+
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/HackIllinois/api/services/notifications/service"
 	"github.com/gorilla/mux"
-	"net/http"
-	"time"
 )
 
 func SetupController(route *mux.Route) {
@@ -25,6 +26,25 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/topic/{id}/unsubscribe/", UnsubscribeToTopic).Methods("POST")
 	router.HandleFunc("/device/", RegisterDeviceToUser).Methods("POST")
 	router.HandleFunc("/order/{id}/", GetNotificationOrder).Methods("GET")
+}
+
+/*
+	Returns all stats : topics subscribed to, devices registered, past notifications sent
+*/
+func GetRegisteredDevices(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+	devices, err := service.GetUserDevices(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve notifications."))
+		return
+	}
+
+	device_list := models.DeviceList{
+		Devices: devices,
+	}
+
+	json.NewEncoder(w).Encode(device_list)
 }
 
 /*

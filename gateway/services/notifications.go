@@ -15,6 +15,12 @@ const NotificationsFormat string = "JSON"
 
 var NotificationsRoutes = arbor.RouteCollection{
 	arbor.Route{
+		"GetAllSubscriptions",
+		"GET",
+		"/notifications/subscriptions",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(GetAllSubscriptions).ServeHTTP,
+	},
+	arbor.Route{
 		"GetAllRegisteredDevices",
 		"GET",
 		"/notifications/devices",
@@ -86,6 +92,10 @@ var NotificationsRoutes = arbor.RouteCollection{
 		"/notifications/order/{id}/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(GetNotificationOrder).ServeHTTP,
 	},
+}
+
+func GetAllSubscriptions(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }
 
 func GetRegisteredDevices(w http.ResponseWriter, r *http.Request) {

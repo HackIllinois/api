@@ -29,7 +29,26 @@ func SetupController(route *mux.Route) {
 }
 
 /*
-	Returns all stats : topics subscribed to, devices registered, past notifications sent
+	Returns all topics a user is subscribed to
+*/
+func GetAllSubscriptions(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+	topics, err := service.GetSubscriptions(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve notifications."))
+		return
+	}
+
+	topic_list := models.TopicList{
+		Topics: topics,
+	}
+
+	json.NewEncoder(w).Encode(topic_list)
+}
+
+/*
+	Returns devices registered of a specific user
 */
 func GetRegisteredDevices(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")

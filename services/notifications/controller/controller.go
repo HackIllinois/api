@@ -31,12 +31,12 @@ func SetupController(route *mux.Route) {
 /*
 	Returns all topics a user is subscribed to
 */
-func GetAllSubscriptions(w http.ResponseWriter, r *http.Request) {
+func GetUserSubscriptions(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 	topics, err := service.GetSubscriptions(id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve notifications."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve user's subscriptions."))
 		return
 	}
 
@@ -50,12 +50,12 @@ func GetAllSubscriptions(w http.ResponseWriter, r *http.Request) {
 /*
 	Returns devices registered of a specific user
 */
-func GetRegisteredDevices(w http.ResponseWriter, r *http.Request) {
+func GetUserRegisteredDevices(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 	devices, err := service.GetUserDevices(id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve notifications."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve user's registered devices."))
 		return
 	}
 

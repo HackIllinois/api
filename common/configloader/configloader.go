@@ -77,7 +77,7 @@ func (loader *ConfigLoader) Get(key string) (string, error) {
 	raw_value, exists := loader.parsedConfig[key]
 
 	if !exists {
-		return "", errors.New("The value for the given key: " + key " was not set")
+		return "", errors.New("The value for the given key: " + key + " was not set")
 	}
 
 	err := json.Unmarshal(*raw_value, &value)

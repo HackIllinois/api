@@ -13,9 +13,6 @@ import (
 	"os"
 )
 
-var ErrNotSet = errors.New("The value for the given key was not set")
-var ErrDecodeFailed = errors.New("The value for the given key could not be decoded")
-var ErrLoadFailed = errors.New("Unable to load config")
 
 /*
 	Used to load a key value configuration
@@ -33,7 +30,7 @@ func Load(config_path string) (*ConfigLoader, error) {
 	uri, err := url.Parse(config_path)
 
 	if err != nil {
-		return nil, ErrLoadFailed
+		return nil, errors.New("Unable to load config path: " + config_path)
 	}
 
 	var config_contents []byte
@@ -46,11 +43,11 @@ func Load(config_path string) (*ConfigLoader, error) {
 	case "https":
 		config_contents, err = loadFromHttps(config_path)
 	default:
-		return nil, ErrLoadFailed
+		return nil, errors.New("Unable to load config path: " + config_path)
 	}
 
 	if err != nil {
-		return nil, ErrLoadFailed
+		return nil, errors.New("Unable to load config path: " + config_path)
 	}
 
 	loader := ConfigLoader{
@@ -60,7 +57,7 @@ func Load(config_path string) (*ConfigLoader, error) {
 	err = json.Unmarshal(config_contents, &loader.parsedConfig)
 
 	if err != nil {
-		return nil, ErrLoadFailed
+		return nil, errors.New("Unable to load config path: " + config_path)
 	}
 
 	return &loader, nil
@@ -80,13 +77,13 @@ func (loader *ConfigLoader) Get(key string) (string, error) {
 	raw_value, exists := loader.parsedConfig[key]
 
 	if !exists {
-		return "", ErrNotSet
+		return "", errors.New("The value for the given key: " + key " was not set")
 	}
 
 	err := json.Unmarshal(*raw_value, &value)
 
 	if err != nil {
-		return "", ErrDecodeFailed
+		return "", errors.New("The value for the given key: " + key + " could not be decoded")
 	}
 
 	return value, nil
@@ -106,7 +103,7 @@ func (loader *ConfigLoader) ParseInto(key string, out interface{}) error {
 	raw_value, exists := loader.parsedConfig[key]
 
 	if !exists {
-		return ErrNotSet
+		return errors.New("The value for the given key: " + key + " was not set")
 	}
 
 	return json.Unmarshal(*raw_value, out)

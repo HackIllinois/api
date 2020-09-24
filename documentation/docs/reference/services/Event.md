@@ -361,3 +361,15 @@ Response format:
 	]
 }
 ```
+
+DELETE /event/favorite/remove/
+----------------------------
+
+Removes all of the events from the favorites for the current user.
+
+Response format:
+```
+{
+	"id": "github001",
+	"events": []
+}

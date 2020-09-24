@@ -416,7 +416,7 @@ func AddEventFavorite(id string, event string) error {
 }
 
 /*
-	Removes the given event to the favorites for the user with the given id
+	Removes the given event from the favorites for the user with the given id
 */
 func RemoveEventFavorite(id string, event string) error {
 	selector := database.QuerySelector{
@@ -437,6 +437,21 @@ func RemoveEventFavorite(id string, event string) error {
 
 	err = db.Update("favorites", selector, event_favorites)
 
+	return err
+}
+
+/*
+	Removes all of the favorite events from the user with the given id
+*/
+func RemoveAllEventFavorites(id string) error {
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	_, err := db.RemoveAll("favorites", selector)
+	if err != nil {
+		return errors.New("Failed to delete all of the user's favorite events.")
+	}
 	return err
 }
 

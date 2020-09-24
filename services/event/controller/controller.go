@@ -241,7 +241,7 @@ func GetEventFavorites(w http.ResponseWriter, r *http.Request) {
 	favorites, err := service.GetEventFavorites(id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's event favourites."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's event favorites."))
 		return
 	}
 
@@ -293,7 +293,7 @@ func RemoveEventFavorite(w http.ResponseWriter, r *http.Request) {
 	favorites, err := service.GetEventFavorites(id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated event favourites for the user (post-removal)."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated event favorites for the user (post-removal)."))
 		return
 	}
 
@@ -316,7 +316,7 @@ func RemoveAllEventFavorites(w http.ResponseWriter, r *http.Request) {
 	favorites, err := service.GetEventFavorites(id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated event favourites for the user (post-removal)."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated event favorites for the user (post-removal)."))
 		return
 	}
 

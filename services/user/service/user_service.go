@@ -64,7 +64,7 @@ func SetUserInfo(id string, user_info models.UserInfo) error {
 }
 
 /*
-	Returns the users associated with the given parameters
+	Returns the users associated with the given parameters sorted by firstName and lastName
 */
 func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers, error) {
 	query, err := database.CreateFilterQuery(parameters, models.UserInfo{})

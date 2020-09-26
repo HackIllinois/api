@@ -74,7 +74,17 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 	}
 
 	var filtered_users models.FilteredUsers
-	err = db.FindAll("info", query, &filtered_users.Users)
+
+	err := db.FindAllSorted("info", nil, []database.SortField{
+        {
+                Name:     "firstName",
+                Reversed: false,
+        },
+        {
+                Name:     "lastName",
+                Reversed: false,
+        },
+	}, &filtered_users)
 
 	if err != nil {
 		return nil, err

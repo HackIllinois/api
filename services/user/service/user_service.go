@@ -64,7 +64,7 @@ func SetUserInfo(id string, user_info models.UserInfo) error {
 }
 
 /*
-	Returns the users associated with the given parameters
+	Returns the users associated with the given parameters sorted by firstName and lastName
 */
 func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers, error) {
 	query, err := database.CreateFilterQuery(parameters, models.UserInfo{})
@@ -74,7 +74,17 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 	}
 
 	var filtered_users models.FilteredUsers
-	err = db.FindAll("info", query, &filtered_users.Users)
+
+	err := db.FindAllSorted("info", nil, []database.SortField{
+        {
+                Name:     "firstName",
+                Reversed: false,
+        },
+        {
+                Name:     "lastName",
+                Reversed: false,
+        },
+	}, &filtered_users)
 
 	if err != nil {
 		return nil, err

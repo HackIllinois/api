@@ -54,7 +54,7 @@ func GetProfile(id string) (*models.Profile, error) {
 	Removes the profile from profile trackers and every user's tracker.
 	Returns the profile that was deleted.
 */
-func DeleteProject(id string) (*models.Profile, error) {
+func DeleteProfile(id string) (*models.Profile, error) {
 
 	// Gets profile to be able to return it later
 

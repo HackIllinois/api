@@ -79,7 +79,7 @@ func CleanupTestDB(t *testing.T) {
 /*
 	Service level test for getting all profiles from db
 */
-func TestGetAllProjectsService(t *testing.T) {
+func TestGetAllProfilesService(t *testing.T) {
 	SetupTestDB(t)
 
 	profile := models.Profile{
@@ -146,4 +146,144 @@ func TestGetAllProjectsService(t *testing.T) {
 
 	CleanupTestDB(t)
 
+}
+
+/*
+	Service level test for getting profile from db
+*/
+func TestGetProfileService(t *testing.T) {
+	SetupTestDB(t)
+
+	profile, err := service.GetProfile("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_profile := models.Profile{
+		ID:        "testid",
+		Name:      "testname",
+		Email:     "testemail",
+		Github:    "testgithub",
+		Linkedin:  "testlinkedin",
+		Interests: []string{"testinterest1", "testinterest2"},
+	}
+
+	if !reflect.DeepEqual(profile, &expected_profile) {
+		t.Errorf("Wrong profile info. Expected %v, got %v", &expected_profile, profile)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for creating a profile in the db
+*/
+func TestCreateProfileService(t *testing.T) {
+	SetupTestDB(t)
+
+	new_profile := models.Profile{
+		ID:        "testid2",
+		Name:      "testname2",
+		Email:     "testemail2",
+		Github:    "testgithub2",
+		Linkedin:  "testlinkedin2",
+		Interests: []string{"testinterest3", "testinterest4"},
+	}
+
+	err := service.CreateProfile("testid2", new_profile)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	profile, err := service.GetProfile("testid2")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_profile := models.Profile{
+		ID:        "testid2",
+		Name:      "testname2",
+		Email:     "testemail2",
+		Github:    "testgithub2",
+		Linkedin:  "testlinkedin2",
+		Interests: []string{"testinterest3", "testinterest4"},
+	}
+
+	if !reflect.DeepEqual(profile, &expected_profile) {
+		t.Errorf("Wrong profile info. Expected %v, got %v", expected_profile, profile)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for deleting a profile in the db
+*/
+func TestDeleteProfileService(t *testing.T) {
+	SetupTestDB(t)
+
+	profile_id := "testid"
+
+	// Try to delete the profile
+
+	_, err := service.DeleteProfile(profile_id)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Try to find the profile in the profiles db
+	profile, err := service.GetProfile(profile_id)
+
+	if err == nil {
+		t.Errorf("Found profile %v in profiles database.", profile)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for updating a profile in the db
+*/
+func TestUpdateProfileService(t *testing.T) {
+	SetupTestDB(t)
+
+	profile := models.Profile{
+		ID:        "testid",
+		Name:      "testname2",
+		Email:     "testemail2",
+		Github:    "testgithub2",
+		Linkedin:  "testlinkedin2",
+		Interests: []string{"testinterest3", "testinterest4"},
+	}
+
+	err := service.UpdateProfile("testid", profile)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	updated_profile, err := service.GetProfile("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_profile := models.Profile{
+		ID:        "testid",
+		Name:      "testname2",
+		Email:     "testemail2",
+		Github:    "testgithub2",
+		Linkedin:  "testlinkedin2",
+		Interests: []string{"testinterest3", "testinterest4"},
+	}
+
+	if !reflect.DeepEqual(updated_profile, &expected_profile) {
+		t.Errorf("Wrong profile info. Expected %v, got %v", expected_profile, updated_profile)
+	}
+
+	CleanupTestDB(t)
 }

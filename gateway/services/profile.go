@@ -1,0 +1,56 @@
+package services
+
+import (
+	"net/http"
+
+	"github.com/HackIllinois/api/gateway/config"
+	"github.com/HackIllinois/api/gateway/middleware"
+	"github.com/HackIllinois/api/gateway/models"
+	"github.com/arbor-dev/arbor"
+	"github.com/justinas/alice"
+)
+
+const ProfileFormat string = "JSON"
+
+var ProfileRoutes = arbor.RouteCollection{
+	arbor.Route{
+		"GetCurrentUserProfile",
+		"GET",
+		"/profile/",
+		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetProfile).ServeHTTP,
+	},
+	arbor.Route{
+		"CreateCurrentUserProfile",
+		"POST",
+		"/profile/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(CreateProfile).ServeHTTP,
+	},
+	arbor.Route{
+		"UpdateCurrentUserProfile",
+		"PUT",
+		"/profile/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateProfile).ServeHTTP,
+	},
+	arbor.Route{
+		"DeleteCurrentUserProfile",
+		"DELETE",
+		"/profile/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(DeleteProfile).ServeHTTP,
+	},
+}
+
+func GetProfile(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
+func CreateProfile(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
+func UpdateProfile(w http.ResponseWriter, r *http.Request) {
+	arbor.PUT(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
+func DeleteProfile(w http.ResponseWriter, r *http.Request) {
+	arbor.PUT(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}

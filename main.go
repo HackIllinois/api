@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/DevSatpathy/api/services/profile"
 	"github.com/HackIllinois/api/gateway"
 	"github.com/HackIllinois/api/services/auth"
 	"github.com/HackIllinois/api/services/checkin"
@@ -34,6 +35,7 @@ var SERVICE_ENTRYPOINTS = map[string](func()){
 	"stat":          stat.Entry,
 	"notifications": notifications.Entry,
 	"project":       project.Entry,
+	"profile":       profile.Entry,
 }
 
 func StartAll() {

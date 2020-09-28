@@ -17,10 +17,12 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/", CreateProfile).Methods("POST")
 	router.HandleFunc("/", UpdateProfile).Methods("PUT")
 	router.HandleFunc("/", DeleteProfile).Methods("DELETE")
+
+	router.HandleFunc("/list/", GetAllProfiles).Methods("GET")
 }
 
 /*
-	Endpoint to get the registration for the current user
+	Endpoint to get the profile for the current user
 */
 func GetProfile(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
@@ -69,6 +71,9 @@ func CreateProfile(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(updated_profile)
 }
 
+/*
+	Endpoint to update the profile for the current user
+*/
 func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 	if id == "" {
@@ -95,6 +100,9 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(updated_profile)
 }
 
+/*
+	Endpoint to delete the profile for the current user
+*/
 func DeleteProfile(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 	if id == "" {
@@ -110,4 +118,19 @@ func DeleteProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(deleted_profile)
+}
+
+/*
+	Endpoint to get all active user profiles
+*/
+func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
+
+	user_profile_list, err := service.GetAllProfiles()
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not list all user profiles."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(user_profile_list)
 }

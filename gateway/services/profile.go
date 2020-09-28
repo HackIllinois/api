@@ -37,6 +37,12 @@ var ProfileRoutes = arbor.RouteCollection{
 		"/profile/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(DeleteProfile).ServeHTTP,
 	},
+	arbor.Route{
+		"GetAllProfiles",
+		"Get",
+		"/profile/list/",
+		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetAllProfiles).ServeHTTP,
+	},
 }
 
 func GetProfile(w http.ResponseWriter, r *http.Request) {
@@ -53,4 +59,8 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 
 func DeleteProfile(w http.ResponseWriter, r *http.Request) {
 	arbor.PUT(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
+func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
 }

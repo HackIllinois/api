@@ -68,7 +68,7 @@ func DeleteProfile(id string) (*models.Profile, error) {
 		"id": id,
 	}
 
-	// Remove project from projects database
+	// Remove profile from profile database
 
 	err = db.RemoveOne("profiles", query)
 
@@ -120,4 +120,23 @@ func UpdateProfile(id string, profile models.Profile) error {
 	err = db.Update("profiles", selector, &profile)
 
 	return err
+}
+
+/*
+	Returns the list of all accessible profiles
+*/
+func GetAllProfiles() (*models.ProfileList, error) {
+	profiles := []models.Profile{}
+
+	err := db.FindAll("profiles", nil, &profiles)
+
+	if err != nil {
+		return nil, err
+	}
+
+	profile_list := models.ProfileList{
+		Profiles: profiles,
+	}
+
+	return &profile_list, nil
 }

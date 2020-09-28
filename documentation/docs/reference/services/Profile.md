@@ -16,10 +16,45 @@ Response format:
     "github": "JSmith",
     "linkedin": "john-smith",
     "interests": [
-        "python",
-        "deepLearning"
+        "deep learning",
+        "python"
     ]
 }
+```
+
+GET /profile/list/
+-------------------------
+
+Returns all profiles that are in the database.
+
+Response format:
+```
+{
+    profiles: [
+        {
+            "id": "github0000001"
+            "name": "John Smith",
+            "email": "john@gmail.com",
+            "github": "JSmith",
+            "linkedin": "john-smith",
+            "interests": [
+                "deep learning",
+                "ice skating",
+                "python"
+            ]
+        },
+        {
+            "id": "github0000002"
+            "name": "Smith John",
+            "email": "smith@gmail.com",
+            "github": "SJohn",
+            "linkedin": "smith-john",
+            "interests": [
+                "classical music",
+                "deep learning",
+                "python"
+            ]
+        }
 ```
 
 
@@ -51,8 +86,8 @@ Response format:
     "github": "JSmith",
     "linkedin": "john-smith",
     "interests": [
-        "python",
-        "deepLearning"
+        "deep learning",
+        "python"
     ]
 }
 ```
@@ -71,8 +106,8 @@ Request format:
     "github": "JSmith",
     "linkedin": "john-smith",
     "interests": [
-        "python",
-        "deepLearning"
+        "deep learning",
+        "python"
     ]
 }
 ```
@@ -86,8 +121,8 @@ Response format:
     "github": "JSmith",
     "linkedin": "john-smith",
     "interests": [
-        "python",
-        "deepLearning"
+        "deep learning",
+        "python"
     ]
 }
 ```
@@ -108,8 +143,8 @@ Response format:
     "github": "JSmith",
     "linkedin": "john-smith",
     "interests": [
-        "python",
-        "deepLearning"
+        "deep learning",
+        "python"
     ]
 }
 ```

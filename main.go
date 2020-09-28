@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/DevSatpathy/api/services/profile"
 	"github.com/HackIllinois/api/gateway"
 	"github.com/HackIllinois/api/services/auth"
 	"github.com/HackIllinois/api/services/checkin"
@@ -13,6 +12,7 @@ import (
 	"github.com/HackIllinois/api/services/event"
 	"github.com/HackIllinois/api/services/mail"
 	"github.com/HackIllinois/api/services/notifications"
+	"github.com/HackIllinois/api/services/profile"
 	"github.com/HackIllinois/api/services/project"
 	"github.com/HackIllinois/api/services/registration"
 	"github.com/HackIllinois/api/services/rsvp"

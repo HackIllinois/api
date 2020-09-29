@@ -83,6 +83,7 @@ func DeleteProfile(id string) (*models.Profile, error) {
 	Creates a profile with the given id
 */
 func CreateProfile(id string, profile models.Profile) error {
+	profile.ID = id
 	err := validate.Struct(profile)
 
 	if err != nil {
@@ -107,6 +108,7 @@ func CreateProfile(id string, profile models.Profile) error {
 	Updates the profile with the given id
 */
 func UpdateProfile(id string, profile models.Profile) error {
+	profile.ID = id
 	err := validate.Struct(profile)
 
 	if err != nil {

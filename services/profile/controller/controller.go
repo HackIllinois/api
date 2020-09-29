@@ -21,15 +21,9 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/list/", GetAllProfiles).Methods("GET")
 }
 
-/*
-	Endpoint to get the profile for the current user
-*/
+// GetProfile is the endpoint to get the profile for the current user
 func GetProfile(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
-	if id == "" {
-		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
-		return
-	}
 
 	user_profile, err := service.GetProfile(id)
 
@@ -41,9 +35,7 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user_profile)
 }
 
-/*
-	Endpoint to create the profile for the current user.
-*/
+// CreateProfile is the endpoint to create the profile for the current user.
 func CreateProfile(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
@@ -61,19 +53,17 @@ func CreateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updated_profile, err := service.GetProfile(id)
+	created_profile, err := service.GetProfile(id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated profile."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get created profile."))
 		return
 	}
 
-	json.NewEncoder(w).Encode(updated_profile)
+	json.NewEncoder(w).Encode(created_profile)
 }
 
-/*
-	Endpoint to update the profile for the current user
-*/
+// UpdateProfile is the endpoint to update the profile for the current user
 func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 	if id == "" {
@@ -100,9 +90,7 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(updated_profile)
 }
 
-/*
-	Endpoint to delete the profile for the current user
-*/
+// DeleteProfile is the endpoint to delete the profile for the current user
 func DeleteProfile(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 	if id == "" {
@@ -120,9 +108,7 @@ func DeleteProfile(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(deleted_profile)
 }
 
-/*
-	Endpoint to get all active user profiles
-*/
+// GetAllProfiles is the endpoint to get all active user profiles
 func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
 
 	user_profile_list, err := service.GetAllProfiles()

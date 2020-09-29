@@ -17,35 +17,39 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetCurrentUserProfile",
 		"GET",
 		"/profile/",
-		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetProfile).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(GetProfile).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateCurrentUserProfile",
 		"POST",
 		"/profile/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(CreateProfile).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(CreateProfile).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentUserProfile",
 		"PUT",
 		"/profile/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateProfile).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateProfile).ServeHTTP,
 	},
 	arbor.Route{
 		"DeleteCurrentUserProfile",
 		"DELETE",
 		"/profile/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(DeleteProfile).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(DeleteProfile).ServeHTTP,
 	},
 	arbor.Route{
 		"GetAllProfiles",
-		"Get",
+		"GET",
 		"/profile/list/",
 		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetAllProfiles).ServeHTTP,
 	},
 }
 
 func GetProfile(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
+func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
 }
 
@@ -58,9 +62,5 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteProfile(w http.ResponseWriter, r *http.Request) {
-	arbor.PUT(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
-}
-
-func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+	arbor.DELETE(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
 }

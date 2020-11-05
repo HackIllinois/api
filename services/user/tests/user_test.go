@@ -2,14 +2,15 @@ package tests
 
 import (
 	"fmt"
-	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/user/config"
-	"github.com/HackIllinois/api/services/user/models"
-	"github.com/HackIllinois/api/services/user/service"
 	"net/url"
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/services/user/config"
+	"github.com/HackIllinois/api/services/user/models"
+	"github.com/HackIllinois/api/services/user/service"
 )
 
 var db database.Database
@@ -43,7 +44,7 @@ func TestMain(m *testing.M) {
 }
 
 /*
-	Initialize databse with test user info
+	Initialize database with test user info
 */
 func SetupTestDB(t *testing.T) {
 	err := db.Insert("info", &models.UserInfo{
@@ -65,6 +66,47 @@ func SetupTestDB(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+func SetupFilterTestDB(t *testing.T) {
+	err := db.Insert("info", &models.UserInfo{
+		ID:        "testid1",
+		FirstName: "Alex",
+		Username:  "testusername",
+		Email:     "testemail@domain.com",
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.Insert("info", &models.UserInfo{
+		ID:        "testid2",
+		FirstName: "Charlie",
+		Username:  "testusername",
+		Email:     "testemail@domain.com",
+	})
+
+	err = db.Insert("info", &models.UserInfo{
+		ID:        "testid3",
+		FirstName: "Bobby",
+		Username:  "testusername",
+		Email:     "testemail@domain.com",
+	})
+
+	err = db.Insert("info", &models.UserInfo{
+		ID:        "testid4",
+		FirstName: "Bobby",
+		LastName:  "Adamson",
+		Username:  "test-two-parameter-filter",
+	})
+
+	err = db.Insert("info", &models.UserInfo{
+		ID:        "testid5",
+		FirstName: "Bobby",
+		LastName:  "Zulu",
+		Username:  "test-two-parameter-filter",
+	})
 }
 
 /*
@@ -166,6 +208,64 @@ func TestGetFilteredUserInfoService(t *testing.T) {
 		[]models.UserInfo{
 			*user_info_1,
 			*user_info_2,
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_info, expected_info) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, filtered_info)
+	}
+
+	CleanupTestDB(t)
+}
+
+func TestGetFilteredUserInfoWithSortingService(t *testing.T) {
+	SetupFilterTestDB(t)
+
+	user_info_1, err := service.GetUserInfo("testid1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	user_info_2, err := service.GetUserInfo("testid2")
+	user_info_3, err := service.GetUserInfo("testid3")
+
+	parameters := map[string][]string{
+		"username": {"testusername"},
+		"sortby":   {"FiRsTNAmE"},
+	}
+
+	filtered_info, err := service.GetFilteredUserInfo(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_info := &models.FilteredUsers{
+		[]models.UserInfo{
+			*user_info_1, // Alex
+			*user_info_3, // Bobby
+			*user_info_2, // Charlie
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_info, expected_info) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, filtered_info)
+	}
+
+	user_info_1, err = service.GetUserInfo("testid5")
+	user_info_2, err = service.GetUserInfo("testid4")
+	parameters = map[string][]string{
+		"username": {"test-two-parameter-filter"},
+		"sortby":   {"firstName,lastName"},
+	}
+
+	filtered_info, err = service.GetFilteredUserInfo(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_info = &models.FilteredUsers{
+		[]models.UserInfo{
+			*user_info_2, // Bobby Adamson
+			*user_info_1, // Bobby Zulu
 		},
 	}
 

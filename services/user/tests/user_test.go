@@ -228,6 +228,8 @@ func TestGetFilteredUserInfoWithSortingService(t *testing.T) {
 	user_info_2, err := service.GetUserInfo("testid2")
 	user_info_3, err := service.GetUserInfo("testid3")
 
+	// Sort by first name and expect: Alex, Bobby, Charlie
+
 	parameters := map[string][]string{
 		"username": {"testusername"},
 		"sortby":   {"FiRsTNAmE"},
@@ -249,6 +251,32 @@ func TestGetFilteredUserInfoWithSortingService(t *testing.T) {
 	if !reflect.DeepEqual(filtered_info, expected_info) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, filtered_info)
 	}
+
+	// Reverse the sort and expect: Charlie, Bobby, Alex.
+
+	parameters = map[string][]string{
+		"username": {"testusername"},
+		"sortby":   {"-FiRsTNAmE"},
+	}
+
+	filtered_info, err = service.GetFilteredUserInfo(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_info = &models.FilteredUsers{
+		[]models.UserInfo{
+			*user_info_2, // Charlie
+			*user_info_3, // Bobby
+			*user_info_1, // Alex
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_info, expected_info) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, filtered_info)
+	}
+
+	// Sort by two parameters and expect: Bobby Adamson, Bobby Zulu
 
 	user_info_1, err = service.GetUserInfo("testid5")
 	user_info_2, err = service.GetUserInfo("testid4")

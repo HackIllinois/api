@@ -2,14 +2,15 @@ package tests
 
 import (
 	"fmt"
-	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/user/config"
-	"github.com/HackIllinois/api/services/user/models"
-	"github.com/HackIllinois/api/services/user/service"
 	"net/url"
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/services/user/config"
+	"github.com/HackIllinois/api/services/user/models"
+	"github.com/HackIllinois/api/services/user/service"
 )
 
 var db database.Database
@@ -65,6 +66,42 @@ func SetupTestDB(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+func SetupPaginationDB(t *testing.T) {
+	err := db.Insert("info", &models.UserInfo{
+		ID:       "testid",
+		Username: "testusername",
+		Email:    "testemail@domain.com",
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.Insert("info", &models.UserInfo{
+		ID:       "testid2",
+		Username: "testusername",
+		Email:    "testemail@domain.com",
+	})
+
+	err = db.Insert("info", &models.UserInfo{
+		ID:       "testid3",
+		Username: "testusername",
+		Email:    "testemail@domain.com",
+	})
+
+	err = db.Insert("info", &models.UserInfo{
+		ID:       "testid4",
+		Username: "testusername",
+		Email:    "testemail@domain.com",
+	})
+
+	err = db.Insert("info", &models.UserInfo{
+		ID:       "testid5",
+		Username: "testusername",
+		Email:    "testemail@domain.com",
+	})
 }
 
 /*
@@ -166,6 +203,125 @@ func TestGetFilteredUserInfoService(t *testing.T) {
 		[]models.UserInfo{
 			*user_info_1,
 			*user_info_2,
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_info, expected_info) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, filtered_info)
+	}
+
+	CleanupTestDB(t)
+}
+
+func TestGetFilteredUserInfoServicePagination(t *testing.T) {
+	SetupPaginationDB(t)
+
+	user_info_1, err := service.GetUserInfo("testid")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	user_info_2, err := service.GetUserInfo("testid2")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	user_info_3, err := service.GetUserInfo("testid3")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	user_info_4, err := service.GetUserInfo("testid4")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	user_info_5, err := service.GetUserInfo("testid5")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Filter to page two, expect user_info_2
+	parameters := map[string][]string{
+		"username": {"testusername"},
+		"p":        {"2"},
+		"limit":    {"1"},
+	}
+	filtered_info, err := service.GetFilteredUserInfo(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_info := &models.FilteredUsers{
+		[]models.UserInfo{
+			*user_info_2,
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_info, expected_info) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, filtered_info)
+	}
+
+	// Filter to page two with two users per page
+
+	// page_1: user_info_1, user_info_2
+	parameters = map[string][]string{
+		"username": {"testusername"},
+		"p":        {"1"},
+		"limit":    {"2"},
+	}
+	filtered_info, err = service.GetFilteredUserInfo(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_info = &models.FilteredUsers{
+		[]models.UserInfo{
+			*user_info_1,
+			*user_info_2,
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_info, expected_info) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, filtered_info)
+	}
+
+	// page 2: user_info_3, user_info_4
+	parameters = map[string][]string{
+		"username": {"testusername"},
+		"p":        {"2"},
+		"limit":    {"2"},
+	}
+	filtered_info, err = service.GetFilteredUserInfo(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_info = &models.FilteredUsers{
+		[]models.UserInfo{
+			*user_info_3,
+			*user_info_4,
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_info, expected_info) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, filtered_info)
+	}
+
+	// page 3: user_info_5
+	parameters = map[string][]string{
+		"username": {"testusername"},
+		"p":        {"3"},
+		"limit":    {"2"},
+	}
+	filtered_info, err = service.GetFilteredUserInfo(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_info = &models.FilteredUsers{
+		[]models.UserInfo{
+			*user_info_5,
 		},
 	}
 

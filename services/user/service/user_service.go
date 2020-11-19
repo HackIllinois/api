@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"net/url"
+	"strconv"
 
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/user/config"
@@ -67,6 +68,11 @@ func SetUserInfo(id string, user_info models.UserInfo) error {
 	Returns the users associated with the given parameters
 */
 func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers, error) {
+	page := parameters["p"]
+	page_limit := parameters["limit"]
+	delete(parameters, "p")
+	delete(parameters, "limit")
+
 	query, err := database.CreateFilterQuery(parameters, models.UserInfo{})
 
 	if err != nil {
@@ -80,7 +86,23 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 		return nil, err
 	}
 
+	if len(page) == 1 && len(page_limit) == 1 {
+		page, _ := strconv.Atoi(page[0])
+		page_limit, _ := strconv.Atoi(page_limit[0])
+
+		// Subtract one because page numbers will be 1-indexed
+		// The max() function will ensure we don't paginate past the length of the Users list
+		filtered_users.Users = filtered_users.Users[(page-1)*page_limit : max(page*page_limit, len(filtered_users.Users))]
+	}
+
 	return &filtered_users, nil
+}
+
+func max(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
 }
 
 /*

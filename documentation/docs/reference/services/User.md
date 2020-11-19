@@ -65,6 +65,12 @@ GET /user/filter/?key=value
 
 Returns the basic user information, filtered with the given key-value pairs.
 
+To paginate the response, provide a parameter "p" with the page number you are requesting, as well as a parameter "limit" with the desired number of Users per page. If the pagination request exceeds the length of the available Users, it will be truncated.
+ 
+
+For example, the following request: `/user/filter/?key=value&p=1&limit=5` will return the first 5 Users (index 0 through 4).
+
+
 Response format:
 ```
 {

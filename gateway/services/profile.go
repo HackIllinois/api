@@ -17,19 +17,19 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetCurrentUserProfile",
 		"GET",
 		"/profile/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(GetProfile).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.ApplicantRole})).ThenFunc(GetProfile).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateCurrentUserProfile",
 		"POST",
 		"/profile/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(CreateProfile).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.ApplicantRole})).ThenFunc(CreateProfile).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentUserProfile",
 		"PUT",
 		"/profile/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateProfile).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateProfile).ServeHTTP,
 	},
 	arbor.Route{
 		"DeleteCurrentUserProfile",
@@ -41,7 +41,7 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetAllProfiles",
 		"GET",
 		"/profile/list/",
-		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetAllProfiles).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetAllProfiles).ServeHTTP,
 	},
 }
 

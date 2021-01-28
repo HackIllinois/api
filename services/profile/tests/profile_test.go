@@ -50,12 +50,16 @@ var TestTime = time.Now().Unix()
 */
 func SetupTestDB(t *testing.T) {
 	profile := models.Profile{
-		ID:        "testid",
-		Name:      "testname",
-		Email:     "testemail",
-		Github:    "testgithub",
-		Linkedin:  "testlinkedin",
-		Interests: []string{"testinterest1", "testinterest2"},
+		ID:          "testid",
+		FirstName:   "testfirstname",
+		LastName:    "testlastname",
+		Points:      0,
+		Timezone:    "America/Chicago",
+		Description: "Hi",
+		Discord:     "testdiscordusername",
+		AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
+		TeamStatus:  "Looking For Team",
+		Interests:   []string{"testinterest1", "testinterest2"},
 	}
 
 	err := db.Insert("profiles", &profile)
@@ -83,12 +87,16 @@ func TestGetAllProfilesService(t *testing.T) {
 	SetupTestDB(t)
 
 	profile := models.Profile{
-		ID:        "testid2",
-		Name:      "testname2",
-		Email:     "testemail2",
-		Github:    "testgithub2",
-		Linkedin:  "testlinkedin2",
-		Interests: []string{"testinterest3", "testinterest4"},
+		ID:          "testid2",
+		FirstName:   "testfirstname2",
+		LastName:    "testlastname2",
+		Points:      340,
+		Timezone:    "America/New York",
+		Description: "Hello",
+		Discord:     "testdiscordusername2",
+		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		TeamStatus:  "Found Team",
+		Interests:   []string{"testinterest2"},
 	}
 
 	err := db.Insert("profiles", &profile)
@@ -106,20 +114,28 @@ func TestGetAllProfilesService(t *testing.T) {
 	expected_profile_list := models.ProfileList{
 		Profiles: []models.Profile{
 			{
-				ID:        "testid",
-				Name:      "testname",
-				Email:     "testemail",
-				Github:    "testgithub",
-				Linkedin:  "testlinkedin",
-				Interests: []string{"testinterest1", "testinterest2"},
+				ID:          "testid",
+				FirstName:   "testfirstname",
+				LastName:    "testlastname",
+				Points:      0,
+				Timezone:    "America/Chicago",
+				Description: "Hi",
+				Discord:     "testdiscordusername",
+				AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
+				TeamStatus:  "Looking For Team",
+				Interests:   []string{"testinterest1", "testinterest2"},
 			},
 			{
-				ID:        "testid2",
-				Name:      "testname2",
-				Email:     "testemail2",
-				Github:    "testgithub2",
-				Linkedin:  "testlinkedin2",
-				Interests: []string{"testinterest3", "testinterest4"},
+				ID:          "testid2",
+				FirstName:   "testfirstname2",
+				LastName:    "testlastname2",
+				Points:      340,
+				Timezone:    "America/New York",
+				Description: "Hello",
+				Discord:     "testdiscordusername2",
+				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				TeamStatus:  "Found Team",
+				Interests:   []string{"testinterest2"},
 			},
 		},
 	}
@@ -161,12 +177,16 @@ func TestGetProfileService(t *testing.T) {
 	}
 
 	expected_profile := models.Profile{
-		ID:        "testid",
-		Name:      "testname",
-		Email:     "testemail",
-		Github:    "testgithub",
-		Linkedin:  "testlinkedin",
-		Interests: []string{"testinterest1", "testinterest2"},
+		ID:          "testid",
+		FirstName:   "testfirstname",
+		LastName:    "testlastname",
+		Points:      0,
+		Timezone:    "America/Chicago",
+		Description: "Hi",
+		Discord:     "testdiscordusername",
+		AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
+		TeamStatus:  "Looking For Team",
+		Interests:   []string{"testinterest1", "testinterest2"},
 	}
 
 	if !reflect.DeepEqual(profile, &expected_profile) {
@@ -183,12 +203,16 @@ func TestCreateProfileService(t *testing.T) {
 	SetupTestDB(t)
 
 	new_profile := models.Profile{
-		ID:        "testid2",
-		Name:      "testname2",
-		Email:     "testemail2",
-		Github:    "testgithub2",
-		Linkedin:  "testlinkedin2",
-		Interests: []string{"testinterest3", "testinterest4"},
+		ID:          "testid2",
+		FirstName:   "testfirstname2",
+		LastName:    "testlastname2",
+		Points:      340,
+		Timezone:    "America/New York",
+		Description: "Hello",
+		Discord:     "testdiscordusername2",
+		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		TeamStatus:  "Found Team",
+		Interests:   []string{"testinterest2"},
 	}
 
 	err := service.CreateProfile("testid2", new_profile)
@@ -204,12 +228,16 @@ func TestCreateProfileService(t *testing.T) {
 	}
 
 	expected_profile := models.Profile{
-		ID:        "testid2",
-		Name:      "testname2",
-		Email:     "testemail2",
-		Github:    "testgithub2",
-		Linkedin:  "testlinkedin2",
-		Interests: []string{"testinterest3", "testinterest4"},
+		ID:          "testid2",
+		FirstName:   "testfirstname2",
+		LastName:    "testlastname2",
+		Points:      340,
+		Timezone:    "America/New York",
+		Description: "Hello",
+		Discord:     "testdiscordusername2",
+		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		TeamStatus:  "Found Team",
+		Interests:   []string{"testinterest2"},
 	}
 
 	if !reflect.DeepEqual(profile, &expected_profile) {
@@ -252,12 +280,16 @@ func TestUpdateProfileService(t *testing.T) {
 	SetupTestDB(t)
 
 	profile := models.Profile{
-		ID:        "testid",
-		Name:      "testname2",
-		Email:     "testemail2",
-		Github:    "testgithub2",
-		Linkedin:  "testlinkedin2",
-		Interests: []string{"testinterest3", "testinterest4"},
+		ID:          "testid",
+		FirstName:   "testfirstname2",
+		LastName:    "testlastname2",
+		Points:      340,
+		Timezone:    "America/New York",
+		Description: "Hello",
+		Discord:     "testdiscordusername2",
+		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		TeamStatus:  "Found Team",
+		Interests:   []string{"testinterest2"},
 	}
 
 	err := service.UpdateProfile("testid", profile)
@@ -273,12 +305,16 @@ func TestUpdateProfileService(t *testing.T) {
 	}
 
 	expected_profile := models.Profile{
-		ID:        "testid",
-		Name:      "testname2",
-		Email:     "testemail2",
-		Github:    "testgithub2",
-		Linkedin:  "testlinkedin2",
-		Interests: []string{"testinterest3", "testinterest4"},
+		ID:          "testid",
+		FirstName:   "testfirstname2",
+		LastName:    "testlastname2",
+		Points:      340,
+		Timezone:    "America/New York",
+		Description: "Hello",
+		Discord:     "testdiscordusername2",
+		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		TeamStatus:  "Found Team",
+		Interests:   []string{"testinterest2"},
 	}
 
 	if !reflect.DeepEqual(updated_profile, &expected_profile) {

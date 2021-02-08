@@ -72,10 +72,12 @@ func CreateProfile(w http.ResponseWriter, r *http.Request) {
 */
 func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
+
 	if id == "" {
 		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 		return
 	}
+
 	var profile models.Profile
 	json.NewDecoder(r.Body).Decode(&profile)
 

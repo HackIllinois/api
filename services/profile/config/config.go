@@ -6,10 +6,10 @@ import (
 	"github.com/HackIllinois/api/common/configloader"
 )
 
-var PROJECT_DB_HOST string
-var PROJECT_DB_NAME string
+var PROFILE_DB_HOST string
+var PROFILE_DB_NAME string
 
-var PROJECT_PORT string
+var PROFILE_PORT string
 
 func Initialize() error {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
@@ -18,19 +18,19 @@ func Initialize() error {
 		return err
 	}
 
-	PROJECT_DB_HOST, err = cfg_loader.Get("PROJECT_DB_HOST")
+	PROFILE_DB_HOST, err = cfg_loader.Get("PROFILE_DB_HOST")
 
 	if err != nil {
 		return err
 	}
 
-	PROJECT_DB_NAME, err = cfg_loader.Get("PROJECT_DB_NAME")
+	PROFILE_DB_NAME, err = cfg_loader.Get("PROFILE_DB_NAME")
 
 	if err != nil {
 		return err
 	}
 
-	PROJECT_PORT, err = cfg_loader.Get("PROJECT_PORT")
+	PROFILE_PORT, err = cfg_loader.Get("PROFILE_PORT")
 
 	if err != nil {
 		return err

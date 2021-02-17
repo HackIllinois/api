@@ -2,11 +2,12 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/checkin/models"
 	"github.com/HackIllinois/api/services/checkin/service"
 	"github.com/gorilla/mux"
-	"net/http"
 )
 
 func SetupController(route *mux.Route) {
@@ -62,29 +63,48 @@ func CreateUserCheckin(w http.ResponseWriter, r *http.Request) {
 
 	can_user_checkin, err := service.CanUserCheckin(user_checkin.ID, user_checkin.Override)
 
-	if err != nil {
-		errors.WriteError(w, r, errors.InternalError(err.Error(), "Unable to determine user's check-in permissions."))
+	// Ignore the error caused when a user hasn't been accepted (no RSVP status)
+	if err != nil && err.Error() != "Rsvp service failed to return status" {
+		if err.Error() == "User is not registered." {
+			errors.WriteError(w, r, errors.AttributeMismatchError("User is not registered.", "User is not registered."))
+		} else {
+			errors.WriteError(w, r, errors.InternalError(err.Error(), "Unable to determine user's check-in permissions."))
+		}
 		return
 	}
 
 	if !can_user_checkin {
-		errors.WriteError(w, r, errors.AttributeMismatchError("Reasons for not being able to check-in include: no RSVP, no staff override (in case of no RSVP), or check-ins are not allowed at this time.", "Attendee is not allowed to check-in."))
+		errors.WriteError(w, r, errors.AttributeMismatchError("Reasons for not being able to check-in include: no RSVP, no staff override (in case of no RSVP), or check-ins are not allowed at this time.", "Attendee has not RSVPed."))
 		return
 	}
 
-	rsvp_data, err := service.GetRsvpData(user_checkin.ID)
+	is_rsvped, err := service.IsAttendeeRsvped(user_checkin.ID)
 
-	if err != nil {
-		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not retrieve rsvp data."))
+	// Ignore the error caused when a user hasn't been accepted
+	if err != nil && err.Error() != "Rsvp service failed to return status" {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not retrieve rsvp status."))
 		return
 	}
 
-	user_checkin.RsvpData = rsvp_data
+	if is_rsvped {
+		rsvp_data, err := service.GetRsvpData(user_checkin.ID)
+
+		if err != nil {
+			errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not retrieve rsvp data."))
+			return
+		}
+
+		user_checkin.RsvpData = rsvp_data
+	}
 
 	err = service.CreateUserCheckin(user_checkin.ID, user_checkin)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not create user check-in."))
+		if err.Error() == "Checkin already exists" {
+			errors.WriteError(w, r, errors.AttributeMismatchError("User has already checked in.", "User has already checked in."))
+		} else {
+			errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not create user check-in."))
+		}
 		return
 	}
 

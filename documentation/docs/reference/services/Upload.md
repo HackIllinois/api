@@ -40,6 +40,45 @@ Response format:
 }
 ```
 
+GET /upload/photo/USERID/
+--------------------------
+
+Returns the photo stored for the user with the `id` `USERID`.
+
+Response format:
+```
+{
+	"id": "github0000001",
+	"photo": "https://bucket.s3.amazonaws.com/photo"
+}
+```
+
+GET /upload/photo/
+-------------------
+
+Returns the photo stored for the user with the `id` stored in the given JWT in the Authorization header.
+
+Response format:
+```
+{
+	"id": "github0000001",
+	"photo": "https://bucket.s3.amazonaws.com/photo"
+}
+```
+
+GET /upload/photo/upload/
+--------------------------
+
+Returns the S3 link for photo uploading for the user with the `id` stored in the given JWT in the Authorization header. The user's photo can be `PUT` to this link.
+
+Response format:
+```
+{
+	"id": "github0000001",
+	"photo": "https://bucket.s3.amazonaws.com/photo"
+}
+```
+
 GET /upload/blobstore/ID/
 -------------------------
 
@@ -96,6 +135,29 @@ Request format:
 		"thing1": "hi",
 		"thing2": "hello"
 	}
+}
+```
+
+Response format:
+```
+{
+	"id": "exampleblob",
+	"data": {
+		"thing1": "hi",
+		"thing2": "hello"
+	}
+}
+```
+
+DELETE /upload/blobstore/ID
+----------------------
+
+Deletes the blob with the specified `id`.
+
+Request format:
+```
+{
+	"id": "exampleblob",
 }
 ```
 

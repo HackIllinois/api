@@ -10,6 +10,8 @@
 	"EVENT_SERVICE": "http://localhost:8010",
 	"STAT_SERVICE": "http://localhost:8011",
 	"NOTIFICATIONS_SERVICE": "http://localhost:8012",
+	"PROJECT_SERVICE": "http://localhost:8013",
+	"PROFILE_SERVICE": "http://localhost:8014",
 
 	"GATEWAY_PORT": "8000",
 	"AUTH_PORT": ":8002",
@@ -23,6 +25,8 @@
 	"EVENT_PORT": ":8010",
 	"STAT_PORT": ":8011",
 	"NOTIFICATIONS_PORT": ":8012",
+	"PROJECT_PORT": ":8013",
+	"PROFILE_PORT": ":8014",
 
 	"AUTH_DB_HOST": "localhost",
 	"USER_DB_HOST": "localhost",
@@ -35,6 +39,8 @@
 	"EVENT_DB_HOST": "localhost",
 	"STAT_DB_HOST": "localhost",
 	"NOTIFICATIONS_DB_HOST": "localhost",
+	"PROJECT_DB_HOST": "localhost",
+	"PROFILE_DB_HOST": "localhost",
 
 	"AUTH_DB_NAME": "auth",
 	"USER_DB_NAME": "user",
@@ -47,6 +53,8 @@
 	"EVENT_DB_NAME": "event",
 	"STAT_DB_NAME": "stat",
 	"NOTIFICATIONS_DB_NAME": "notifications",
+	"PROJECT_DB_NAME": "project",
+	"PROFILE_DB_NAME": "profile",
 
 	"S3_REGION": "us-east-1",
 	"S3_BUCKET": "hackillinois-upload-2019",
@@ -78,38 +86,34 @@
 
 	"DECISION_EXPIRATION_HOURS": "48",
 
+	"EVENT_CHECKIN_TIME_RESTRICTED": "true",
+
 	"STAT_ENDPOINTS": {
 		"registration": "http://localhost:8004/registration/internal/stats/",
 		"decision": "http://localhost:8005/decision/internal/stats/",
 		"rsvp": "http://localhost:8006/rsvp/internal/stats/",
 		"checkin": "http://localhost:8007/checkin/internal/stats/",
 		"user": "http://localhost:8003/user/internal/stats/",
-		"event": "http://localhost:8010/event/internal/stats/"
+		"event": "http://localhost:8010/event/internal/stats/",
+		"auth": "http://localhost:8002/auth/internal/stats/"
 	},
 
-        "GROUP_TOPIC_MAP": {
-                "Admin": "Admin",
-                "Staff": "Staff",
-                "Mentor": "Mentor",
-                "Applicant": "Applicant",
-                "Attendee": "Attendee",
-                "User": "User",
-                "Sponsor": "Sponsor"
-        },
-
+	"GROUP_TOPIC_MAP": {
+		"Admin": "Admin",
+		"Staff": "Staff",
+		"Mentor": "Mentor",
+		"Applicant": "Applicant",
+		"Attendee": "Attendee",
+		"User": "User",
+		"Sponsor": "Sponsor"
+	},
 
 	"REGISTRATION_STAT_FIELDS": [
 		"major",
-		"school",
-		"shirtSize",
-		"diet",
-		"age",
 		"graduationYear",
-		"transportation",
 		"gender",
-		"interests",
-		"isBeginner",
-		"priorAttendance"
+		"race",
+		"programmingYears"
 	],
 
 	"REGISTRATION_DEFINITION": {
@@ -124,15 +128,29 @@
 				"fields": []
 			},
 			{
+				"name": "createdAt",
+				"type": "int",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "updatedAt",
+				"type": "int",
+				"validations": "required",
+				"fields": []
+			},
+
+
+			{
 				"name": "firstName",
 				"type": "string",
-				"validations": "",
+				"validations": "required",
 				"fields": []
 			},
 			{
 				"name": "lastName",
 				"type": "string",
-				"validations": "",
+				"validations": "required",
 				"fields": []
 			},
 			{
@@ -142,35 +160,37 @@
 				"fields": []
 			},
 			{
-				"name": "shirtSize",
+				"name": "github",
 				"type": "string",
-				"validations": "required,oneof=S M L XL",
+				"validations": "required",
 				"fields": []
 			},
 			{
-				"name": "diet",
+				"name": "location",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "timezone",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
+			{
+				"name": "gender",
+				"type": "string",
+				"validations": "",
+				"fields": []
+			},
+			{
+				"name": "race",
 				"type": "[]string",
-				"validations": "required,dive,oneof=NONE VEGAN VEGETARIAN NOPEANUT NOGLUTEN",
+				"validations": "",
 				"fields": []
 			},
-			{
-				"name": "age",
-				"type": "int",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "graduationYear",
-				"type": "int",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "transportation",
-				"type": "string",
-				"validations": "required,oneof=NONE BUS",
-				"fields": []
-			},
+
+
 			{
 				"name": "school",
 				"type": "string",
@@ -184,116 +204,46 @@
 				"fields": []
 			},
 			{
-				"name": "gender",
+				"name": "degreePursued",
 				"type": "string",
-				"validations": "required,oneof=MALE FEMALE NONBINARY OTHER NOANSWER",
+				"validations": "omitempty,oneof=HIGHSCHOOL ASSOCIATES BACHELORS MASTERS PHD",
 				"fields": []
 			},
 			{
-				"name": "interests",
-				"type": "[]string",
-				"validations": "dive,oneof=INTERNSHIP FULLTIME",
-				"fields": []
-			},
-			{
-				"name": "github",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "linkedin",
-				"type": "string",
-				"validations": "",
-				"fields": []
-			},
-			{
-				"name": "isBeginner",
-				"type": "boolean",
-				"validations": "required|isdefault",
-				"fields": []
-			},
-			{
-				"name": "priorAttendance",
-				"type": "boolean",
-				"validations": "required|isdefault",
-				"fields": []
-			},
-			{
-				"name": "phone",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "skills",
-				"type": "[]string",
-				"validations": "",
-				"fields": []
-			},
-			{
-				"name": "extraInfo",
-				"type": "string",
-				"validations": "",
-				"fields": []
-			},
-			{
-				"name": "teamMembers",
-				"type": "[]string",
-				"validations": "",
-				"fields": []
-			},
-			{
-				"name": "createdAt",
+				"name": "graduationYear",
 				"type": "int",
-				"validations": "required",
+				"validations": "omitempty,min=1900,max=2030",
 				"fields": []
 			},
+
+
 			{
-				"name": "updatedAt",
+				"name": "programmingYears",
 				"type": "int",
-				"validations": "required",
+				"validations": "min=0,max=10",
 				"fields": []
 			},
 			{
-				"name": "beginnerInfo",
-				"type": "object",
-				"validations": "required",
-				"fields": [
-					{
-						"name": "versionControl",
-						"type": "int",
-						"validations": "required",
-						"fields": []
-					},
-					{
-						"name": "pullRequest",
-						"type": "int",
-						"validations": "required",
-						"fields": []
-					},
-					{
-						"name": "yearsExperience",
-						"type": "int",
-						"validations": "",
-						"fields": []
-					},
-					{
-						"name": "technicalSkills",
-						"type": "[]string",
-						"validations": "",
-						"fields": []
-					}
-				]
+				"name": "programmingAbility",
+				"type": "int",
+				"validations": "required,min=1,max=5",
+				"fields": []
 			},
 			{
-				"name": "isOSContributor",
+				"name": "hasInternship",
 				"type": "boolean",
 				"validations": "required|isdefault",
+				"fields": []
+			},
+			{
+				"name": "resumeFilename",
+				"type": "string",
+				"validations": "",
 				"fields": []
 			}
 		]
 	},
+	
 	"MENTOR_REGISTRATION_DEFINITION": {
 		"name": "mentor_registration",
 		"type": "object",

@@ -2,13 +2,14 @@ package tests
 
 import (
 	"fmt"
+	"os"
+	"reflect"
+	"testing"
+
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/notifications/config"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/HackIllinois/api/services/notifications/service"
-	"os"
-	"reflect"
-	"testing"
 )
 
 var db database.Database
@@ -378,6 +379,25 @@ func TestRegisterDeviceToUser(t *testing.T) {
 		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_devices, devices)
 	}
 
+	// Test deduplication
+	err = service.RegisterDeviceToUser("test_token", "android", "test_user")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	devices, err = service.GetUserDevices("test_user")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_devices = []string{"test_arn", ""}
+
+	if !reflect.DeepEqual(devices, expected_devices) {
+		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_devices, devices)
+	}
+
 	CleanupTestDB(t)
 }
 
@@ -437,21 +457,58 @@ func TestPublishNotificationToTopic(t *testing.T) {
 		Time:  3000,
 	}
 
+	// Send notification to one user w/ one device
 	order, err := service.PublishNotificationToTopic(notification)
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	expected_order := models.NotificationOrder{
-		ID:      "test_id2",
-		Success: 0,
-		Failure: 0,
-		Time:    3000,
+		ID:         "test_id2",
+		Recipients: 1,
+		Success:    0,
+		Failure:    0,
+		Time:       3000,
+	}
+	if !reflect.DeepEqual(order, &expected_order) {
+		t.Errorf("Wrong order.\nExpected %v\ngot %v\n", &expected_order, order)
+	}
+
+	// Add additional user w/ two devices
+	user := models.User{
+		ID:      "test_user_2",
+		Devices: []string{"test_arn2", "test_arn3"},
+	}
+	err = db.Insert("users", &user)
+
+	selector := database.QuerySelector{
+		"id": "User",
+	}
+	topic := models.Topic{
+		ID:      "User",
+		UserIDs: []string{"test_user", "test_user_2"},
+	}
+	err = db.Update("topics", selector, &topic)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Send notification to two users w/ three total devices
+	order, err = service.PublishNotificationToTopic(notification)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_order = models.NotificationOrder{
+		ID:         "test_id2",
+		Recipients: 3,
+		Success:    0,
+		Failure:    0,
+		Time:       3000,
 	}
 
 	if !reflect.DeepEqual(order, &expected_order) {
-		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", &expected_order, order)
+		t.Errorf("Wrong order.\nExpected %v\ngot %v\n", &expected_order, order)
 	}
 
 	CleanupTestDB(t)

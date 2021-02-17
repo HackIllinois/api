@@ -2,15 +2,16 @@ package tests
 
 import (
 	"fmt"
-	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/event/config"
-	"github.com/HackIllinois/api/services/event/models"
-	"github.com/HackIllinois/api/services/event/service"
 	"math"
 	"os"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/services/event/config"
+	"github.com/HackIllinois/api/services/event/models"
+	"github.com/HackIllinois/api/services/event/service"
 )
 
 var db database.Database
@@ -60,6 +61,7 @@ func SetupTestDB(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"ECEB1"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},
@@ -112,6 +114,7 @@ func TestGetAllEventsService(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL0", "ECEB1"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},
@@ -143,8 +146,10 @@ func TestGetAllEventsService(t *testing.T) {
 				Locations: []models.EventLocation{
 					{
 						Description: "testlocationdescription",
-						Latitude:    123.456,
-						Longitude:   123.456,
+						Tags:        []string{"ECEB1"},
+
+						Latitude:  123.456,
+						Longitude: 123.456,
 					},
 				},
 			},
@@ -159,8 +164,10 @@ func TestGetAllEventsService(t *testing.T) {
 				Locations: []models.EventLocation{
 					{
 						Description: "testlocationdescription",
-						Latitude:    123.456,
-						Longitude:   123.456,
+						Tags:        []string{"SIEBEL0", "ECEB1"},
+
+						Latitude:  123.456,
+						Longitude: 123.456,
 					},
 				},
 			},
@@ -174,6 +181,150 @@ func TestGetAllEventsService(t *testing.T) {
 	db.RemoveAll("events", nil)
 
 	actual_event_list, err = service.GetAllEvents()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_list = models.EventList{
+		Events: []models.Event{},
+	}
+
+	if !reflect.DeepEqual(actual_event_list, &expected_event_list) {
+		t.Errorf("Wrong event list. Expected %v, got %v", expected_event_list, actual_event_list)
+	}
+
+	CleanupTestDB(t)
+
+}
+
+/*
+	Service level test for getting a filtered list of events from the db
+*/
+func TestGetFilteredEventsService(t *testing.T) {
+	SetupTestDB(t)
+
+	event := models.Event{
+		ID:          "testid2",
+		Name:        "testname2",
+		Description: "testdescription2",
+		StartTime:   TestTime,
+		EndTime:     TestTime + 60000,
+		Sponsor:     "testsponsor",
+		EventType:   "WORKSHOP",
+		Locations: []models.EventLocation{
+			{
+				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL0", "ECEB1"},
+
+				Latitude:  123.456,
+				Longitude: 123.456,
+			},
+		},
+	}
+
+	err := db.Insert("events", &event)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Filter to one event
+	parameters := map[string][]string{
+		"name": {"testname2"},
+	}
+	actual_event_list, err := service.GetFilteredEvents(parameters)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_list := models.EventList{
+		Events: []models.Event{
+			{
+				ID:          "testid2",
+				Name:        "testname2",
+				Description: "testdescription2",
+				StartTime:   TestTime,
+				EndTime:     TestTime + 60000,
+				Sponsor:     "testsponsor",
+				EventType:   "WORKSHOP",
+				Locations: []models.EventLocation{
+					{
+						Description: "testlocationdescription",
+						Tags:        []string{"SIEBEL0", "ECEB1"},
+
+						Latitude:  123.456,
+						Longitude: 123.456,
+					},
+				},
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(actual_event_list, &expected_event_list) {
+		t.Errorf("Wrong event list. Expected %v, got %v", expected_event_list, actual_event_list)
+	}
+
+	// Filter to multiple (all) events
+	parameters = map[string][]string{
+		"sponsor": {"testsponsor"},
+	}
+	actual_event_list, err = service.GetFilteredEvents(parameters)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_list = models.EventList{
+		Events: []models.Event{
+			{
+				ID:          "testid",
+				Name:        "testname",
+				Description: "testdescription",
+				StartTime:   TestTime,
+				EndTime:     TestTime + 60000,
+				Sponsor:     "testsponsor",
+				EventType:   "WORKSHOP",
+				Locations: []models.EventLocation{
+					{
+						Description: "testlocationdescription",
+						Tags:        []string{"ECEB1"},
+
+						Latitude:  123.456,
+						Longitude: 123.456,
+					},
+				},
+			},
+			{
+				ID:          "testid2",
+				Name:        "testname2",
+				Description: "testdescription2",
+				StartTime:   TestTime,
+				EndTime:     TestTime + 60000,
+				Sponsor:     "testsponsor",
+				EventType:   "WORKSHOP",
+				Locations: []models.EventLocation{
+					{
+						Description: "testlocationdescription",
+						Tags:        []string{"SIEBEL0", "ECEB1"},
+
+						Latitude:  123.456,
+						Longitude: 123.456,
+					},
+				},
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(actual_event_list, &expected_event_list) {
+		t.Errorf("Wrong event list. Expected %v, got %v", expected_event_list, actual_event_list)
+	}
+
+	db.RemoveAll("events", nil)
+
+	// Filter again, with no events remaining
+	actual_event_list, err = service.GetFilteredEvents(parameters)
 
 	if err != nil {
 		t.Fatal(err)
@@ -214,6 +365,7 @@ func TestGetEventService(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"ECEB1"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},
@@ -244,6 +396,7 @@ func TestCreateEventService(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL0", "ECEB1"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},
@@ -273,6 +426,7 @@ func TestCreateEventService(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL0", "ECEB1"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},
@@ -368,6 +522,7 @@ func TestUpdateEventService(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL3", "ECEB2"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},
@@ -397,6 +552,7 @@ func TestUpdateEventService(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL3", "ECEB2"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},
@@ -526,6 +682,7 @@ func TestIsEventActive(t *testing.T) {
 		Locations: []models.EventLocation{
 			{
 				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL3", "ECEB2"},
 				Latitude:    123.456,
 				Longitude:   123.456,
 			},

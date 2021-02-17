@@ -10,6 +10,7 @@
 	"EVENT_SERVICE": "http://event.api.:8010",
 	"STAT_SERVICE": "http://stat.api.:8011",
 	"NOTIFICATIONS_SERVICE": "http://notifications.api.:8012",
+	"PROJECT_SERVICE": "http://notifications.api.:8013",
 
 	"GATEWAY_PORT": "8000",
 	"AUTH_PORT": ":8002",
@@ -23,6 +24,7 @@
 	"EVENT_PORT": ":8010",
 	"STAT_PORT": ":8011",
 	"NOTIFICATIONS_PORT": ":8012",
+	"PROJECT_PORT": ":8013",
 
 	"AUTH_DB_NAME": "auth",
 	"USER_DB_NAME": "user",
@@ -35,6 +37,7 @@
 	"EVENT_DB_NAME": "event",
 	"STAT_DB_NAME": "stat",
 	"NOTIFICATIONS_DB_NAME": "notifications",
+	"PROJECT_DB_NAME": "project",
 
 	"S3_REGION": "us-east-1",
 	"S3_BUCKET": "hackillinois-upload",
@@ -52,6 +55,8 @@
 	"DEBUG_MODE": "false",
 
 	"DECISION_EXPIRATION_HOURS": "48",
+
+	"EVENT_CHECKIN_TIME_RESTRICTED": "true",
 
 	"STAT_ENDPOINTS": {
 		"registration": "http://registration.api.:8004/registration/internal/stats/",

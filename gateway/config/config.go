@@ -1,11 +1,12 @@
 package config
 
 import (
+	"os"
+	"strconv"
+
 	"github.com/HackIllinois/api/common/configloader"
 	"github.com/arbor-dev/arbor/proxy"
 	"github.com/arbor-dev/arbor/security"
-	"os"
-	"strconv"
 )
 
 var GATEWAY_PORT uint16
@@ -23,6 +24,8 @@ var MAIL_SERVICE string
 var EVENT_SERVICE string
 var STAT_SERVICE string
 var NOTIFICATIONS_SERVICE string
+var PROJECT_SERVICE string
+var PROFILE_SERVICE string
 
 func Initialize() error {
 
@@ -99,6 +102,18 @@ func Initialize() error {
 	}
 
 	NOTIFICATIONS_SERVICE, err = cfg_loader.Get("NOTIFICATIONS_SERVICE")
+
+	if err != nil {
+		return err
+	}
+
+	PROJECT_SERVICE, err = cfg_loader.Get("PROJECT_SERVICE")
+
+	if err != nil {
+		return err
+	}
+
+	PROFILE_SERVICE, err = cfg_loader.Get("PROFILE_SERVICE")
 
 	if err != nil {
 		return err

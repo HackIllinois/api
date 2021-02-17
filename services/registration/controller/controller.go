@@ -2,14 +2,15 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+	"time"
+
 	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 	"github.com/HackIllinois/api/services/registration/service"
 	"github.com/gorilla/mux"
-	"net/http"
-	"time"
 )
 
 func SetupController(route *mux.Route) {
@@ -20,15 +21,16 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/attendee/", GetCurrentUserRegistration).Methods("GET")
 	router.HandleFunc("/attendee/", CreateCurrentUserRegistration).Methods("POST")
 	router.HandleFunc("/attendee/", UpdateCurrentUserRegistration).Methods("PUT")
-	router.HandleFunc("/filter/", GetFilteredUserRegistrations).Methods("GET")
+	router.HandleFunc("/attendee/filter/", GetFilteredUserRegistrations).Methods("GET")
 
 	router.HandleFunc("/mentor/", GetCurrentMentorRegistration).Methods("GET")
 	router.HandleFunc("/mentor/", CreateCurrentMentorRegistration).Methods("POST")
 	router.HandleFunc("/mentor/", UpdateCurrentMentorRegistration).Methods("PUT")
+	router.HandleFunc("/mentor/filter/", GetFilteredMentorRegistrations).Methods("GET")
 
 	router.HandleFunc("/{id}/", GetAllRegistrations).Methods("GET")
 	router.HandleFunc("/attendee/{id}/", GetUserRegistration).Methods("GET")
-	router.HandleFunc("/mentor/{id}", GetMentorRegistration).Methods("GET")
+	router.HandleFunc("/mentor/{id}/", GetMentorRegistration).Methods("GET")
 
 	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
 }
@@ -117,7 +119,6 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user_registration.Data["github"] = user_info.Username
-	user_registration.Data["email"] = user_info.Email
 
 	user_registration.Data["createdAt"] = time.Now().Unix()
 	user_registration.Data["updatedAt"] = time.Now().Unix()
@@ -227,9 +228,6 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user_registration.Data["github"] = user_info.Username
-	user_registration.Data["email"] = user_info.Email
-	user_registration.Data["firstName"] = user_info.FirstName
-	user_registration.Data["lastName"] = user_info.LastName
 
 	user_registration.Data["createdAt"] = original_registration.Data["createdAt"]
 	user_registration.Data["updatedAt"] = time.Now().Unix()
@@ -260,7 +258,7 @@ func UpdateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Endpoint to get registrations based on filters
+	Endpoint to get user registrations based on filters
 */
 func GetFilteredUserRegistrations(w http.ResponseWriter, r *http.Request) {
 	parameters := r.URL.Query()
@@ -319,9 +317,6 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mentor_registration.Data["github"] = user_info.Username
-	mentor_registration.Data["email"] = user_info.Email
-	mentor_registration.Data["firstName"] = user_info.FirstName
-	mentor_registration.Data["lastName"] = user_info.LastName
 
 	mentor_registration.Data["createdAt"] = time.Now().Unix()
 	mentor_registration.Data["updatedAt"] = time.Now().Unix()
@@ -386,9 +381,6 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mentor_registration.Data["github"] = user_info.Username
-	mentor_registration.Data["email"] = user_info.Email
-	mentor_registration.Data["firstName"] = user_info.FirstName
-	mentor_registration.Data["lastName"] = user_info.LastName
 
 	mentor_registration.Data["createdAt"] = original_registration.Data["createdAt"]
 	mentor_registration.Data["updatedAt"] = time.Now().Unix()
@@ -408,6 +400,21 @@ func UpdateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_registration)
+}
+
+/*
+	Endpoint to get mentor registrations based on filters
+*/
+func GetFilteredMentorRegistrations(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+	mentor_registrations, err := service.GetFilteredMentorRegistrations(parameters)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get filtered mentor registrations."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(mentor_registrations)
 }
 
 /*

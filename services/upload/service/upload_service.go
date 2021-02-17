@@ -38,7 +38,7 @@ func Initialize() error {
 }
 
 /*
-	Returns a presigned link to user requested user's resume
+	Returns a presigned link to user's resume
 */
 func GetUserResumeLink(id string) (*models.UserResume, error) {
 	var signed_url string
@@ -56,7 +56,7 @@ func GetUserResumeLink(id string) (*models.UserResume, error) {
 			return nil, err
 		}
 	} else {
-		signed_url = "/tmp/uploads/" + id + ".pdf"
+		signed_url = "/tmp/upload/resumes/" + id + ".pdf"
 	}
 
 	resume := models.UserResume{
@@ -86,7 +86,7 @@ func GetUpdateUserResumeLink(id string) (*models.UserResume, error) {
 			return nil, err
 		}
 	} else {
-		signed_url = "/tmp/uploads/" + id + ".pdf"
+		signed_url = "/tmp/upload/resumes/" + id + ".pdf"
 	}
 
 	resume := models.UserResume{
@@ -95,6 +95,66 @@ func GetUpdateUserResumeLink(id string) (*models.UserResume, error) {
 	}
 
 	return &resume, nil
+}
+
+/*
+	Returns a presigned link to user's photo
+*/
+func GetUserPhotoLink(id string) (*models.UserPhoto, error) {
+	var signed_url string
+	var err error
+
+	if config.IS_PRODUCTION {
+		request, _ := client.GetObjectRequest(&s3.GetObjectInput{
+			Bucket: aws.String(config.S3_BUCKET),
+			Key:    aws.String("photos/" + id),
+		})
+
+		signed_url, err = request.Presign(15 * time.Minute)
+
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		signed_url = "/tmp/upload/photos/" + id
+	}
+
+	photo := models.UserPhoto{
+		ID:    id,
+		Photo: signed_url,
+	}
+
+	return &photo, nil
+}
+
+/*
+	Update the given user's photo
+*/
+func GetUpdateUserPhotoLink(id string) (*models.UserPhoto, error) {
+	var signed_url string
+	var err error
+
+	if config.IS_PRODUCTION {
+		request, _ := client.PutObjectRequest(&s3.PutObjectInput{
+			Bucket: aws.String(config.S3_BUCKET),
+			Key:    aws.String("photos/" + id),
+		})
+
+		signed_url, err = request.Presign(15 * time.Minute)
+
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		signed_url = "/tmp/upload/photos/" + id
+	}
+
+	photo := models.UserPhoto{
+		ID:    id,
+		Photo: signed_url,
+	}
+
+	return &photo, nil
 }
 
 /*
@@ -144,4 +204,24 @@ func UpdateBlob(blob models.Blob) error {
 	err := db.Update("blobstore", selector, &blob)
 
 	return err
+}
+
+/*
+Deletes the blob with the given id
+Returns the blob that was deleted
+*/
+func DeleteBlob(id string) (*models.Blob, error) {
+	blob, err := GetBlob(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	err = db.RemoveOne("blobstore", selector)
+
+	return blob, err
 }

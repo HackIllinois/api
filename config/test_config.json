@@ -10,6 +10,8 @@
 	"EVENT_SERVICE": "http://localhost:8010",
 	"STAT_SERVICE": "http://localhost:8011",
 	"NOTIFICATIONS_SERVICE": "http://localhost:8012",
+	"PROJECT_SERVICE": "http://localhost:8013",
+	"PROFILE_SERVICE": "http://localhost:8014",
 
 	"GATEWAY_PORT": "8000",
 	"AUTH_PORT": ":8002",
@@ -23,6 +25,8 @@
 	"EVENT_PORT": ":8010",
 	"STAT_PORT": ":8011",
 	"NOTIFICATIONS_PORT": ":8012",
+	"PROJECT_PORT": ":8013",
+	"PROFILE_PORT": ":8014",
 
 	"AUTH_DB_HOST": "localhost",
 	"USER_DB_HOST": "localhost",
@@ -35,6 +39,8 @@
 	"EVENT_DB_HOST": "localhost",
 	"STAT_DB_HOST": "localhost",
 	"NOTIFICATIONS_DB_HOST": "localhost",
+	"PROJECT_DB_HOST": "localhost",
+	"PROFILE_DB_HOST": "localhost",
 
 	"AUTH_DB_NAME": "test-auth",
 	"USER_DB_NAME": "test-user",
@@ -47,6 +53,8 @@
 	"EVENT_DB_NAME": "test-event",
 	"STAT_DB_NAME": "test-stat",
 	"NOTIFICATIONS_DB_NAME": "test-notifications",
+	"PROJECT_DB_NAME": "test-project",
+	"PROFILE_DB_NAME": "test-profile",
 
 	"S3_REGION": "us-east-1",
 	"S3_BUCKET": "hackillinois-upload-2019",
@@ -77,6 +85,8 @@
 	"DEBUG_MODE": "true",
 
 	"DECISION_EXPIRATION_HOURS": "48",
+
+	"EVENT_CHECKIN_TIME_RESTRICTED": "true",
 
 	"STAT_ENDPOINTS": {
 		"registration": "http://localhost:8004/registration/internal/stats/"

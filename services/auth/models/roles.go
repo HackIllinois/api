@@ -10,6 +10,7 @@ const (
 	AttendeeRole  = "Attendee"
 	UserRole      = "User"
 	SponsorRole   = "Sponsor"
+	BlobstoreRole = "Blobstore"
 )
 
-var Roles []Role = []Role{AdminRole, StaffRole, MentorRole, ApplicantRole, AttendeeRole, UserRole, SponsorRole}
+var Roles []Role = []Role{AdminRole, StaffRole, MentorRole, ApplicantRole, AttendeeRole, UserRole, SponsorRole, BlobstoreRole}

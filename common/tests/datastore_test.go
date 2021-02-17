@@ -2,6 +2,8 @@ package tests
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/HackIllinois/api/common/datastore"
 	"gopkg.in/mgo.v2/bson"
 	"testing"
@@ -20,6 +22,44 @@ var small_json_data string = `
 			{
 				"thing1": 2,
 				"thing2": "a"
+			}
+		]
+	}
+}
+`
+
+var small_invalid_json_data string = `
+{
+	"intKey": "test",
+	"stringKey": "value",
+	"objectKey": {
+		"stringKeys": [
+			"value2",
+			"value3"
+		],
+		"objectKeys": [
+			{
+				"thing1": 2,
+				"thing2": "a"
+			}
+		]
+	}
+}
+`
+
+var small_invalid_json_data_2 string = `
+{
+	"intKey": 100,
+	"stringKey": "value",
+	"objectKey": {
+		"stringKeys": [
+			"value2",
+			"value3"
+		],
+		"objectKeys": [
+			{
+				"thing1": 2,
+				"thing2": 5
 			}
 		]
 	}
@@ -345,6 +385,41 @@ func TestDatastoreBasic(t *testing.T) {
 
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestDatastoreAssertions(t *testing.T) {
+	var definition datastore.DataStoreDefinition
+	err := json.Unmarshal([]byte(small_json_definition), &definition)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	store := datastore.NewDataStore(definition)
+	err = json.Unmarshal([]byte(small_invalid_json_data), &store)
+
+	expected_err_inner := errors.New("Type mismatch in data and definition. Expected float64, got string")
+	expected_err := datastore.ErrorInField{
+		FieldName: "intKey",
+		Err:       expected_err_inner,
+	}
+
+	if fmt.Sprint(err) != fmt.Sprint(expected_err) {
+		t.Errorf("Wrong field name.\nExpected %s\ngot %s\n", expected_err, err)
+	}
+
+	store = datastore.NewDataStore(definition)
+	err = json.Unmarshal([]byte(small_invalid_json_data_2), &store)
+
+	expected_err_inner = errors.New("Type mismatch in data and definition. Expected string, got float64")
+	expected_err = datastore.ErrorInField{
+		FieldName: "objectKey.objectKeys.thing2",
+		Err:       expected_err_inner,
+	}
+
+	if fmt.Sprint(err) != fmt.Sprint(expected_err) {
+		t.Errorf("Wrong field name.\nExpected %s\ngot %s\n", expected_err, err)
 	}
 }
 

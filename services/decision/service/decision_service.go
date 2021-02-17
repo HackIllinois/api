@@ -4,13 +4,9 @@ import (
 	"errors"
 
 	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/decision/config"
 	"github.com/HackIllinois/api/services/decision/models"
 	"gopkg.in/go-playground/validator.v9"
-
-	"strconv"
-	"strings"
 )
 
 var validate *validator.Validate
@@ -114,41 +110,18 @@ func HasDecision(id string) (bool, error) {
 	}
 }
 
-func AssignValueType(key, value string) (interface{}, error) {
-	int_keys := []string{"wave", "timestamp", "expiresat"}
-	if utils.ContainsString(int_keys, key) {
-		return strconv.Atoi(value)
-	}
-	return value, nil
-}
-
 /*
 	Returns decisions based on a filter
 */
 func GetFilteredDecisions(parameters map[string][]string) (*models.FilteredDecisions, error) {
-	query := make(map[string]interface{})
-	for key, values := range parameters {
-		if len(values) > 1 {
-			return nil, errors.New("Multiple usage of key " + key)
-		}
+	query, err := database.CreateFilterQuery(parameters, models.DecisionHistory{})
 
-		key = strings.ToLower(key)
-		value_list := strings.Split(values[0], ",")
-
-		correctly_typed_value_list := make([]interface{}, len(value_list))
-		for i, value := range value_list {
-			correctly_typed_value, err := AssignValueType(key, value)
-			if err == nil {
-				correctly_typed_value_list[i] = correctly_typed_value
-			} else {
-				return nil, err
-			}
-		}
-		query[key] = database.QuerySelector{"$in": correctly_typed_value_list}
+	if err != nil {
+		return nil, err
 	}
 
 	var filtered_decisions models.FilteredDecisions
-	err := db.FindAll("decision", query, &filtered_decisions.Decisions)
+	err = db.FindAll("decision", query, &filtered_decisions.Decisions)
 	if err != nil {
 		return nil, err
 	}

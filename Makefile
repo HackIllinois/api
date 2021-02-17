@@ -9,7 +9,7 @@ REPO_ROOT := $(shell git rev-parse --show-toplevel)
 # SERVICES is the list services to test, services are located at $(REPO_ROOT)/service/<service_name>
 # GATEWAYS is the list of top level directories to test, gateways are located at $(REPO_ROOT)/<gateway_name>
 # Add new services or top level directories to test here
-SERVICES := auth user registration decision rsvp checkin upload mail event stat notifications
+SERVICES := auth user registration decision rsvp checkin upload mail event stat notifications project profile
 GATEWAYS := gateway common
 
 # UTILITIES is the list of utilities to build, utilities are located at $(REPO_ROOT)/utilities/<utility_name>

@@ -17,6 +17,7 @@ Response format:
 	"locations": [
 		{
 			"description": "Example Location",
+			"tags": ["SIEBEL0", "ECEB1"],
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}
@@ -44,6 +45,7 @@ Response format:
 			"locations": [
 				{
 					"description": "Example Location",
+					"tags": ["SIEBEL0", "ECEB1"],
 					"latitude": 40.1138,
 					"longitude": -88.2249
 				}
@@ -60,6 +62,7 @@ Response format:
 			"locations": [
 				{
 					"description": "Example Location",
+					"tags": ["SIEBEL3"],
 					"latitude": 40.1138,
 					"longitude": -88.2249
 				}
@@ -68,6 +71,53 @@ Response format:
 			"eventType": "WORKSHOP"
 		}
 	]
+}
+```
+
+GET /event/filter/?key=value
+---------------------
+
+Returns all events, filtered with the given key-value pairs.
+
+Response format:
+```
+{
+    "events": [
+        {
+            "id": "52fdfc072182654f163f5f0f9a621d72",
+            "name": "Example Event 10",
+            "description": "This is a description",
+            "startTime": 1532202702,
+            "endTime": 1532212702,
+            "locations": [
+                {
+                    "description": "Example Location",
+					"tags": ["SIEBEL0", "ECEB1"],
+                    "latitude": 40.1138,
+                    "longitude": -88.2249
+                }
+            ],
+            "sponsor": "Example sponsor",
+            "eventType": "WORKSHOP"
+        },
+        {
+            "id": "9566c74d10037c4d7bbb0407d1e2c649",
+            "name": "Example Event 10",
+            "description": "This is a description",
+            "startTime": 1532202702,
+            "endTime": 1532212702,
+            "locations": [
+                {
+                    "description": "Example Location",
+					"tags": ["SIEBEL3"],
+                    "latitude": 40.1138,
+                    "longitude": -88.2249
+                }
+            ],
+            "sponsor": "Example sponsor",
+            "eventType": "WORKSHOP"
+        }
+    ]
 }
 ```
 
@@ -88,6 +138,7 @@ Request format:
 	"locations": [
 		{
 			"description": "Example Location",
+			"tags": ["SIEBEL0", "ECEB1"],
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}
@@ -106,6 +157,7 @@ Response format:
 	"locations": [
 		{
 			"description": "Example Location",
+			"tags": ["SIEBEL0", "ECEB1"],
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}
@@ -131,6 +183,7 @@ Response format:
 	"locations": [
 		{
 			"description": "Example Location",
+			"tags": ["SIEBEL0", "ECEB1"],
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}
@@ -158,6 +211,7 @@ Request format:
 	"locations": [
 		{
 			"description": "Example Location",
+			"tags": ["SIEBEL0", "ECEB1"],
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}
@@ -176,6 +230,7 @@ Response format:
 	"locations": [
 		{
 			"description": "Example Location",
+			"tags": ["SIEBEL0", "ECEB1"],
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}

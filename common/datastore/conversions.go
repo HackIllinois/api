@@ -4,7 +4,7 @@ func toInt(raw_data interface{}, definition DataStoreDefinition) (interface{}, e
 	data, ok := raw_data.(float64)
 
 	if !ok {
-		return nil, ErrTypeMismatch
+		return nil, NewErrTypeMismatch(raw_data, "float64")
 	}
 
 	return int64(data), nil
@@ -14,7 +14,7 @@ func toFloat(raw_data interface{}, definition DataStoreDefinition) (interface{},
 	data, ok := raw_data.(float64)
 
 	if !ok {
-		return nil, ErrTypeMismatch
+		return nil, NewErrTypeMismatch(raw_data, "float64")
 	}
 
 	return data, nil
@@ -24,7 +24,7 @@ func toString(raw_data interface{}, definition DataStoreDefinition) (interface{}
 	data, ok := raw_data.(string)
 
 	if !ok {
-		return nil, ErrTypeMismatch
+		return nil, NewErrTypeMismatch(raw_data, "string")
 	}
 
 	return data, nil
@@ -34,7 +34,7 @@ func toBoolean(raw_data interface{}, definition DataStoreDefinition) (interface{
 	data, ok := raw_data.(bool)
 
 	if !ok {
-		return nil, ErrTypeMismatch
+		return nil, NewErrTypeMismatch(raw_data, "bool")
 	}
 
 	return data, nil
@@ -44,7 +44,7 @@ func toObject(raw_data interface{}, definition DataStoreDefinition) (interface{}
 	unfiltered_data, ok := raw_data.(map[string]interface{})
 
 	if !ok {
-		return nil, ErrTypeMismatch
+		return nil, NewErrTypeMismatch(raw_data, "map[string]interface{}")
 	}
 
 	data := make(map[string]interface{})
@@ -57,7 +57,7 @@ func toObject(raw_data interface{}, definition DataStoreDefinition) (interface{}
 			data[field.Name], err = buildDataFromDefinition(unfiltered_fields, field)
 
 			if err != nil {
-				return nil, err
+				return nil, NewErrInField(field.Name, err)
 			}
 		} else {
 			data[field.Name] = getDefaultValue(field.Type)
@@ -71,7 +71,7 @@ func toIntArray(raw_data interface{}, definition DataStoreDefinition) (interface
 	data, ok := raw_data.([]interface{})
 
 	if !ok {
-		return nil, ErrTypeMismatch
+		return nil, NewErrTypeMismatch(raw_data, "[]interface{}")
 	}
 
 	int_data := make([]int64, len(data))
@@ -80,7 +80,7 @@ func toIntArray(raw_data interface{}, definition DataStoreDefinition) (interface
 		element, ok := data[i].(float64)
 
 		if !ok {
-			return nil, ErrTypeMismatch
+			return nil, NewErrTypeMismatch(raw_data, "float64")
 		}
 
 		int_data[i] = int64(element)
@@ -93,7 +93,7 @@ func toFloatArray(raw_data interface{}, definition DataStoreDefinition) (interfa
 	data, ok := raw_data.([]interface{})
 
 	if !ok {
-		return nil, ErrTypeMismatch
+		return nil, NewErrTypeMismatch(raw_data, "[]interface{}")
 	}
 
 	float_data := make([]float64, len(data))
@@ -102,7 +102,7 @@ func toFloatArray(raw_data interface{}, definition DataStoreDefinition) (interfa
 		element, ok := data[i].(float64)
 
 		if !ok {
-			return nil, ErrTypeMismatch
+			return nil, NewErrTypeMismatch(raw_data, "float64")
 		}
 
 		float_data[i] = element
@@ -115,7 +115,7 @@ func toStringArray(raw_data interface{}, definition DataStoreDefinition) (interf
 	data, ok := raw_data.([]interface{})
 
 	if !ok {
-		return nil, ErrTypeMismatch
+		return nil, NewErrTypeMismatch(raw_data, "[]interface{}")
 	}
 
 	string_data := make([]string, len(data))
@@ -124,7 +124,7 @@ func toStringArray(raw_data interface{}, definition DataStoreDefinition) (interf
 		element, ok := data[i].(string)
 
 		if !ok {
-			return nil, ErrTypeMismatch
+			return nil, NewErrTypeMismatch(raw_data, "string")
 		}
 
 		string_data[i] = element
@@ -137,7 +137,7 @@ func toBooleanArray(raw_data interface{}, definition DataStoreDefinition) (inter
 	data, ok := raw_data.([]interface{})
 
 	if !ok {
-		return nil, ErrTypeMismatch
+		return nil, NewErrTypeMismatch(raw_data, "[]interface{}")
 	}
 
 	bool_data := make([]bool, len(data))
@@ -146,7 +146,7 @@ func toBooleanArray(raw_data interface{}, definition DataStoreDefinition) (inter
 		element, ok := data[i].(bool)
 
 		if !ok {
-			return nil, ErrTypeMismatch
+			return nil, NewErrTypeMismatch(raw_data, "bool")
 		}
 
 		bool_data[i] = element
@@ -159,7 +159,7 @@ func toObjectArray(raw_data interface{}, definition DataStoreDefinition) (interf
 	unfiltered_data, ok := raw_data.([]interface{})
 
 	if !ok {
-		return nil, ErrTypeMismatch
+		return nil, NewErrTypeMismatch(raw_data, "[]interface{}")
 	}
 
 	data := make([]map[string]interface{}, len(unfiltered_data))

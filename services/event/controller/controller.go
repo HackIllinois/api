@@ -18,6 +18,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/favorite/add/", AddEventFavorite).Methods("POST")
 	router.HandleFunc("/favorite/remove/", RemoveEventFavorite).Methods("POST")
 
+	router.HandleFunc("/filter/", GetFilteredEvents).Methods("GET")
 	router.HandleFunc("/{id}/", GetEvent).Methods("GET")
 	router.HandleFunc("/{id}/", DeleteEvent).Methods("DELETE")
 	router.HandleFunc("/", CreateEvent).Methods("POST")
@@ -77,6 +78,21 @@ func GetAllEvents(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(event_list)
+}
+
+/*
+	Endpoint to get events based on filters
+*/
+func GetFilteredEvents(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+	event, err := service.GetFilteredEvents(parameters)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch filtered list of events."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(event)
 }
 
 /*
@@ -183,7 +199,13 @@ func MarkUserAsAttendingEvent(w http.ResponseWriter, r *http.Request) {
 	err = service.MarkUserAsAttendingEvent(tracking_info.EventID, tracking_info.UserID)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not mark user as attending the event."))
+		if err.Error() == "User has already been marked as attending" {
+			errors.WriteError(w, r, errors.AttributeMismatchError("User has already checked in.", "User has already checked in."))
+		} else if err.Error() == "People cannot be checked-in for the event at this time." {
+			errors.WriteError(w, r, errors.AttributeMismatchError("Event is not open for check-in at this time.", "Event is not open for check-in at this time."))
+		} else {
+			errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not mark user as attending the event."))
+		}
 		return
 	}
 

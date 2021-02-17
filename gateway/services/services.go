@@ -2,10 +2,11 @@ package services
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 var ServiceLocations map[string]string
@@ -23,6 +24,8 @@ func Initialize() error {
 		"event":         config.EVENT_SERVICE,
 		"stat":          config.STAT_SERVICE,
 		"notifications": config.NOTIFICATIONS_SERVICE,
+		"project":       config.PROJECT_SERVICE,
+		"profile":       config.PROFILE_SERVICE,
 	}
 
 	return nil
@@ -63,6 +66,8 @@ func RegisterAPIs() arbor.RouteCollection {
 	Routes = append(Routes, EventRoutes...)
 	Routes = append(Routes, StatRoutes...)
 	Routes = append(Routes, NotificationsRoutes...)
+	Routes = append(Routes, ProjectRoutes...)
+	Routes = append(Routes, ProfileRoutes...)
 	Routes = append(Routes, HealthRoutes...)
 	Routes = append(Routes, ReloadRoutes...)
 	return Routes

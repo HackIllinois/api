@@ -8,6 +8,7 @@ type Database interface {
 	Close()
 	FindOne(collection_name string, query interface{}, result interface{}) error
 	FindAll(collection_name string, query interface{}, result interface{}) error
+	FindAllSorted(collection_name string, query interface{}, sort_fields []SortField, result interface{}) error
 	RemoveOne(collection_name string, query interface{}) error
 	RemoveAll(collection_name string, query interface{}) (*ChangeResults, error)
 	Insert(collection_name string, item interface{}) error
@@ -22,6 +23,14 @@ type Database interface {
 	An alias of a string -> interface{} map used for database queries and selectors
 */
 type QuerySelector map[string]interface{}
+
+/*
+   Represents a single field to sort by, including the name and whether the sort should be reversed
+*/
+type SortField struct {
+	Name     string
+	Reversed bool
+}
 
 /*
 	Used to store information about the changes made by a database operation

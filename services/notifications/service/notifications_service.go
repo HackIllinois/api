@@ -3,13 +3,15 @@ package service
 import (
 	"encoding/json"
 	"errors"
+	"strings"
+
 	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/notifications/config"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
-	"strings"
 )
 
 var SNS_MESSAGE_STRUCTURE string = "json"
@@ -344,7 +346,9 @@ func RegisterDeviceToUser(token string, platform string, id string) error {
 		return err
 	}
 
-	devices = append(devices, device_arn)
+	if !utils.ContainsString(devices, device_arn) {
+		devices = append(devices, device_arn)
+	}
 
 	err = SetUserDevices(id, devices)
 
@@ -447,10 +451,11 @@ func PublishNotificationToTopic(notification models.Notification) (*models.Notif
 	}
 
 	order := models.NotificationOrder{
-		ID:      notification.ID,
-		Success: 0,
-		Failure: 0,
-		Time:    notification.Time,
+		ID:         notification.ID,
+		Recipients: len(device_arns),
+		Success:    0,
+		Failure:    0,
+		Time:       notification.Time,
 	}
 
 	err = db.Insert("orders", &order)

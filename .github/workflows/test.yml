@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "v*.*.*"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2    
+      
+      - name: install go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.11.x
+          
+      - name: install dependencies  
+        run: |
+          sudo apt-get -y install python3 python3-pip
+          sudo pip3 install setuptools wheel
+
+      - name: check fmt
+        run: bash -c "[ $(make fmt | wc -l) == 0 ]"
+
+      - name: build api
+        run: make all
+
+      - name: run tests
+        run: make test
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: "github.ref == 'refs/heads/master' && github.event_name == 'push'"
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: set tag env
+        run: echo "RELEASE_TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: print tag env
+        run: |
+          echo $RELEASE_TAG
+          echo ${{ env.RELEASE_TAG }}
+
+      # - name: build docs and docker container
+      #   run: |
+      #     make docs
+      #     make container
+
+      # - name: pushing container to dockerhub
+      #   run: make container-push TAG=$RELEASE_TAG
+      #   env:
+      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      #     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

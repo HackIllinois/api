@@ -95,8 +95,8 @@ release: container
 container-push:
 	@echo 'Pushing container to DockerHub'
 	@echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin
-	@docker tag hackillinois-api:$(TAG) hackillinois/api:$(TAG)
-	@docker push hackillinois/api:$(TAG)
+	@docker tag hackillinois-api:$(TAG) heesooy/hackillinois-api:$(TAG)
+	@docker push heesooy/hackillinois-api:$(TAG)
 
 # Builds static html documentation for the API
 .PHONY: docs

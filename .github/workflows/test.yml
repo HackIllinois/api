@@ -52,6 +52,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: install dependencies  
+        run: |
+          sudo apt-get -y install python3 python3-pip
+          sudo pip3 install setuptools wheel
+
       - name: using release version as container tag (release build only)
         if: "github.event_name == 'release'"
         run: echo "CONTAINER_TAG=${{ github.event.release.tag_name }}" >> $GITHUB_ENV

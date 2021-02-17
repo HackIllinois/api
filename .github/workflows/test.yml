@@ -48,7 +48,7 @@ jobs:
   deploy:
     runs-on: ubuntu-18.04
     needs: [build]
-    if: "github.ref == 'refs/heads/master'"
+    if: "github.ref == 'refs/heads/master' || github.event_name == 'release'"
     steps:
       - uses: actions/checkout@v2
 

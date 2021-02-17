@@ -56,6 +56,7 @@ jobs:
         run: |
           sudo apt-get -y install python3 python3-pip
           sudo pip3 install setuptools wheel
+          sudo pip3 install -r documentation/requirements.txt
 
       - name: using release version as container tag (release build only)
         if: "github.event_name == 'release'"

@@ -43,13 +43,39 @@ var ProfileRoutes = arbor.RouteCollection{
 		"/profile/list/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetAllProfiles).ServeHTTP,
 	},
+	arbor.Route{
+		"GetProfileLeaderboard",
+		"GET",
+		"/profile/leaderboard/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetProfileLeaderboard).ServeHTTP,
+	},
+	arbor.Route{
+		"GetFilteredProfiles",
+		"GET",
+		"/profile/search/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetFilteredProfiles).ServeHTTP,
+	},
+	arbor.Route{
+		"GetUserProfileById",
+		"GET",
+		"/profile/{id}/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetProfileById).ServeHTTP,
+	},
 }
 
 func GetProfile(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
 }
 
+func GetProfileById(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
 func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
+func GetFilteredProfiles(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
 }
 
@@ -63,4 +89,8 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 
 func DeleteProfile(w http.ResponseWriter, r *http.Request) {
 	arbor.DELETE(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
+func GetProfileLeaderboard(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
 }

@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/profile/models"
@@ -19,6 +20,10 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/", DeleteProfile).Methods("DELETE")
 
 	router.HandleFunc("/list/", GetAllProfiles).Methods("GET")
+	router.HandleFunc("/search/", GetFilteredProfiles).Methods("GET")
+	router.HandleFunc("/leaderboard/", GetProfileLeaderboard).Methods("GET")
+	router.HandleFunc("/{id}/", GetProfileById).Methods("GET")
+
 }
 
 /*
@@ -31,6 +36,24 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get current user's profile."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(user_profile)
+}
+
+/*
+	GetProfileById is used to get a profile for a provided id.
+*/
+func GetProfileById(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+
+	id := parameters.Get("id")
+
+	user_profile, err := service.GetProfile(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile for id "+id+"."))
 		return
 	}
 
@@ -131,4 +154,49 @@ func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(user_profile_list)
+}
+
+/*
+	GetProfileLeaderboard is the endpoint used to return a list of profiles, sorted by the amount of points they have (descending).
+*/
+func GetProfileLeaderboard(w http.ResponseWriter, r *http.Request) {
+
+	parameters := r.URL.Query()
+
+	limit, err := strconv.Atoi(parameters.Get("limit"))
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to convert limit argument to int."))
+		return
+	}
+
+	user_profile_list, err := service.GetProfileLeaderboard(limit)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get the profile leaderboard."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(user_profile_list)
+}
+
+/*
+	Filters the profiles by TeamStatus and Interests
+*/
+func GetFilteredProfiles(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+
+	limit, err := strconv.Atoi(parameters.Get("limit"))
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to convert limit argument to int."))
+		return
+	}
+
+	filtered_profile_list, err := service.GetFilteredProfiles(parameters.Get("teamStatus"), parameters.Get("interests"), limit)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get the filtered profiles."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(filtered_profile_list)
 }

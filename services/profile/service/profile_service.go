@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/profile/config"
@@ -141,4 +142,86 @@ func GetAllProfiles() (*models.ProfileList, error) {
 	}
 
 	return &profile_list, nil
+}
+
+/*
+	Returns a list of "limit" profiles sorted decesending by points.
+	If "limit" is not provided, this will return a list of all profiles.
+*/
+func GetProfileLeaderboard(limit int) (*models.ProfileList, error) {
+	profiles := []models.Profile{}
+
+	sort_field := database.SortField{
+		Name:     "points",
+		Reversed: true,
+	}
+
+	err := db.FindAllSorted("profiles", nil, []database.SortField{sort_field}, &profiles)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if limit != 0 { // If no limit is provided, it will default to 0, and all profiles will be returned
+		profiles = profiles[:limit]
+	}
+
+	profile_list := models.ProfileList{
+		Profiles: profiles,
+	}
+
+	return &profile_list, nil
+}
+
+/*
+	Returns a list of profiles filtered upon teamStatus and interests. Will be limited to only include the first "limit" results.
+*/
+func GetFilteredProfiles(teamStatus string, interests_string string, limit int) (*models.ProfileList, error) {
+	profiles, err := GetAllProfiles()
+
+	if err != nil {
+		return nil, err
+	}
+
+	interests := []string{}
+	if interests_string != "" {
+		interests = strings.Split(interests_string, ",")
+	}
+
+	filtered_profiles := []models.Profile{}
+
+	for _, profile := range profiles.Profiles {
+		// Filter by teamStatus
+		if teamStatus != "" && teamStatus != profile.TeamStatus {
+			continue
+		}
+
+		// Filter by interests
+		interest_match_count := 0
+
+		for _, interest := range profile.Interests {
+			for _, search_interest := range interests {
+				if interest == search_interest {
+					interest_match_count += 1
+					break
+				}
+			}
+		}
+
+		if interest_match_count == len(interests) {
+			filtered_profiles = append(filtered_profiles, profile)
+			continue
+		}
+	}
+
+	if limit != 0 { // If no limit is provided, it will default to 0, and all profiles will be returned
+		filtered_profiles = filtered_profiles[:limit]
+	}
+
+	profile_list := models.ProfileList{
+		Profiles: filtered_profiles,
+	}
+
+	return &profile_list, nil
+
 }

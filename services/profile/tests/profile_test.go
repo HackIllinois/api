@@ -323,3 +323,358 @@ func TestUpdateProfileService(t *testing.T) {
 
 	CleanupTestDB(t)
 }
+
+func TestGetFilteredProfiles(t *testing.T) {
+	SetupTestDB(t)
+
+	profile := models.Profile{
+		ID:          "testid2",
+		FirstName:   "testfirstname2",
+		LastName:    "testlastname2",
+		Points:      340,
+		Timezone:    "America/New York",
+		Description: "Hello",
+		Discord:     "testdiscordusername2",
+		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		TeamStatus:  "Found Team",
+		Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+	}
+
+	err := db.Insert("profiles", &profile)
+
+	profile = models.Profile{
+		ID:          "testid3",
+		FirstName:   "testfirstname3",
+		LastName:    "testlastname3",
+		Points:      342,
+		Timezone:    "America/New York",
+		Description: "Hello",
+		Discord:     "testdiscordusername3",
+		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		TeamStatus:  "Found Team",
+		Interests:   []string{"C++", "Machine Learning"},
+	}
+	err = db.Insert("profiles", &profile)
+
+	filtered_profile_list, err := service.GetFilteredProfiles("Found Team", "C++,Machine Learning", 0)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_filtered_profile_list := models.ProfileList{
+		Profiles: []models.Profile{
+			{
+				ID:          "testid2",
+				FirstName:   "testfirstname2",
+				LastName:    "testlastname2",
+				Points:      340,
+				Timezone:    "America/New York",
+				Description: "Hello",
+				Discord:     "testdiscordusername2",
+				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				TeamStatus:  "Found Team",
+				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+			},
+			{
+				ID:          "testid3",
+				FirstName:   "testfirstname3",
+				LastName:    "testlastname3",
+				Points:      342,
+				Timezone:    "America/New York",
+				Description: "Hello",
+				Discord:     "testdiscordusername3",
+				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				TeamStatus:  "Found Team",
+				Interests:   []string{"C++", "Machine Learning"},
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_profile_list, &expected_filtered_profile_list) {
+		t.Errorf("Wrong profile list. Expected %v, got %v", expected_filtered_profile_list, filtered_profile_list)
+	}
+
+	// Add a limit and test that
+	filtered_profile_list, err = service.GetFilteredProfiles("Found Team", "C++,Machine Learning", 1)
+
+	expected_filtered_profile_list = models.ProfileList{
+		Profiles: []models.Profile{
+			{
+				ID:          "testid2",
+				FirstName:   "testfirstname2",
+				LastName:    "testlastname2",
+				Points:      340,
+				Timezone:    "America/New York",
+				Description: "Hello",
+				Discord:     "testdiscordusername2",
+				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				TeamStatus:  "Found Team",
+				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_profile_list, &expected_filtered_profile_list) {
+		t.Errorf("Wrong profile list. Expected %v, got %v", expected_filtered_profile_list, filtered_profile_list)
+	}
+
+	// Change the interests to be off by one
+	filtered_profile_list, err = service.GetFilteredProfiles("Found Team", "C++,Machine Learning,Additional Interest", 0)
+
+	expected_filtered_profile_list = models.ProfileList{
+		Profiles: []models.Profile{
+			{
+				ID:          "testid2",
+				FirstName:   "testfirstname2",
+				LastName:    "testlastname2",
+				Points:      340,
+				Timezone:    "America/New York",
+				Description: "Hello",
+				Discord:     "testdiscordusername2",
+				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				TeamStatus:  "Found Team",
+				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_profile_list, &expected_filtered_profile_list) {
+		t.Errorf("Wrong profile list. Expected %v, got %v", expected_filtered_profile_list, filtered_profile_list)
+	}
+
+	// Remove filter by interests
+	filtered_profile_list, err = service.GetFilteredProfiles("Found Team", "", 0)
+
+	expected_filtered_profile_list = models.ProfileList{
+		Profiles: []models.Profile{
+			{
+				ID:          "testid2",
+				FirstName:   "testfirstname2",
+				LastName:    "testlastname2",
+				Points:      340,
+				Timezone:    "America/New York",
+				Description: "Hello",
+				Discord:     "testdiscordusername2",
+				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				TeamStatus:  "Found Team",
+				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+			},
+			{
+				ID:          "testid3",
+				FirstName:   "testfirstname3",
+				LastName:    "testlastname3",
+				Points:      342,
+				Timezone:    "America/New York",
+				Description: "Hello",
+				Discord:     "testdiscordusername3",
+				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				TeamStatus:  "Found Team",
+				Interests:   []string{"C++", "Machine Learning"},
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_profile_list, &expected_filtered_profile_list) {
+		t.Errorf("Wrong profile list. Expected %v, got %v", expected_filtered_profile_list, filtered_profile_list)
+	}
+
+	// Remove filter by teamStatus
+	filtered_profile_list, err = service.GetFilteredProfiles("", "C++,Machine Learning,Additional Interest", 0)
+
+	expected_filtered_profile_list = models.ProfileList{
+		Profiles: []models.Profile{
+			{
+				ID:          "testid2",
+				FirstName:   "testfirstname2",
+				LastName:    "testlastname2",
+				Points:      340,
+				Timezone:    "America/New York",
+				Description: "Hello",
+				Discord:     "testdiscordusername2",
+				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				TeamStatus:  "Found Team",
+				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_profile_list, &expected_filtered_profile_list) {
+		t.Errorf("Wrong profile list. Expected %v, got %v", expected_filtered_profile_list, filtered_profile_list)
+	}
+
+	CleanupTestDB(t)
+}
+
+func TestGetProfileLeaderboard(t *testing.T) {
+	SetupTestDB(t)
+
+	profile := models.Profile{
+		ID:          "testid2",
+		FirstName:   "testfirstname2",
+		LastName:    "testlastname2",
+		Points:      340,
+		Timezone:    "America/New York",
+		Description: "Hello",
+		Discord:     "testdiscordusername2",
+		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		TeamStatus:  "Found Team",
+		Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+	}
+
+	err := db.Insert("profiles", &profile)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	leaderboard, err := service.GetProfileLeaderboard(0)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_leaderboard := models.ProfileList{
+		Profiles: []models.Profile{
+			{
+				ID:          "testid2",
+				FirstName:   "testfirstname2",
+				LastName:    "testlastname2",
+				Points:      340,
+				Timezone:    "America/New York",
+				Description: "Hello",
+				Discord:     "testdiscordusername2",
+				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				TeamStatus:  "Found Team",
+				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+			},
+			{
+				ID:          "testid",
+				FirstName:   "testfirstname",
+				LastName:    "testlastname",
+				Points:      0,
+				Timezone:    "America/Chicago",
+				Description: "Hi",
+				Discord:     "testdiscordusername",
+				AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
+				TeamStatus:  "Looking For Team",
+				Interests:   []string{"testinterest1", "testinterest2"},
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(leaderboard, &expected_leaderboard) {
+		t.Errorf("Wrong profile info. Expected %v, got %v", expected_leaderboard, leaderboard)
+	}
+
+	// Insert another profile and test
+	profile = models.Profile{
+		ID:          "testid3",
+		FirstName:   "testfirstname3",
+		LastName:    "testlastname3",
+		Points:      999,
+		Timezone:    "America/New York",
+		Description: "Hello",
+		Discord:     "testdiscordusername3",
+		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		TeamStatus:  "Found Team",
+		Interests:   []string{"C++"},
+	}
+
+	err = db.Insert("profiles", &profile)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	leaderboard, err = service.GetProfileLeaderboard(0)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_leaderboard = models.ProfileList{
+		Profiles: []models.Profile{
+			{
+				ID:          "testid3",
+				FirstName:   "testfirstname3",
+				LastName:    "testlastname3",
+				Points:      999,
+				Timezone:    "America/New York",
+				Description: "Hello",
+				Discord:     "testdiscordusername3",
+				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				TeamStatus:  "Found Team",
+				Interests:   []string{"C++"},
+			},
+			{
+				ID:          "testid2",
+				FirstName:   "testfirstname2",
+				LastName:    "testlastname2",
+				Points:      340,
+				Timezone:    "America/New York",
+				Description: "Hello",
+				Discord:     "testdiscordusername2",
+				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				TeamStatus:  "Found Team",
+				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+			},
+			{
+				ID:          "testid",
+				FirstName:   "testfirstname",
+				LastName:    "testlastname",
+				Points:      0,
+				Timezone:    "America/Chicago",
+				Description: "Hi",
+				Discord:     "testdiscordusername",
+				AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
+				TeamStatus:  "Looking For Team",
+				Interests:   []string{"testinterest1", "testinterest2"},
+			},
+		},
+	}
+	if !reflect.DeepEqual(leaderboard, &expected_leaderboard) {
+		t.Errorf("Wrong profile info. Expected %v, got %v", expected_leaderboard, leaderboard)
+	}
+
+	// Add a limit and test again
+	leaderboard, err = service.GetProfileLeaderboard(2) // Get the top two
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_leaderboard = models.ProfileList{
+		Profiles: []models.Profile{
+			{
+				ID:          "testid3",
+				FirstName:   "testfirstname3",
+				LastName:    "testlastname3",
+				Points:      999,
+				Timezone:    "America/New York",
+				Description: "Hello",
+				Discord:     "testdiscordusername3",
+				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				TeamStatus:  "Found Team",
+				Interests:   []string{"C++"},
+			},
+			{
+				ID:          "testid2",
+				FirstName:   "testfirstname2",
+				LastName:    "testlastname2",
+				Points:      340,
+				Timezone:    "America/New York",
+				Description: "Hello",
+				Discord:     "testdiscordusername2",
+				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				TeamStatus:  "Found Team",
+				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+			},
+		},
+	}
+	if !reflect.DeepEqual(leaderboard, &expected_leaderboard) {
+		t.Errorf("Wrong profile info. Expected %v, got %v", expected_leaderboard, leaderboard)
+	}
+
+	CleanupTestDB(t)
+}

@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - "**"
-    tags:
-      - "v*.*.*"
+  release:
+    types:
+      - published
 
 defaults:
   run:
@@ -19,15 +20,17 @@ jobs:
         image: mongo
         ports:
           - 27017:27017
+    env:
+      GO111MODULE: on
     steps:
       - name: checkout code
         uses: actions/checkout@v2    
-      
+
       - name: install go
         uses: actions/setup-go@v2
         with:
           go-version: 1.11.x
-          
+
       - name: install dependencies  
         run: |
           sudo apt-get -y install python3 python3-pip
@@ -45,25 +48,32 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: [build]
-    if: "github.ref == 'refs/heads/master' && github.event_name == 'push'"
+    if: "github.ref == 'refs/heads/master'"
     steps:
       - uses: actions/checkout@v2
-      
-      - name: set tag env
-        run: echo "RELEASE_TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
-      - name: print tag env
+      - name: using release version as container tag (release build only)
+        if: "github.event_name == 'release'"
+        run: echo "CONTAINER_TAG=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+
+      - name: build docs and docker container
         run: |
-          echo $RELEASE_TAG
-          echo ${{ env.RELEASE_TAG }}
+          make docs
+          make container TAG=$CONTAINER_TAG
 
-      # - name: build docs and docker container
-      #   run: |
-      #     make docs
-      #     make container
+      - name: push docs to s3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: hackillinois-api-docs-test
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-east-1'
+          SOURCE_DIR: 'documentation/site'
 
-      # - name: pushing container to dockerhub
-      #   run: make container-push TAG=$RELEASE_TAG
-      #   env:
-      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      #     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: push docker container to dockerhub
+        run: make container-push TAG=$CONTAINER_TAG
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

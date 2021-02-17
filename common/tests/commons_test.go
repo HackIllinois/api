@@ -5,7 +5,7 @@ import (
 )
 
 /*
-	Placeholder test for travis build
+	Placeholder test for CI build
 */
 func TestPlaceholder(t *testing.T) {
 }

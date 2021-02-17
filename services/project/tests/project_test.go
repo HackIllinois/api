@@ -354,7 +354,7 @@ func TestCreateProjectService(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(project, &expected_project) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_project, project)
+		t.Errorf("Wrong project info. Expected %v, got %v", expected_project, project)
 	}
 
 	CleanupTestDB(t)
@@ -425,7 +425,7 @@ func TestUpdateProjectService(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(updated_project, &expected_project) {
-		t.Errorf("Wrong user info. Expected %v, got %v", expected_project, updated_project)
+		t.Errorf("Wrong project info. Expected %v, got %v", expected_project, updated_project)
 	}
 
 	CleanupTestDB(t)

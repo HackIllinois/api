@@ -316,7 +316,7 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mentor_registration.Data["github"] = user_info.Username
+	mentor_registration.Data["github"] = user_info.Usernam
 
 	mentor_registration.Data["createdAt"] = time.Now().Unix()
 	mentor_registration.Data["updatedAt"] = time.Now().Unix()

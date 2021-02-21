@@ -91,15 +91,12 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 		// i.e FirstName, LastName --> ["FirstName", "LastName"]
 		sort_parameters = strings.Split(sort_parameters[0], ",")
 
-		// Create and fill the sort fields
 		var sort_fields []database.SortField
 
 		for _, field := range sort_parameters {
 			// Push to lowercase because MongoDB columns are all lowercase
 			field = strings.ToLower(field)
 			field = strings.TrimSpace(field)
-
-			// TODO Add a check here to make sure the requested sort field is actually a field in the model.
 
 			sort_fields = append(sort_fields,
 				database.SortField{
@@ -128,13 +125,6 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 	}
 
 	return &filtered_users, nil
-}
-
-func max(x, y int) int {
-	if x < y {
-		return x
-	}
-	return y
 }
 
 /*

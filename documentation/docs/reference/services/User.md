@@ -65,6 +65,15 @@ GET /user/filter/?key=value
 
 Returns the basic user information, filtered with the given key-value pairs.
 
+To sort the users, provide a **comma-separated** "sortby" parameter. For example, the following request:  
+``
+/user/filter/?key=value&sortby=FirstName,LastName
+``
+
+will return a list of filtered users sorted by first name, using the last name as a tie breaker.
+
+To reverse the sort, add a minus (-) to the desired sort field. For example, "FirstName" would become "-FirstName".
+
 Response format:
 ```
 {

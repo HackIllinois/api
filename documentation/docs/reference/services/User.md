@@ -70,6 +70,14 @@ To paginate the response, provide a parameter "p" with the page number you are r
 
 For example, the following request: `/user/filter/?key=value&p=1&limit=5` will return the first 5 Users (index 0 through 4).
 
+To sort the users, provide a **comma-separated** "sortby" parameter. For example, the following request:  
+``
+/user/filter/?key=value&sortby=FirstName,LastName
+``
+
+will return a list of filtered users sorted by first name, using the last name as a tie breaker.
+
+To reverse the sort, add a minus (-) to the desired sort field. For example, "FirstName" would become "-FirstName".
 
 Response format:
 ```

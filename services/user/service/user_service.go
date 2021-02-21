@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/user/config"
@@ -68,10 +69,13 @@ func SetUserInfo(id string, user_info models.UserInfo) error {
 	Returns the users associated with the given parameters
 */
 func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers, error) {
+  // Grab pagination and sorting parameters and delete to prevent the CreateFilterQuery from using them
 	page := parameters["p"]
 	page_limit := parameters["limit"]
+  sort_parameters := parameters["sortby"]
 	delete(parameters, "p")
 	delete(parameters, "limit")
+	delete(parameters, "sortby")
 
 	query, err := database.CreateFilterQuery(parameters, models.UserInfo{})
 
@@ -80,7 +84,34 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 	}
 
 	var filtered_users models.FilteredUsers
-	err = db.FindAll("info", query, &filtered_users.Users)
+
+	if len(sort_parameters) == 1 {
+		// Split by comma to get a slice of sorting parameters
+		// i.e FirstName, LastName --> ["FirstName", "LastName"]
+		sort_parameters = strings.Split(sort_parameters[0], ",")
+
+		// Create and fill the sort fields
+		var sort_fields []database.SortField
+
+		for _, field := range sort_parameters {
+			// Push to lowercase because MongoDB columns are all lowercase
+			field = strings.ToLower(field)
+			field = strings.TrimSpace(field)
+
+			// TODO Add a check here to make sure the requested sort field is actually a field in the model.
+
+			sort_fields = append(sort_fields,
+				database.SortField{
+					Name:     field,
+					Reversed: false,
+				})
+		}
+
+		// Fetch and Sort
+		err = db.FindAllSorted("info", query, sort_fields, &filtered_users.Users)
+	} else {
+		err = db.FindAll("info", query, &filtered_users.Users)
+	}
 
 	if err != nil {
 		return nil, err

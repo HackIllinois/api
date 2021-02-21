@@ -44,7 +44,7 @@ func TestMain(m *testing.M) {
 }
 
 /*
-	Initialize databse with test user info
+	Initialize database with test user info
 */
 func SetupTestDB(t *testing.T) {
 	err := db.Insert("info", &models.UserInfo{
@@ -68,6 +68,53 @@ func SetupTestDB(t *testing.T) {
 	}
 }
 
+/*
+  Initialize db for sortby filter tests
+*/
+func SetupFilterTestDB(t *testing.T) {
+	err := db.Insert("info", &models.UserInfo{
+		ID:        "testid1",
+		FirstName: "Alex",
+		Username:  "testusername",
+		Email:     "testemail@domain.com",
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.Insert("info", &models.UserInfo{
+		ID:        "testid2",
+		FirstName: "Charlie",
+		Username:  "testusername",
+		Email:     "testemail@domain.com",
+	})
+
+	err = db.Insert("info", &models.UserInfo{
+		ID:        "testid3",
+		FirstName: "Bobby",
+		Username:  "testusername",
+		Email:     "testemail@domain.com",
+	})
+
+	err = db.Insert("info", &models.UserInfo{
+		ID:        "testid4",
+		FirstName: "Bobby",
+		LastName:  "Adamson",
+		Username:  "test-two-parameter-filter",
+	})
+
+	err = db.Insert("info", &models.UserInfo{
+		ID:        "testid5",
+		FirstName: "Bobby",
+		LastName:  "Zulu",
+		Username:  "test-two-parameter-filter",
+	})
+}
+
+/*
+  Initialize db for pagination, filter tests
+*/
 func SetupPaginationDB(t *testing.T) {
 	err := db.Insert("info", &models.UserInfo{
 		ID:       "testid",
@@ -213,6 +260,98 @@ func TestGetFilteredUserInfoService(t *testing.T) {
 	CleanupTestDB(t)
 }
 
+/*
+  Test Sortby parameter
+*/
+func TestGetFilteredUserInfoWithSortingService(t *testing.T) {
+	SetupFilterTestDB(t)
+
+	user_info_1, err := service.GetUserInfo("testid1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	user_info_2, err := service.GetUserInfo("testid2")
+	user_info_3, err := service.GetUserInfo("testid3")
+
+	// Sort by first name and expect: Alex, Bobby, Charlie
+
+	parameters := map[string][]string{
+		"username": {"testusername"},
+		"sortby":   {"FiRsTNAmE"},
+	}
+
+	filtered_info, err := service.GetFilteredUserInfo(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_info := &models.FilteredUsers{
+		[]models.UserInfo{
+			*user_info_1, // Alex
+			*user_info_3, // Bobby
+			*user_info_2, // Charlie
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_info, expected_info) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, filtered_info)
+	}
+
+	// Reverse the sort and expect: Charlie, Bobby, Alex.
+
+	parameters = map[string][]string{
+		"username": {"testusername"},
+		"sortby":   {"-FiRsTNAmE"},
+	}
+
+	filtered_info, err = service.GetFilteredUserInfo(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_info = &models.FilteredUsers{
+		[]models.UserInfo{
+			*user_info_2, // Charlie
+			*user_info_3, // Bobby
+			*user_info_1, // Alex
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_info, expected_info) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, filtered_info)
+	}
+
+	// Sort by two parameters and expect: Bobby Adamson, Bobby Zulu
+
+	user_info_1, err = service.GetUserInfo("testid5")
+	user_info_2, err = service.GetUserInfo("testid4")
+	parameters = map[string][]string{
+		"username": {"test-two-parameter-filter"},
+		"sortby":   {"firstName,lastName"},
+	}
+
+	filtered_info, err = service.GetFilteredUserInfo(parameters)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_info = &models.FilteredUsers{
+		[]models.UserInfo{
+			*user_info_2, // Bobby Adamson
+			*user_info_1, // Bobby Zulu
+		},
+	}
+
+	if !reflect.DeepEqual(filtered_info, expected_info) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_info, filtered_info)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+  Test Pagination parameter
+*/
 func TestGetFilteredUserInfoServicePagination(t *testing.T) {
 	SetupPaginationDB(t)
 

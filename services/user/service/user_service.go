@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
 )
@@ -123,7 +124,7 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 
 		// Subtract one because page numbers will be 1-indexed
 		// The max() function will ensure we don't paginate past the length of the Users list
-		filtered_users.Users = filtered_users.Users[(page-1)*page_limit : max(page*page_limit, len(filtered_users.Users))]
+		filtered_users.Users = filtered_users.Users[(page-1)*page_limit : utils.Max(page*page_limit, len(filtered_users.Users))]
 	}
 
 	return &filtered_users, nil

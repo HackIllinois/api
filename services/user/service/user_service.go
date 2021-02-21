@@ -69,10 +69,10 @@ func SetUserInfo(id string, user_info models.UserInfo) error {
 	Returns the users associated with the given parameters
 */
 func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers, error) {
-  // Grab pagination and sorting parameters and delete to prevent the CreateFilterQuery from using them
+	// Grab pagination and sorting parameters and delete to prevent the CreateFilterQuery from using them
 	page := parameters["p"]
 	page_limit := parameters["limit"]
-  sort_parameters := parameters["sortby"]
+	sort_parameters := parameters["sortby"]
 	delete(parameters, "p")
 	delete(parameters, "limit")
 	delete(parameters, "sortby")

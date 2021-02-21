@@ -3,9 +3,11 @@ package service
 import (
 	"errors"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
 )
@@ -68,8 +70,12 @@ func SetUserInfo(id string, user_info models.UserInfo) error {
 	Returns the users associated with the given parameters
 */
 func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers, error) {
-	// Grab the sortby parameter and delete it to prevent the CreateFilterQuery from using it
+	// Grab pagination and sorting parameters and delete to prevent the CreateFilterQuery from using them
+	page := parameters["p"]
+	page_limit := parameters["limit"]
 	sort_parameters := parameters["sortby"]
+	delete(parameters, "p")
+	delete(parameters, "limit")
 	delete(parameters, "sortby")
 
 	query, err := database.CreateFilterQuery(parameters, models.UserInfo{})
@@ -85,15 +91,12 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 		// i.e FirstName, LastName --> ["FirstName", "LastName"]
 		sort_parameters = strings.Split(sort_parameters[0], ",")
 
-		// Create and fill the sort fields
 		var sort_fields []database.SortField
 
 		for _, field := range sort_parameters {
 			// Push to lowercase because MongoDB columns are all lowercase
 			field = strings.ToLower(field)
 			field = strings.TrimSpace(field)
-
-			// TODO Add a check here to make sure the requested sort field is actually a field in the model.
 
 			sort_fields = append(sort_fields,
 				database.SortField{
@@ -110,6 +113,15 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 
 	if err != nil {
 		return nil, err
+	}
+
+	if len(page) == 1 && len(page_limit) == 1 {
+		page, _ := strconv.Atoi(page[0])
+		page_limit, _ := strconv.Atoi(page_limit[0])
+
+		// Subtract one because page numbers will be 1-indexed
+		// The max() function will ensure we don't paginate past the length of the Users list
+		filtered_users.Users = filtered_users.Users[(page-1)*page_limit : utils.Max(page*page_limit, len(filtered_users.Users))]
 	}
 
 	return &filtered_users, nil

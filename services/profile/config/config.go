@@ -18,6 +18,8 @@ func Initialize() error {
 		return err
 	}
 
+	//test
+
 	PROFILE_DB_HOST, err = cfg_loader.Get("PROFILE_DB_HOST")
 
 	if err != nil {

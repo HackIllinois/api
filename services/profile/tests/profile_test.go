@@ -358,8 +358,8 @@ func TestGetFilteredProfiles(t *testing.T) {
 
 	parameters := map[string][]string{
 		"teamStatus": {"Found Team"},
-		"interests": {"Cpp,Machine Learning"},
-		"limit": {"0"},
+		"interests":  {"Cpp,Machine Learning"},
+		"limit":      {"0"},
 	}
 
 	filtered_profile_list, err := service.GetFilteredProfiles(parameters)
@@ -404,8 +404,8 @@ func TestGetFilteredProfiles(t *testing.T) {
 	// Add a limit and test that
 	parameters = map[string][]string{
 		"teamStatus": {"Found Team"},
-		"interests": {"Cpp,Machine Learning"},
-		"limit": {"1"},
+		"interests":  {"Cpp,Machine Learning"},
+		"limit":      {"1"},
 	}
 
 	filtered_profile_list, err = service.GetFilteredProfiles(parameters)
@@ -434,8 +434,8 @@ func TestGetFilteredProfiles(t *testing.T) {
 	// Change the interests to be off by one
 	parameters = map[string][]string{
 		"teamStatus": {"Found Team"},
-		"interests": {"Cpp,Machine Learning,Additional Interest"},
-		"limit": {"0"},
+		"interests":  {"Cpp,Machine Learning,Additional Interest"},
+		"limit":      {"0"},
 	}
 
 	filtered_profile_list, err = service.GetFilteredProfiles(parameters)
@@ -464,7 +464,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 	// Remove filter by interests
 	parameters = map[string][]string{
 		"teamStatus": {"Found Team"},
-		"limit": {"0"},
+		"limit":      {"0"},
 	}
 
 	filtered_profile_list, err = service.GetFilteredProfiles(parameters)
@@ -505,7 +505,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 	// Remove filter by teamStatus
 	parameters = map[string][]string{
 		"interests": {"Cpp,Machine Learning,Additional Interest"},
-		"limit": {"0"},
+		"limit":     {"0"},
 	}
 
 	filtered_profile_list, err = service.GetFilteredProfiles(parameters)

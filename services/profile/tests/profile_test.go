@@ -337,7 +337,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 		Discord:     "testdiscordusername2",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 		TeamStatus:  "Found Team",
-		Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+		Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 	}
 
 	err := db.Insert("profiles", &profile)
@@ -352,13 +352,13 @@ func TestGetFilteredProfiles(t *testing.T) {
 		Discord:     "testdiscordusername3",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 		TeamStatus:  "Found Team",
-		Interests:   []string{"C++", "Machine Learning"},
+		Interests:   []string{"Cpp", "Machine Learning"},
 	}
 	err = db.Insert("profiles", &profile)
 
 	parameters := map[string][]string{
 		"teamStatus": {"Found Team"},
-		"interests": {"C++,Machine Learning"},
+		"interests": {"Cpp,Machine Learning"},
 		"limit": {"0"},
 	}
 
@@ -380,7 +380,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 				Discord:     "testdiscordusername2",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 				TeamStatus:  "Found Team",
-				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 			},
 			{
 				ID:          "testid3",
@@ -392,7 +392,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 				Discord:     "testdiscordusername3",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 				TeamStatus:  "Found Team",
-				Interests:   []string{"C++", "Machine Learning"},
+				Interests:   []string{"Cpp", "Machine Learning"},
 			},
 		},
 	}
@@ -404,7 +404,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 	// Add a limit and test that
 	parameters = map[string][]string{
 		"teamStatus": {"Found Team"},
-		"interests": {"C++,Machine Learning"},
+		"interests": {"Cpp,Machine Learning"},
 		"limit": {"1"},
 	}
 
@@ -422,7 +422,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 				Discord:     "testdiscordusername2",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 				TeamStatus:  "Found Team",
-				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 			},
 		},
 	}
@@ -434,7 +434,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 	// Change the interests to be off by one
 	parameters = map[string][]string{
 		"teamStatus": {"Found Team"},
-		"interests": {"C++,Machine Learning,Additional Interest"},
+		"interests": {"Cpp,Machine Learning,Additional Interest"},
 		"limit": {"0"},
 	}
 
@@ -452,7 +452,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 				Discord:     "testdiscordusername2",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 				TeamStatus:  "Found Team",
-				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 			},
 		},
 	}
@@ -481,7 +481,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 				Discord:     "testdiscordusername2",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 				TeamStatus:  "Found Team",
-				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 			},
 			{
 				ID:          "testid3",
@@ -493,7 +493,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 				Discord:     "testdiscordusername3",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 				TeamStatus:  "Found Team",
-				Interests:   []string{"C++", "Machine Learning"},
+				Interests:   []string{"Cpp", "Machine Learning"},
 			},
 		},
 	}
@@ -504,7 +504,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 
 	// Remove filter by teamStatus
 	parameters = map[string][]string{
-		"interests": {"C++,Machine Learning,Additional Interest"},
+		"interests": {"Cpp,Machine Learning,Additional Interest"},
 		"limit": {"0"},
 	}
 
@@ -522,7 +522,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 				Discord:     "testdiscordusername2",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 				TeamStatus:  "Found Team",
-				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 			},
 		},
 	}
@@ -547,7 +547,7 @@ func TestGetProfileLeaderboard(t *testing.T) {
 		Discord:     "testdiscordusername2",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 		TeamStatus:  "Found Team",
-		Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+		Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 	}
 
 	err := db.Insert("profiles", &profile)
@@ -576,7 +576,7 @@ func TestGetProfileLeaderboard(t *testing.T) {
 				Discord:     "testdiscordusername2",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 				TeamStatus:  "Found Team",
-				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 			},
 			{
 				ID:          "testid",
@@ -608,7 +608,7 @@ func TestGetProfileLeaderboard(t *testing.T) {
 		Discord:     "testdiscordusername3",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 		TeamStatus:  "Found Team",
-		Interests:   []string{"C++"},
+		Interests:   []string{"Cpp"},
 	}
 
 	err = db.Insert("profiles", &profile)
@@ -639,7 +639,7 @@ func TestGetProfileLeaderboard(t *testing.T) {
 				Discord:     "testdiscordusername3",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 				TeamStatus:  "Found Team",
-				Interests:   []string{"C++"},
+				Interests:   []string{"Cpp"},
 			},
 			{
 				ID:          "testid2",
@@ -651,7 +651,7 @@ func TestGetProfileLeaderboard(t *testing.T) {
 				Discord:     "testdiscordusername2",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 				TeamStatus:  "Found Team",
-				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 			},
 			{
 				ID:          "testid",
@@ -694,7 +694,7 @@ func TestGetProfileLeaderboard(t *testing.T) {
 				Discord:     "testdiscordusername3",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 				TeamStatus:  "Found Team",
-				Interests:   []string{"C++"},
+				Interests:   []string{"Cpp"},
 			},
 			{
 				ID:          "testid2",
@@ -706,7 +706,7 @@ func TestGetProfileLeaderboard(t *testing.T) {
 				Discord:     "testdiscordusername2",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 				TeamStatus:  "Found Team",
-				Interests:   []string{"C++", "Machine Learning", "Additional Interest"},
+				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 			},
 		},
 	}

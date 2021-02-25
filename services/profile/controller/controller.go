@@ -159,15 +159,15 @@ func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
 func GetProfileLeaderboard(w http.ResponseWriter, r *http.Request) {
 	parameters := r.URL.Query()
 
-	limit_str = parameters.Get("limit")
+	limit_str := parameters.Get("limit")
 	if limit_str == "" {
-		errors.WriteError(w, r, errors.MalformedRequestError("Must specify limit."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must specify limit.", "Must specify limit."))
 		return
 	}
 
 	limit, err := strconv.Atoi(limit_str)
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to convert limit argument to int."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Failed to convert limit argument to int.", "Failed to convert limit argument to int."))
 		return
 	}
 
@@ -186,15 +186,15 @@ func GetProfileLeaderboard(w http.ResponseWriter, r *http.Request) {
 func GetFilteredProfiles(w http.ResponseWriter, r *http.Request) {
 	parameters := r.URL.Query()
 
-	limit_str = parameters.Get("limit")
+	limit_str := parameters.Get("limit")
 	if limit_str == "" {
-		errors.WriteError(w, r, errors.MalformedRequestError("Must specify limit."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Must specify limit.", "Must specify limit."))
 		return
 	}
 
 	limit, err := strconv.Atoi(limit_str)
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to convert limit argument to int."))
+		errors.WriteError(w, r, errors.MalformedRequestError("Failed to convert limit argument to int.", "Failed to convert limit argument to int."))
 		return
 	}
 

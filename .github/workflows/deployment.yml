@@ -2,10 +2,6 @@ name: deployment
 
 
 on:
-  push:
-    branches:
-      - "master"
-      - "**"
   workflow_dispatch:
     inputs:
       service-name:

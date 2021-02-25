@@ -10,16 +10,16 @@ Returns the profile stored for the current user.
 Response format:
 ```
 {
-    “id”: “github123456”,
-    “firstName”: “John”,
-    “lastName”: “Doe”,
-    “points”: 2021,
-    “timezone”: “Americas UTC+8”,
-    “avatarUrl”: “https://github.com/.../profile.jpg”,
-    “discord”: “patrick#1234”,
-    “teamStatus”: “looking”,
-    “description”: “Lorem Ipsum…”,
-    “interests”: [“C++”, “Machine Learning”]
+    "id": "github123456",
+    "firstName": "John",
+    "lastName": "Doe",
+    "points": 2021,
+    "timezone": "Americas UTC+8",
+    "avatarUrl": "https://github.com/.../profile.jpg",
+    "discord": "patrick#1234",
+    "teamStatus": "looking",
+    "description": "Lorem Ipsum…",
+    "interests": ["C++", "Machine Learning"]
 }
 
 ```
@@ -32,16 +32,16 @@ Returns the profile stored for user that has the ID ``{id}``.
 Response format:
 ```
 {
-    “id”: “github123456”,
-    “firstName”: “John”,
-    “lastName”: “Doe”,
-    “points”: 2021,
-    “timezone”: “Americas UTC+8”,
-    “avatarUrl”: “https://github.com/.../profile.jpg”,
-    “discord”: “patrick#1234”,
-    “teamStatus”: “looking”,
-    “description”: “Lorem Ipsum…”,
-    “interests”: [“C++”, “Machine Learning”]
+    "id": "github123456",
+    "firstName": "John",
+    "lastName": "Doe",
+    "points": 2021,
+    "timezone": "Americas UTC+8",
+    "avatarUrl": "https://github.com/.../profile.jpg",
+    "discord": "patrick#1234",
+    "teamStatus": "looking",
+    "description": "Lorem Ipsum…",
+    "interests": ["C++", "Machine Learning"]
 }
 ```
 
@@ -55,28 +55,28 @@ Response format:
 {
     profiles: [
         {
-            “id”: “github123456”,
-            “firstName”: “John”,
-            “lastName”: “Doe”,
-            “points”: 2021,
-            “timezone”: “Americas UTC+8”,
-            “avatarUrl”: “https://github.com/.../profile.jpg”,
-            “discord”: “patrick#1234”,
-            “teamStatus”: “looking”,
-            “description”: “Lorem Ipsum…”,
-            “interests”: [“C++”, “Machine Learning”]
+            "id": "github123456",
+            "firstName": "John",
+            "lastName": "Doe",
+            "points": 2021,
+            "timezone": "Americas UTC+8",
+            "avatarUrl": "https://github.com/.../profile.jpg",
+            "discord": "patrick#1234",
+            "teamStatus": "looking",
+            "description": "Lorem Ipsum…",
+            "interests": ["C++", "Machine Learning"]
         },
         {
-            “id”: “github123456”,
-            “firstName”: “John”,
-            “lastName”: “Doe”,
-            “points”: 2021,
-            “timezone”: “Americas UTC+8”,
-            “avatarUrl”: “https://github.com/.../profile.jpg”,
-            “discord”: “patrick#1234”,
-            “teamStatus”: “looking”,
-            “description”: “Lorem Ipsum…”,
-            “interests”: [“C++”, “Machine Learning”]
+            "id": "github123456",
+            "firstName": "John",
+            "lastName": "Doe",
+            "points": 2021,
+            "timezone": "Americas UTC+8",
+            "avatarUrl": "https://github.com/.../profile.jpg",
+            "discord": "patrick#1234",
+            "teamStatus": "looking",
+            "description": "Lorem Ipsum…",
+            "interests": ["C++", "Machine Learning"]
         },
     ]
 }
@@ -91,30 +91,30 @@ Creates a profile for the user with the `id` in the JWT token provided in the Au
 Request format:
 ```
 {
-    “firstName”: “John”,
-    “lastName”: “Doe”,
-    “timezone”: “Americas UTC+8”,
-    “avatarUrl”: “https://github.com/.../profile.jpg”,
-    “discord”: “patrick#1234”,
-    “teamStatus”: “looking”,
-    “description”: “Lorem Ipsum…”,
-    “interests”: [“C++”, “Machine Learning”]
+    "firstName": "John",
+    "lastName": "Doe",
+    "timezone": "Americas UTC+8",
+    "avatarUrl": "https://github.com/.../profile.jpg",
+    "discord": "patrick#1234",
+    "teamStatus": "looking",
+    "description": "Lorem Ipsum…",
+    "interests": ["C++", "Machine Learning"]
 }
 ```
 
 Response format:
 ```
 {
-    “id”: “github123456”,
-    “firstName”: “John”,
-    “lastName”: “Doe”,
-    “points”: 2021,
-    “timezone”: “Americas UTC+8”,
-    “avatarUrl”: “https://github.com/.../profile.jpg”,
-    “discord”: “patrick#1234”,
-    “teamStatus”: “looking”,
-    “description”: “Lorem Ipsum…”,
-    “interests”: [“C++”, “Machine Learning”]
+    "id": "github123456",
+    "firstName": "John",
+    "lastName": "Doe",
+    "points": 2021,
+    "timezone": "Americas UTC+8",
+    "avatarUrl": "https://github.com/.../profile.jpg",
+    "discord": "patrick#1234",
+    "teamStatus": "looking",
+    "description": "Lorem Ipsum…",
+    "interests": ["C++", "Machine Learning"]
 }
 ```
 
@@ -127,30 +127,30 @@ This returns the updated profile information.
 Request format:
 ```
 {
-    “firstName”: “John”,
-    “lastName”: “Doe”,
-    “timezone”: “Americas UTC+8”,
-    “avatarUrl”: “https://github.com/.../profile.jpg”,
-    “discord”: “patrick#1234”,
-    “teamStatus”: “looking”,
-    “description”: “Lorem Ipsum…”,
-    “interests”: [“C++”, “Machine Learning”]
+    "firstName": "John",
+    "lastName": "Doe",
+    "timezone": "Americas UTC+8",
+    "avatarUrl": "https://github.com/.../profile.jpg",
+    "discord": "patrick#1234",
+    "teamStatus": "looking",
+    "description": "Lorem Ipsum…",
+    "interests": ["C++", "Machine Learning"]
 }
 ```
 
 Response format:
 ```
 {
-    “id”: “github123456”,
-    “firstName”: “John”,
-    “lastName”: “Doe”,
-    “points”: 2021,
-    “timezone”: “Americas UTC+8”,
-    “avatarUrl”: “https://github.com/.../profile.jpg”,
-    “discord”: “patrick#1234”,
-    “teamStatus”: “looking”,
-    “description”: “Lorem Ipsum…”,
-    “interests”: [“C++”, “Machine Learning”]
+    "id": "github123456",
+    "firstName": "John",
+    "lastName": "Doe",
+    "points": 2021,
+    "timezone": "Americas UTC+8",
+    "avatarUrl": "https://github.com/.../profile.jpg",
+    "discord": "patrick#1234",
+    "teamStatus": "looking",
+    "description": "Lorem Ipsum…",
+    "interests": ["C++", "Machine Learning"]
 }
 ```
 
@@ -164,16 +164,16 @@ This returns the deleted profile information.
 Response format:
 ```
 {
-    “id”: “github123456”,
-    “firstName”: “John”,
-    “lastName”: “Doe”,
-    “points”: 2021,
-    “timezone”: “Americas UTC+8”,
-    “avatarUrl”: “https://github.com/.../profile.jpg”,
-    “discord”: “patrick#1234”,
-    “teamStatus”: “looking”,
-    “description”: “Lorem Ipsum…”,
-    “interests”: [“C++”, “Machine Learning”]
+    "id": "github123456",
+    "firstName": "John",
+    "lastName": "Doe",
+    "points": 2021,
+    "timezone": "Americas UTC+8",
+    "avatarUrl": "https://github.com/.../profile.jpg",
+    "discord": "patrick#1234",
+    "teamStatus": "looking",
+    "description": "Lorem Ipsum…",
+    "interests": ["C++", "Machine Learning"]
 }
 ```
 
@@ -187,28 +187,28 @@ Response format:
 {
     profiles: [
         {
-            “id”: “github123456”,
-            “firstName”: “John”,
-            “lastName”: “Doe”,
-            “points”: 2021,
-            “timezone”: “Americas UTC+8”,
-            “avatarUrl”: “https://github.com/.../profile.jpg”,
-            “discord”: “patrick#1234”,
-            “teamStatus”: “looking”,
-            “description”: “Lorem Ipsum…”,
-            “interests”: [“C++”, “Machine Learning”]
+            "id": "github123456",
+            "firstName": "John",
+            "lastName": "Doe",
+            "points": 2021,
+            "timezone": "Americas UTC+8",
+            "avatarUrl": "https://github.com/.../profile.jpg",
+            "discord": "patrick#1234",
+            "teamStatus": "looking",
+            "description": "Lorem Ipsum…",
+            "interests": ["C++", "Machine Learning"]
         },
         {
-            “id”: “github123456”,
-            “firstName”: “John”,
-            “lastName”: “Doe”,
-            “points”: 2021,
-            “timezone”: “Americas UTC+8”,
-            “avatarUrl”: “https://github.com/.../profile.jpg”,
-            “discord”: “patrick#1234”,
-            “teamStatus”: “looking”,
-            “description”: “Lorem Ipsum…”,
-            “interests”: [“C++”, “Machine Learning”]
+            "id": "github123456",
+            "firstName": "John",
+            "lastName": "Doe",
+            "points": 2021,
+            "timezone": "Americas UTC+8",
+            "avatarUrl": "https://github.com/.../profile.jpg",
+            "discord": "patrick#1234",
+            "teamStatus": "looking",
+            "description": "Lorem Ipsum…",
+            "interests": ["C++", "Machine Learning"]
         },
     ]
 }
@@ -233,28 +233,28 @@ Response format:
 {
     profiles: [
         {
-            “id”: “github123456”,
-            “firstName”: “John”,
-            “lastName”: “Doe”,
-            “points”: 2021,
-            “timezone”: “Americas UTC+8”,
-            “avatarUrl”: “https://github.com/.../profile.jpg”,
-            “discord”: “patrick#1234”,
-            “teamStatus”: “looking”,
-            “description”: “Lorem Ipsum…”,
-            “interests”: [“C++”, “Machine Learning”]
+            "id": "github123456",
+            "firstName": "John",
+            "lastName": "Doe",
+            "points": 2021,
+            "timezone": "Americas UTC+8",
+            "avatarUrl": "https://github.com/.../profile.jpg",
+            "discord": "patrick#1234",
+            "teamStatus": "looking",
+            "description": "Lorem Ipsum…",
+            "interests": ["C++", "Machine Learning"]
         },
         {
-            “id”: “github123456”,
-            “firstName”: “John”,
-            “lastName”: “Doe”,
-            “points”: 2021,
-            “timezone”: “Americas UTC+8”,
-            “avatarUrl”: “https://github.com/.../profile.jpg”,
-            “discord”: “patrick#1234”,
-            “teamStatus”: “looking”,
-            “description”: “Lorem Ipsum…”,
-            “interests”: [“C++”, “Machine Learning”]
+            "id": "github123456",
+            "firstName": "John",
+            "lastName": "Doe",
+            "points": 2021,
+            "timezone": "Americas UTC+8",
+            "avatarUrl": "https://github.com/.../profile.jpg",
+            "discord": "patrick#1234",
+            "teamStatus": "looking",
+            "description": "Lorem Ipsum…",
+            "interests": ["C++", "Machine Learning"]
         },
     ]
 }

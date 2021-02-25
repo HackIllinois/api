@@ -3,7 +3,6 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/profile/models"
@@ -174,19 +173,7 @@ func GetProfileLeaderboard(w http.ResponseWriter, r *http.Request) {
 func GetFilteredProfiles(w http.ResponseWriter, r *http.Request) {
 	parameters := r.URL.Query()
 
-	limit_str := parameters.Get("limit")
-	if limit_str == "" {
-		errors.WriteError(w, r, errors.MalformedRequestError("Must specify limit.", "Must specify limit."))
-		return
-	}
-
-	limit, err := strconv.Atoi(limit_str)
-	if err != nil {
-		errors.WriteError(w, r, errors.MalformedRequestError("Failed to convert limit argument to int.", "Failed to convert limit argument to int."))
-		return
-	}
-
-	filtered_profile_list, err := service.GetFilteredProfiles(parameters.Get("teamStatus"), parameters.Get("interests"), limit)
+	filtered_profile_list, err := service.GetFilteredProfiles(parameters)
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get the filtered profiles."))
 		return

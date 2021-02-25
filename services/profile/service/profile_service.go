@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"strconv"
-	"strings"
 
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/utils"
@@ -191,51 +190,44 @@ func GetProfileLeaderboard(parameters map[string][]string) (*models.ProfileList,
 /*
 	Returns a list of profiles filtered upon teamStatus and interests. Will be limited to only include the first "limit" results.
 */
-func GetFilteredProfiles(teamStatus string, interests_string string, limit int) (*models.ProfileList, error) {
-	profiles, err := GetAllProfiles()
+func GetFilteredProfiles(parameters map[string][]string) (*models.ProfileList, error) {
+	limit_param, ok := parameters["limit"]
+
+	if !ok {
+		limit_param = []string{"0"}
+	}
+
+	limit, err := strconv.Atoi(limit_param[0])
+
+	if err != nil {
+		return nil, errors.New("Could not convert 'limit' to int.")
+	}
+
+	// Remove "limit" from parameters before querying db
+	delete(parameters, "limit")
+
+	query, err := database.CreateFilterQuery(parameters, models.Profile{})
 
 	if err != nil {
 		return nil, err
 	}
 
-	interests := []string{}
-	if interests_string != "" {
-		interests = strings.Split(interests_string, ",")
+	profiles := []models.Profile{}
+	err = db.FindAll("profiles", query, &profiles)
+
+	if err != nil {
+		return nil, err
 	}
 
-	filtered_profiles := []models.Profile{}
-
-	for _, profile := range profiles.Profiles {
-		// Filter by teamStatus
-		if teamStatus != "" && teamStatus != profile.TeamStatus {
-			continue
-		}
-
-		// Filter by interests
-		interest_match_count := 0
-
-		for _, interest := range profile.Interests {
-			for _, search_interest := range interests {
-				if interest == search_interest {
-					interest_match_count += 1
-					break
-				}
-			}
-		}
-
-		if interest_match_count == len(interests) {
-			filtered_profiles = append(filtered_profiles, profile)
-			continue
-		}
-	}
+	// TODO: add some kind of recommendation sort/metric here
 
 	if limit > 0 {
-		limit = utils.Min(limit, len(filtered_profiles))
-		filtered_profiles = filtered_profiles[:limit]
+		limit = utils.Min(limit, len(profiles))
+		profiles = profiles[:limit]
 	}
 
 	profile_list := models.ProfileList{
-		Profiles: filtered_profiles,
+		Profiles: profiles,
 	}
 
 	return &profile_list, nil

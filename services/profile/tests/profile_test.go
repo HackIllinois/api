@@ -356,7 +356,13 @@ func TestGetFilteredProfiles(t *testing.T) {
 	}
 	err = db.Insert("profiles", &profile)
 
-	filtered_profile_list, err := service.GetFilteredProfiles("Found Team", "C++,Machine Learning", 0)
+	parameters := map[string][]string{
+		"teamStatus": {"Found Team"},
+		"interests": {"C++,Machine Learning"},
+		"limit": {"0"},
+	}
+
+	filtered_profile_list, err := service.GetFilteredProfiles(parameters)
 
 	if err != nil {
 		t.Fatal(err)
@@ -396,7 +402,13 @@ func TestGetFilteredProfiles(t *testing.T) {
 	}
 
 	// Add a limit and test that
-	filtered_profile_list, err = service.GetFilteredProfiles("Found Team", "C++,Machine Learning", 1)
+	parameters = map[string][]string{
+		"teamStatus": {"Found Team"},
+		"interests": {"C++,Machine Learning"},
+		"limit": {"1"},
+	}
+
+	filtered_profile_list, err = service.GetFilteredProfiles(parameters)
 
 	expected_filtered_profile_list = models.ProfileList{
 		Profiles: []models.Profile{
@@ -420,7 +432,13 @@ func TestGetFilteredProfiles(t *testing.T) {
 	}
 
 	// Change the interests to be off by one
-	filtered_profile_list, err = service.GetFilteredProfiles("Found Team", "C++,Machine Learning,Additional Interest", 0)
+	parameters = map[string][]string{
+		"teamStatus": {"Found Team"},
+		"interests": {"C++,Machine Learning,Additional Interest"},
+		"limit": {"0"},
+	}
+
+	filtered_profile_list, err = service.GetFilteredProfiles(parameters)
 
 	expected_filtered_profile_list = models.ProfileList{
 		Profiles: []models.Profile{
@@ -444,7 +462,12 @@ func TestGetFilteredProfiles(t *testing.T) {
 	}
 
 	// Remove filter by interests
-	filtered_profile_list, err = service.GetFilteredProfiles("Found Team", "", 0)
+	parameters = map[string][]string{
+		"teamStatus": {"Found Team"},
+		"limit": {"0"},
+	}
+
+	filtered_profile_list, err = service.GetFilteredProfiles(parameters)
 
 	expected_filtered_profile_list = models.ProfileList{
 		Profiles: []models.Profile{
@@ -480,7 +503,12 @@ func TestGetFilteredProfiles(t *testing.T) {
 	}
 
 	// Remove filter by teamStatus
-	filtered_profile_list, err = service.GetFilteredProfiles("", "C++,Machine Learning,Additional Interest", 0)
+	parameters = map[string][]string{
+		"interests": {"C++,Machine Learning,Additional Interest"},
+		"limit": {"0"},
+	}
+
+	filtered_profile_list, err = service.GetFilteredProfiles(parameters)
 
 	expected_filtered_profile_list = models.ProfileList{
 		Profiles: []models.Profile{

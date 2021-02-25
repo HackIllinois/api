@@ -10,16 +10,18 @@ Returns the profile stored for the current user.
 Response format:
 ```
 {
-    "id": "github0000001"
-    "name": "John Smith",
-    "email": "john@gmail.com",
-    "github": "JSmith",
-    "linkedin": "john-smith",
-    "interests": [
-        "deep learning",
-        "python"
-    ]
+    “id”: “github123456”,
+    “firstName”: “John”,
+    “lastName”: “Doe”,
+    “points”: 2021,
+    “timezone”: “Americas UTC+8”,
+    “avatarUrl”: “https://github.com/.../profile.jpg”,
+    “discord”: “patrick#1234”,
+    “teamStatus”: “looking”,
+    “description”: “Lorem Ipsum…”,
+    “interests”: [“C++”, “Machine Learning”]
 }
+
 ```
 
 GET /profile/{id}
@@ -30,15 +32,16 @@ Returns the profile stored for user that has the ID ``{id}``.
 Response format:
 ```
 {
-    "id": "github0000001"
-    "name": "John Smith",
-    "email": "john@gmail.com",
-    "github": "JSmith",
-    "linkedin": "john-smith",
-    "interests": [
-        "deep learning",
-        "python"
-    ]
+    “id”: “github123456”,
+    “firstName”: “John”,
+    “lastName”: “Doe”,
+    “points”: 2021,
+    “timezone”: “Americas UTC+8”,
+    “avatarUrl”: “https://github.com/.../profile.jpg”,
+    “discord”: “patrick#1234”,
+    “teamStatus”: “looking”,
+    “description”: “Lorem Ipsum…”,
+    “interests”: [“C++”, “Machine Learning”]
 }
 ```
 
@@ -52,29 +55,31 @@ Response format:
 {
     profiles: [
         {
-            "id": "github0000001"
-            "name": "John Smith",
-            "email": "john@gmail.com",
-            "github": "JSmith",
-            "linkedin": "john-smith",
-            "interests": [
-                "deep learning",
-                "ice skating",
-                "python"
-            ]
+            “id”: “github123456”,
+            “firstName”: “John”,
+            “lastName”: “Doe”,
+            “points”: 2021,
+            “timezone”: “Americas UTC+8”,
+            “avatarUrl”: “https://github.com/.../profile.jpg”,
+            “discord”: “patrick#1234”,
+            “teamStatus”: “looking”,
+            “description”: “Lorem Ipsum…”,
+            “interests”: [“C++”, “Machine Learning”]
         },
         {
-            "id": "github0000002"
-            "name": "Smith John",
-            "email": "smith@gmail.com",
-            "github": "SJohn",
-            "linkedin": "smith-john",
-            "interests": [
-                "classical music",
-                "deep learning",
-                "python"
-            ]
-        }
+            “id”: “github123456”,
+            “firstName”: “John”,
+            “lastName”: “Doe”,
+            “points”: 2021,
+            “timezone”: “Americas UTC+8”,
+            “avatarUrl”: “https://github.com/.../profile.jpg”,
+            “discord”: “patrick#1234”,
+            “teamStatus”: “looking”,
+            “description”: “Lorem Ipsum…”,
+            “interests”: [“C++”, “Machine Learning”]
+        },
+    ]
+}
 ```
 
 
@@ -86,29 +91,30 @@ Creates a profile for the user with the `id` in the JWT token provided in the Au
 Request format:
 ```
 {
-    "name": "John Smith",
-    "email": "john@gmail.com",
-    "github": "JSmith",
-    "linkedin": "john-smith",
-    "interests": [
-        "python",
-        "deepLearning"
-    ]
+    “firstName”: “John”,
+    “lastName”: “Doe”,
+    “timezone”: “Americas UTC+8”,
+    “avatarUrl”: “https://github.com/.../profile.jpg”,
+    “discord”: “patrick#1234”,
+    “teamStatus”: “looking”,
+    “description”: “Lorem Ipsum…”,
+    “interests”: [“C++”, “Machine Learning”]
 }
 ```
 
 Response format:
 ```
 {
-    "id": "github0000001"
-    "name": "John Smith",
-    "email": "john@gmail.com",
-    "github": "JSmith",
-    "linkedin": "john-smith",
-    "interests": [
-        "deep learning",
-        "python"
-    ]
+    “id”: “github123456”,
+    “firstName”: “John”,
+    “lastName”: “Doe”,
+    “points”: 2021,
+    “timezone”: “Americas UTC+8”,
+    “avatarUrl”: “https://github.com/.../profile.jpg”,
+    “discord”: “patrick#1234”,
+    “teamStatus”: “looking”,
+    “description”: “Lorem Ipsum…”,
+    “interests”: [“C++”, “Machine Learning”]
 }
 ```
 
@@ -121,29 +127,30 @@ This returns the updated profile information.
 Request format:
 ```
 {
-    "name": "John Smith",
-    "email": "john@gmail.com",
-    "github": "JSmith",
-    "linkedin": "john-smith",
-    "interests": [
-        "deep learning",
-        "python"
-    ]
+    “firstName”: “John”,
+    “lastName”: “Doe”,
+    “timezone”: “Americas UTC+8”,
+    “avatarUrl”: “https://github.com/.../profile.jpg”,
+    “discord”: “patrick#1234”,
+    “teamStatus”: “looking”,
+    “description”: “Lorem Ipsum…”,
+    “interests”: [“C++”, “Machine Learning”]
 }
 ```
 
 Response format:
 ```
 {
-    "id": "github0000001"
-    "name": "John Smith",
-    "email": "john@gmail.com",
-    "github": "JSmith",
-    "linkedin": "john-smith",
-    "interests": [
-        "deep learning",
-        "python"
-    ]
+    “id”: “github123456”,
+    “firstName”: “John”,
+    “lastName”: “Doe”,
+    “points”: 2021,
+    “timezone”: “Americas UTC+8”,
+    “avatarUrl”: “https://github.com/.../profile.jpg”,
+    “discord”: “patrick#1234”,
+    “teamStatus”: “looking”,
+    “description”: “Lorem Ipsum…”,
+    “interests”: [“C++”, “Machine Learning”]
 }
 ```
 
@@ -157,15 +164,16 @@ This returns the deleted profile information.
 Response format:
 ```
 {
-    "id": "github0000001"
-    "name": "John Smith",
-    "email": "john@gmail.com",
-    "github": "JSmith",
-    "linkedin": "john-smith",
-    "interests": [
-        "deep learning",
-        "python"
-    ]
+    “id”: “github123456”,
+    “firstName”: “John”,
+    “lastName”: “Doe”,
+    “points”: 2021,
+    “timezone”: “Americas UTC+8”,
+    “avatarUrl”: “https://github.com/.../profile.jpg”,
+    “discord”: “patrick#1234”,
+    “teamStatus”: “looking”,
+    “description”: “Lorem Ipsum…”,
+    “interests”: [“C++”, “Machine Learning”]
 }
 ```
 
@@ -179,31 +187,31 @@ Response format:
 {
     profiles: [
         {
-            "id": "github0000001"
-            "name": "John Smith",
-            "email": "john@gmail.com",
-            "github": "JSmith",
-            "linkedin": "john-smith",
-            "interests": [
-                "deep learning",
-                "ice skating",
-                "python"
-            ],
-            "points": 1000,
+            “id”: “github123456”,
+            “firstName”: “John”,
+            “lastName”: “Doe”,
+            “points”: 2021,
+            “timezone”: “Americas UTC+8”,
+            “avatarUrl”: “https://github.com/.../profile.jpg”,
+            “discord”: “patrick#1234”,
+            “teamStatus”: “looking”,
+            “description”: “Lorem Ipsum…”,
+            “interests”: [“C++”, “Machine Learning”]
         },
         {
-            "id": "github0000002"
-            "name": "Smith John",
-            "email": "smith@gmail.com",
-            "github": "SJohn",
-            "linkedin": "smith-john",
-            "interests": [
-                "classical music",
-                "deep learning",
-                "python"
-            ],
-            "points": 500,
-        }
+            “id”: “github123456”,
+            “firstName”: “John”,
+            “lastName”: “Doe”,
+            “points”: 2021,
+            “timezone”: “Americas UTC+8”,
+            “avatarUrl”: “https://github.com/.../profile.jpg”,
+            “discord”: “patrick#1234”,
+            “teamStatus”: “looking”,
+            “description”: “Lorem Ipsum…”,
+            “interests”: [“C++”, “Machine Learning”]
+        },
+    ]
+}
 ```
 
 GET /profile/search/?teamStatus=value&interests=value,value,value&limit=value
@@ -225,29 +233,29 @@ Response format:
 {
     profiles: [
         {
-            "id": "github0000001"
-            "name": "John Smith",
-            "email": "john@gmail.com",
-            "github": "JSmith",
-            "linkedin": "john-smith",
-            "interests": [
-                "deep learning",
-                "ice skating",
-                "python"
-            ],
-            "points": 1000,
+            “id”: “github123456”,
+            “firstName”: “John”,
+            “lastName”: “Doe”,
+            “points”: 2021,
+            “timezone”: “Americas UTC+8”,
+            “avatarUrl”: “https://github.com/.../profile.jpg”,
+            “discord”: “patrick#1234”,
+            “teamStatus”: “looking”,
+            “description”: “Lorem Ipsum…”,
+            “interests”: [“C++”, “Machine Learning”]
         },
         {
-            "id": "github0000002"
-            "name": "Smith John",
-            "email": "smith@gmail.com",
-            "github": "SJohn",
-            "linkedin": "smith-john",
-            "interests": [
-                "classical music",
-                "deep learning",
-                "python"
-            ],
-            "points": 500,
-        }
+            “id”: “github123456”,
+            “firstName”: “John”,
+            “lastName”: “Doe”,
+            “points”: 2021,
+            “timezone”: “Americas UTC+8”,
+            “avatarUrl”: “https://github.com/.../profile.jpg”,
+            “discord”: “patrick#1234”,
+            “teamStatus”: “looking”,
+            “description”: “Lorem Ipsum…”,
+            “interests”: [“C++”, “Machine Learning”]
+        },
+    ]
+}
 ```

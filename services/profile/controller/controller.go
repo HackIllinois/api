@@ -159,14 +159,19 @@ func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
 func GetProfileLeaderboard(w http.ResponseWriter, r *http.Request) {
 	parameters := r.URL.Query()
 
-	limit, err := strconv.Atoi(parameters.Get("limit"))
+	limit_str = parameters.Get("limit")
+	if limit_str == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must specify limit."))
+		return
+	}
+
+	limit, err := strconv.Atoi(limit_str)
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to convert limit argument to int."))
 		return
 	}
 
 	user_profile_list, err := service.GetProfileLeaderboard(limit)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get the profile leaderboard."))
 		return
@@ -181,14 +186,19 @@ func GetProfileLeaderboard(w http.ResponseWriter, r *http.Request) {
 func GetFilteredProfiles(w http.ResponseWriter, r *http.Request) {
 	parameters := r.URL.Query()
 
-	limit, err := strconv.Atoi(parameters.Get("limit"))
+	limit_str = parameters.Get("limit")
+	if limit_str == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must specify limit."))
+		return
+	}
+
+	limit, err := strconv.Atoi(limit_str)
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to convert limit argument to int."))
 		return
 	}
 
 	filtered_profile_list, err := service.GetFilteredProfiles(parameters.Get("teamStatus"), parameters.Get("interests"), limit)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get the filtered profiles."))
 		return

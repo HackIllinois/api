@@ -528,7 +528,9 @@ func TestGetProfileLeaderboard(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	leaderboard, err := service.GetProfileLeaderboard(0)
+	parameters := map[string][]string{}
+
+	leaderboard, err := service.GetProfileLeaderboard(parameters)
 
 	if err != nil {
 		t.Fatal(err)
@@ -587,7 +589,11 @@ func TestGetProfileLeaderboard(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	leaderboard, err = service.GetProfileLeaderboard(0)
+	parameters = map[string][]string{
+		"limit": {"0"},
+	}
+
+	leaderboard, err = service.GetProfileLeaderboard(parameters)
 
 	if err != nil {
 		t.Fatal(err)
@@ -638,7 +644,11 @@ func TestGetProfileLeaderboard(t *testing.T) {
 	}
 
 	// Add a limit and test again
-	leaderboard, err = service.GetProfileLeaderboard(2) // Get the top two
+	parameters = map[string][]string{
+		"limit": {"2"}, // Get the top two
+	}
+
+	leaderboard, err = service.GetProfileLeaderboard(parameters)
 
 	if err != nil {
 		t.Fatal(err)

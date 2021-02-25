@@ -2,9 +2,11 @@ package service
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 
 	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/profile/config"
 	"github.com/HackIllinois/api/services/profile/models"
 	"gopkg.in/go-playground/validator.v9"
@@ -148,7 +150,19 @@ func GetAllProfiles() (*models.ProfileList, error) {
 	Returns a list of "limit" profiles sorted decesending by points.
 	If "limit" is not provided, this will return a list of all profiles.
 */
-func GetProfileLeaderboard(limit int) (*models.ProfileList, error) {
+func GetProfileLeaderboard(parameters map[string][]string) (*models.ProfileList, error) {
+	limit_param, ok := parameters["limit"]
+
+	if !ok {
+		limit_param = []string{"0"}
+	}
+
+	limit, err := strconv.Atoi(limit_param[0])
+
+	if err != nil {
+		return nil, errors.New("Could not convert 'limit' to int.")
+	}
+
 	profiles := []models.Profile{}
 
 	sort_field := database.SortField{
@@ -156,13 +170,14 @@ func GetProfileLeaderboard(limit int) (*models.ProfileList, error) {
 		Reversed: true,
 	}
 
-	err := db.FindAllSorted("profiles", nil, []database.SortField{sort_field}, &profiles)
+	err = db.FindAllSorted("profiles", nil, []database.SortField{sort_field}, &profiles)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if limit != 0 { // If no limit is provided, it will default to 0, and all profiles will be returned
+	if limit > 0 {
+		limit = utils.Min(limit, len(profiles))
 		profiles = profiles[:limit]
 	}
 
@@ -214,7 +229,8 @@ func GetFilteredProfiles(teamStatus string, interests_string string, limit int) 
 		}
 	}
 
-	if limit != 0 { // If no limit is provided, it will default to 0, and all profiles will be returned
+	if limit > 0 {
+		limit = utils.Min(limit, len(filtered_profiles))
 		filtered_profiles = filtered_profiles[:limit]
 	}
 
@@ -223,5 +239,4 @@ func GetFilteredProfiles(teamStatus string, interests_string string, limit int) 
 	}
 
 	return &profile_list, nil
-
 }

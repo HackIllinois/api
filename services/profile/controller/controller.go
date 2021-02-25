@@ -23,7 +23,6 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/search/", GetFilteredProfiles).Methods("GET")
 	router.HandleFunc("/leaderboard/", GetProfileLeaderboard).Methods("GET")
 	router.HandleFunc("/{id}/", GetProfileById).Methods("GET")
-
 }
 
 /*
@@ -46,9 +45,7 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 	GetProfileById is used to get a profile for a provided id.
 */
 func GetProfileById(w http.ResponseWriter, r *http.Request) {
-	parameters := r.URL.Query()
-
-	id := parameters.Get("id")
+	id := mux.Vars(r)["id"]
 
 	user_profile, err := service.GetProfile(id)
 
@@ -126,6 +123,7 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 */
 func DeleteProfile(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
+
 	if id == "" {
 		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 		return
@@ -145,7 +143,6 @@ func DeleteProfile(w http.ResponseWriter, r *http.Request) {
 	GetAllProfiles is the endpoint to get all active user profiles
 */
 func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
-
 	user_profile_list, err := service.GetAllProfiles()
 
 	if err != nil {
@@ -160,7 +157,6 @@ func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
 	GetProfileLeaderboard is the endpoint used to return a list of profiles, sorted by the amount of points they have (descending).
 */
 func GetProfileLeaderboard(w http.ResponseWriter, r *http.Request) {
-
 	parameters := r.URL.Query()
 
 	limit, err := strconv.Atoi(parameters.Get("limit"))

@@ -794,7 +794,7 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 	// Remove the interests filter. Now every profile should show up except for those that are "Not Looking" for a team.
 
 	parameters = map[string][]string{
-		"limit": {"1"},
+		"limit": {"0"},
 	}
 
 	filtered_profile_list, err = service.GetValidFilteredProfiles(parameters)

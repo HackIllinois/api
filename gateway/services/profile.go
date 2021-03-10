@@ -50,11 +50,18 @@ var ProfileRoutes = arbor.RouteCollection{
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetProfileLeaderboard).ServeHTTP,
 	},
 	arbor.Route{
-		"GetFilteredProfiles",
+		"GetValidFilteredProfiles",
 		"GET",
 		"/profile/search/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetFilteredProfiles).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetValidFilteredProfiles).ServeHTTP,
 	},
+	arbor.Route{
+		"GetFilteredProfiles",
+		"GET",
+		"/profile/filtered/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetFilteredProfiles).ServeHTTP,
+	},
+	// This needs to be the last route in order to prevent endpoints like "search", "leaderboard" from accidentally being routed as the {id} variable.
 	arbor.Route{
 		"GetUserProfileById",
 		"GET",
@@ -72,6 +79,10 @@ func GetProfileById(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
+func GetValidFilteredProfiles(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
 }
 

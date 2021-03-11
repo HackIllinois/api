@@ -234,7 +234,7 @@ func GetFilteredProfiles(parameters map[string][]string) (*models.ProfileList, e
 }
 
 func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileList, error) {
-	parameters["TeamStatusNot"] = append(parameters["TeamStatusNot"], "Not Looking")
+	parameters["teamStatusNot"] = append(parameters["teamStatusNot"], "Not Looking")
 	filtered_profile_list, err := GetFilteredProfiles(parameters)
 
 	if err != nil {

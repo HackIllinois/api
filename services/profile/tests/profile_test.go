@@ -850,7 +850,7 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 	// Add a TeamStatus filter.
 
 	parameters = map[string][]string{
-		"TeamStatus": {"Looking For Team"},
+		"teamStatus": {"Looking For Team"},
 		"limit":      {"0"},
 	}
 

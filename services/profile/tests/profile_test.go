@@ -786,7 +786,7 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 		Description: "Hello",
 		Discord:     "testdiscordusername3",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Looking for Team",
+		TeamStatus:  "Looking For Team",
 		Interests:   []string{},
 	}
 	err = db.Insert("profiles", &profile)
@@ -838,7 +838,52 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 				Description: "Hello",
 				Discord:     "testdiscordusername3",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Looking for Team",
+				TeamStatus:  "Looking For Team",
+				Interests:   []string{},
+			},
+		},
+	}
+	if !reflect.DeepEqual(filtered_profile_list, &expected_filtered_profile_list) {
+		t.Errorf("Wrong profile list. Expected %v, got %v", expected_filtered_profile_list, filtered_profile_list)
+	}
+
+	// Add a TeamStatus filter.
+
+	parameters = map[string][]string{
+		"TeamStatus": {"Looking For Team"},
+		"limit":      {"0"},
+	}
+
+	filtered_profile_list, err = service.GetValidFilteredProfiles(parameters)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_filtered_profile_list = models.ProfileList{
+		Profiles: []models.Profile{
+			{
+				ID:          "testid",
+				FirstName:   "testfirstname",
+				LastName:    "testlastname",
+				Points:      0,
+				Timezone:    "America/Chicago",
+				Description: "Hi",
+				Discord:     "testdiscordusername",
+				AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
+				TeamStatus:  "Looking For Team",
+				Interests:   []string{"testinterest1", "testinterest2"},
+			},
+			{
+				ID:          "testid4",
+				FirstName:   "testfirstname3",
+				LastName:    "testlastname3",
+				Points:      342,
+				Timezone:    "America/New York",
+				Description: "Hello",
+				Discord:     "testdiscordusername3",
+				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				TeamStatus:  "Looking For Team",
 				Interests:   []string{},
 			},
 		},

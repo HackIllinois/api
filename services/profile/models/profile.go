@@ -6,7 +6,7 @@ type Profile struct {
 	LastName    string   `json:"lastName"`
 	Points      int      `json:"points"`
 	Timezone    string   `json:"timezone"`
-	Description string   `json:"description`
+	Description string   `json:"description"`
 	Discord     string   `json:"discord"`
 	AvatarUrl   string   `json:"avatarUrl"`
 	TeamStatus  string   `json:"teamStatus"`

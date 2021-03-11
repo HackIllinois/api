@@ -181,3 +181,18 @@ func GetFilteredProfiles(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(filtered_profile_list)
 }
+
+/*
+	Filters the profiles by TeamStatus and Interests. Additionally filters out profiles that have the TeamStatus "Not Looking".
+*/
+func GetValidFilteredProfiles(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+
+	filtered_profile_list, err := service.GetValidFilteredProfiles(parameters)
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get the valid filtered profiles."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(filtered_profile_list)
+}

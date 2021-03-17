@@ -47,7 +47,7 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetProfileLeaderboard",
 		"GET",
 		"/profile/leaderboard/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetProfileLeaderboard).ServeHTTP,
+		http.HandlerFunc(GetProfileLeaderboard).ServeHTTP,
 	},
 	arbor.Route{
 		"GetValidFilteredProfiles",

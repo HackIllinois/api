@@ -564,31 +564,19 @@ func TestGetProfileLeaderboard(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_leaderboard := models.ProfileList{
-		Profiles: []models.Profile{
+	expected_leaderboard := models.LeaderboardEntryList{
+		LeaderboardEntries: []models.LeaderboardEntry{
 			{
-				ID:          "testid2",
-				FirstName:   "testfirstname2",
-				LastName:    "testlastname2",
-				Points:      340,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername2",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
-				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
+				ID:        "testid2",
+				FirstName: "testfirstname2",
+				LastName:  "testlastname2",
+				Points:    340,
 			},
 			{
-				ID:          "testid",
-				FirstName:   "testfirstname",
-				LastName:    "testlastname",
-				Points:      0,
-				Timezone:    "America/Chicago",
-				Description: "Hi",
-				Discord:     "testdiscordusername",
-				AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
-				TeamStatus:  "Looking For Team",
-				Interests:   []string{"testinterest1", "testinterest2"},
+				ID:        "testid",
+				FirstName: "testfirstname",
+				LastName:  "testlastname",
+				Points:    0,
 			},
 		},
 	}
@@ -627,43 +615,25 @@ func TestGetProfileLeaderboard(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_leaderboard = models.ProfileList{
-		Profiles: []models.Profile{
+	expected_leaderboard = models.LeaderboardEntryList{
+		LeaderboardEntries: []models.LeaderboardEntry{
 			{
-				ID:          "testid3",
-				FirstName:   "testfirstname3",
-				LastName:    "testlastname3",
-				Points:      999,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername3",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
-				Interests:   []string{"Cpp"},
+				ID:        "testid3",
+				FirstName: "testfirstname3",
+				LastName:  "testlastname3",
+				Points:    999,
 			},
 			{
-				ID:          "testid2",
-				FirstName:   "testfirstname2",
-				LastName:    "testlastname2",
-				Points:      340,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername2",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
-				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
+				ID:        "testid2",
+				FirstName: "testfirstname2",
+				LastName:  "testlastname2",
+				Points:    340,
 			},
 			{
-				ID:          "testid",
-				FirstName:   "testfirstname",
-				LastName:    "testlastname",
-				Points:      0,
-				Timezone:    "America/Chicago",
-				Description: "Hi",
-				Discord:     "testdiscordusername",
-				AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
-				TeamStatus:  "Looking For Team",
-				Interests:   []string{"testinterest1", "testinterest2"},
+				ID:        "testid",
+				FirstName: "testfirstname",
+				LastName:  "testlastname",
+				Points:    0,
 			},
 		},
 	}
@@ -682,31 +652,19 @@ func TestGetProfileLeaderboard(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_leaderboard = models.ProfileList{
-		Profiles: []models.Profile{
+	expected_leaderboard = models.LeaderboardEntryList{
+		LeaderboardEntries: []models.LeaderboardEntry{
 			{
-				ID:          "testid3",
-				FirstName:   "testfirstname3",
-				LastName:    "testlastname3",
-				Points:      999,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername3",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
-				Interests:   []string{"Cpp"},
+				ID:        "testid3",
+				FirstName: "testfirstname3",
+				LastName:  "testlastname3",
+				Points:    999,
 			},
 			{
-				ID:          "testid2",
-				FirstName:   "testfirstname2",
-				LastName:    "testlastname2",
-				Points:      340,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername2",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
-				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
+				ID:        "testid2",
+				FirstName: "testfirstname2",
+				LastName:  "testlastname2",
+				Points:    340,
 			},
 		},
 	}

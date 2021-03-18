@@ -191,24 +191,12 @@ Response format:
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
-            "timezone": "Americas UTC+8",
-            "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234",
-            "teamStatus": "looking",
-            "description": "Lorem Ipsum…",
-            "interests": ["C++", "Machine Learning"]
         },
         {
             "id": "github123456",
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
-            "timezone": "Americas UTC+8",
-            "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234",
-            "teamStatus": "looking",
-            "description": "Lorem Ipsum…",
-            "interests": ["C++", "Machine Learning"]
         },
     ]
 }

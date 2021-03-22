@@ -24,6 +24,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/", CreateEvent).Methods("POST")
 	router.HandleFunc("/", UpdateEvent).Methods("PUT")
 	router.HandleFunc("/", GetAllEvents).Methods("GET")
+	router.HandleFunc("/code/{id}/", GetEventCode).Methods("GET")
 
 	router.HandleFunc("/track/", MarkUserAsAttendingEvent).Methods("POST")
 	router.HandleFunc("/track/event/{id}/", GetEventTrackingInfo).Methods("GET")
@@ -103,8 +104,9 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&event)
 
 	event.ID = utils.GenerateUniqueID()
+	var code = utils.GenerateUniqueCode()
 
-	err := service.CreateEvent(event.ID, event)
+	err := service.CreateEvent(event.ID, code, event)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not create new event."))
@@ -143,6 +145,22 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_event)
+}
+
+/*
+	Endpoint to get the code associated with an event (or nil)
+*/
+func GetEventCode(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	code, err := service.GetEventCode(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
+		return
+	}
+
+	json.NewEncoder(w).Encode(code)
 }
 
 /*

@@ -10,3 +10,9 @@ func GenerateUniqueID() string {
 	rand.Read(id)
 	return hex.EncodeToString(id)
 }
+
+func GenerateUniqueCode() string {
+	id := make([]byte, 3)
+	rand.Read(id)
+	return hex.EncodeToString(id)
+}

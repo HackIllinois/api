@@ -147,7 +147,7 @@ func GetFilteredEvents(parameters map[string][]string) (*models.EventList, error
 /*
 	Creates an event with the given id
 */
-func CreateEvent(id string, event models.Event) error {
+func CreateEvent(id string, code string, event models.Event) error {
 	err := validate.Struct(event)
 
 	if err != nil {
@@ -175,6 +175,17 @@ func CreateEvent(id string, event models.Event) error {
 	}
 
 	err = db.Insert("eventtrackers", &event_tracker)
+
+	if err != nil {
+		return err
+	}
+
+	event_code := models.EventCode{
+		ID:   id,
+		Code: code,
+	}
+
+	err = db.Insert("eventcodes", &event_code)
 
 	return err
 }
@@ -460,4 +471,39 @@ func GetStats() (map[string]interface{}, error) {
 	}
 
 	return stats, nil
+}
+
+/*
+	Check if an event can be redeemed for points, i.e., that the point timeout has not been reached
+	Returns true if the current time is between `PreEventCheckinIntervalInMinutes` number of minutes before the event, and the end of event.
+*/
+func CanRedeemPoints(event_id string) (bool, error) {
+	event, err := GetEvent(event_id)
+
+	if err != nil {
+		return false, err
+	}
+
+	expiration_time := event.PointExpiration
+	current_time := time.Now().Unix()
+
+	return current_time < expiration_time, nil
+}
+
+/*
+	Returns the code of the event with the given id
+*/
+func GetEventCode(id string) (*models.EventCode, error) {
+	query := database.QuerySelector{
+		"id": id,
+	}
+
+	var eventCode models.EventCode
+	err := db.FindOne("eventcodes", query, &eventCode)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &eventCode, nil
 }

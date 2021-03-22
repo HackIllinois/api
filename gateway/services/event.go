@@ -85,6 +85,12 @@ var EventRoutes = arbor.RouteCollection{
 		"/event/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateEvent).ServeHTTP,
 	},
+	arbor.Route{
+		"GetEventCode",
+		"GET",
+		"/event/code/{id}/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetEventCode).ServeHTTP,
+	},
 }
 
 func GetEvent(w http.ResponseWriter, r *http.Request) {
@@ -105,6 +111,10 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 
 func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	arbor.PUT(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
+}
+
+func GetEventCode(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }
 
 func MarkUserAsAttendingEvent(w http.ResponseWriter, r *http.Request) {

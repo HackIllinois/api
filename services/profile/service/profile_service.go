@@ -103,6 +103,17 @@ func CreateProfile(id string, profile models.Profile) error {
 
 	err = db.Insert("profiles", &profile)
 
+	if err != nil {
+		return err
+	}
+
+	attendance_tracker := models.AttendanceTracker{
+		ID:     id,
+		Events: []string{},
+	}
+
+	err = db.Insert("profileattendance", &attendance_tracker)
+
 	return err
 }
 

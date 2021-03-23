@@ -25,6 +25,9 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/", UpdateEvent).Methods("PUT")
 	router.HandleFunc("/", GetAllEvents).Methods("GET")
 	router.HandleFunc("/code/{id}/", GetEventCode).Methods("GET")
+	router.HandleFunc("/code/{id}/", UpdateEventCode).Methods("PUT")
+
+	router.HandleFunc("/checkin/{code}/", Checkin).Methods("GET")
 
 	router.HandleFunc("/track/", MarkUserAsAttendingEvent).Methods("POST")
 	router.HandleFunc("/track/event/{id}/", GetEventTrackingInfo).Methods("GET")
@@ -161,6 +164,58 @@ func GetEventCode(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(code)
+}
+
+/*
+	Endpoint to update an event code and end time
+*/
+func UpdateEventCode(w http.ResponseWriter, r *http.Request) {
+	var eventCode models.EventCode
+	json.NewDecoder(r.Body).Decode(&eventCode)
+
+	err := service.UpdateEventCode(eventCode.ID, eventCode)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the code and timestamp of the event."))
+		return
+	}
+
+	updated_event, err := service.GetEventCode(eventCode.ID)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated event code and timestamp details."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(updated_event)
+}
+
+/*
+	Endpoint to get the code associated with an event (or nil)
+*/
+func Checkin(w http.ResponseWriter, r *http.Request) {
+	event_code := mux.Vars(r)["code"]
+
+	valid, err := service.CanRedeemPoints(event_code)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
+		return
+	}
+
+	result := models.CheckinResult{
+		NewPoints:   -1,
+		TotalPoints: -1,
+		Status:      "Success",
+	}
+
+	if !valid {
+		result.Status = "InvalidTime"
+	}
+
+	// TODO: Valid checkin time means we must query the user's profile, add the event to their list of events, and increment their points.
+
+	json.NewEncoder(w).Encode(result)
 }
 
 /*

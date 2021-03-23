@@ -91,6 +91,18 @@ var EventRoutes = arbor.RouteCollection{
 		"/event/code/{id}/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetEventCode).ServeHTTP,
 	},
+	arbor.Route{
+		"UpdateEventCode",
+		"PUT",
+		"/event/code/{id}/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(PutEventCode).ServeHTTP,
+	},
+	arbor.Route{
+		"Checkin",
+		"GET",
+		"/event/checkin/{code}/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(Checkin).ServeHTTP,
+	},
 }
 
 func GetEvent(w http.ResponseWriter, r *http.Request) {
@@ -114,6 +126,14 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetEventCode(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
+}
+
+func PutEventCode(w http.ResponseWriter, r *http.Request) {
+	arbor.PUT(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
+}
+
+func Checkin(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }
 

@@ -181,8 +181,9 @@ func CreateEvent(id string, code string, event models.Event) error {
 	}
 
 	event_code := models.EventCode{
-		ID:   id,
-		Code: code,
+		ID:         id,
+		Code:       code,
+		Expiration: 1521388800,
 	}
 
 	err = db.Insert("eventcodes", &event_code)
@@ -477,21 +478,28 @@ func GetStats() (map[string]interface{}, error) {
 	Check if an event can be redeemed for points, i.e., that the point timeout has not been reached
 	Returns true if the current time is between `PreEventCheckinIntervalInMinutes` number of minutes before the event, and the end of event.
 */
-func CanRedeemPoints(event_id string) (bool, error) {
-	event, err := GetEvent(event_id)
+func CanRedeemPoints(event_code string) (bool, error) {
+	query := database.QuerySelector{
+		"code": event_code,
+	}
 
-	if err != nil {
+	var eventCode models.EventCode
+	err := db.FindOne("eventcodes", query, &eventCode)
+
+	if err == database.ErrNotFound {
+		return false, errors.New("No event has that code")
+	} else if err != nil {
 		return false, err
 	}
 
-	expiration_time := event.PointExpiration
+	expiration_time := eventCode.Expiration
 	current_time := time.Now().Unix()
 
 	return current_time < expiration_time, nil
 }
 
 /*
-	Returns the code of the event with the given id
+	Returns the eventcode struct for the event with the given id
 */
 func GetEventCode(id string) (*models.EventCode, error) {
 	query := database.QuerySelector{
@@ -506,4 +514,18 @@ func GetEventCode(id string) (*models.EventCode, error) {
 	}
 
 	return &eventCode, nil
+}
+
+/*
+	Updates the event code and end time with the given id
+*/
+func UpdateEventCode(id string, eventCode models.EventCode) error {
+
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	err := db.Update("eventcodes", selector, &eventCode)
+
+	return err
 }

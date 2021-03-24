@@ -296,3 +296,66 @@ Response format:
 }
 ```
 
+GET /profile/favorite/
+-------------------------
+
+Returns a list of profiles that the user has favorited.
+
+Response format:
+```
+{
+    id: "testid", 
+    profiles: [
+        "testid3",
+    ]
+}
+```
+
+POST /profile/favorite/add/
+-------------------------
+Adds a profile to the specified user's favorite list, and returns the updated list of favorite profiles.
+
+Request format:
+```
+{
+    profileId: "testid2"
+}
+```
+
+Response format:
+```
+{
+    id: "testid"
+    profiles: [
+        "testid3",
+        "testid2",
+    ]
+}
+```
+
+POST /profile/favorite/remove/
+-------------------------
+Removes a profile from the specified user's favorite list, and returns the updated list of favorite profiles.
+
+Request format:
+```
+{
+    profileId: "testid3"
+}
+```
+
+Response format:
+```
+{
+    id: "testid"
+    profiles: [
+        "testid2",
+    ]
+}
+```
+
+
+
+
+
+

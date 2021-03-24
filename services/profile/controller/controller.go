@@ -21,6 +21,11 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/list/", GetAllProfiles).Methods("GET")
 	router.HandleFunc("/search/", GetFilteredProfiles).Methods("GET")
 	router.HandleFunc("/leaderboard/", GetProfileLeaderboard).Methods("GET")
+
+	router.HandleFunc("/favorite/", GetProfileFavorites).Methods("GET")
+	router.HandleFunc("/favorite/add/", AddProfileFavorite).Methods("POST")
+	router.HandleFunc("/favorite/remove/", RemoveProfileFavorite).Methods("POST")
+
 	router.HandleFunc("/{id}/", GetProfileById).Methods("GET")
 }
 
@@ -195,4 +200,72 @@ func GetValidFilteredProfiles(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(filtered_profile_list)
+}
+
+/*
+	Endpoint to get the current user's profile favorites
+*/
+func GetProfileFavorites(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	favorites, err := service.GetProfileFavorites(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's profile favorites."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(favorites)
+}
+
+/*
+	Endpoint to add a profile favorite for the current user
+*/
+func AddProfileFavorite(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	var profile_favorite_modification models.ProfileFavoriteModification
+	json.NewDecoder(r.Body).Decode(&profile_favorite_modification)
+
+	err := service.AddProfileFavorite(id, profile_favorite_modification.ProfileID)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not add a profile favorite for the current user."))
+		return
+	}
+
+	favorites, err := service.GetProfileFavorites(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated user profile favorites."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(favorites)
+}
+
+/*
+	Endpoint to remove a profile favorite for the current user
+*/
+func RemoveProfileFavorite(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	var profile_favorite_modification models.ProfileFavoriteModification
+	json.NewDecoder(r.Body).Decode(&profile_favorite_modification)
+
+	err := service.RemoveProfileFavorite(id, profile_favorite_modification.ProfileID)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not remove a profile favorite for the current user."))
+		return
+	}
+
+	favorites, err := service.GetProfileFavorites(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated user profile favorites."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(favorites)
 }

@@ -1,7 +1,6 @@
 Profile
 ============
 
-
 GET /profile/
 -------------------------
 
@@ -24,7 +23,7 @@ Response format:
 
 ```
 
-GET /profile/{id}
+GET /profile/{id}/
 -------------------------
 
 Returns the profile stored for user that has the ID ``{id}``.
@@ -179,6 +178,8 @@ Response format:
 
 GET /profile/leaderboard/?limit=
 -------------------------
+
+**Public endpoint.**
 
 Returns a list of profiles sorted by points descending. If a ``limit`` parameter is provided, it will return the first ``limit`` profiles. Otherwise, it will return all of the profiles.
 

@@ -35,7 +35,7 @@ func GetProjectFavorites(w http.ResponseWriter, r *http.Request) {
 	favorites, err := service.GetProjectFavorites(id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's project favourites."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's project favorites."))
 		return
 	}
 
@@ -87,7 +87,7 @@ func RemoveProjectFavorite(w http.ResponseWriter, r *http.Request) {
 	favorites, err := service.GetProjectFavorites(id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated project favourites for the user (post-removal)."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated project favorites for the user (post-removal)."))
 		return
 	}
 

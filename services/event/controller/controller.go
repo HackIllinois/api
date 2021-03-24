@@ -17,6 +17,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/favorite/", GetEventFavorites).Methods("GET")
 	router.HandleFunc("/favorite/add/", AddEventFavorite).Methods("POST")
 	router.HandleFunc("/favorite/remove/", RemoveEventFavorite).Methods("POST")
+	router.HandleFunc("/favorite/remove/", RemoveAllEventFavorites).Methods("DELETE")
 
 	router.HandleFunc("/filter/", GetFilteredEvents).Methods("GET")
 	router.HandleFunc("/{id}/", GetEvent).Methods("GET")
@@ -240,7 +241,7 @@ func GetEventFavorites(w http.ResponseWriter, r *http.Request) {
 	favorites, err := service.GetEventFavorites(id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's event favourites."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's event favorites."))
 		return
 	}
 
@@ -292,7 +293,30 @@ func RemoveEventFavorite(w http.ResponseWriter, r *http.Request) {
 	favorites, err := service.GetEventFavorites(id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated event favourites for the user (post-removal)."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated event favorites for the user (post-removal)."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(favorites)
+}
+
+/*
+	Endpoint to remove all of the event favorites for the current user
+*/
+func RemoveAllEventFavorites(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	err := service.RemoveAllEventFavorites(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not remove all event favorites for the current user."))
+		return
+	}
+
+	favorites, err := service.GetEventFavorites(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated event favorites for the user (post-removal)."))
 		return
 	}
 

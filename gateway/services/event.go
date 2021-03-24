@@ -32,6 +32,12 @@ var EventRoutes = arbor.RouteCollection{
 		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveEventFavorite).ServeHTTP,
 	},
 	arbor.Route{
+		"RemoveAllEventFavorites",
+		"DELETE",
+		"/event/favorite/remove/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveAllEventFavorites).ServeHTTP,
+	},
+	arbor.Route{
 		"MarkUserAsAttendingEvent",
 		"POST",
 		"/event/track/",
@@ -129,4 +135,8 @@ func AddEventFavorite(w http.ResponseWriter, r *http.Request) {
 
 func RemoveEventFavorite(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
+}
+
+func RemoveAllEventFavorites(w http.ResponseWriter, r *http.Request) {
+	arbor.DELETE(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }

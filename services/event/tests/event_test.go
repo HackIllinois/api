@@ -813,3 +813,71 @@ func TestRemoveEventFavorite(t *testing.T) {
 
 	CleanupTestDB(t)
 }
+
+/*
+	Tests that clearing event favorites works correctly at the service level.
+*/
+func TestRemoveAllEventFavorites(t *testing.T) {
+	SetupTestDB(t)
+
+	// Add a second event (to test multi-event removal)
+	event := models.Event{
+		ID:          "testid2",
+		Name:        "testname2",
+		Description: "testdescription2",
+		StartTime:   TestTime,
+		EndTime:     TestTime + 60000,
+		Sponsor:     "testsponsor",
+		EventType:   "WORKSHOP",
+		Locations: []models.EventLocation{
+			{
+				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL0", "ECEB1"},
+				Latitude:    123.456,
+				Longitude:   123.456,
+			},
+		},
+	}
+
+	err := db.Insert("events", &event)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Favorite event 1
+	err = service.AddEventFavorite("testuser", "testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Favorite event 2
+	err = service.AddEventFavorite("testuser", "testid2")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = service.RemoveAllEventFavorites("testuser")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	event_favorites, err := service.GetEventFavorites("testuser")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_favorites := models.EventFavorites{
+		ID:     "testuser",
+		Events: []string{},
+	}
+
+	if !reflect.DeepEqual(event_favorites, &expected_event_favorites) {
+		t.Errorf("Wrong tracker info. Expected %v, got %v", &expected_event_favorites, event_favorites)
+	}
+
+	CleanupTestDB(t)
+}

@@ -213,10 +213,6 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 		result.Status = "InvalidTime"
 	}
 
-	// TODO: Valid checkin time means we must query the user's profile, add the event to their list of events, and increment their points.
-
-	// Find profile, determine if event already in list. If in list, then result.status=AlreadyCheckedIn, if not, then add event to list.
-	// Increment profile points with a put request
 	alreadyRedeemedEvent, err := service.AlreadyRedeemedEvent(event_id)
 
 	if err != nil {

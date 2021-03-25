@@ -254,3 +254,38 @@ func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileLi
 
 	return filtered_profile_list, nil
 }
+
+func EventRedemptionStatus(id string, event_id string) (bool, error) {
+
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	var attended_events models.AttendanceTracker
+	err := db.FindOne("profileattendance", selector, &attended_events)
+
+	if err != nil {
+		if err == database.ErrNotFound {
+			err = db.Insert("profileattendance", &models.AttendanceTracker{
+				ID:     id,
+				Events: []string{},
+			})
+
+			if err != nil {
+				return false, err
+			}
+		} else {
+			return false, err
+		}
+	}
+
+	if utils.ContainsString(attended_events.Events, event_id) {
+		return false, nil
+	} else {
+		attended_events.Events = append(attended_events.Events, event_id)
+	}
+
+	err = db.Update("profileattendance", selector, attended_events)
+
+	return true, err
+}

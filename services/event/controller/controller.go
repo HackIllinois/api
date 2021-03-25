@@ -196,7 +196,7 @@ func UpdateEventCode(w http.ResponseWriter, r *http.Request) {
 func Checkin(w http.ResponseWriter, r *http.Request) {
 	event_code := mux.Vars(r)["code"]
 
-	valid, err := service.CanRedeemPoints(event_code)
+	valid, event_id, err := service.CanRedeemPoints(event_code)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
@@ -214,6 +214,42 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO: Valid checkin time means we must query the user's profile, add the event to their list of events, and increment their points.
+
+	// Find profile, determine if event already in list. If in list, then result.status=AlreadyCheckedIn, if not, then add event to list.
+	// Increment profile points with a put request
+	alreadyRedeemedEvent, err := service.AlreadyRedeemedEvent(event_id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to verify if user already had redeemed event points"))
+		return
+	}
+
+	if alreadyRedeemedEvent {
+		result.NewPoints = 0
+		result.Status = "AlreadyCheckedIn"
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	// Determine the current event and its point value
+
+	event, err := service.GetEvent(event_id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch the event details and point value."))
+		return
+	}
+
+	// Add this point value to given profile
+	status, err := service.UpdatePoints(event.Points)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to award user with points"))
+	}
+
+	if status != true {
+		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to award user with points"))
+	}
 
 	json.NewEncoder(w).Encode(result)
 }

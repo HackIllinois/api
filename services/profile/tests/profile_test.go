@@ -58,7 +58,7 @@ func SetupTestDB(t *testing.T) {
 		Description: "Hi",
 		Discord:     "testdiscordusername",
 		AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
-		TeamStatus:  "Looking For Team",
+		TeamStatus:  "LOOKING_FOR_TEAM",
 		Interests:   []string{"testinterest1", "testinterest2"},
 	}
 
@@ -95,7 +95,7 @@ func TestGetAllProfilesService(t *testing.T) {
 		Description: "Hello",
 		Discord:     "testdiscordusername2",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Found Team",
+		TeamStatus:  "NOT_LOOKING",
 		Interests:   []string{"testinterest2"},
 	}
 
@@ -122,7 +122,7 @@ func TestGetAllProfilesService(t *testing.T) {
 				Description: "Hi",
 				Discord:     "testdiscordusername",
 				AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
-				TeamStatus:  "Looking For Team",
+				TeamStatus:  "LOOKING_FOR_TEAM",
 				Interests:   []string{"testinterest1", "testinterest2"},
 			},
 			{
@@ -134,7 +134,7 @@ func TestGetAllProfilesService(t *testing.T) {
 				Description: "Hello",
 				Discord:     "testdiscordusername2",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
+				TeamStatus:  "NOT_LOOKING",
 				Interests:   []string{"testinterest2"},
 			},
 		},
@@ -185,7 +185,7 @@ func TestGetProfileService(t *testing.T) {
 		Description: "Hi",
 		Discord:     "testdiscordusername",
 		AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
-		TeamStatus:  "Looking For Team",
+		TeamStatus:  "LOOKING_FOR_TEAM",
 		Interests:   []string{"testinterest1", "testinterest2"},
 	}
 
@@ -211,7 +211,7 @@ func TestCreateProfileService(t *testing.T) {
 		Description: "Hello",
 		Discord:     "testdiscordusername2",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Found Team",
+		TeamStatus:  "NOT_LOOKING",
 		Interests:   []string{"testinterest2"},
 	}
 
@@ -236,7 +236,7 @@ func TestCreateProfileService(t *testing.T) {
 		Description: "Hello",
 		Discord:     "testdiscordusername2",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Found Team",
+		TeamStatus:  "NOT_LOOKING",
 		Interests:   []string{"testinterest2"},
 	}
 
@@ -288,7 +288,7 @@ func TestUpdateProfileService(t *testing.T) {
 		Description: "Hello",
 		Discord:     "testdiscordusername2",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Found Team",
+		TeamStatus:  "NOT_LOOKING",
 		Interests:   []string{"testinterest2"},
 	}
 
@@ -313,7 +313,7 @@ func TestUpdateProfileService(t *testing.T) {
 		Description: "Hello",
 		Discord:     "testdiscordusername2",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Found Team",
+		TeamStatus:  "NOT_LOOKING",
 		Interests:   []string{"testinterest2"},
 	}
 
@@ -336,7 +336,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 		Description: "Hello",
 		Discord:     "testdiscordusername2",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Found Team",
+		TeamStatus:  "NOT_LOOKING",
 		Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 	}
 
@@ -351,13 +351,13 @@ func TestGetFilteredProfiles(t *testing.T) {
 		Description: "Hello",
 		Discord:     "testdiscordusername3",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Found Team",
+		TeamStatus:  "NOT_LOOKING",
 		Interests:   []string{"Cpp", "Machine Learning"},
 	}
 	err = db.Insert("profiles", &profile)
 
 	parameters := map[string][]string{
-		"teamStatus": {"Found Team"},
+		"teamStatus": {"NOT_LOOKING"},
 		"interests":  {"Cpp,Machine Learning"},
 		"limit":      {"0"},
 	}
@@ -379,7 +379,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 				Description: "Hello",
 				Discord:     "testdiscordusername2",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
+				TeamStatus:  "NOT_LOOKING",
 				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 			},
 			{
@@ -391,7 +391,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 				Description: "Hello",
 				Discord:     "testdiscordusername3",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
+				TeamStatus:  "NOT_LOOKING",
 				Interests:   []string{"Cpp", "Machine Learning"},
 			},
 		},
@@ -403,7 +403,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 
 	// Add a limit and test that
 	parameters = map[string][]string{
-		"teamStatus": {"Found Team"},
+		"teamStatus": {"NOT_LOOKING"},
 		"interests":  {"Cpp,Machine Learning"},
 		"limit":      {"1"},
 	}
@@ -421,7 +421,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 				Description: "Hello",
 				Discord:     "testdiscordusername2",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
+				TeamStatus:  "NOT_LOOKING",
 				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 			},
 		},
@@ -433,7 +433,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 
 	// Change the interests to be off by one
 	parameters = map[string][]string{
-		"teamStatus": {"Found Team"},
+		"teamStatus": {"NOT_LOOKING"},
 		"interests":  {"Cpp,Machine Learning,Additional Interest"},
 		"limit":      {"0"},
 	}
@@ -451,7 +451,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 				Description: "Hello",
 				Discord:     "testdiscordusername2",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
+				TeamStatus:  "NOT_LOOKING",
 				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 			},
 		},
@@ -463,7 +463,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 
 	// Remove filter by interests
 	parameters = map[string][]string{
-		"teamStatus": {"Found Team"},
+		"teamStatus": {"NOT_LOOKING"},
 		"limit":      {"0"},
 	}
 
@@ -480,7 +480,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 				Description: "Hello",
 				Discord:     "testdiscordusername2",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
+				TeamStatus:  "NOT_LOOKING",
 				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 			},
 			{
@@ -492,7 +492,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 				Description: "Hello",
 				Discord:     "testdiscordusername3",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
+				TeamStatus:  "NOT_LOOKING",
 				Interests:   []string{"Cpp", "Machine Learning"},
 			},
 		},
@@ -521,7 +521,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 				Description: "Hello",
 				Discord:     "testdiscordusername2",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
+				TeamStatus:  "NOT_LOOKING",
 				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 			},
 		},
@@ -546,7 +546,7 @@ func TestGetProfileLeaderboard(t *testing.T) {
 		Description: "Hello",
 		Discord:     "testdiscordusername2",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Found Team",
+		TeamStatus:  "NOT_LOOKING",
 		Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 	}
 
@@ -595,7 +595,7 @@ func TestGetProfileLeaderboard(t *testing.T) {
 		Description: "Hello",
 		Discord:     "testdiscordusername3",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Found Team",
+		TeamStatus:  "NOT_LOOKING",
 		Interests:   []string{"Cpp"},
 	}
 
@@ -687,7 +687,7 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 		Description: "Hello",
 		Discord:     "testdiscordusername2",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Not Looking",
+		TeamStatus:  "NOT_LOOKING",
 		Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
 	}
 
@@ -702,7 +702,7 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 		Description: "Hello",
 		Discord:     "testdiscordusername3",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Found Team",
+		TeamStatus:  "NOT_LOOKING",
 		Interests:   []string{"Cpp", "Machine Learning"},
 	}
 	err = db.Insert("profiles", &profile)
@@ -729,7 +729,7 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 				Description: "Hello",
 				Discord:     "testdiscordusername3",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
+				TeamStatus:  "NOT_LOOKING",
 				Interests:   []string{"Cpp", "Machine Learning"},
 			},
 		},
@@ -744,12 +744,12 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 		Description: "Hello",
 		Discord:     "testdiscordusername3",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Looking For Team",
+		TeamStatus:  "LOOKING_FOR_TEAM",
 		Interests:   []string{},
 	}
 	err = db.Insert("profiles", &profile)
 
-	// Remove the interests filter. Now every profile should show up except for those that are "Not Looking" for a team.
+	// Remove the interests filter. Now every profile should show up except for those that are "NOT_LOOKING" for a team.
 
 	parameters = map[string][]string{
 		"limit": {"0"},
@@ -772,20 +772,8 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 				Description: "Hi",
 				Discord:     "testdiscordusername",
 				AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
-				TeamStatus:  "Looking For Team",
+				TeamStatus:  "LOOKING_FOR_TEAM",
 				Interests:   []string{"testinterest1", "testinterest2"},
-			},
-			{
-				ID:          "testid3",
-				FirstName:   "testfirstname3",
-				LastName:    "testlastname3",
-				Points:      342,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername3",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Found Team",
-				Interests:   []string{"Cpp", "Machine Learning"},
 			},
 			{
 				ID:          "testid4",
@@ -796,7 +784,7 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 				Description: "Hello",
 				Discord:     "testdiscordusername3",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Looking For Team",
+				TeamStatus:  "LOOKING_FOR_TEAM",
 				Interests:   []string{},
 			},
 		},
@@ -808,7 +796,7 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 	// Add a TeamStatus filter.
 
 	parameters = map[string][]string{
-		"teamStatus": {"Looking For Team"},
+		"teamStatus": {"LOOKING_FOR_TEAM"},
 		"limit":      {"0"},
 	}
 
@@ -829,7 +817,7 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 				Description: "Hi",
 				Discord:     "testdiscordusername",
 				AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
-				TeamStatus:  "Looking For Team",
+				TeamStatus:  "LOOKING_FOR_TEAM",
 				Interests:   []string{"testinterest1", "testinterest2"},
 			},
 			{
@@ -841,7 +829,7 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 				Description: "Hello",
 				Discord:     "testdiscordusername3",
 				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "Looking For Team",
+				TeamStatus:  "LOOKING_FOR_TEAM",
 				Interests:   []string{},
 			},
 		},

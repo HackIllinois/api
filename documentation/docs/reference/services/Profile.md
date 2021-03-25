@@ -6,6 +6,8 @@ GET /profile/
 
 Returns the profile stored for the current user.
 
+Valid values for ``teamStatus`` are ``LOOKING_FOR_MEMBERS``, ``LOOKING_FOR_TEAM``, and ``NOT_LOOKING``.
+
 Response format:
 ```
 {
@@ -16,7 +18,7 @@ Response format:
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
     "discord": "patrick#1234",
-    "teamStatus": "looking",
+    "teamStatus": "LOOKING_FOR_TEAM",
     "description": "Lorem Ipsum…",
     "interests": ["C++", "Machine Learning"]
 }
@@ -38,7 +40,7 @@ Response format:
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
     "discord": "patrick#1234",
-    "teamStatus": "looking",
+    "teamStatus": "LOOKING_FOR_TEAM",
     "description": "Lorem Ipsum…",
     "interests": ["C++", "Machine Learning"]
 }
@@ -61,7 +63,7 @@ Response format:
             "timezone": "Americas UTC+8",
             "avatarUrl": "https://github.com/.../profile.jpg",
             "discord": "patrick#1234",
-            "teamStatus": "looking",
+            "teamStatus": "LOOKING_FOR_TEAM",
             "description": "Lorem Ipsum…",
             "interests": ["C++", "Machine Learning"]
         },
@@ -73,7 +75,7 @@ Response format:
             "timezone": "Americas UTC+8",
             "avatarUrl": "https://github.com/.../profile.jpg",
             "discord": "patrick#1234",
-            "teamStatus": "looking",
+            "teamStatus": "LOOKING_FOR_MEMBERS",
             "description": "Lorem Ipsum…",
             "interests": ["C++", "Machine Learning"]
         },
@@ -95,7 +97,7 @@ Request format:
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
     "discord": "patrick#1234",
-    "teamStatus": "looking",
+    "teamStatus": "LOOKING_FOR_TEAM",
     "description": "Lorem Ipsum…",
     "interests": ["C++", "Machine Learning"]
 }
@@ -111,7 +113,7 @@ Response format:
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
     "discord": "patrick#1234",
-    "teamStatus": "looking",
+    "teamStatus": "LOOKING_FOR_TEAM",
     "description": "Lorem Ipsum…",
     "interests": ["C++", "Machine Learning"]
 }
@@ -131,7 +133,7 @@ Request format:
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
     "discord": "patrick#1234",
-    "teamStatus": "looking",
+    "teamStatus": "LOOKING_FOR_TEAM",
     "description": "Lorem Ipsum…",
     "interests": ["C++", "Machine Learning"]
 }
@@ -147,7 +149,7 @@ Response format:
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
     "discord": "patrick#1234",
-    "teamStatus": "looking",
+    "teamStatus": "LOOKING_FOR_TEAM",
     "description": "Lorem Ipsum…",
     "interests": ["C++", "Machine Learning"]
 }
@@ -170,7 +172,7 @@ Response format:
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
     "discord": "patrick#1234",
-    "teamStatus": "looking",
+    "teamStatus": "LOOKING_FOR_TEAM",
     "description": "Lorem Ipsum…",
     "interests": ["C++", "Machine Learning"]
 }
@@ -208,7 +210,7 @@ GET /profile/search/?teamStatus=value&interests=value,value,value&limit=value
 
 Returns a list of profiles matching the filter conditions. 
 
-teamStatus is a string matching the user's team status.
+``teamStatus`` is a string matching the user's team status. Valid values for ``teamStatus`` are ``LOOKING_FOR_MEMBERS``, ``LOOKING_FOR_TEAM``, and ``NOT_LOOKING``.
 
 interests is a comma-separated string representing the user's interests.
 
@@ -216,7 +218,7 @@ interests is a comma-separated string representing the user's interests.
 
 If a ``limit`` parameter is provided, it will return the first matching ``limit`` profiles. Otherwise, it will return all of the matched profiles.
 
-Any users with the TeamStatus "Not Looking" will be removed.
+Any users with the TeamStatus "NOT_LOOKING" will be removed.
 
 Response format:
 ```
@@ -230,7 +232,7 @@ Response format:
             "timezone": "Americas UTC+8",
             "avatarUrl": "https://github.com/.../profile.jpg",
             "discord": "patrick#1234",
-            "teamStatus": "looking",
+            "teamStatus": "LOOKING_FOR_TEAM",
             "description": "Lorem Ipsum…",
             "interests": ["C++", "Machine Learning"]
         },
@@ -242,7 +244,7 @@ Response format:
             "timezone": "Americas UTC+8",
             "avatarUrl": "https://github.com/.../profile.jpg",
             "discord": "patrick#1234",
-            "teamStatus": "looking",
+            "teamStatus": "LOOKING_FOR_TEAM",
             "description": "Lorem Ipsum…",
             "interests": ["C++", "Machine Learning"]
         },
@@ -277,7 +279,7 @@ Response format:
             "timezone": "Americas UTC+8",
             "avatarUrl": "https://github.com/.../profile.jpg",
             "discord": "patrick#1234",
-            "teamStatus": "looking",
+            "teamStatus": "LOOKING_FOR_TEAM",
             "description": "Lorem Ipsum…",
             "interests": ["C++", "Machine Learning"]
         },
@@ -289,7 +291,7 @@ Response format:
             "timezone": "Americas UTC+8",
             "avatarUrl": "https://github.com/.../profile.jpg",
             "discord": "patrick#1234",
-            "teamStatus": "Not Looking",
+            "teamStatus": "NOT_LOOKING",
             "description": "Lorem Ipsum…",
             "interests": ["C++", "Machine Learning"]
         },

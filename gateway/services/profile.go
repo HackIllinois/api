@@ -17,19 +17,19 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetCurrentUserProfile",
 		"GET",
 		"/profile/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.ApplicantRole})).ThenFunc(GetProfile).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole})).ThenFunc(GetProfile).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateCurrentUserProfile",
 		"POST",
 		"/profile/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.ApplicantRole})).ThenFunc(CreateProfile).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole})).ThenFunc(CreateProfile).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentUserProfile",
 		"PUT",
 		"/profile/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateProfile).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateProfile).ServeHTTP,
 	},
 	arbor.Route{
 		"DeleteCurrentUserProfile",
@@ -47,13 +47,13 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetProfileLeaderboard",
 		"GET",
 		"/profile/leaderboard/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetProfileLeaderboard).ServeHTTP,
+		http.HandlerFunc(GetProfileLeaderboard).ServeHTTP,
 	},
 	arbor.Route{
 		"GetValidFilteredProfiles",
 		"GET",
 		"/profile/search/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetValidFilteredProfiles).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetValidFilteredProfiles).ServeHTTP,
 	},
 	arbor.Route{
 		"GetFilteredProfiles",
@@ -78,7 +78,7 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetUserProfileById",
 		"GET",
 		"/profile/{id}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetProfileById).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetProfileById).ServeHTTP,
 	},
 }
 

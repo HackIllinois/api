@@ -160,7 +160,7 @@ func GetAllProfiles() (*models.ProfileList, error) {
 	Returns a list of "limit" profiles sorted decesending by points.
 	If "limit" is not provided, this will return a list of all profiles.
 */
-func GetProfileLeaderboard(parameters map[string][]string) (*models.ProfileList, error) {
+func GetProfileLeaderboard(parameters map[string][]string) (*models.LeaderboardEntryList, error) {
 	limit_param, ok := parameters["limit"]
 
 	if !ok {
@@ -173,29 +173,29 @@ func GetProfileLeaderboard(parameters map[string][]string) (*models.ProfileList,
 		return nil, errors.New("Could not convert 'limit' to int.")
 	}
 
-	profiles := []models.Profile{}
+	leaderboard_entries := []models.LeaderboardEntry{}
 
 	sort_field := database.SortField{
 		Name:     "points",
 		Reversed: true,
 	}
 
-	err = db.FindAllSorted("profiles", nil, []database.SortField{sort_field}, &profiles)
+	err = db.FindAllSorted("profiles", nil, []database.SortField{sort_field}, &leaderboard_entries)
 
 	if err != nil {
 		return nil, err
 	}
 
 	if limit > 0 {
-		limit = utils.Min(limit, len(profiles))
-		profiles = profiles[:limit]
+		limit = utils.Min(limit, len(leaderboard_entries))
+		leaderboard_entries = leaderboard_entries[:limit]
 	}
 
-	profile_list := models.ProfileList{
-		Profiles: profiles,
+	leaderboard_entry_list := models.LeaderboardEntryList{
+		LeaderboardEntries: leaderboard_entries,
 	}
 
-	return &profile_list, nil
+	return &leaderboard_entry_list, nil
 }
 
 /*
@@ -245,7 +245,7 @@ func GetFilteredProfiles(parameters map[string][]string) (*models.ProfileList, e
 }
 
 func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileList, error) {
-	parameters["teamStatusNot"] = append(parameters["teamStatusNot"], "Not Looking")
+	parameters["teamStatusNot"] = append(parameters["teamStatusNot"], "NOT_LOOKING")
 	filtered_profile_list, err := GetFilteredProfiles(parameters)
 
 	if err != nil {

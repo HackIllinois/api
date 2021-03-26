@@ -186,7 +186,7 @@ func GetFilteredProfiles(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Filters the profiles by TeamStatus and Interests. Additionally filters out profiles that have the TeamStatus "Not Looking".
+	Filters the profiles by TeamStatus and Interests. Additionally filters out profiles that have the TeamStatus "NOT_LOOKING".
 */
 func GetValidFilteredProfiles(w http.ResponseWriter, r *http.Request) {
 	parameters := r.URL.Query()

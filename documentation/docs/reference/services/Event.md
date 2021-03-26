@@ -405,16 +405,26 @@ Response format:
 ```
 
 
-GET /event/checkin/{code}/
+POST /event/checkin/
 ----------------------------
 
 Retrieves a struct that contains information about the event checkin status, point increment value, and total point number.
+Takes in a struct that contains an event checkin code.
+
+Request format:
+```
+{
+    "code": "new_code",
+}
+
+```
+
 
 Response format:
 ```
 {
-    "NewPoints": 10,
-    "TotalPoints": 10,
+    "newPoints": 10,
+    "totalPoints": 10,
     "status": "Success"
 }
 ```

@@ -89,19 +89,19 @@ var EventRoutes = arbor.RouteCollection{
 		"GetEventCode",
 		"GET",
 		"/event/code/{id}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetEventCode).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetEventCode).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateEventCode",
 		"PUT",
 		"/event/code/{id}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(PutEventCode).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(PutEventCode).ServeHTTP,
 	},
 	arbor.Route{
 		"Checkin",
-		"GET",
-		"/event/checkin/{code}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(Checkin).ServeHTTP,
+		"POST",
+		"/event/checkin/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(Checkin).ServeHTTP,
 	},
 }
 
@@ -134,7 +134,7 @@ func PutEventCode(w http.ResponseWriter, r *http.Request) {
 }
 
 func Checkin(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
+	arbor.POST(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }
 
 func MarkUserAsAttendingEvent(w http.ResponseWriter, r *http.Request) {

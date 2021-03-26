@@ -1,35 +1,55 @@
 package service
 
 import (
+	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/event/config"
+	"github.com/HackIllinois/api/services/profile/models"
 )
 
 /*
 	Checks if the user has been checked in already
 */
-func AlreadyRedeemedEvent(event_id string) (bool, error) {
-	status, err := apirequest.Get(config.PROFILE_SERVICE+"/checkin/"+event_id+"/", nil)
-
-	if err != nil {
-		return false, err
+func RedeemEvent(id string, event_id string) (*models.RedeemEventResponse, error) {
+	var redemption_status models.RedeemEventResponse
+	event_info := models.RedeemEventRequest{
+		ID:      id,
+		EventID: event_id,
 	}
 
-	return status == http.StatusOK, nil
+	status, err := apirequest.Post(config.PROFILE_SERVICE+"/event/checkin/", &event_info, &redemption_status)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if status != http.StatusOK {
+		return nil, errors.New("Unable to check event redemption")
+	}
+
+	return &redemption_status, nil
 }
 
 /*
 	Performs a get and a put operation on the profile to increment the current number of points
 */
-func UpdatePoints(points int) (bool, error) {
-	status, err := apirequest.Get(config.PROFILE_SERVICE+"/award/"+strconv.Itoa(points)+"/", nil)
+func AwardPoints(id string, points int) (*models.Profile, error) {
+	var profile models.Profile
+	point_info := models.AwardPointsRequest{
+		ID:     id,
+		Points: points,
+	}
+	status, err := apirequest.Post(config.PROFILE_SERVICE+"/points/award/", point_info, &profile)
 
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
-	return status == http.StatusOK, nil
+	if status != http.StatusOK {
+		return nil, errors.New("Unable to award points")
+	}
+
+	return &profile, nil
 }

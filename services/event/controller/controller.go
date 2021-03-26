@@ -27,7 +27,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/code/{id}/", GetEventCode).Methods("GET")
 	router.HandleFunc("/code/{id}/", UpdateEventCode).Methods("PUT")
 
-	router.HandleFunc("/checkin/{code}/", Checkin).Methods("GET")
+	router.HandleFunc("/checkin/", Checkin).Methods("POST")
 
 	router.HandleFunc("/track/", MarkUserAsAttendingEvent).Methods("POST")
 	router.HandleFunc("/track/event/{id}/", GetEventTrackingInfo).Methods("GET")
@@ -194,9 +194,17 @@ func UpdateEventCode(w http.ResponseWriter, r *http.Request) {
 	Endpoint to get the code associated with an event (or nil)
 */
 func Checkin(w http.ResponseWriter, r *http.Request) {
-	event_code := mux.Vars(r)["code"]
+	id := r.Header.Get("HackIllinois-Identity")
 
-	valid, event_id, err := service.CanRedeemPoints(event_code)
+	if id == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		return
+	}
+
+	var checkin_request models.CheckinRequest
+	json.NewDecoder(r.Body).Decode(&checkin_request)
+
+	valid, event_id, err := service.CanRedeemPoints(checkin_request.Code)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
@@ -213,14 +221,14 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 		result.Status = "InvalidTime"
 	}
 
-	alreadyRedeemedEvent, err := service.AlreadyRedeemedEvent(event_id)
+	redemption_status, err := service.RedeemEvent(id, event_id)
 
-	if err != nil {
+	if err != nil || redemption_status == nil {
 		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to verify if user already had redeemed event points"))
 		return
 	}
 
-	if alreadyRedeemedEvent {
+	if redemption_status.Status != "Success" {
 		result.NewPoints = 0
 		result.Status = "AlreadyCheckedIn"
 		json.NewEncoder(w).Encode(result)
@@ -236,16 +244,17 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	result.NewPoints = event.Points
+
 	// Add this point value to given profile
-	status, err := service.UpdatePoints(event.Points)
+	profile, err := service.AwardPoints(id, event.Points)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to award user with points"))
+		return
 	}
 
-	if status != true {
-		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to award user with points"))
-	}
+	result.TotalPoints = profile.Points
 
 	json.NewEncoder(w).Encode(result)
 }

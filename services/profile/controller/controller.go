@@ -3,7 +3,6 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/profile/models"
@@ -22,8 +21,8 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/list/", GetAllProfiles).Methods("GET")
 	router.HandleFunc("/search/", GetFilteredProfiles).Methods("GET")
 	router.HandleFunc("/leaderboard/", GetProfileLeaderboard).Methods("GET")
-	router.HandleFunc("/checkin/{id}/", IsEventRedeemed).Methods("GET")
-	router.HandleFunc("/award/{points}/", AwardPoints).Methods("GET")
+	router.HandleFunc("/event/checkin/", RedeemEvent).Methods("POST")
+	router.HandleFunc("/points/award/", AwardPoints).Methods("POST")
 	router.HandleFunc("/{id}/", GetProfileById).Methods("GET")
 }
 
@@ -201,20 +200,16 @@ func GetValidFilteredProfiles(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	IsEventRedeemed checks the appropriate table to check whether the given event id has already been redeemed. If the event is not in the table, it add to the array.
+	RedeemEvent checks the appropriate table to check whether the given event id has already been redeemed. If the event is not in the table, it add to the array.
 */
-func IsEventRedeemed(w http.ResponseWriter, r *http.Request) {
-	id := r.Header.Get("HackIllinois-Identity")
-	event_id := mux.Vars(r)["id"]
+func RedeemEvent(w http.ResponseWriter, r *http.Request) {
+	var request models.RedeemEventRequest
+	json.NewDecoder(r.Body).Decode(&request)
 
-	redemption_status, err := service.EventRedemptionStatus(id, event_id)
+	redemption_status, err := service.RedeemEvent(request.ID, request.EventID)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not check if event was redeemed for id "+id+"."))
-		return
-	}
-	if !redemption_status {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Event with id "+id+" was already redeemed."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not check if event was redeemed for id "+request.ID+" and event id "+request.EventID+". "+redemption_status.Status))
 		return
 	}
 
@@ -225,26 +220,26 @@ func IsEventRedeemed(w http.ResponseWriter, r *http.Request) {
 	AwardPoints gives the specified number of points to the current user.
 */
 func AwardPoints(w http.ResponseWriter, r *http.Request) {
-	id := r.Header.Get("HackIllinois-Identity")
-	points, err := strconv.Atoi(mux.Vars(r)["points"])
+	var request models.AwardPointsRequest
+	json.NewDecoder(r.Body).Decode(&request)
 
-	user_profile, err := service.GetProfile(id)
+	user_profile, err := service.GetProfile(request.ID)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile for id "+id+" when trying to award points."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile for id "+request.ID+" when trying to award points."))
 		return
 	}
 
-	user_profile.Points += points
+	user_profile.Points += request.Points
 
-	err = service.UpdateProfile(id, *user_profile)
+	err = service.UpdateProfile(request.ID, *user_profile)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the profile when trying to award points."))
 		return
 	}
 
-	updated_profile, err := service.GetProfile(id)
+	updated_profile, err := service.GetProfile(request.ID)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated profile details after awarding points."))

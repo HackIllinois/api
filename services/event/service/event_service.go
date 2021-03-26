@@ -183,7 +183,7 @@ func CreateEvent(id string, code string, event models.Event) error {
 	event_code := models.EventCode{
 		ID:         id,
 		Code:       code,
-		Expiration: 1521388800,
+		Expiration: event.EndTime,
 	}
 
 	err = db.Insert("eventcodes", &event_code)
@@ -520,7 +520,6 @@ func GetEventCode(id string) (*models.EventCode, error) {
 	Updates the event code and end time with the given id
 */
 func UpdateEventCode(id string, eventCode models.EventCode) error {
-
 	selector := database.QuerySelector{
 		"id": id,
 	}

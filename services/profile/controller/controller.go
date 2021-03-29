@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/profile/models"
 	"github.com/HackIllinois/api/services/profile/service"
 	"github.com/gorilla/mux"
@@ -30,7 +31,14 @@ func SetupController(route *mux.Route) {
 func GetProfile(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
-	user_profile, err := service.GetProfile(id)
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
+
+	user_profile, err := service.GetProfile(profile_id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get current user's profile."))
@@ -44,12 +52,12 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 	GetProfileById is used to get a profile for a provided id.
 */
 func GetProfileById(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
+	profile_id := mux.Vars(r)["id"]
 
-	user_profile, err := service.GetProfile(id)
+	user_profile, err := service.GetProfile(profile_id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile for id "+id+"."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile for profile id "+profile_id))
 		return
 	}
 
@@ -67,16 +75,26 @@ func CreateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err == nil {
+		errors.WriteError(w, r, errors.DatabaseError("", "User already has a profile with profile id "+profile_id))
+		return
+	}
+
+	profile_id = utils.GenerateUniqueID()
+
 	var profile models.Profile
 	json.NewDecoder(r.Body).Decode(&profile)
-	err := service.CreateProfile(id, profile)
+
+	err = service.CreateProfile(id, profile_id, profile)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not create new profile."))
 		return
 	}
 
-	created_profile, err := service.GetProfile(id)
+	created_profile, err := service.GetProfile(profile_id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get created profile."))
@@ -97,17 +115,24 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
+
 	var profile models.Profile
 	json.NewDecoder(r.Body).Decode(&profile)
 
-	err := service.UpdateProfile(id, profile)
+	err = service.UpdateProfile(profile_id, profile)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the profile."))
 		return
 	}
 
-	updated_profile, err := service.GetProfile(id)
+	updated_profile, err := service.GetProfile(profile_id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated profile details."))
@@ -128,7 +153,14 @@ func DeleteProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	deleted_profile, err := service.DeleteProfile(id)
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
+
+	deleted_profile, err := service.DeleteProfile(profile_id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not delete the profile."))

@@ -49,6 +49,17 @@ var TestTime = time.Now().Unix()
 	Initialize db with a test profile
 */
 func SetupTestDB(t *testing.T) {
+	id_map := models.IdMap{
+		UserID:    "testuserid",
+		ProfileID: "testid",
+	}
+
+	err := db.Insert("profileids", &id_map)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	profile := models.Profile{
 		ID:          "testid",
 		FirstName:   "testfirstname",
@@ -62,7 +73,7 @@ func SetupTestDB(t *testing.T) {
 		Interests:   []string{"testinterest1", "testinterest2"},
 	}
 
-	err := db.Insert("profiles", &profile)
+	err = db.Insert("profiles", &profile)
 
 	if err != nil {
 		t.Fatal(err)
@@ -215,7 +226,7 @@ func TestCreateProfileService(t *testing.T) {
 		Interests:   []string{"testinterest2"},
 	}
 
-	err := service.CreateProfile("testid2", new_profile)
+	err := service.CreateProfile("testuserid2", "testid2", new_profile)
 
 	if err != nil {
 		t.Fatal(err)
@@ -242,6 +253,17 @@ func TestCreateProfileService(t *testing.T) {
 
 	if !reflect.DeepEqual(profile, &expected_profile) {
 		t.Errorf("Wrong profile info. Expected %v, got %v", expected_profile, profile)
+	}
+
+	// Test that id mapping was inserted correctly
+	profile_id1, err := service.GetProfileIdFromUserId("testuserid2")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if profile_id1 != "testid2" {
+		t.Errorf("Wrong profile mapping found for user %s. Expected %s but got %s", "testuserid2", "testid2", profile_id1)
 	}
 
 	CleanupTestDB(t)

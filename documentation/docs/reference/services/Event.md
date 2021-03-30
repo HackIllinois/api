@@ -361,3 +361,70 @@ Response format:
 	]
 }
 ```
+
+
+
+GET /event/code/{id}/
+----------------------------
+
+Gets a struct that contains information about the event code (generated upon event creation) and expiration time.
+By convention, event checkin codes will be 6 bytes long.
+
+Response format:
+```
+{
+    "id": "52fdfc072182654f163f5f0f9a621d72",
+    "code": "sample_code",
+    "expiration": 1521388800
+}
+
+```
+
+PUT /event/code/{id}/
+----------------------------
+
+Updates a struct that contains information about the event code (generated upon event creation) and expiration time.
+
+Request format:
+```
+{
+    "id": "52fdfc072182654f163f5f0f9a621d72",
+    "code": "new_code",
+    "expiration": 1521388800
+}
+
+```
+
+Response format:
+```
+{
+    "id": "52fdfc072182654f163f5f0f9a621d72",
+    "code": "new_code",
+    "expiration": 1521388800
+}
+```
+
+
+POST /event/checkin/
+----------------------------
+
+Retrieves a struct that contains information about the event checkin status, point increment value, and total point number.
+Takes in a struct that contains an event checkin code.
+
+Request format:
+```
+{
+    "code": "new_code",
+}
+
+```
+
+
+Response format:
+```
+{
+    "newPoints": 10,
+    "totalPoints": 10,
+    "status": "Success"
+}
+```

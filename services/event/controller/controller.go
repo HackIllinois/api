@@ -24,6 +24,10 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/", CreateEvent).Methods("POST")
 	router.HandleFunc("/", UpdateEvent).Methods("PUT")
 	router.HandleFunc("/", GetAllEvents).Methods("GET")
+	router.HandleFunc("/code/{id}/", GetEventCode).Methods("GET")
+	router.HandleFunc("/code/{id}/", UpdateEventCode).Methods("PUT")
+
+	router.HandleFunc("/checkin/", Checkin).Methods("POST")
 
 	router.HandleFunc("/track/", MarkUserAsAttendingEvent).Methods("POST")
 	router.HandleFunc("/track/event/{id}/", GetEventTrackingInfo).Methods("GET")
@@ -103,8 +107,9 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&event)
 
 	event.ID = utils.GenerateUniqueID()
+	var code = utils.GenerateUniqueCode()
 
-	err := service.CreateEvent(event.ID, event)
+	err := service.CreateEvent(event.ID, code, event)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not create new event."))
@@ -143,6 +148,115 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_event)
+}
+
+/*
+	Endpoint to get the code associated with an event (or nil)
+*/
+func GetEventCode(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	code, err := service.GetEventCode(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
+		return
+	}
+
+	json.NewEncoder(w).Encode(code)
+}
+
+/*
+	Endpoint to update an event code and end time
+*/
+func UpdateEventCode(w http.ResponseWriter, r *http.Request) {
+	var eventCode models.EventCode
+	json.NewDecoder(r.Body).Decode(&eventCode)
+
+	err := service.UpdateEventCode(eventCode.ID, eventCode)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the code and timestamp of the event."))
+		return
+	}
+
+	updated_event, err := service.GetEventCode(eventCode.ID)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated event code and timestamp details."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(updated_event)
+}
+
+/*
+	Endpoint to get the code associated with an event (or nil)
+*/
+func Checkin(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	if id == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		return
+	}
+
+	var checkin_request models.CheckinRequest
+	json.NewDecoder(r.Body).Decode(&checkin_request)
+
+	valid, event_id, err := service.CanRedeemPoints(checkin_request.Code)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
+		return
+	}
+
+	result := models.CheckinResult{
+		NewPoints:   -1,
+		TotalPoints: -1,
+		Status:      "Success",
+	}
+
+	if !valid {
+		result.Status = "InvalidTime"
+	}
+
+	redemption_status, err := service.RedeemEvent(id, event_id)
+
+	if err != nil || redemption_status == nil {
+		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to verify if user already had redeemed event points"))
+		return
+	}
+
+	if redemption_status.Status != "Success" {
+		result.NewPoints = 0
+		result.Status = "AlreadyCheckedIn"
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	// Determine the current event and its point value
+
+	event, err := service.GetEvent(event_id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch the event details and point value."))
+		return
+	}
+
+	result.NewPoints = event.Points
+
+	// Add this point value to given profile
+	profile, err := service.AwardPoints(id, event.Points)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to award user with points"))
+		return
+	}
+
+	result.TotalPoints = profile.Points
+
+	json.NewEncoder(w).Encode(result)
 }
 
 /*

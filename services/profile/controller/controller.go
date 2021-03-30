@@ -19,8 +19,9 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/", DeleteProfile).Methods("DELETE")
 
 	router.HandleFunc("/list/", GetAllProfiles).Methods("GET")
-	router.HandleFunc("/search/", GetFilteredProfiles).Methods("GET")
 	router.HandleFunc("/leaderboard/", GetProfileLeaderboard).Methods("GET")
+	router.HandleFunc("/search/", GetValidFilteredProfiles).Methods("GET")
+	router.HandleFunc("/filtered/", GetFilteredProfiles).Methods("GET")
 	router.HandleFunc("/event/checkin/", RedeemEvent).Methods("POST")
 	router.HandleFunc("/points/award/", AwardPoints).Methods("POST")
 	router.HandleFunc("/{id}/", GetProfileById).Methods("GET")

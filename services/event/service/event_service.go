@@ -147,7 +147,7 @@ func GetFilteredEvents(parameters map[string][]string) (*models.EventList, error
 /*
 	Creates an event with the given id
 */
-func CreateEvent(id string, event models.Event) error {
+func CreateEvent(id string, code string, event models.Event) error {
 	err := validate.Struct(event)
 
 	if err != nil {
@@ -175,6 +175,18 @@ func CreateEvent(id string, event models.Event) error {
 	}
 
 	err = db.Insert("eventtrackers", &event_tracker)
+
+	if err != nil {
+		return err
+	}
+
+	event_code := models.EventCode{
+		ID:         id,
+		Code:       code,
+		Expiration: event.EndTime,
+	}
+
+	err = db.Insert("eventcodes", &event_code)
 
 	return err
 }
@@ -460,4 +472,59 @@ func GetStats() (map[string]interface{}, error) {
 	}
 
 	return stats, nil
+}
+
+/*
+	Check if an event can be redeemed for points, i.e., that the point timeout has not been reached
+	Returns true if the current time is between `PreEventCheckinIntervalInMinutes` number of minutes before the event, and the end of event.
+*/
+func CanRedeemPoints(event_code string) (bool, string, error) {
+	query := database.QuerySelector{
+		"code": event_code,
+	}
+
+	var eventCode models.EventCode
+	err := db.FindOne("eventcodes", query, &eventCode)
+
+	if err == database.ErrNotFound {
+		return false, "invalid", errors.New("No event has that code")
+	} else if err != nil {
+		return false, "invalid", err
+	}
+
+	expiration_time := eventCode.Expiration
+	current_time := time.Now().Unix()
+
+	return current_time < expiration_time, eventCode.ID, nil
+}
+
+/*
+	Returns the eventcode struct for the event with the given id
+*/
+func GetEventCode(id string) (*models.EventCode, error) {
+	query := database.QuerySelector{
+		"id": id,
+	}
+
+	var eventCode models.EventCode
+	err := db.FindOne("eventcodes", query, &eventCode)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &eventCode, nil
+}
+
+/*
+	Updates the event code and end time with the given id
+*/
+func UpdateEventCode(id string, eventCode models.EventCode) error {
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	err := db.Update("eventcodes", selector, &eventCode)
+
+	return err
 }

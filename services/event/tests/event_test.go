@@ -66,6 +66,7 @@ func SetupTestDB(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
+		Points: 10,
 	}
 
 	err := db.Insert("events", &event)
@@ -152,6 +153,7 @@ func TestGetAllEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
+				Points: 10,
 			},
 			{
 				ID:          "testid2",
@@ -170,6 +172,7 @@ func TestGetAllEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
+				Points: 0,
 			},
 		},
 	}
@@ -221,6 +224,7 @@ func TestGetFilteredEventsService(t *testing.T) {
 				Longitude: 123.456,
 			},
 		},
+		Points: 0,
 	}
 
 	err := db.Insert("events", &event)
@@ -258,6 +262,7 @@ func TestGetFilteredEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
+				Points: 0,
 			},
 		},
 	}
@@ -295,6 +300,7 @@ func TestGetFilteredEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
+				Points: 10,
 			},
 			{
 				ID:          "testid2",
@@ -313,6 +319,7 @@ func TestGetFilteredEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
+				Points: 0,
 			},
 		},
 	}
@@ -370,6 +377,7 @@ func TestGetEventService(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
+		Points: 10,
 	}
 
 	if !reflect.DeepEqual(event, &expected_event) {
@@ -403,7 +411,7 @@ func TestCreateEventService(t *testing.T) {
 		},
 	}
 
-	err := service.CreateEvent("testid2", new_event)
+	err := service.CreateEvent("testid2", "testcode2", new_event)
 
 	if err != nil {
 		t.Fatal(err)
@@ -431,6 +439,7 @@ func TestCreateEventService(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
+		Points: 0,
 	}
 
 	if !reflect.DeepEqual(event, &expected_event) {
@@ -527,6 +536,7 @@ func TestUpdateEventService(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
+		Points: 100,
 	}
 
 	err := service.UpdateEvent("testid", event)
@@ -557,6 +567,7 @@ func TestUpdateEventService(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
+		Points: 100,
 	}
 
 	if !reflect.DeepEqual(updated_event, &expected_event) {
@@ -689,7 +700,7 @@ func TestIsEventActive(t *testing.T) {
 		},
 	}
 
-	service.CreateEvent(new_event.ID, new_event)
+	service.CreateEvent(new_event.ID, "testcode3", new_event)
 
 	is_active, err := service.IsEventActive("testid3")
 
@@ -708,7 +719,7 @@ func TestIsEventActive(t *testing.T) {
 	new_event.StartTime = TestTime
 	new_event.EndTime = TestTime + ONE_MINUTE_IN_SECONDS*20
 
-	service.CreateEvent(new_event.ID, new_event)
+	service.CreateEvent(new_event.ID, "testcode4", new_event)
 
 	is_active, err = service.IsEventActive("testid4")
 

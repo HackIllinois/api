@@ -13,6 +13,8 @@ var EVENT_PORT string
 
 var CHECKIN_SERVICE string
 
+var PROFILE_SERVICE string
+
 var EVENT_CHECKIN_TIME_RESTRICTED bool
 
 func Initialize() error {
@@ -41,6 +43,12 @@ func Initialize() error {
 	}
 
 	CHECKIN_SERVICE, err = cfg_loader.Get("CHECKIN_SERVICE")
+
+	if err != nil {
+		return err
+	}
+
+	PROFILE_SERVICE, err = cfg_loader.Get("PROFILE_SERVICE")
 
 	if err != nil {
 		return err

@@ -22,6 +22,8 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/leaderboard/", GetProfileLeaderboard).Methods("GET")
 	router.HandleFunc("/search/", GetValidFilteredProfiles).Methods("GET")
 	router.HandleFunc("/filtered/", GetFilteredProfiles).Methods("GET")
+	router.HandleFunc("/event/checkin/", RedeemEvent).Methods("POST")
+	router.HandleFunc("/points/award/", AwardPoints).Methods("POST")
 	router.HandleFunc("/{id}/", GetProfileById).Methods("GET")
 }
 
@@ -196,4 +198,54 @@ func GetValidFilteredProfiles(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(filtered_profile_list)
+}
+
+/*
+	RedeemEvent checks the appropriate table to check whether the given event id has already been redeemed. If the event is not in the table, it add to the array.
+*/
+func RedeemEvent(w http.ResponseWriter, r *http.Request) {
+	var request models.RedeemEventRequest
+	json.NewDecoder(r.Body).Decode(&request)
+
+	redemption_status, err := service.RedeemEvent(request.ID, request.EventID)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not check if event was redeemed for id "+request.ID+" and event id "+request.EventID+". "+redemption_status.Status))
+		return
+	}
+
+	json.NewEncoder(w).Encode(redemption_status)
+}
+
+/*
+	AwardPoints gives the specified number of points to the current user.
+*/
+func AwardPoints(w http.ResponseWriter, r *http.Request) {
+	var request models.AwardPointsRequest
+	json.NewDecoder(r.Body).Decode(&request)
+
+	user_profile, err := service.GetProfile(request.ID)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile for id "+request.ID+" when trying to award points."))
+		return
+	}
+
+	user_profile.Points += request.Points
+
+	err = service.UpdateProfile(request.ID, *user_profile)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the profile when trying to award points."))
+		return
+	}
+
+	updated_profile, err := service.GetProfile(request.ID)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated profile details after awarding points."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(updated_profile)
 }

@@ -103,6 +103,17 @@ func CreateProfile(id string, profile models.Profile) error {
 
 	err = db.Insert("profiles", &profile)
 
+	if err != nil {
+		return err
+	}
+
+	attendance_tracker := models.AttendanceTracker{
+		ID:     id,
+		Events: []string{},
+	}
+
+	err = db.Insert("profileattendance", &attendance_tracker)
+
 	return err
 }
 
@@ -149,7 +160,7 @@ func GetAllProfiles() (*models.ProfileList, error) {
 	Returns a list of "limit" profiles sorted decesending by points.
 	If "limit" is not provided, this will return a list of all profiles.
 */
-func GetProfileLeaderboard(parameters map[string][]string) (*models.ProfileList, error) {
+func GetProfileLeaderboard(parameters map[string][]string) (*models.LeaderboardEntryList, error) {
 	limit_param, ok := parameters["limit"]
 
 	if !ok {
@@ -162,29 +173,29 @@ func GetProfileLeaderboard(parameters map[string][]string) (*models.ProfileList,
 		return nil, errors.New("Could not convert 'limit' to int.")
 	}
 
-	profiles := []models.Profile{}
+	leaderboard_entries := []models.LeaderboardEntry{}
 
 	sort_field := database.SortField{
 		Name:     "points",
 		Reversed: true,
 	}
 
-	err = db.FindAllSorted("profiles", nil, []database.SortField{sort_field}, &profiles)
+	err = db.FindAllSorted("profiles", nil, []database.SortField{sort_field}, &leaderboard_entries)
 
 	if err != nil {
 		return nil, err
 	}
 
 	if limit > 0 {
-		limit = utils.Min(limit, len(profiles))
-		profiles = profiles[:limit]
+		limit = utils.Min(limit, len(leaderboard_entries))
+		leaderboard_entries = leaderboard_entries[:limit]
 	}
 
-	profile_list := models.ProfileList{
-		Profiles: profiles,
+	leaderboard_entry_list := models.LeaderboardEntryList{
+		LeaderboardEntries: leaderboard_entries,
 	}
 
-	return &profile_list, nil
+	return &leaderboard_entry_list, nil
 }
 
 /*
@@ -234,7 +245,7 @@ func GetFilteredProfiles(parameters map[string][]string) (*models.ProfileList, e
 }
 
 func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileList, error) {
-	parameters["teamStatusNot"] = append(parameters["teamStatusNot"], "Not Looking")
+	parameters["teamStatusNot"] = append(parameters["teamStatusNot"], "NOT_LOOKING")
 	filtered_profile_list, err := GetFilteredProfiles(parameters)
 
 	if err != nil {
@@ -242,4 +253,44 @@ func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileLi
 	}
 
 	return filtered_profile_list, nil
+}
+
+func RedeemEvent(id string, event_id string) (*models.RedeemEventResponse, error) {
+	var redemption_status models.RedeemEventResponse
+	redemption_status.Status = "Success"
+
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	var attended_events models.AttendanceTracker
+	err := db.FindOne("profileattendance", selector, &attended_events)
+
+	if err != nil {
+		if err == database.ErrNotFound {
+			err = db.Insert("profileattendance", &models.AttendanceTracker{
+				ID:     id,
+				Events: []string{},
+			})
+
+			if err != nil {
+				redemption_status.Status = "Could not add tracker to db"
+				return &redemption_status, err
+			}
+		} else {
+			redemption_status.Status = "Could not access db"
+			return &redemption_status, err
+		}
+	}
+
+	if utils.ContainsString(attended_events.Events, event_id) {
+		redemption_status.Status = "Event already redeemed"
+		return &redemption_status, nil
+	} else {
+		attended_events.Events = append(attended_events.Events, event_id)
+	}
+
+	err = db.Update("profileattendance", selector, attended_events)
+
+	return &redemption_status, err
 }

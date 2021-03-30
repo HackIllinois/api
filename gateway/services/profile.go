@@ -17,19 +17,19 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetCurrentUserProfile",
 		"GET",
 		"/profile/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.ApplicantRole})).ThenFunc(GetProfile).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole})).ThenFunc(GetProfile).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateCurrentUserProfile",
 		"POST",
 		"/profile/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.ApplicantRole})).ThenFunc(CreateProfile).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole})).ThenFunc(CreateProfile).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentUserProfile",
 		"PUT",
 		"/profile/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateProfile).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateProfile).ServeHTTP,
 	},
 	arbor.Route{
 		"DeleteCurrentUserProfile",
@@ -47,13 +47,13 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetProfileLeaderboard",
 		"GET",
 		"/profile/leaderboard/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetProfileLeaderboard).ServeHTTP,
+		http.HandlerFunc(GetProfileLeaderboard).ServeHTTP,
 	},
 	arbor.Route{
 		"GetValidFilteredProfiles",
 		"GET",
 		"/profile/search/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetValidFilteredProfiles).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetValidFilteredProfiles).ServeHTTP,
 	},
 	arbor.Route{
 		"GetFilteredProfiles",
@@ -61,12 +61,24 @@ var ProfileRoutes = arbor.RouteCollection{
 		"/profile/filtered/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetFilteredProfiles).ServeHTTP,
 	},
+	arbor.Route{
+		"RedeemEvent",
+		"POST",
+		"/profile/event/checkin/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(RedeemEvent).ServeHTTP,
+	},
+	arbor.Route{
+		"AwardPoints",
+		"POST",
+		"/profile/points/award/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(AwardPoints).ServeHTTP,
+	},
 	// This needs to be the last route in order to prevent endpoints like "search", "leaderboard" from accidentally being routed as the {id} variable.
 	arbor.Route{
 		"GetUserProfileById",
 		"GET",
 		"/profile/{id}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetProfileById).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetProfileById).ServeHTTP,
 	},
 }
 
@@ -104,4 +116,12 @@ func DeleteProfile(w http.ResponseWriter, r *http.Request) {
 
 func GetProfileLeaderboard(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
+func RedeemEvent(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
+func AwardPoints(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
 }

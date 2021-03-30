@@ -8,10 +8,12 @@ Returns the profile stored for the current user.
 
 Valid values for ``teamStatus`` are ``LOOKING_FOR_MEMBERS``, ``LOOKING_FOR_TEAM``, and ``NOT_LOOKING``.
 
+***The `id` in the profile service refers to a separate, randomly-generated, profile-only id. This is different from the (user) `id` used in other services. When a profile is created, a mapping from the user `id` to the profile `id` is stored in the database.***
+
 Response format:
 ```
 {
-    "id": "github123456",
+    "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
@@ -33,7 +35,7 @@ Returns the profile stored for user that has the ID ``{id}``.
 Response format:
 ```
 {
-    "id": "github123456",
+    "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
@@ -56,7 +58,7 @@ Response format:
 {
     profiles: [
         {
-            "id": "github123456",
+            "id": "profileid123456",
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
@@ -68,7 +70,7 @@ Response format:
             "interests": ["C++", "Machine Learning"]
         },
         {
-            "id": "github123456",
+            "id": "profileid123456",
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
@@ -106,7 +108,7 @@ Request format:
 Response format:
 ```
 {
-    "id": "github123456",
+    "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
@@ -142,7 +144,7 @@ Request format:
 Response format:
 ```
 {
-    "id": "github123456",
+    "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
@@ -165,7 +167,7 @@ This returns the deleted profile information.
 Response format:
 ```
 {
-    "id": "github123456",
+    "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
@@ -190,13 +192,13 @@ Response format:
 {
     profiles: [
         {
-            "id": "github123456",
+            "id": "profileid123456",
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
         },
         {
-            "id": "github123456",
+            "id": "profileid123456",
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
@@ -225,7 +227,7 @@ Response format:
 {
     profiles: [
         {
-            "id": "github123456",
+            "id": "profileid123456",
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
@@ -237,7 +239,7 @@ Response format:
             "interests": ["C++", "Machine Learning"]
         },
         {
-            "id": "github123456",
+            "id": "profileid123456",
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
@@ -272,7 +274,7 @@ Response format:
 {
     profiles: [
         {
-            "id": "github123456",
+            "id": "profileid123456",
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
@@ -284,7 +286,7 @@ Response format:
             "interests": ["C++", "Machine Learning"]
         },
         {
-            "id": "github123456",
+            "id": "profileid123456",
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,

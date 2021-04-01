@@ -38,12 +38,12 @@ class AutoAccept():
             Accepts a user to the event with ``id``. Returns a bool representing if the accept was successful. 
         '''
 
-        data = {
+        json = {
             "id": id,
             "status": "ACCEPTED",
             "wave": 1
         }
-        r = requests.post(f"{self.base_url}/decision/", headers=self.headers, data=data)
+        r = requests.post(f"{self.base_url}/decision/", headers=self.headers, json=json)
         return r.ok
 
     def finalize_user(self, id: str) -> bool:
@@ -51,21 +51,21 @@ class AutoAccept():
             Finalizes a user's decision. Returns a bool representing if the finalization was successful.
         '''
 
-        data = {
+        json = {
             "id": id,
             "finalized": True
         }
 
-        r = requests.post(f"{self.base_url}/decision/finalize/", headers=self.headers, data=data)
+        r = requests.post(f"{self.base_url}/decision/finalize/", headers=self.headers, json=json)
         return r.ok
 
     def send_email(self, ids: list, template_id: str) -> bool:
-        data = {
+        json = {
             "ids": ids,
             "template": template_id
         }
 
-        r = requests.post(f"{self.base_url}/mail/send/", headers=self.headers, data=data)
+        r = requests.post(f"{self.base_url}/mail/send/", headers=self.headers, json=json)
         return r.ok
 
     def run_accept_cycle(self):
@@ -76,7 +76,6 @@ class AutoAccept():
         accepted_users = self.get_accepted_users()
 
         users_to_accept = registered_users - accepted_users
-        users_to_accept = users_to_accept[0]
 
         # 3. Accept all users in this list (RATE LIMITED)
         for user in users_to_accept:
@@ -91,7 +90,7 @@ class AutoAccept():
             time.sleep(self.RATE_LIMIT)
 
         # 5. Send email with the user ids and template (POST /mail/send/)
-        self.send_email(list(users_to_accept), "TODO_TEMPLATE_ID")
+        self.send_email(list(users_to_accept), "acceptance")
 
 if __name__ == "__main__":
     admin_jwt = os.environ["HackIllinois_Admin_JWT"]

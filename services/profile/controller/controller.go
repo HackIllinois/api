@@ -245,7 +245,14 @@ func RedeemEvent(w http.ResponseWriter, r *http.Request) {
 	var request models.RedeemEventRequest
 	json.NewDecoder(r.Body).Decode(&request)
 
-	profile_id := request.ID
+	id := request.ID
+
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
 
 	redemption_status, err := service.RedeemEvent(profile_id, request.EventID)
 
@@ -264,7 +271,14 @@ func AwardPoints(w http.ResponseWriter, r *http.Request) {
 	var request models.AwardPointsRequest
 	json.NewDecoder(r.Body).Decode(&request)
 
-	profile_id := request.ID
+	id := request.ID
+
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
 
 	user_profile, err := service.GetProfile(profile_id)
 

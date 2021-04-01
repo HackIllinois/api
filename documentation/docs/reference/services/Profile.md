@@ -10,6 +10,8 @@ Valid values for ``teamStatus`` are ``LOOKING_FOR_MEMBERS``, ``LOOKING_FOR_TEAM`
 
 ***The `id` in the profile service refers to a separate, randomly-generated, profile-only id. This is different from the (user) `id` used in other services. When a profile is created, a mapping from the user `id` to the profile `id` is stored in the database.***
 
+We will distinguish user id and profile id by using `github12456` and `profileid123456` for each, respectively, in the examples below.
+
 Response format:
 ```
 {
@@ -304,15 +306,18 @@ Response format:
 POST /profile/event/checkin/
 ----------------------------
 
+**Internal Use Only**
 Validates the status of an event that the user is trying to check into.
 This is an internal endpoint hit during the checkin process (when the user posts a code to the event service).
 The response is a status string, and throws an error (except the case when the user is already checked in).
 In the case that the user has already been checked, status is set to "Event already redeemed" and a 200 status code is still used.
 
+Note: here, the "id" actually refers to the user id, not the profile id (hence `github123456` instead of `profileid123456`)
+
 Request format:
 ```
 {
-    "id": "profileid123456",
+    "id": "github123456",
     "eventID": "52fdfc072182654f163f5f0f9a621d72"
 }
 
@@ -331,10 +336,12 @@ POST /profile/points/award/
 **Internal Use Only**
 Takes a struct with a profile and a certain number of points to increment their score by, and returns this profile upon completion.
 
+Note: here, the "id" actually refers to the user id, not the profile id (hence `github123456` instead of `profileid123456`)
+
 Request format:
 ```
 {
-    "id": "profileid123456",
+    "id": "github123456",
     "points": 10
 }
 

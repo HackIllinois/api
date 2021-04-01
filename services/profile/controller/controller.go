@@ -245,7 +245,9 @@ func RedeemEvent(w http.ResponseWriter, r *http.Request) {
 	var request models.RedeemEventRequest
 	json.NewDecoder(r.Body).Decode(&request)
 
-	redemption_status, err := service.RedeemEvent(request.ID, request.EventID)
+	profile_id := request.ID
+
+	redemption_status, err := service.RedeemEvent(profile_id, request.EventID)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not check if event was redeemed for id "+request.ID+" and event id "+request.EventID+". "+redemption_status.Status))
@@ -262,7 +264,9 @@ func AwardPoints(w http.ResponseWriter, r *http.Request) {
 	var request models.AwardPointsRequest
 	json.NewDecoder(r.Body).Decode(&request)
 
-	user_profile, err := service.GetProfile(request.ID)
+	profile_id := request.ID
+
+	user_profile, err := service.GetProfile(profile_id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile for id "+request.ID+" when trying to award points."))
@@ -271,14 +275,14 @@ func AwardPoints(w http.ResponseWriter, r *http.Request) {
 
 	user_profile.Points += request.Points
 
-	err = service.UpdateProfile(request.ID, *user_profile)
+	err = service.UpdateProfile(profile_id, *user_profile)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the profile when trying to award points."))
 		return
 	}
 
-	updated_profile, err := service.GetProfile(request.ID)
+	updated_profile, err := service.GetProfile(profile_id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated profile details after awarding points."))

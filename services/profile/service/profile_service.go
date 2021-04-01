@@ -302,12 +302,12 @@ func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileLi
 /*
   Redeems the event with `event_id` for the user with profile id `id`
 */
-func RedeemEvent(id string, event_id string) (*models.RedeemEventResponse, error) {
+func RedeemEvent(profile_id string, event_id string) (*models.RedeemEventResponse, error) {
 	var redemption_status models.RedeemEventResponse
 	redemption_status.Status = "Success"
 
 	selector := database.QuerySelector{
-		"id": id,
+		"id": profile_id,
 	}
 
 	var attended_events models.AttendanceTracker
@@ -316,7 +316,7 @@ func RedeemEvent(id string, event_id string) (*models.RedeemEventResponse, error
 	if err != nil {
 		if err == database.ErrNotFound {
 			err = db.Insert("profileattendance", &models.AttendanceTracker{
-				ID:     id,
+				ID:     profile_id,
 				Events: []string{},
 			})
 

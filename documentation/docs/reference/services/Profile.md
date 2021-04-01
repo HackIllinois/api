@@ -312,12 +312,11 @@ In the case that the user has already been checked, status is set to "Event alre
 Request format:
 ```
 {
-    "id": "github123456",
+    "id": "profileid123456",
     "eventID": "52fdfc072182654f163f5f0f9a621d72"
 }
 
 ```
-
 
 Response format:
 ```
@@ -329,22 +328,22 @@ Response format:
 POST /profile/points/award/
 ----------------------------
 
+**Internal Use Only**
 Takes a struct with a profile and a certain number of points to increment their score by, and returns this profile upon completion.
 
 Request format:
 ```
 {
-    "id": "github123456",
+    "id": "profileid123456",
     "points": 10
 }
 
 ```
 
-
 Response format:
 ```
 {
-    "id": "github123456",
+    "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
@@ -355,5 +354,63 @@ Response format:
     "description": "Lorem Ipsum…",
     "interests": ["C++", "Machine Learning"]
     "points": 10
+}
+```
+
+GET /profile/favorite/
+-------------------------
+
+Returns a list of profiles that the current user has favorited.
+
+Response format:
+```
+{
+    id: "testid", 
+    profiles: [
+        "testid3",
+    ]
+}
+```
+
+POST /profile/favorite/add/
+-------------------------
+Adds the specified profile to the current user's favorite list, and returns the updated list of favorite profiles.
+
+Request format:
+```
+{
+    id: "testid2"
+}
+```
+
+Response format:
+```
+{
+    id: "testid"
+    profiles: [
+        "testid3",
+        "testid2",
+    ]
+}
+```
+
+POST /profile/favorite/remove/
+-------------------------
+Removes the specified profile from the current user's favorite list, and returns the updated list of favorite profiles.
+
+Request format:
+```
+{
+    id: "testid3"
+}
+```
+
+Response format:
+```
+{
+    id: "testid"
+    profiles: [
+        "testid2",
+    ]
 }
 ```

@@ -23,8 +23,14 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/leaderboard/", GetProfileLeaderboard).Methods("GET")
 	router.HandleFunc("/search/", GetValidFilteredProfiles).Methods("GET")
 	router.HandleFunc("/filtered/", GetFilteredProfiles).Methods("GET")
+
 	router.HandleFunc("/event/checkin/", RedeemEvent).Methods("POST")
 	router.HandleFunc("/points/award/", AwardPoints).Methods("POST")
+
+	router.HandleFunc("/favorite/", GetProfileFavorites).Methods("GET")
+	router.HandleFunc("/favorite/add/", AddProfileFavorite).Methods("POST")
+	router.HandleFunc("/favorite/remove/", RemoveProfileFavorite).Methods("POST")
+
 	router.HandleFunc("/{id}/", GetProfileById).Methods("GET")
 }
 
@@ -239,7 +245,9 @@ func RedeemEvent(w http.ResponseWriter, r *http.Request) {
 	var request models.RedeemEventRequest
 	json.NewDecoder(r.Body).Decode(&request)
 
-	redemption_status, err := service.RedeemEvent(request.ID, request.EventID)
+	profile_id := request.ID
+
+	redemption_status, err := service.RedeemEvent(profile_id, request.EventID)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not check if event was redeemed for id "+request.ID+" and event id "+request.EventID+". "+redemption_status.Status))
@@ -256,7 +264,9 @@ func AwardPoints(w http.ResponseWriter, r *http.Request) {
 	var request models.AwardPointsRequest
 	json.NewDecoder(r.Body).Decode(&request)
 
-	user_profile, err := service.GetProfile(request.ID)
+	profile_id := request.ID
+
+	user_profile, err := service.GetProfile(profile_id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile for id "+request.ID+" when trying to award points."))
@@ -265,14 +275,14 @@ func AwardPoints(w http.ResponseWriter, r *http.Request) {
 
 	user_profile.Points += request.Points
 
-	err = service.UpdateProfile(request.ID, *user_profile)
+	err = service.UpdateProfile(profile_id, *user_profile)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the profile when trying to award points."))
 		return
 	}
 
-	updated_profile, err := service.GetProfile(request.ID)
+	updated_profile, err := service.GetProfile(profile_id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated profile details after awarding points."))
@@ -280,4 +290,108 @@ func AwardPoints(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_profile)
+}
+
+/*
+	Endpoint to get the current user's profile favorites
+*/
+func GetProfileFavorites(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	if id == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		return
+	}
+
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
+
+	favorites, err := service.GetProfileFavorites(profile_id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's profile favorites."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(favorites)
+}
+
+/*
+	Endpoint to add a profile favorite for the current user
+*/
+func AddProfileFavorite(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	if id == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		return
+	}
+
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
+
+	var profile_favorite_modification models.ProfileFavoriteModification
+	json.NewDecoder(r.Body).Decode(&profile_favorite_modification)
+
+	err = service.AddProfileFavorite(profile_id, profile_favorite_modification.ID)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not add a profile favorite for the current user."))
+		return
+	}
+
+	favorites, err := service.GetProfileFavorites(profile_id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated user profile favorites."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(favorites)
+}
+
+/*
+	Endpoint to remove a profile favorite for the current user
+*/
+func RemoveProfileFavorite(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	if id == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		return
+	}
+
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
+
+	var profile_favorite_modification models.ProfileFavoriteModification
+	json.NewDecoder(r.Body).Decode(&profile_favorite_modification)
+
+	err = service.RemoveProfileFavorite(profile_id, profile_favorite_modification.ID)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not remove a profile favorite for the current user."))
+		return
+	}
+
+	favorites, err := service.GetProfileFavorites(profile_id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated user profile favorites."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(favorites)
 }

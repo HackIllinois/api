@@ -61,8 +61,8 @@ var ProfileRoutes = arbor.RouteCollection{
 		"/profile/filtered/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetFilteredProfiles).ServeHTTP,
 	},
-  arbor.Route{
-  	"RedeemEvent",
+	arbor.Route{
+		"RedeemEvent",
 		"POST",
 		"/profile/event/checkin/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(RedeemEvent).ServeHTTP,
@@ -72,7 +72,7 @@ var ProfileRoutes = arbor.RouteCollection{
 		"POST",
 		"/profile/points/award/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(AwardPoints).ServeHTTP,
-  },
+	},
 	arbor.Route{
 		"GetProfileFavorites",
 		"GET",
@@ -155,4 +155,3 @@ func AddProfileFavorite(w http.ResponseWriter, r *http.Request) {
 func RemoveProfileFavorite(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
 }
-

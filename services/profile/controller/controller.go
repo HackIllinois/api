@@ -26,8 +26,8 @@ func SetupController(route *mux.Route) {
 
 	router.HandleFunc("/event/checkin/", RedeemEvent).Methods("POST")
 	router.HandleFunc("/points/award/", AwardPoints).Methods("POST")
-  
-  router.HandleFunc("/favorite/", GetProfileFavorites).Methods("GET")
+
+	router.HandleFunc("/favorite/", GetProfileFavorites).Methods("GET")
 	router.HandleFunc("/favorite/add/", AddProfileFavorite).Methods("POST")
 	router.HandleFunc("/favorite/remove/", RemoveProfileFavorite).Methods("POST")
 
@@ -391,4 +391,3 @@ func RemoveProfileFavorite(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(favorites)
 }
-

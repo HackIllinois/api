@@ -351,11 +351,11 @@ func GetProfileFavorites(profile_id string) (*models.ProfileFavorites, error) {
 	}
 
 	var profile_favorites models.ProfileFavorites
-	err := db.FindOne("profile_favorites", query, &profile_favorites)
+	err := db.FindOne("profilefavorites", query, &profile_favorites)
 
 	if err != nil {
 		if err == database.ErrNotFound {
-			err = db.Insert("profile_favorites", &models.ProfileFavorites{
+			err = db.Insert("profilefavorites", &models.ProfileFavorites{
 				ID:       profile_id,
 				Profiles: []string{},
 			})
@@ -364,7 +364,7 @@ func GetProfileFavorites(profile_id string) (*models.ProfileFavorites, error) {
 				return nil, err
 			}
 
-			err = db.FindOne("profile_favorites", query, &profile_favorites)
+			err = db.FindOne("profilefavorites", query, &profile_favorites)
 
 			if err != nil {
 				return nil, err
@@ -405,7 +405,7 @@ func AddProfileFavorite(profile_id string, profile string) error {
 		profile_favorites.Profiles = append(profile_favorites.Profiles, profile)
 	}
 
-	err = db.Update("profile_favorites", selector, profile_favorites)
+	err = db.Update("profilefavorites", selector, profile_favorites)
 
 	return err
 }
@@ -430,7 +430,7 @@ func RemoveProfileFavorite(profile_id string, profile string) error {
 		return errors.New("User's profile favorites does not have specified profile")
 	}
 
-	err = db.Update("profile_favorites", selector, profile_favorites)
+	err = db.Update("profilefavorites", selector, profile_favorites)
 
 	return err
 }

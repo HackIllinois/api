@@ -416,7 +416,7 @@ func AddEventFavorite(id string, event string) error {
 }
 
 /*
-	Removes the given event to the favorites for the user with the given id
+	Removes the given event from the favorites for the user with the given id
 */
 func RemoveEventFavorite(id string, event string) error {
 	selector := database.QuerySelector{

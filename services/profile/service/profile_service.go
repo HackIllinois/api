@@ -273,6 +273,10 @@ func GetFilteredProfiles(parameters map[string][]string) (*models.ProfileList, e
 	return &profile_list, nil
 }
 
+/*
+	Returns a list of profiles filtered upon teamStatus and interests. Will be limited to only include the first "limit" results.
+	Will also remove profiles with a TeamStatus set to "NOT_LOOKING"
+*/
 func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileList, error) {
 	parameters["teamStatusNot"] = append(parameters["teamStatusNot"], "NOT_LOOKING")
 	filtered_profile_list, err := GetFilteredProfiles(parameters)
@@ -282,4 +286,97 @@ func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileLi
 	}
 
 	return filtered_profile_list, nil
+}
+
+/*
+	Returns the profile favorites for the user with the given id
+*/
+func GetProfileFavorites(id string) (*models.ProfileFavorites, error) {
+	query := database.QuerySelector{
+		"id": id,
+	}
+
+	var profile_favorites models.ProfileFavorites
+	err := db.FindOne("profile_favorites", query, &profile_favorites)
+
+	if err != nil {
+		if err == database.ErrNotFound {
+			err = db.Insert("profile_favorites", &models.ProfileFavorites{
+				ID:       id,
+				Profiles: []string{},
+			})
+
+			if err != nil {
+				return nil, err
+			}
+
+			err = db.FindOne("profile_favorites", query, &profile_favorites)
+
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, err
+		}
+	}
+
+	return &profile_favorites, nil
+}
+
+/*
+	Adds the given profile to the favorites for the user with the given id
+*/
+func AddProfileFavorite(id string, profile string) error {
+	if id == profile {
+		return errors.New("User's profile matches the specified profile.")
+	}
+
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	_, err := GetProfile(profile)
+
+	if err != nil {
+		return errors.New("Could not find profile with the given id.")
+	}
+
+	profile_favorites, err := GetProfileFavorites(id)
+
+	if err != nil {
+		return err
+	}
+
+	if !utils.ContainsString(profile_favorites.Profiles, profile) {
+		profile_favorites.Profiles = append(profile_favorites.Profiles, profile)
+	}
+
+	err = db.Update("profile_favorites", selector, profile_favorites)
+
+	return err
+}
+
+/*
+	Removes the given profile from the favorites for the user with the given id
+*/
+func RemoveProfileFavorite(id string, profile string) error {
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	profile_favorites, err := GetProfileFavorites(id)
+
+	if err != nil {
+		return err
+	}
+
+	profile_favorites.Profiles, err = utils.RemoveString(profile_favorites.Profiles, profile)
+
+	if err != nil {
+		return errors.New("User's profile favorites does not have specified profile")
+	}
+
+	err = db.Update("profile_favorites", selector, profile_favorites)
+
+	return err
 }

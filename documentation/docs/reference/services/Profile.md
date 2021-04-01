@@ -304,7 +304,7 @@ Response format:
 GET /profile/favorite/
 -------------------------
 
-Returns a list of profiles that the user has favorited.
+Returns a list of profiles that the current user has favorited.
 
 Response format:
 ```
@@ -318,7 +318,7 @@ Response format:
 
 POST /profile/favorite/add/
 -------------------------
-Adds a profile to the specified user's favorite list, and returns the updated list of favorite profiles.
+Adds the specified profile to the current user's favorite list, and returns the updated list of favorite profiles.
 
 Request format:
 ```
@@ -340,7 +340,7 @@ Response format:
 
 POST /profile/favorite/remove/
 -------------------------
-Removes a profile from the specified user's favorite list, and returns the updated list of favorite profiles.
+Removes the specified profile from the current user's favorite list, and returns the updated list of favorite profiles.
 
 Request format:
 ```

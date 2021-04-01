@@ -312,7 +312,7 @@ In the case that the user has already been checked, status is set to "Event alre
 Request format:
 ```
 {
-    "id": "github123456",
+    "id": "profileid123456",
     "eventID": "52fdfc072182654f163f5f0f9a621d72"
 }
 
@@ -334,7 +334,7 @@ Takes a struct with a profile and a certain number of points to increment their 
 Request format:
 ```
 {
-    "id": "github123456",
+    "id": "profileid123456",
     "points": 10
 }
 
@@ -343,7 +343,7 @@ Request format:
 Response format:
 ```
 {
-    "id": "github123456",
+    "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,

@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"math/rand"
 	"os"
+	"time"
 
 	"github.com/HackIllinois/api/gateway"
 	"github.com/HackIllinois/api/services/auth"
@@ -56,6 +58,8 @@ func StartAll() {
 }
 
 func main() {
+	rand.Seed(time.Now().UTC().UnixNano())
+
 	var service string
 	flag.StringVar(&service, "service", "", "The service to start")
 

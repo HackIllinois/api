@@ -34,11 +34,30 @@ func Initialize() error {
 }
 
 /*
+	Returns the profile id associated with the given user id
+*/
+func GetProfileIdFromUserId(id string) (string, error) {
+	query := database.QuerySelector{
+		"userid": id,
+	}
+
+	var id_map models.IdMap
+	err := db.FindOne("profileids", query, &id_map)
+
+	// Returns error if no mapping was found
+	if err != nil {
+		return "", err
+	}
+
+	return id_map.ProfileID, nil
+}
+
+/*
 	Returns the profile with the given id
 */
-func GetProfile(id string) (*models.Profile, error) {
+func GetProfile(profile_id string) (*models.Profile, error) {
 	query := database.QuerySelector{
-		"id": id,
+		"id": profile_id,
 	}
 
 	var profile models.Profile
@@ -56,21 +75,29 @@ func GetProfile(id string) (*models.Profile, error) {
 	Removes the profile from profile trackers and every user's tracker.
 	Returns the profile that was deleted.
 */
-func DeleteProfile(id string) (*models.Profile, error) {
-
+func DeleteProfile(profile_id string) (*models.Profile, error) {
 	// Gets profile to be able to return it later
-
-	profile, err := GetProfile(id)
+	profile, err := GetProfile(profile_id)
 
 	if err != nil {
 		return nil, err
 	}
 
+	// Remove user id to profile id mapping
 	query := database.QuerySelector{
-		"id": id,
+		"profileid": profile_id,
+	}
+
+	err = db.RemoveOne("profileids", query)
+
+	if err != nil {
+		return nil, err
 	}
 
 	// Remove profile from profile database
+	query = database.QuerySelector{
+		"id": profile_id,
+	}
 
 	err = db.RemoveOne("profiles", query)
 
@@ -84,21 +111,34 @@ func DeleteProfile(id string) (*models.Profile, error) {
 /*
 	Creates a profile with the given id
 */
-func CreateProfile(id string, profile models.Profile) error {
-	profile.ID = id
+func CreateProfile(id string, profile_id string, profile models.Profile) error {
+	profile.ID = profile_id
 	err := validate.Struct(profile)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = GetProfile(id)
+	_, err = GetProfile(profile_id)
 
 	if err != database.ErrNotFound {
 		if err != nil {
 			return err
 		}
 		return errors.New("Profile already exists")
+	}
+
+	// TODO: Look into mongodb multi-document transactions
+	// Create user id to profile id mapping
+	var id_map models.IdMap
+
+	id_map.UserID = id
+	id_map.ProfileID = profile_id
+
+	err = db.Insert("profileids", &id_map)
+
+	if err != nil {
+		return err
 	}
 
 	err = db.Insert("profiles", &profile)
@@ -120,8 +160,8 @@ func CreateProfile(id string, profile models.Profile) error {
 /*
 	Updates the profile with the given id
 */
-func UpdateProfile(id string, profile models.Profile) error {
-	profile.ID = id
+func UpdateProfile(profile_id string, profile models.Profile) error {
+	profile.ID = profile_id
 	err := validate.Struct(profile)
 
 	if err != nil {
@@ -129,7 +169,7 @@ func UpdateProfile(id string, profile models.Profile) error {
 	}
 
 	selector := database.QuerySelector{
-		"id": id,
+		"id": profile_id,
 	}
 
 	err = db.Update("profiles", selector, &profile)

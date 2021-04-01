@@ -218,7 +218,10 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !valid {
+		result.NewPoints = 0
 		result.Status = "InvalidTime"
+		json.NewEncoder(w).Encode(result)
+		return
 	}
 
 	redemption_status, err := service.RedeemEvent(id, event_id)
@@ -236,7 +239,6 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Determine the current event and its point value
-
 	event, err := service.GetEvent(event_id)
 
 	if err != nil {

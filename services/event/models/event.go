@@ -9,6 +9,7 @@ type Event struct {
 	Locations   []EventLocation `json:"locations"           validate:"required,dive,required"`
 	Sponsor     string          `json:"sponsor"`
 	EventType   string          `json:"eventType"           validate:"required,oneof=MEAL SPEAKER WORKSHOP MINIEVENT OTHER"`
+	Points      int             `json:"points"`
 }
 
 type EventLocation struct {

@@ -143,6 +143,17 @@ func CreateProfile(id string, profile_id string, profile models.Profile) error {
 
 	err = db.Insert("profiles", &profile)
 
+	if err != nil {
+		return err
+	}
+
+	attendance_tracker := models.AttendanceTracker{
+		ID:     id,
+		Events: []string{},
+	}
+
+	err = db.Insert("profileattendance", &attendance_tracker)
+
 	return err
 }
 
@@ -286,6 +297,49 @@ func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileLi
 	}
 
 	return filtered_profile_list, nil
+}
+
+/*
+  Redeems the event with `event_id` for the user with profile id `id`
+*/
+func RedeemEvent(id string, event_id string) (*models.RedeemEventResponse, error) {
+	var redemption_status models.RedeemEventResponse
+	redemption_status.Status = "Success"
+
+	selector := database.QuerySelector{
+		"id": id,
+	}
+
+	var attended_events models.AttendanceTracker
+	err := db.FindOne("profileattendance", selector, &attended_events)
+
+	if err != nil {
+		if err == database.ErrNotFound {
+			err = db.Insert("profileattendance", &models.AttendanceTracker{
+				ID:     id,
+				Events: []string{},
+			})
+
+			if err != nil {
+				redemption_status.Status = "Could not add tracker to db"
+				return &redemption_status, err
+			}
+		} else {
+			redemption_status.Status = "Could not access db"
+			return &redemption_status, err
+		}
+	}
+
+	if utils.ContainsString(attended_events.Events, event_id) {
+		redemption_status.Status = "Event already redeemed"
+		return &redemption_status, nil
+	} else {
+		attended_events.Events = append(attended_events.Events, event_id)
+	}
+
+	err = db.Update("profileattendance", selector, attended_events)
+
+	return &redemption_status, err
 }
 
 /*

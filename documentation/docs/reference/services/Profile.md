@@ -323,7 +323,7 @@ Adds a profile to the specified user's favorite list, and returns the updated li
 Request format:
 ```
 {
-    profileId: "testid2"
+    id: "testid2"
 }
 ```
 
@@ -345,7 +345,7 @@ Removes a profile from the specified user's favorite list, and returns the updat
 Request format:
 ```
 {
-    profileId: "testid3"
+    id: "testid3"
 }
 ```
 

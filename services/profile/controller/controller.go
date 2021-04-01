@@ -240,7 +240,19 @@ func GetValidFilteredProfiles(w http.ResponseWriter, r *http.Request) {
 func GetProfileFavorites(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
-	favorites, err := service.GetProfileFavorites(id)
+	if id == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		return
+	}
+
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
+
+	favorites, err := service.GetProfileFavorites(profile_id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's profile favorites."))
@@ -256,17 +268,29 @@ func GetProfileFavorites(w http.ResponseWriter, r *http.Request) {
 func AddProfileFavorite(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
+	if id == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		return
+	}
+
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
+
 	var profile_favorite_modification models.ProfileFavoriteModification
 	json.NewDecoder(r.Body).Decode(&profile_favorite_modification)
 
-	err := service.AddProfileFavorite(id, profile_favorite_modification.ProfileID)
+	err = service.AddProfileFavorite(profile_id, profile_favorite_modification.ID)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not add a profile favorite for the current user."))
 		return
 	}
 
-	favorites, err := service.GetProfileFavorites(id)
+	favorites, err := service.GetProfileFavorites(profile_id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated user profile favorites."))
@@ -282,17 +306,29 @@ func AddProfileFavorite(w http.ResponseWriter, r *http.Request) {
 func RemoveProfileFavorite(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
+	if id == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+		return
+	}
+
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
+
 	var profile_favorite_modification models.ProfileFavoriteModification
 	json.NewDecoder(r.Body).Decode(&profile_favorite_modification)
 
-	err := service.RemoveProfileFavorite(id, profile_favorite_modification.ProfileID)
+	err = service.RemoveProfileFavorite(profile_id, profile_favorite_modification.ID)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not remove a profile favorite for the current user."))
 		return
 	}
 
-	favorites, err := service.GetProfileFavorites(id)
+	favorites, err := service.GetProfileFavorites(profile_id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated user profile favorites."))

@@ -291,9 +291,9 @@ func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileLi
 /*
 	Returns the profile favorites for the user with the given id
 */
-func GetProfileFavorites(id string) (*models.ProfileFavorites, error) {
+func GetProfileFavorites(profile_id string) (*models.ProfileFavorites, error) {
 	query := database.QuerySelector{
-		"id": id,
+		"id": profile_id,
 	}
 
 	var profile_favorites models.ProfileFavorites
@@ -302,7 +302,7 @@ func GetProfileFavorites(id string) (*models.ProfileFavorites, error) {
 	if err != nil {
 		if err == database.ErrNotFound {
 			err = db.Insert("profile_favorites", &models.ProfileFavorites{
-				ID:       id,
+				ID:       profile_id,
 				Profiles: []string{},
 			})
 
@@ -326,13 +326,13 @@ func GetProfileFavorites(id string) (*models.ProfileFavorites, error) {
 /*
 	Adds the given profile to the favorites for the user with the given id
 */
-func AddProfileFavorite(id string, profile string) error {
-	if id == profile {
+func AddProfileFavorite(profile_id string, profile string) error {
+	if profile_id == profile {
 		return errors.New("User's profile matches the specified profile.")
 	}
 
 	selector := database.QuerySelector{
-		"id": id,
+		"id": profile_id,
 	}
 
 	_, err := GetProfile(profile)
@@ -341,7 +341,7 @@ func AddProfileFavorite(id string, profile string) error {
 		return errors.New("Could not find profile with the given id.")
 	}
 
-	profile_favorites, err := GetProfileFavorites(id)
+	profile_favorites, err := GetProfileFavorites(profile_id)
 
 	if err != nil {
 		return err
@@ -359,12 +359,12 @@ func AddProfileFavorite(id string, profile string) error {
 /*
 	Removes the given profile from the favorites for the user with the given id
 */
-func RemoveProfileFavorite(id string, profile string) error {
+func RemoveProfileFavorite(profile_id string, profile string) error {
 	selector := database.QuerySelector{
-		"id": id,
+		"id": profile_id,
 	}
 
-	profile_favorites, err := GetProfileFavorites(id)
+	profile_favorites, err := GetProfileFavorites(profile_id)
 
 	if err != nil {
 		return err

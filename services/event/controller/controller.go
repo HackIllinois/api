@@ -218,7 +218,6 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !valid {
-		result.NewPoints = 0
 		result.Status = "InvalidTime"
 		json.NewEncoder(w).Encode(result)
 		return
@@ -232,7 +231,6 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if redemption_status.Status != "Success" {
-		result.NewPoints = 0
 		result.Status = "AlreadyCheckedIn"
 		json.NewEncoder(w).Encode(result)
 		return

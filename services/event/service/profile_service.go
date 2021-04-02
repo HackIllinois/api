@@ -19,7 +19,7 @@ func RedeemEvent(id string, event_id string) (*models.RedeemEventResponse, error
 		EventID: event_id,
 	}
 
-	status, err := apirequest.Post(config.PROFILE_SERVICE+"/event/checkin/", &event_info, &redemption_status)
+	status, err := apirequest.Post(config.PROFILE_SERVICE+"/profile/event/checkin/", &event_info, &redemption_status)
 
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func AwardPoints(id string, points int) (*models.Profile, error) {
 		ID:     id,
 		Points: points,
 	}
-	status, err := apirequest.Post(config.PROFILE_SERVICE+"/points/award/", point_info, &profile)
+	status, err := apirequest.Post(config.PROFILE_SERVICE+"/profile/points/award/", point_info, &profile)
 
 	if err != nil {
 		return nil, err

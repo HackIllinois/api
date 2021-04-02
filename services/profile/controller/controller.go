@@ -155,28 +155,29 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	DeleteProfile is the endpoint to delete the profile for the current user
 */
 func DeleteProfile(w http.ResponseWriter, r *http.Request) {
-	id := r.Header.Get("HackIllinois-Identity")
+	// id := r.Header.Get("HackIllinois-Identity")
 
-	if id == "" {
-		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
-		return
-	}
+	// if id == "" {
+	// 	errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+	// 	return
+	// }
 
-	profile_id, err := service.GetProfileIdFromUserId(id)
+	// profile_id, err := service.GetProfileIdFromUserId(id)
 
-	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
-		return
-	}
+	// if err != nil {
+	// 	errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+	// 	return
+	// }
 
-	deleted_profile, err := service.DeleteProfile(profile_id)
+	// deleted_profile, err := service.DeleteProfile(profile_id)
 
-	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not delete the profile."))
-		return
-	}
+	// if err != nil {
+	// 	errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not delete the profile."))
+	// 	return
+	// }
 
-	json.NewEncoder(w).Encode(deleted_profile)
+	// json.NewEncoder(w).Encode(deleted_profile)
+	errors.WriteError(w, r, errors.InternalError("Endpoint temporarily disabled.", "Endpoint temporarily disabled."))
 }
 
 /*
@@ -239,13 +240,21 @@ func GetValidFilteredProfiles(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	RedeemEvent checks the appropriate table to check whether the given event id has already been redeemed. If the event is not in the table, it add to the array.
+	RedeemEvent checks the appropriate table to check whether the given event id has already
+	been redeemed by the specified user. If the event is not in the table, add it to the array.
 */
 func RedeemEvent(w http.ResponseWriter, r *http.Request) {
 	var request models.RedeemEventRequest
 	json.NewDecoder(r.Body).Decode(&request)
 
-	profile_id := request.ID
+	id := request.ID
+
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
 
 	redemption_status, err := service.RedeemEvent(profile_id, request.EventID)
 
@@ -264,7 +273,14 @@ func AwardPoints(w http.ResponseWriter, r *http.Request) {
 	var request models.AwardPointsRequest
 	json.NewDecoder(r.Body).Decode(&request)
 
-	profile_id := request.ID
+	id := request.ID
+
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
 
 	user_profile, err := service.GetProfile(profile_id)
 

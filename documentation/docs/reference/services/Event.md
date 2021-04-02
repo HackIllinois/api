@@ -362,8 +362,6 @@ Response format:
 }
 ```
 
-
-
 GET /event/code/{id}/
 ----------------------------
 
@@ -388,7 +386,6 @@ Updates a struct that contains information about the event code (generated upon 
 Request format:
 ```
 {
-    "id": "52fdfc072182654f163f5f0f9a621d72",
     "code": "new_code",
     "expiration": 1521388800
 }
@@ -404,12 +401,13 @@ Response format:
 }
 ```
 
-
 POST /event/checkin/
 ----------------------------
 
 Retrieves a struct that contains information about the event checkin status, point increment value, and total point number.
 Takes in a struct that contains an event checkin code.
+
+Valid values for `status` are `Success`, `InvalidTime`, `AlreadyCheckedIn`. When `status != Success`, the `newPoints` and `totalPoints` fields will be -1 and should be ignored.
 
 Request format:
 ```
@@ -418,7 +416,6 @@ Request format:
 }
 
 ```
-
 
 Response format:
 ```

@@ -156,6 +156,11 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 func GetEventCode(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
+	if id == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide event id in request url.", "Must provide event id in request url."))
+		return
+	}
+
 	code, err := service.GetEventCode(id)
 
 	if err != nil {
@@ -170,17 +175,26 @@ func GetEventCode(w http.ResponseWriter, r *http.Request) {
 	Endpoint to update an event code and end time
 */
 func UpdateEventCode(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	if id == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide event id in request url.", "Must provide event id in request url."))
+		return
+	}
+
 	var eventCode models.EventCode
 	json.NewDecoder(r.Body).Decode(&eventCode)
 
-	err := service.UpdateEventCode(eventCode.ID, eventCode)
+	eventCode.ID = id
+
+	err := service.UpdateEventCode(id, eventCode)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the code and timestamp of the event."))
 		return
 	}
 
-	updated_event, err := service.GetEventCode(eventCode.ID)
+	updated_event, err := service.GetEventCode(id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated event code and timestamp details."))

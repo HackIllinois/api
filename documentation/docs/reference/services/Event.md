@@ -386,7 +386,6 @@ Updates a struct that contains information about the event code (generated upon 
 Request format:
 ```
 {
-    "id": "52fdfc072182654f163f5f0f9a621d72",
     "code": "new_code",
     "expiration": 1521388800
 }

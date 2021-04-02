@@ -486,9 +486,7 @@ func CanRedeemPoints(event_code string) (bool, string, error) {
 	var eventCode models.EventCode
 	err := db.FindOne("eventcodes", query, &eventCode)
 
-	if err == database.ErrNotFound {
-		return false, "invalid", errors.New("No event has that code")
-	} else if err != nil {
+	if err != nil {
 		return false, "invalid", err
 	}
 

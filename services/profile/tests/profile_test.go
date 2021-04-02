@@ -50,19 +50,10 @@ var TestTime = time.Now().Unix()
 	Initialize db with a test profile
 */
 func SetupTestDB(t *testing.T) {
-	id_map := models.IdMap{
-		UserID:    "testuserid",
-		ProfileID: "testid",
-	}
-
-	err := db.Insert("profileids", &id_map)
-
-	if err != nil {
-		t.Fatal(err)
-	}
+	profile_id := "testid"
 
 	profile := models.Profile{
-		ID:          "testid",
+		ID:          profile_id,
 		FirstName:   "testfirstname",
 		LastName:    "testlastname",
 		Points:      0,
@@ -74,7 +65,40 @@ func SetupTestDB(t *testing.T) {
 		Interests:   []string{"testinterest1", "testinterest2"},
 	}
 
+	id_map := models.IdMap{
+		UserID:    "testuserid",
+		ProfileID: profile_id,
+	}
+
+	err := db.Insert("profileids", &id_map)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	err = db.Insert("profiles", &profile)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	attendance_tracker := models.AttendanceTracker{
+		ID:     profile_id,
+		Events: []string{},
+	}
+
+	err = db.Insert("profileattendance", &attendance_tracker)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	profile_favorites := models.ProfileFavorites{
+		ID:       profile_id,
+		Profiles: []string{},
+	}
+
+	err = db.Insert("profilefavorites", &profile_favorites)
 
 	if err != nil {
 		t.Fatal(err)

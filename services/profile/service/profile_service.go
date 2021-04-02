@@ -105,6 +105,18 @@ func DeleteProfile(profile_id string) (*models.Profile, error) {
 		return nil, err
 	}
 
+	err = db.RemoveOne("profileattendance", query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.RemoveOne("profilefavorites", query)
+
+	if err != nil {
+		return nil, err
+	}
+
 	return profile, err
 }
 
@@ -148,11 +160,26 @@ func CreateProfile(id string, profile_id string, profile models.Profile) error {
 	}
 
 	attendance_tracker := models.AttendanceTracker{
-		ID:     id,
+		ID:     profile_id,
 		Events: []string{},
 	}
 
 	err = db.Insert("profileattendance", &attendance_tracker)
+
+	if err != nil {
+		return err
+	}
+
+	profile_favorites := models.ProfileFavorites{
+		ID:       profile_id,
+		Profiles: []string{},
+	}
+
+	err = db.Insert("profilefavorites", &profile_favorites)
+
+	if err != nil {
+		return err
+	}
 
 	return err
 }
@@ -354,24 +381,7 @@ func GetProfileFavorites(profile_id string) (*models.ProfileFavorites, error) {
 	err := db.FindOne("profilefavorites", query, &profile_favorites)
 
 	if err != nil {
-		if err == database.ErrNotFound {
-			err = db.Insert("profilefavorites", &models.ProfileFavorites{
-				ID:       profile_id,
-				Profiles: []string{},
-			})
-
-			if err != nil {
-				return nil, err
-			}
-
-			err = db.FindOne("profilefavorites", query, &profile_favorites)
-
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			return nil, err
-		}
+		return nil, err
 	}
 
 	return &profile_favorites, nil

@@ -239,7 +239,8 @@ func GetValidFilteredProfiles(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	RedeemEvent checks the appropriate table to check whether the given event id has already been redeemed. If the event is not in the table, it add to the array.
+	RedeemEvent checks the appropriate table to check whether the given event id has already
+	been redeemed by the specified user. If the event is not in the table, it add to the array.
 */
 func RedeemEvent(w http.ResponseWriter, r *http.Request) {
 	var request models.RedeemEventRequest

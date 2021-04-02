@@ -155,28 +155,29 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	DeleteProfile is the endpoint to delete the profile for the current user
 */
 func DeleteProfile(w http.ResponseWriter, r *http.Request) {
-	id := r.Header.Get("HackIllinois-Identity")
+	// id := r.Header.Get("HackIllinois-Identity")
 
-	if id == "" {
-		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
-		return
-	}
+	// if id == "" {
+	// 	errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
+	// 	return
+	// }
 
-	profile_id, err := service.GetProfileIdFromUserId(id)
+	// profile_id, err := service.GetProfileIdFromUserId(id)
 
-	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
-		return
-	}
+	// if err != nil {
+	// 	errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+	// 	return
+	// }
 
-	deleted_profile, err := service.DeleteProfile(profile_id)
+	// deleted_profile, err := service.DeleteProfile(profile_id)
 
-	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not delete the profile."))
-		return
-	}
+	// if err != nil {
+	// 	errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not delete the profile."))
+	// 	return
+	// }
 
-	json.NewEncoder(w).Encode(deleted_profile)
+	// json.NewEncoder(w).Encode(deleted_profile)
+	errors.WriteError(w, r, errors.InternalError("Endpoint temporarily disabled.", "Endpoint temporarily disabled."))
 }
 
 /*

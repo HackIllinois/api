@@ -407,7 +407,7 @@ POST /event/checkin/
 Retrieves a struct that contains information about the event checkin status, point increment value, and total point number.
 Takes in a struct that contains an event checkin code.
 
-Valid values for `status` are `Success`, `InvalidTime`, `AlreadyCheckedIn`. When `status != Success`, the `newPoints` and `totalPoints` fields will be -1 and should be ignored.
+Valid values for `status` are `Success`, `InvalidCode`, `InvalidTime`, `AlreadyCheckedIn`. When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.
 
 Request format:
 ```

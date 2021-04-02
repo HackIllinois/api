@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/event/models"
@@ -220,15 +221,20 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 
 	valid, event_id, err := service.CanRedeemPoints(checkin_request.Code)
 
-	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
-		return
-	}
-
 	result := models.CheckinResult{
 		NewPoints:   -1,
 		TotalPoints: -1,
 		Status:      "Success",
+	}
+
+	// For this specific error, don't return a http error code and populate the `status` field instead.
+	if err == database.ErrNotFound {
+		result.Status = "InvalidCode"
+		json.NewEncoder(w).Encode(result)
+		return
+	} else if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
+		return
 	}
 
 	if !valid {

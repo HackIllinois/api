@@ -428,7 +428,7 @@ func AddEventFavorite(id string, event string) error {
 }
 
 /*
-	Removes the given event to the favorites for the user with the given id
+	Removes the given event from the favorites for the user with the given id
 */
 func RemoveEventFavorite(id string, event string) error {
 	selector := database.QuerySelector{
@@ -486,9 +486,7 @@ func CanRedeemPoints(event_code string) (bool, string, error) {
 	var eventCode models.EventCode
 	err := db.FindOne("eventcodes", query, &eventCode)
 
-	if err == database.ErrNotFound {
-		return false, "invalid", errors.New("No event has that code")
-	} else if err != nil {
+	if err != nil {
 		return false, "invalid", err
 	}
 

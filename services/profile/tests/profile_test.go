@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"reflect"
@@ -49,8 +50,10 @@ var TestTime = time.Now().Unix()
 	Initialize db with a test profile
 */
 func SetupTestDB(t *testing.T) {
+	profile_id := "testid"
+
 	profile := models.Profile{
-		ID:          "testid",
+		ID:          profile_id,
 		FirstName:   "testfirstname",
 		LastName:    "testlastname",
 		Points:      0,
@@ -62,7 +65,40 @@ func SetupTestDB(t *testing.T) {
 		Interests:   []string{"testinterest1", "testinterest2"},
 	}
 
-	err := db.Insert("profiles", &profile)
+	id_map := models.IdMap{
+		UserID:    "testuserid",
+		ProfileID: profile_id,
+	}
+
+	err := db.Insert("profileids", &id_map)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.Insert("profiles", &profile)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	attendance_tracker := models.AttendanceTracker{
+		ID:     profile_id,
+		Events: []string{},
+	}
+
+	err = db.Insert("profileattendance", &attendance_tracker)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	profile_favorites := models.ProfileFavorites{
+		ID:       profile_id,
+		Profiles: []string{},
+	}
+
+	err = db.Insert("profilefavorites", &profile_favorites)
 
 	if err != nil {
 		t.Fatal(err)
@@ -215,7 +251,7 @@ func TestCreateProfileService(t *testing.T) {
 		Interests:   []string{"testinterest2"},
 	}
 
-	err := service.CreateProfile("testid2", new_profile)
+	err := service.CreateProfile("testuserid2", "testid2", new_profile)
 
 	if err != nil {
 		t.Fatal(err)
@@ -242,6 +278,17 @@ func TestCreateProfileService(t *testing.T) {
 
 	if !reflect.DeepEqual(profile, &expected_profile) {
 		t.Errorf("Wrong profile info. Expected %v, got %v", expected_profile, profile)
+	}
+
+	// Test that id mapping was inserted correctly
+	profile_id1, err := service.GetProfileIdFromUserId("testuserid2")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if profile_id1 != "testid2" {
+		t.Errorf("Wrong profile mapping found for user %s. Expected %s but got %s", "testuserid2", "testid2", profile_id1)
 	}
 
 	CleanupTestDB(t)
@@ -837,6 +884,132 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 
 	if !reflect.DeepEqual(filtered_profile_list, &expected_filtered_profile_list) {
 		t.Errorf("Wrong profile list. Expected %v, got %v", expected_filtered_profile_list, filtered_profile_list)
+	}
+
+	CleanupTestDB(t)
+}
+
+func TestProfileFavorites(t *testing.T) {
+	SetupTestDB(t)
+
+	profile := models.Profile{
+		ID:          "testid2",
+		FirstName:   "testfirstname2",
+		LastName:    "testlastname2",
+		Points:      340,
+		Timezone:    "America/New York",
+		Description: "Hello",
+		Discord:     "testdiscordusername2",
+		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		TeamStatus:  "Not Looking",
+		Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
+	}
+
+	err := db.Insert("profiles", &profile)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	profile_favorites, err := service.GetProfileFavorites("testid")
+
+	expected_profile_favorites := models.ProfileFavorites{
+		ID:       "testid",
+		Profiles: []string{},
+	}
+
+	if !reflect.DeepEqual(profile_favorites, &expected_profile_favorites) {
+		t.Errorf("Wrong favorite profile list. Expected %v, got %v", expected_profile_favorites, profile_favorites)
+	}
+
+	// Add a profile to the favorites
+	err = service.AddProfileFavorite("testid", "testid2")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	profile_favorites, err = service.GetProfileFavorites("testid")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_profile_favorites = models.ProfileFavorites{
+		ID:       "testid",
+		Profiles: []string{"testid2"},
+	}
+
+	if !reflect.DeepEqual(profile_favorites, &expected_profile_favorites) {
+		t.Errorf("Wrong favorite profile list. Expected %v, got %v", expected_profile_favorites, profile_favorites)
+	}
+
+	// Favorite another (nonexistent) profile and make sure it fails.
+	err = service.AddProfileFavorite("testid", "testid3")
+	expected_err := errors.New("Could not find profile with the given id.")
+	if !reflect.DeepEqual(err, expected_err) {
+		t.Errorf("The service did not return the correct error. Expected %v, got %v", expected_err, err)
+	}
+
+	// Remove the (nonexistent) profile from the favorites and make sure it fails.
+	err = service.RemoveProfileFavorite("testid", "testid3")
+	expected_err = errors.New("User's profile favorites does not have specified profile")
+	if !reflect.DeepEqual(err, expected_err) {
+		t.Errorf("The service did not return the correct error. Expected %v, got %v", expected_err, err)
+	}
+
+	// Add yourself to the favorites and make sure it fails
+	err = service.AddProfileFavorite("testid", "testid")
+	expected_err = errors.New("User's profile matches the specified profile.")
+	if !reflect.DeepEqual(err, expected_err) {
+		t.Errorf("The service did not return the correct error. Expected %v, got %v", expected_err, err)
+	}
+
+	// Favorite another profile
+	profile = models.Profile{
+		ID:          "testid3",
+		FirstName:   "testfirstname3",
+		LastName:    "testlastname3",
+		Points:      342,
+		Timezone:    "America/New York",
+		Description: "Hello",
+		Discord:     "testdiscordusername3",
+		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		TeamStatus:  "Found Team",
+		Interests:   []string{"Cpp", "Machine Learning"},
+	}
+	err = db.Insert("profiles", &profile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = service.AddProfileFavorite("testid", "testid3")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	profile_favorites, err = service.GetProfileFavorites("testid")
+	expected_profile_favorites = models.ProfileFavorites{
+		ID:       "testid",
+		Profiles: []string{"testid2", "testid3"},
+	}
+
+	if !reflect.DeepEqual(profile_favorites, &expected_profile_favorites) {
+		t.Errorf("Wrong favorite profile list. Expected %v, got %v", expected_profile_favorites, profile_favorites)
+	}
+
+	// Remove a favorite
+	err = service.RemoveProfileFavorite("testid", "testid2")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	profile_favorites, err = service.GetProfileFavorites("testid")
+	expected_profile_favorites = models.ProfileFavorites{
+		ID:       "testid",
+		Profiles: []string{"testid3"},
+	}
+
+	if !reflect.DeepEqual(profile_favorites, &expected_profile_favorites) {
+		t.Errorf("Wrong favorite profile list. Expected %v, got %v", expected_profile_favorites, profile_favorites)
 	}
 
 	CleanupTestDB(t)

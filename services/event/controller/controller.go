@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/event/models"
@@ -156,6 +157,14 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 func GetEventCode(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
+<<<<<<< HEAD
+=======
+	if id == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide event id in request url.", "Must provide event id in request url."))
+		return
+	}
+
+>>>>>>> staging
 	code, err := service.GetEventCode(id)
 
 	if err != nil {
@@ -170,17 +179,37 @@ func GetEventCode(w http.ResponseWriter, r *http.Request) {
 	Endpoint to update an event code and end time
 */
 func UpdateEventCode(w http.ResponseWriter, r *http.Request) {
+<<<<<<< HEAD
 	var eventCode models.EventCode
 	json.NewDecoder(r.Body).Decode(&eventCode)
 
 	err := service.UpdateEventCode(eventCode.ID, eventCode)
+=======
+	id := mux.Vars(r)["id"]
+
+	if id == "" {
+		errors.WriteError(w, r, errors.MalformedRequestError("Must provide event id in request url.", "Must provide event id in request url."))
+		return
+	}
+
+	var eventCode models.EventCode
+	json.NewDecoder(r.Body).Decode(&eventCode)
+
+	eventCode.ID = id
+
+	err := service.UpdateEventCode(id, eventCode)
+>>>>>>> staging
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the code and timestamp of the event."))
 		return
 	}
 
+<<<<<<< HEAD
 	updated_event, err := service.GetEventCode(eventCode.ID)
+=======
+	updated_event, err := service.GetEventCode(id)
+>>>>>>> staging
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated event code and timestamp details."))
@@ -206,19 +235,39 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 
 	valid, event_id, err := service.CanRedeemPoints(checkin_request.Code)
 
+<<<<<<< HEAD
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
 		return
 	}
 
+=======
+>>>>>>> staging
 	result := models.CheckinResult{
 		NewPoints:   -1,
 		TotalPoints: -1,
 		Status:      "Success",
 	}
 
+<<<<<<< HEAD
 	if !valid {
 		result.Status = "InvalidTime"
+=======
+	// For this specific error, don't return a http error code and populate the `status` field instead.
+	if err == database.ErrNotFound {
+		result.Status = "InvalidCode"
+		json.NewEncoder(w).Encode(result)
+		return
+	} else if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
+		return
+	}
+
+	if !valid {
+		result.Status = "InvalidTime"
+		json.NewEncoder(w).Encode(result)
+		return
+>>>>>>> staging
 	}
 
 	redemption_status, err := service.RedeemEvent(id, event_id)
@@ -229,14 +278,20 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if redemption_status.Status != "Success" {
+<<<<<<< HEAD
 		result.NewPoints = 0
+=======
+>>>>>>> staging
 		result.Status = "AlreadyCheckedIn"
 		json.NewEncoder(w).Encode(result)
 		return
 	}
 
 	// Determine the current event and its point value
+<<<<<<< HEAD
 
+=======
+>>>>>>> staging
 	event, err := service.GetEvent(event_id)
 
 	if err != nil {
@@ -354,7 +409,7 @@ func GetEventFavorites(w http.ResponseWriter, r *http.Request) {
 	favorites, err := service.GetEventFavorites(id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's event favourites."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's event favorites."))
 		return
 	}
 
@@ -406,7 +461,7 @@ func RemoveEventFavorite(w http.ResponseWriter, r *http.Request) {
 	favorites, err := service.GetEventFavorites(id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated event favourites for the user (post-removal)."))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated event favorites for the user (post-removal)."))
 		return
 	}
 

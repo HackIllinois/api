@@ -34,11 +34,30 @@ func Initialize() error {
 }
 
 /*
+	Returns the profile id associated with the given user id
+*/
+func GetProfileIdFromUserId(id string) (string, error) {
+	query := database.QuerySelector{
+		"userid": id,
+	}
+
+	var id_map models.IdMap
+	err := db.FindOne("profileids", query, &id_map)
+
+	// Returns error if no mapping was found
+	if err != nil {
+		return "", err
+	}
+
+	return id_map.ProfileID, nil
+}
+
+/*
 	Returns the profile with the given id
 */
-func GetProfile(id string) (*models.Profile, error) {
+func GetProfile(profile_id string) (*models.Profile, error) {
 	query := database.QuerySelector{
-		"id": id,
+		"id": profile_id,
 	}
 
 	var profile models.Profile
@@ -56,23 +75,43 @@ func GetProfile(id string) (*models.Profile, error) {
 	Removes the profile from profile trackers and every user's tracker.
 	Returns the profile that was deleted.
 */
-func DeleteProfile(id string) (*models.Profile, error) {
-
+func DeleteProfile(profile_id string) (*models.Profile, error) {
 	// Gets profile to be able to return it later
-
-	profile, err := GetProfile(id)
+	profile, err := GetProfile(profile_id)
 
 	if err != nil {
 		return nil, err
 	}
 
+	// Remove user id to profile id mapping
 	query := database.QuerySelector{
-		"id": id,
+		"profileid": profile_id,
+	}
+
+	err = db.RemoveOne("profileids", query)
+
+	if err != nil {
+		return nil, err
 	}
 
 	// Remove profile from profile database
+	query = database.QuerySelector{
+		"id": profile_id,
+	}
 
 	err = db.RemoveOne("profiles", query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.RemoveOne("profileattendance", query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.RemoveOne("profilefavorites", query)
 
 	if err != nil {
 		return nil, err
@@ -84,21 +123,34 @@ func DeleteProfile(id string) (*models.Profile, error) {
 /*
 	Creates a profile with the given id
 */
-func CreateProfile(id string, profile models.Profile) error {
-	profile.ID = id
+func CreateProfile(id string, profile_id string, profile models.Profile) error {
+	profile.ID = profile_id
 	err := validate.Struct(profile)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = GetProfile(id)
+	_, err = GetProfile(profile_id)
 
 	if err != database.ErrNotFound {
 		if err != nil {
 			return err
 		}
 		return errors.New("Profile already exists")
+	}
+
+	// TODO: Look into mongodb multi-document transactions
+	// Create user id to profile id mapping
+	var id_map models.IdMap
+
+	id_map.UserID = id
+	id_map.ProfileID = profile_id
+
+	err = db.Insert("profileids", &id_map)
+
+	if err != nil {
+		return err
 	}
 
 	err = db.Insert("profiles", &profile)
@@ -108,11 +160,26 @@ func CreateProfile(id string, profile models.Profile) error {
 	}
 
 	attendance_tracker := models.AttendanceTracker{
-		ID:     id,
+		ID:     profile_id,
 		Events: []string{},
 	}
 
 	err = db.Insert("profileattendance", &attendance_tracker)
+
+	if err != nil {
+		return err
+	}
+
+	profile_favorites := models.ProfileFavorites{
+		ID:       profile_id,
+		Profiles: []string{},
+	}
+
+	err = db.Insert("profilefavorites", &profile_favorites)
+
+	if err != nil {
+		return err
+	}
 
 	return err
 }
@@ -120,8 +187,8 @@ func CreateProfile(id string, profile models.Profile) error {
 /*
 	Updates the profile with the given id
 */
-func UpdateProfile(id string, profile models.Profile) error {
-	profile.ID = id
+func UpdateProfile(profile_id string, profile models.Profile) error {
+	profile.ID = profile_id
 	err := validate.Struct(profile)
 
 	if err != nil {
@@ -129,7 +196,7 @@ func UpdateProfile(id string, profile models.Profile) error {
 	}
 
 	selector := database.QuerySelector{
-		"id": id,
+		"id": profile_id,
 	}
 
 	err = db.Update("profiles", selector, &profile)
@@ -244,6 +311,10 @@ func GetFilteredProfiles(parameters map[string][]string) (*models.ProfileList, e
 	return &profile_list, nil
 }
 
+/*
+	Returns a list of profiles filtered upon teamStatus and interests. Will be limited to only include the first "limit" results.
+	Will also remove profiles with a TeamStatus set to "NOT_LOOKING"
+*/
 func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileList, error) {
 	parameters["teamStatusNot"] = append(parameters["teamStatusNot"], "NOT_LOOKING")
 	filtered_profile_list, err := GetFilteredProfiles(parameters)
@@ -255,12 +326,15 @@ func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileLi
 	return filtered_profile_list, nil
 }
 
-func RedeemEvent(id string, event_id string) (*models.RedeemEventResponse, error) {
+/*
+  Redeems the event with `event_id` for the user with profile id `id`
+*/
+func RedeemEvent(profile_id string, event_id string) (*models.RedeemEventResponse, error) {
 	var redemption_status models.RedeemEventResponse
 	redemption_status.Status = "Success"
 
 	selector := database.QuerySelector{
-		"id": id,
+		"id": profile_id,
 	}
 
 	var attended_events models.AttendanceTracker
@@ -269,7 +343,7 @@ func RedeemEvent(id string, event_id string) (*models.RedeemEventResponse, error
 	if err != nil {
 		if err == database.ErrNotFound {
 			err = db.Insert("profileattendance", &models.AttendanceTracker{
-				ID:     id,
+				ID:     profile_id,
 				Events: []string{},
 			})
 
@@ -293,4 +367,80 @@ func RedeemEvent(id string, event_id string) (*models.RedeemEventResponse, error
 	err = db.Update("profileattendance", selector, attended_events)
 
 	return &redemption_status, err
+}
+
+/*
+	Returns the profile favorites for the user with the given id
+*/
+func GetProfileFavorites(profile_id string) (*models.ProfileFavorites, error) {
+	query := database.QuerySelector{
+		"id": profile_id,
+	}
+
+	var profile_favorites models.ProfileFavorites
+	err := db.FindOne("profilefavorites", query, &profile_favorites)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &profile_favorites, nil
+}
+
+/*
+	Adds the given profile to the favorites for the user with the given id
+*/
+func AddProfileFavorite(profile_id string, profile string) error {
+	if profile_id == profile {
+		return errors.New("User's profile matches the specified profile.")
+	}
+
+	selector := database.QuerySelector{
+		"id": profile_id,
+	}
+
+	_, err := GetProfile(profile)
+
+	if err != nil {
+		return errors.New("Could not find profile with the given id.")
+	}
+
+	profile_favorites, err := GetProfileFavorites(profile_id)
+
+	if err != nil {
+		return err
+	}
+
+	if !utils.ContainsString(profile_favorites.Profiles, profile) {
+		profile_favorites.Profiles = append(profile_favorites.Profiles, profile)
+	}
+
+	err = db.Update("profilefavorites", selector, profile_favorites)
+
+	return err
+}
+
+/*
+	Removes the given profile from the favorites for the user with the given id
+*/
+func RemoveProfileFavorite(profile_id string, profile string) error {
+	selector := database.QuerySelector{
+		"id": profile_id,
+	}
+
+	profile_favorites, err := GetProfileFavorites(profile_id)
+
+	if err != nil {
+		return err
+	}
+
+	profile_favorites.Profiles, err = utils.RemoveString(profile_favorites.Profiles, profile)
+
+	if err != nil {
+		return errors.New("User's profile favorites does not have specified profile")
+	}
+
+	err = db.Update("profilefavorites", selector, profile_favorites)
+
+	return err
 }

@@ -8,7 +8,7 @@ type Event struct {
 	EndTime     int64           `json:"endTime"             validate:"required"`
 	Locations   []EventLocation `json:"locations"           validate:"required,dive,required"`
 	Sponsor     string          `json:"sponsor"`
-	EventType   string          `json:"eventType"           validate:"required,oneof=MEAL SPEAKER WORKSHOP MINIEVENT OTHER"`
+	EventType   string          `json:"eventType"           validate:"required,oneof=MEAL SPEAKER WORKSHOP MINIEVENT QNA OTHER"`
 	Points      int             `json:"points"`
 }
 

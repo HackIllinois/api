@@ -244,53 +244,6 @@ Response format:
 }
 ```
 
-GET /profile/search/?teamStatus=value&interests=value,value,value&limit=value
--------------------------
-
-Returns a list of profiles matching the filter conditions. 
-
-``teamStatus`` is a string matching the user's team status. Valid values for ``teamStatus`` are ``LOOKING_FOR_MEMBERS``, ``LOOKING_FOR_TEAM``, and ``NOT_LOOKING``.
-
-interests is a comma-separated string representing the user's interests.
-
-- i.e if the user's interests are ["C++", "Machine Learning"], you can filter on this by sending ``interests="C++,Machine Learning"``
-
-If a ``limit`` parameter is provided, it will return the first matching ``limit`` profiles. Otherwise, it will return all of the matched profiles.
-
-Any users with the TeamStatus "NOT_LOOKING" will be removed.
-
-Response format:
-```
-{
-    profiles: [
-        {
-            "id": "github123456",
-            "firstName": "John",
-            "lastName": "Doe",
-            "points": 2021,
-            "timezone": "Americas UTC+8",
-            "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234",
-            "teamStatus": "LOOKING_FOR_TEAM",
-            "description": "Lorem Ipsum…",
-            "interests": ["C++", "Machine Learning"]
-        },
-        {
-            "id": "profileid123456",
-            "firstName": "John",
-            "lastName": "Doe",
-            "points": 2021,
-            "timezone": "Americas UTC+8",
-            "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234",
-            "teamStatus": "LOOKING_FOR_TEAM",
-            "description": "Lorem Ipsum…",
-            "interests": ["C++", "Machine Learning"]
-        },
-    ]
-}
-```
-
 GET /profile/filtered/?teamStatus=value&interests=value,value,value&limit=value
 -------------------------
 

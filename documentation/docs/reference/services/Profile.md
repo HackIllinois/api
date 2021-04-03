@@ -10,7 +10,7 @@ Valid values for ``teamStatus`` are ``LOOKING_FOR_MEMBERS``, ``LOOKING_FOR_TEAM`
 
 ***The `id` in the profile service refers to a separate, randomly-generated, profile-only id. This is different from the (user) `id` used in other services. When a profile is created, a mapping from the user `id` to the profile `id` is stored in the database.***
 
-We will distinguish user id and profile id by using `github12456` and `profileid123456` for each, respectively, in the examples below.
+We will distinguish user id and profile id by using `github123456` and `profileid123456` for each, respectively, in the examples below.
 
 Response format:
 ```
@@ -233,24 +233,12 @@ Response format:
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
-            "timezone": "Americas UTC+8",
-            "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234",
-            "teamStatus": "LOOKING_FOR_TEAM",
-            "description": "Lorem Ipsum…",
-            "interests": ["C++", "Machine Learning"]
         },
         {
             "id": "profileid123456",
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
-            "timezone": "Americas UTC+8",
-            "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234",
-            "teamStatus": "LOOKING_FOR_TEAM",
-            "description": "Lorem Ipsum…",
-            "interests": ["C++", "Machine Learning"]
         },
     ]
 }

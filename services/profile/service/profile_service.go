@@ -199,6 +199,18 @@ func UpdateProfile(profile_id string, profile models.Profile) error {
 		"id": profile_id,
 	}
 
+	old_profile := models.Profile{}
+
+	err = db.FindOne("profiles", selector, &old_profile)
+
+	if err != nil {
+		return err
+	}
+
+	if profile.Points != old_profile.Points {
+		profile.Points = old_profile.Points
+	}
+
 	err = db.Update("profiles", selector, &profile)
 
 	return err

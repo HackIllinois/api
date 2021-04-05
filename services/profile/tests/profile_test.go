@@ -330,7 +330,7 @@ func TestUpdateProfileService(t *testing.T) {
 		ID:          "testid",
 		FirstName:   "testfirstname2",
 		LastName:    "testlastname2",
-		Points:      340,
+		Points:      0,
 		Timezone:    "America/New York",
 		Description: "Hello",
 		Discord:     "testdiscordusername2",
@@ -355,13 +355,32 @@ func TestUpdateProfileService(t *testing.T) {
 		ID:          "testid",
 		FirstName:   "testfirstname2",
 		LastName:    "testlastname2",
-		Points:      340,
+		Points:      0,
 		Timezone:    "America/New York",
 		Description: "Hello",
 		Discord:     "testdiscordusername2",
 		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 		TeamStatus:  "NOT_LOOKING",
 		Interests:   []string{"testinterest2"},
+	}
+
+	if !reflect.DeepEqual(updated_profile, &expected_profile) {
+		t.Errorf("Wrong profile info. Expected %v, got %v", expected_profile, updated_profile)
+	}
+
+	// Try to update the points and make sure it doesn't change
+	profile.Points = 100000
+
+	err = service.UpdateProfile("testid", profile)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	updated_profile, err = service.GetProfile("testid")
+
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	if !reflect.DeepEqual(updated_profile, &expected_profile) {

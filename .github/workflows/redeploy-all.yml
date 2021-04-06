@@ -32,11 +32,19 @@ jobs:
           do 
             aws ecs describe-task-definition 
               --task-definition hackillinois-api-$service 
-              --query '{  containerDefinitions: taskDefinition.containerDefinitionsfamily: taskDefinition.familytaskRoleArn: taskDefinition.taskRoleArnexecutionRoleArn: taskDefinition.executionRoleArnnetworkMode: taskDefinition.networkModevolumes: taskDefinition.volumesplacementConstraints: taskDefinition.placementConstraintsrequiresCompatibilities: taskDefinition.requiresCompatibilitiescpu: taskDefinition.cpumemory: taskDefinition.memory}' > task_def_$service.json \n 
+              --query '{  containerDefinitions: taskDefinition.containerDefinitions,family: taskDefinition.family,taskRoleArn: taskDefinition.taskRoleArn,executionRoleArn: taskDefinition.executionRoleArn,networkMode: taskDefinition.networkMode,volumes: taskDefinition.volumes,placementConstraints: taskDefinition.placementConstraints,requiresCompatibilities: taskDefinition.requiresCompatibilities,cpu: taskDefinition.cpu,memory: taskDefinition.memory}' > task_def_$service.json \n 
           done"
 
       - name: Register new task definition
-        run: aws ecs register-task-definition --cli-input-json file://task_def_$service.json
+        run: 
+          "for service in ${{env.SERVICES}} \n 
+          do 
+            aws ecs register-task-definition --cli-input-json file://task_def_$service.json \n
+          done"
 
       - name: Redeploy service with new task definition
-        run: aws ecs update-service --cluster hackillinois-api --service hackillinois-api-$service --force-new-deployment --task-definition hackillinois-api-$service
+        run: 
+          "for service in ${{env.SERVICES}} \n 
+          do 
+            aws ecs update-service --cluster hackillinois-api --service hackillinois-api-$service --force-new-deployment --task-definition hackillinois-api-$service \n
+          done"

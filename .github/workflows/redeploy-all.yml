@@ -3,7 +3,7 @@ name: redeploy-all
 on:
   push:
     branches:
-      - "**"
+      - "master"
 
 defaults:
   run:

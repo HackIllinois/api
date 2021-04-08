@@ -1,0 +1,50 @@
+name: redeploy-all
+
+on:
+  push:
+    branches:
+      - "master"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  deploy:
+    runs-on: ubuntu-18.04
+    env:
+      SERVICES: 'auth checkin decision event gateway mail notifications profile project registration rsvp stat upload user'
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2    
+
+      - name: Configure AWS credentials from ECS account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ECS_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ECS_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Create new task definition  
+        run: 
+          "for service in ${{env.SERVICES}} \n 
+          do 
+            aws ecs describe-task-definition 
+              --task-definition hackillinois-api-$service 
+              --query '{  containerDefinitions: taskDefinition.containerDefinitions,family: taskDefinition.family,taskRoleArn: taskDefinition.taskRoleArn,executionRoleArn: taskDefinition.executionRoleArn,networkMode: taskDefinition.networkMode,volumes: taskDefinition.volumes,placementConstraints: taskDefinition.placementConstraints,requiresCompatibilities: taskDefinition.requiresCompatibilities,cpu: taskDefinition.cpu,memory: taskDefinition.memory}' > task_def_$service.json \n 
+          done"
+
+      - name: Register new task definition
+        run: 
+          "for service in ${{env.SERVICES}} \n 
+          do 
+            aws ecs register-task-definition --cli-input-json file://task_def_$service.json \n
+          done"
+
+      - name: Redeploy service with new task definition
+        run: 
+          "for service in ${{env.SERVICES}} \n 
+          do 
+            aws ecs update-service --cluster hackillinois-api --service hackillinois-api-$service --force-new-deployment --task-definition hackillinois-api-$service \n
+          done"

@@ -136,6 +136,11 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 
 	old_profile, err := service.GetProfile(profile_id)
 
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile associated with this profile id."))
+		return
+	}
+
 	if profile.Points != old_profile.Points {
 		profile.Points = old_profile.Points
 	}

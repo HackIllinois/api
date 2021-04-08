@@ -65,7 +65,7 @@ var EventRoutes = arbor.RouteCollection{
 		"DeleteEvent",
 		"DELETE",
 		"/event/{name}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(DeleteEvent).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(DeleteEvent).ServeHTTP,
 	},
 	arbor.Route{
 		"GetAllEvents",
@@ -77,13 +77,13 @@ var EventRoutes = arbor.RouteCollection{
 		"CreateEvent",
 		"POST",
 		"/event/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(CreateEvent).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(CreateEvent).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateEvent",
 		"PUT",
 		"/event/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateEvent).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateEvent).ServeHTTP,
 	},
 	arbor.Route{
 		"GetEventCode",

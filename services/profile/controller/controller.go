@@ -134,6 +134,12 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	var profile models.Profile
 	json.NewDecoder(r.Body).Decode(&profile)
 
+	old_profile, err := service.GetProfile(profile_id)
+
+	if profile.Points != old_profile.Points {
+		profile.Points = old_profile.Points
+	}
+
 	err = service.UpdateProfile(profile_id, profile)
 
 	if err != nil {

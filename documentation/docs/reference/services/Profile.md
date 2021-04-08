@@ -128,6 +128,7 @@ PUT /profile/
 
 Updates the profile for the user with the `id` in the JWT token provided in the Authorization header.
 This returns the updated profile information.
+Note you can not edit the ``points`` field through this.
 
 Request format:
 ```

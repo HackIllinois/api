@@ -2,13 +2,14 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+	"time"
+
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/HackIllinois/api/services/notifications/service"
 	"github.com/gorilla/mux"
-	"net/http"
-	"time"
 )
 
 func SetupController(route *mux.Route) {
@@ -24,6 +25,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/topic/{id}/subscribe/", SubscribeToTopic).Methods("POST")
 	router.HandleFunc("/topic/{id}/unsubscribe/", UnsubscribeToTopic).Methods("POST")
 	router.HandleFunc("/device/", RegisterDeviceToUser).Methods("POST")
+	router.HandleFunc("/device/", UnregisterDeviceFromUser).Methods("DELETE")
 	router.HandleFunc("/order/{id}/", GetNotificationOrder).Methods("GET")
 }
 
@@ -241,6 +243,36 @@ func RegisterDeviceToUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		errors.WriteError(w, r, errors.InternalError(err.Error(), "Failed to register device to user."))
+		return
+	}
+
+	devices, err := service.GetUserDevices(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to retrieve user's devices."))
+		return
+	}
+
+	device_list := models.DeviceList{
+		Devices: devices,
+	}
+
+	json.NewEncoder(w).Encode(device_list)
+}
+
+/*
+	Unregistered the specified device token from the user
+*/
+func UnregisterDeviceFromUser(w http.ResponseWriter, r *http.Request) {
+	id := r.Header.Get("HackIllinois-Identity")
+
+	var device_registration models.DeviceRegistration
+	json.NewDecoder(r.Body).Decode(&device_registration)
+
+	err := service.UnregisterDeviceFromUser(device_registration.Token, device_registration.Platform, id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Failed to unregister device from user."))
 		return
 	}
 

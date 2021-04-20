@@ -207,6 +207,47 @@ func UpdateBlob(blob models.Blob) error {
 }
 
 /*
+	Patches blob with the given id
+*/
+func PatchBlob(blob models.Blob) error {
+	blob_data, err_blob_data := GetBlob(blob.ID)
+	blob_updated_data := map[string]interface{}{}
+	blob_unupdated_data := map[string]interface{}{}
+	// Checks for condition if blob doesn't exist
+	if err_blob_data != nil {
+		return err_blob_data
+	}
+	// Block deals with updated data object
+	json_updated_data, err_json_updated_data := json.Marshal(blob_data.Data)
+	if err_json_updated_data != nil {
+		return err_json_updated_data
+	}
+	json.Unmarshal([]byte(json_updated_data), &blob_updated_data)
+
+	// Block deals with unupdated data object 
+	json_unupdated_data, err_json_unupdated_data := json.Marshal(blob.Data)
+	if err_json_unupdated_data != nil {
+		return err_json_unupdated_data
+	}
+	json.Unmarshal([]byte(json_unupdated_data), &blob_unupdated_data)
+
+	//Replaces values of unupdated to updated data object
+	for blobDataKey := range blob_unupdated_data {
+		blob_updated_data[blobDataKey] = blob_unupdated_data[blobDataKey]
+	}
+	selector := database.QuerySelector {
+		"id": blob.ID
+	}
+	patched_blob_data := models.Blob {
+		ID: blob.ID
+		Data: blob_updated_data,
+	}
+
+	err = db.update("blobstore", selector, &patched_blob_data)
+	return err
+}
+
+/*
 Deletes the blob with the given id
 Returns the blob that was deleted
 */

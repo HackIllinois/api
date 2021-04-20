@@ -60,7 +60,9 @@ func toObject(raw_data interface{}, definition DataStoreDefinition) (interface{}
 				return nil, NewErrInField(field.Name, err)
 			}
 		} else {
-			data[field.Name] = getDefaultValue(field.Type)
+			if len(field.Fields) > 0 {
+				data[field.Name] = getDefaultValue(field.Type)
+			}
 		}
 	}
 

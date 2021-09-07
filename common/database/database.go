@@ -13,6 +13,7 @@ type Database interface {
 	RemoveAll(collection_name string, query interface{}) (*ChangeResults, error)
 	Insert(collection_name string, item interface{}) error
 	Upsert(collection_name string, selector interface{}, update interface{}) (*ChangeResults, error)
+	Patch(collection_name string, selector interface{}, patch interface{}) error
 	Update(collection_name string, selector interface{}, update interface{}) error
 	UpdateAll(collection_name string, selector interface{}, update interface{}) (*ChangeResults, error)
 	DropDatabase() error

@@ -163,6 +163,38 @@ func TestUpdateUserRegistrationService(t *testing.T) {
 }
 
 /*
+	Service level test for patching user registration in the db
+*/
+func TestPatchUserRegistrationService(t *testing.T) {
+	SetupTestDB(t)
+	base_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
+	json.Unmarshal([]byte(patch_registration_data), &base_registration)
+	err := service.PatchUserRegistration("testid", base_registration)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	user_registration, err := service.GetUserRegistration("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_registration := getBaseUserRegistration()
+	expected_registration.Data["id"] = "testid"
+	expected_registration.Data["firstName"] = "John"
+	expected_registration.Data["lastName"] = "Smith"
+	expected_registration.Data["email"] = "new_test@gmail.com"
+
+	if !reflect.DeepEqual(user_registration.Data["firstName"], expected_registration.Data["firstName"]) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registration.Data["firstName"], user_registration.Data["firstName"])
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
 	Service level test for getting mentor registration from db
 */
 func TestGetMentorRegistrationService(t *testing.T) {
@@ -438,6 +470,15 @@ var user_registration_data string = `
 	"age": 20,
 	"createdAt": 10,
 	"updatedAt": 15
+}
+`
+
+var patch_registration_data string = `
+{
+	"id": "testid",
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "new_test@gmail.com"
 }
 `
 

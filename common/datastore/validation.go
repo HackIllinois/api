@@ -5,8 +5,11 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-func (datastore *DataStore) Validate() error {
+func (datastore *DataStore) Validate(params ...int) error {
 	validate := validator.New()
+	if len(params) == 1{
+		return nil
+	}
 
 	return validateField(datastore.Data, datastore.Definition, validate)
 }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/HackIllinois/api/common/config"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 /*
@@ -195,6 +196,19 @@ func (db *MongoDatabase) Upsert(collection_name string, selector interface{}, up
 	}
 
 	return &change_results, convertMgoError(err)
+}
+
+func (db *MongoDatabase) Patch(collection_name string, selector interface{}, patch interface{}) error {
+	current_session := db.GetSession()
+	defer current_session.Close()
+
+	collection := current_session.DB(db.name).C(collection_name)
+
+	// err := collection.Update(selector, bson.M{"$set": patch})
+	// err := collection.Update(selector, bson.M{"$set": bson.M{"lastName": "Springer", "firstName": "Jerry"}})
+	err := collection.Update(selector, bson.M{"$set": patch})
+
+	return convertMgoError(err)
 }
 
 /*

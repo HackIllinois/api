@@ -53,6 +53,18 @@ func NewErrInField(field_name string, err error) error {
 	return ErrorInField{FieldName: field_name, Err: err}
 }
 
+/*
+	Strips default values from 
+*/
+func StripDefaults(form DataStore) DataStore {
+	for key, element := range form.Data {
+		if element == 0 || element == 0.0 || element == false || element == nil || element == "" {
+			delete(form.Data, key)
+		}
+	}
+	return form
+}
+
 var conversionFuncs map[string](func(interface{}, DataStoreDefinition) (interface{}, error))
 var defaultValues map[string]interface{}
 

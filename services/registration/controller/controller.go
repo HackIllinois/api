@@ -269,36 +269,36 @@ func PatchCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
-	err := json.NewDecoder(r.Body).Decode(&user_registration)
+	registration_patch := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
+	err := json.NewDecoder(r.Body).Decode(&registration_patch)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not decode user registration information. Possible failure in JSON validation, or invalid registration format."))
 		return
 	}
 
-	user_registration.Data["id"] = id
-
-	user_info, err := service.GetUserInfo(id)
+	registration_patch.Data["id"] = id
 
 	if err != nil {
 		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not get user info."))
 		return
 	}
 
-	original_registration, err := service.GetUserRegistration(id)
+	user_registration, err := service.GetUserRegistration(id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's original registration."))
 		return
 	}
 
-	user_registration.Data["github"] = user_info.Username
+	registration_patch = datastore.StripDefaults(registration_patch)
+	for key, element := range registration_patch.Data {
+		user_registration.Data[key] = element
+	}
 
-	user_registration.Data["createdAt"] = original_registration.Data["createdAt"]
 	user_registration.Data["updatedAt"] = time.Now().Unix()
 
-	err = service.PatchUserRegistration(id, user_registration)
+	err = service.PatchUserRegistration(id, *user_registration)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not update user's registration."))

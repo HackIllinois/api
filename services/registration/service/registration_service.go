@@ -93,8 +93,8 @@ func UpdateUserRegistration(id string, user_registration models.UserRegistration
 /*
 	Patches the user registration associated with the given user id
 */
-func PatchUserRegistration(id string, user_registration models.UserRegistration) error {
-	err := user_registration.Validate(1)
+func PatchUserRegistration(id string, registration_patch models.UserRegistration) error {
+	err := registration_patch.Validate() //make sure you remember to revalidate
 
 	if err != nil {
 		return err
@@ -102,7 +102,7 @@ func PatchUserRegistration(id string, user_registration models.UserRegistration)
 
 	selector := database.QuerySelector{"id": id}
 
-	err = db.Patch("attendees", selector, &user_registration)
+	err = db.Patch("attendees", selector, &registration_patch)
 
 	return err
 }

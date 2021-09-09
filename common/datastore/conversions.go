@@ -59,10 +59,9 @@ func toObject(raw_data interface{}, definition DataStoreDefinition) (interface{}
 			if err != nil {
 				return nil, NewErrInField(field.Name, err)
 			}
-		} 
-		// else {
-		// 	data[field.Name] = getDefaultValue(field.Type) //removed for registration/attendee patch function
-		// }
+		} else {
+			data[field.Name] = getDefaultValue(field.Type)
+		}
 	}
 
 	return data, nil

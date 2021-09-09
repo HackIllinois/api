@@ -167,9 +167,15 @@ func TestUpdateUserRegistrationService(t *testing.T) {
 */
 func TestPatchUserRegistrationService(t *testing.T) {
 	SetupTestDB(t)
-	base_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
-	json.Unmarshal([]byte(patch_registration_data), &base_registration)
-	err := service.PatchUserRegistration("testid", base_registration)
+	test_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
+	json.Unmarshal([]byte(patch_registration_data), &test_registration)
+	test_data := make (map[string]interface{})
+	test_data["firstName"] = "John"
+	test_data["lastName"] = "Smith"
+	test_data["email"] = "new_test@gmail.com"
+	test_registration.Data = test_data
+	fmt.Println(test_registration)
+	err := service.PatchUserRegistration("testid", test_registration)
 
 	if err != nil {
 		t.Fatal(err)

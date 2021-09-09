@@ -2,13 +2,11 @@ package controller
 
 import (
 	"encoding/json"
-	// "fmt"
 	"net/http"
 	"time"
 
 	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/common/errors"
-	// "github.com/HackIllinois/api/services/registration"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 	"github.com/HackIllinois/api/services/registration/service"
@@ -271,38 +269,28 @@ func PatchCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	var registration_patch map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&registration_patch)
+	var patch_data map[string]interface{}
+	err := json.NewDecoder(r.Body).Decode(&patch_data)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not decode user registration information. Possible failure in JSON validation, or invalid registration format."))
 		return
 	}
 
-	registration_patch["id"] = id
+	patch_data["id"] = id
 
-	if err != nil {
-		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not get user info."))
-		return
-	}
-
-	user_registration, err := service.GetUserRegistration(id)
-
-	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's original registration."))
-		return
-	}
-
-	registration_definition := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
-	for _, field := range registration_definition.Definition.Fields {
-		if val, ok := registration_patch[field.Name]; ok {
-			user_registration.Data[field.Name] = val
+	registration_patch := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
+	for _, field := range registration_patch.Definition.Fields {
+		if _, ok := patch_data[field.Name]; !ok {
+			delete(patch_data, field.Name)
 		}
 	}
 
-	user_registration.Data["updatedAt"] = time.Now().Unix()
+	registration_patch.Data = patch_data;
 
-	err = service.PatchUserRegistration(id, *user_registration)
+	registration_patch.Data["updatedAt"] = time.Now().Unix()
+
+	err = service.PatchUserRegistration(id, registration_patch)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not update user's registration."))

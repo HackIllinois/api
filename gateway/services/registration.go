@@ -40,7 +40,7 @@ var RegistrationRoutes = arbor.RouteCollection{
 		"PatchCurrentUserRegistration",
 		"PATCH",
 		"/registration/attendee/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(PatchRegistration).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(PatchRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"GetFilteredUserRegistrations",

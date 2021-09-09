@@ -8,6 +8,7 @@ import (
 
 	"github.com/HackIllinois/api/common/config"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 /*
@@ -203,7 +204,7 @@ func (db *MongoDatabase) Patch(collection_name string, selector interface{}, pat
 
 	collection := current_session.DB(db.name).C(collection_name)
 
-	err := collection.Update(selector, patch)
+	err := collection.Update(selector, bson.M{"$set": patch})
 
 	return convertMgoError(err)
 }

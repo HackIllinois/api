@@ -2,11 +2,13 @@ package controller
 
 import (
 	"encoding/json"
+	// "fmt"
 	"net/http"
 	"time"
 
 	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/common/errors"
+	// "github.com/HackIllinois/api/services/registration"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 	"github.com/HackIllinois/api/services/registration/service"
@@ -268,8 +270,8 @@ func PatchCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 		return
 	}
-
-	registration_patch := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
+	
+	var registration_patch map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&registration_patch)
 
 	if err != nil {
@@ -277,7 +279,7 @@ func PatchCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	registration_patch.Data["id"] = id
+	registration_patch["id"] = id
 
 	if err != nil {
 		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not get user info."))
@@ -291,9 +293,11 @@ func PatchCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	registration_patch = datastore.StripDefaults(registration_patch)
-	for key, element := range registration_patch.Data {
-		user_registration.Data[key] = element
+	registration_definition := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
+	for _, field := range registration_definition.Definition.Fields {
+		if val, ok := registration_patch[field.Name]; ok {
+			user_registration.Data[field.Name] = val
+		}
 	}
 
 	user_registration.Data["updatedAt"] = time.Now().Unix()

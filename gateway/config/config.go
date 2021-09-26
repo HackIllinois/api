@@ -26,6 +26,7 @@ var STAT_SERVICE string
 var NOTIFICATIONS_SERVICE string
 var PROJECT_SERVICE string
 var PROFILE_SERVICE string
+var PRIZE_SERVICE string
 
 func Initialize() error {
 
@@ -114,6 +115,12 @@ func Initialize() error {
 	}
 
 	PROFILE_SERVICE, err = cfg_loader.Get("PROFILE_SERVICE")
+
+	if err != nil {
+		return err
+	}
+
+	PRIZE_SERVICE, err = cfg_loader.Get("PRIZE_SERVICE")
 
 	if err != nil {
 		return err

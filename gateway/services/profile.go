@@ -91,6 +91,18 @@ var ProfileRoutes = arbor.RouteCollection{
 		"/profile/favorite/remove/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveProfileFavorite).ServeHTTP,
 	},
+	arbor.Route{
+		"AwardShopPoints",
+		"POST",
+		"/profile/shoppoints/award/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(AwardShopPoints).ServeHTTP,
+	},
+	arbor.Route{
+		"AwardShopPoints",
+		"POST",
+		"/profile/shoppoints/redeem/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(RedeemShopPoints).ServeHTTP,
+	},
 	// This needs to be the last route in order to prevent endpoints like "search", "leaderboard" from accidentally being routed as the {id} variable.
 	arbor.Route{
 		"GetUserProfileById",
@@ -153,5 +165,13 @@ func AddProfileFavorite(w http.ResponseWriter, r *http.Request) {
 }
 
 func RemoveProfileFavorite(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
+func AwardShopPoints(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
+func RedeemShopPoints(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
 }

@@ -14,6 +14,7 @@ import (
 var validate *validator.Validate
 
 var db database.Database
+var prize_db database.Database
 
 func Initialize() error {
 	if db != nil {
@@ -23,6 +24,12 @@ func Initialize() error {
 
 	var err error
 	db, err = database.InitDatabase(config.PROFILE_DB_HOST, config.PROFILE_DB_NAME)
+
+	if err != nil {
+		return err
+	}
+
+	prize_db, err = database.InitDatabase(config.PRIZE_DB_HOST, config.PRIZE_DB_NAME)
 
 	if err != nil {
 		return err
@@ -443,4 +450,50 @@ func RemoveProfileFavorite(profile_id string, profile string) error {
 	err = db.Update("profilefavorites", selector, profile_favorites)
 
 	return err
+}
+
+func RedeemShopItem(shop_item_id string, profile models.Profile) error {
+	query := database.QuerySelector{
+		"id": shop_item_id,
+	}
+
+	var prize models.Prize
+	err := prize_db.FindOne("prize", query, &prize)
+
+	if err != nil {
+		return errors.New("Item trying to redeem doesn't exist")
+	}
+
+	if prize.Quantity <= 0 {
+		return errors.New("Item is out of stock")
+	}
+
+	if prize.Value > profile.ShopPoints {
+		return errors.New("User has insufficient points")
+	}
+
+	profile.ShopPoints -= prize.Value // Note: prize.Value can be negative
+	prize.Quantity -= 1
+
+	// TODO: Associate redeemed items with profile
+
+	err = prize_db.Update("prize", query, &prize)
+
+	if err != nil {
+		return errors.New("Prize item could not be updated")
+	}
+
+	selector := database.QuerySelector{
+		"id": profile.ID,
+	}
+	// A rare case, but if this update fails, the user is not charged for the
+	//  item and the quantity of the prize item decrements since they are
+	//  individual commits.
+	err = db.Update("profiles", selector, profile)
+
+	if err != nil {
+		return errors.New("Profile could not be updated")
+	}
+
+	return nil
 }

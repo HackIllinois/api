@@ -32,6 +32,9 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/favorite/remove/", RemoveProfileFavorite).Methods("POST")
 
 	router.HandleFunc("/{id}/", GetProfileById).Methods("GET")
+
+	router.HandleFunc("/shoppoints/award/", AwardShopPoints).Methods("POST")
+	router.HandleFunc("/shoppoints/redeem/", RedeemShopPoints).Methods("POST")
 }
 
 /*
@@ -143,6 +146,10 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 
 	if profile.Points != old_profile.Points {
 		profile.Points = old_profile.Points
+	}
+
+	if profile.ShopPoints != old_profile.ShopPoints {
+		profile.ShopPoints = old_profile.ShopPoints
 	}
 
 	err = service.UpdateProfile(profile_id, profile)
@@ -421,4 +428,86 @@ func RemoveProfileFavorite(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(favorites)
+}
+
+/*
+	AwardPoints gives the specified number of points to the current user.
+*/
+func AwardShopPoints(w http.ResponseWriter, r *http.Request) {
+	var request models.AwardShopPointsRequest
+	json.NewDecoder(r.Body).Decode(&request)
+
+	id := request.ID
+
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
+
+	user_profile, err := service.GetProfile(profile_id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile for id "+request.ID+" when trying to award points."))
+		return
+	}
+
+	user_profile.ShopPoints += request.ShopPoints
+
+	err = service.UpdateProfile(profile_id, *user_profile)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the profile when trying to award points."))
+		return
+	}
+
+	updated_profile, err := service.GetProfile(profile_id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated profile details after awarding points."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(updated_profile)
+}
+
+/*
+	AwardPoints gives the specified number of points to the current user.
+*/
+func RedeemShopPoints(w http.ResponseWriter, r *http.Request) {
+	var request models.RedeemShopPointsRequest
+	json.NewDecoder(r.Body).Decode(&request)
+
+	id := request.ID
+
+	profile_id, err := service.GetProfileIdFromUserId(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		return
+	}
+
+	user_profile, err := service.GetProfile(profile_id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile for id "+request.ID+" when trying to award points."))
+		return
+	}
+
+	err = service.RedeemShopItem(request.ShopItemID, *user_profile)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the profile when trying to award points."))
+		return
+	}
+
+	updated_profile, err := service.GetProfile(profile_id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated profile details after awarding points."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(updated_profile)
 }

@@ -37,6 +37,18 @@ var PrizeRoutes = arbor.RouteCollection{
 		"/prize/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(DeletePrize).ServeHTTP,
 	},
+	arbor.Route{
+		"AwardPoints",
+		"POST",
+		"/prize/points/award/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(AwardShopPoints).ServeHTTP,
+	},
+	arbor.Route{
+		"RedeemPoints",
+		"POST",
+		"/prize/points/redeem/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(RedeemShopPoints).ServeHTTP,
+	},
 }
 
 func GetPrize(w http.ResponseWriter, r *http.Request) {
@@ -53,4 +65,12 @@ func UpdatePrize(w http.ResponseWriter, r *http.Request) {
 
 func DeletePrize(w http.ResponseWriter, r *http.Request) {
 	arbor.DELETE(w, config.PRIZE_SERVICE+r.URL.String(), PrizeFormat, "", r)
+}
+
+func AwardShopPoints(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.PRIZE_SERVICE+r.URL.String(), PrizeFormat, "", r)
+}
+
+func RedeemShopPoints(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.PRIZE_SERVICE+r.URL.String(), PrizeFormat, "", r)
 }

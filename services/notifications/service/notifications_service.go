@@ -170,9 +170,9 @@ func GetAllPublicNotifications() ([]models.Notification, error) {
 }
 
 /*
-	Returns the list of topics the user is subscribed to
+	Returns the list of modifiable topics the user is subscribed to
 */
-func GetSubscriptions(id string) ([]string, error) {
+func GetModifiableSubscriptions(id string)([]string, error) {
 	selector := database.QuerySelector{
 		"userids": database.QuerySelector{
 			"$elemMatch": database.QuerySelector{
@@ -192,6 +192,19 @@ func GetSubscriptions(id string) ([]string, error) {
 
 	for i, topic := range topics {
 		topicIds[i] = topic.ID
+	}
+
+	return topicIds, nil
+}
+
+/*
+	Returns the list of topics the user is subscribed to
+*/
+func GetSubscriptions(id string) ([]string, error) {
+	topicIds, err := GetModifiableSubscriptions(id)
+
+	if err != nil {
+		return nil, err
 	}
 
 	roles, err := GetUserRoles(id)
@@ -229,11 +242,13 @@ func SubscribeToTopic(userId string, topicId string) error {
 }
 
 /*
-	Unsubscribes the user to the specified topic
+	Unsubscribes the user to a list of topics
 */
-func UnsubscribeToTopic(userId string, topicId string) error {
+func UnsubscribeToTopics(userId string, topicIds []string) error {
 	selector := database.QuerySelector{
-		"id": topicId,
+		"id":  database.QuerySelector{
+			"$in": topicIds,
+		},
 	}
 
 	modifier := database.QuerySelector{
@@ -242,13 +257,20 @@ func UnsubscribeToTopic(userId string, topicId string) error {
 		},
 	}
 
-	err := db.Update("topics", selector, &modifier)
+	_, err := db.UpdateAll("topics", selector, &modifier)
 
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+/*
+	Unsubscribes the user to the specified topic
+*/
+func UnsubscribeToTopic(userId string, topicId string) error {
+	return UnsubscribeToTopics(userId, []string{topicId})
 }
 
 /*

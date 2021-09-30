@@ -62,6 +62,12 @@ var NotificationsRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(SubscribeToTopic).ServeHTTP,
 	},
 	arbor.Route{
+		"UnsubscribeToAllTopics",
+		"POST",
+		"/notifications/topic/unsubscribe/all/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(UnsubscribeToAllTopics).ServeHTTP,
+	},
+	arbor.Route{
 		"UnsubscribeToTopic",
 		"POST",
 		"/notifications/topic/{id}/unsubscribe/",
@@ -114,6 +120,10 @@ func SubscribeToTopic(w http.ResponseWriter, r *http.Request) {
 }
 
 func UnsubscribeToTopic(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
+}
+
+func UnsubscribeToAllTopics(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }
 

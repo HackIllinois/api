@@ -57,6 +57,17 @@ func SetupTestDB(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	topicTwo := models.Topic{
+		ID:      "TopicTwo",
+		UserIDs: []string{"test_user"},
+	}
+
+	err = db.Insert("topics", &topicTwo)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	notification := models.Notification{
 		ID:    "test_id",
 		Title: "test title",
@@ -106,7 +117,7 @@ func TestGetAllTopicIDs(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_topics := []string{"User"}
+	expected_topics := []string{"User", "TopicTwo"}
 
 	if !reflect.DeepEqual(topics, expected_topics) {
 		t.Errorf("Wrong topics.\nExpected %v\ngot %v\n", expected_topics, topics)
@@ -284,6 +295,23 @@ func TestSubscribeToTopic(t *testing.T) {
 	SetupTestDB(t)
 
 	err := service.SubscribeToTopic("test_user2", "User")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests unsubscriptioning user to multiple topics
+*/
+func TestUnsubscribeToTopics(t *testing.T) {
+	SetupTestDB(t)
+
+	var topics = []string{"User", "TopicTwo"}
+
+	err := service.UnsubscribeToTopics("test_user", topics)
 
 	if err != nil {
 		t.Fatal(err)

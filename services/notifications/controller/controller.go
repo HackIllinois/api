@@ -23,6 +23,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/topic/{id}/", DeleteTopic).Methods("DELETE")
 	router.HandleFunc("/topic/{id}/subscribe/", SubscribeToTopic).Methods("POST")
 	router.HandleFunc("/topic/{id}/unsubscribe/", UnsubscribeToTopic).Methods("POST")
+	router.HandleFunc("/topic/unsubscribe/all/", UnsubscribeToAllTopics).Methods("POST")
 	router.HandleFunc("/device/", RegisterDeviceToUser).Methods("POST")
 	router.HandleFunc("/order/{id}/", GetNotificationOrder).Methods("GET")
 }
@@ -220,6 +221,39 @@ func UnsubscribeToTopic(w http.ResponseWriter, r *http.Request) {
 	}
 
 	subscriptions, err := service.GetSubscriptions(userId)
+
+	topic_list := models.TopicList{
+		Topics: subscriptions,
+	}
+
+	json.NewEncoder(w).Encode(topic_list)
+}
+
+/*
+	Unsubscribes a user to all topics and returns their updated subscriptions
+*/
+func UnsubscribeToAllTopics(w http.ResponseWriter, r *http.Request) {
+	userId := r.Header.Get("HackIllinois-Identity")
+
+	modifiableSubscriptions, err := service.GetModifiableSubscriptions(userId)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve user subscriptions."))
+		return
+	}
+
+	err = service.UnsubscribeToTopics(userId, modifiableSubscriptions)
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to unsubscribe user to all topics."))
+		return
+	}
+
+	subscriptions, err := service.GetSubscriptions(userId)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not retrieve user subscriptions."))
+		return
+	}
 
 	topic_list := models.TopicList{
 		Topics: subscriptions,

@@ -67,6 +67,12 @@ var RegistrationRoutes = arbor.RouteCollection{
 		alice.New(middleware.AuthMiddleware([]models.Role{models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateRegistration).ServeHTTP,
 	},
 	arbor.Route{
+		"PatchCurrentMentorRegistration",
+		"PATCH",
+		"/registration/mentor/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(PatchRegistration).ServeHTTP,
+	},
+	arbor.Route{
 		"GetFilteredMentorRegistrations",
 		"GET",
 		"/registration/mentor/filter/",

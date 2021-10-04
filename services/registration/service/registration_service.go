@@ -233,6 +233,23 @@ func UpdateMentorRegistration(id string, mentor_registration models.MentorRegist
 }
 
 /*
+	Patches the mentor registration associated with the given user id
+*/
+func PatchMentorRegistration(id string, mentor_registration_patch models.MentorRegistration) error {
+	err := mentor_registration_patch.ValidateNonEmpty()
+
+	if err != nil {
+		return err
+	}
+
+	selector := database.QuerySelector{"id": id}
+
+	err = db.Patch("mentors", selector, &mentor_registration_patch)
+
+	return err
+}
+
+/*
 	Returns the mentor registrations associated with the given parameters
 */
 func GetFilteredMentorRegistrations(parameters map[string][]string) (*models.FilteredMentorRegistrations, error) {

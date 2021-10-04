@@ -290,6 +290,44 @@ func TestUpdateMentorRegistrationService(t *testing.T) {
 }
 
 /*
+	Service level test for patching user registration in the db
+*/
+func TestPatchMentorRegistrationService(t *testing.T) {
+	SetupTestDB(t)
+	test_registration := datastore.NewDataStore(config.MENTOR_REGISTRATION_DEFINITION)
+	json.Unmarshal([]byte(patch_registration_data), &test_registration)
+	test_data := make (map[string]interface{})
+	test_data["firstName"] = "John"
+	test_data["lastName"] = "Smith"
+	test_data["email"] = "new_test@gmail.com"
+	test_registration.Data = test_data
+	fmt.Println(test_registration)
+	err := service.PatchMentorRegistration("testid", test_registration)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	user_registration, err := service.GetMentorRegistration("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_registration := getBaseMentorRegistration()
+	expected_registration.Data["id"] = "testid"
+	expected_registration.Data["firstName"] = "John"
+	expected_registration.Data["lastName"] = "Smith"
+	expected_registration.Data["email"] = "new_test@gmail.com"
+
+	if !reflect.DeepEqual(user_registration.Data["firstName"], expected_registration.Data["firstName"]) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registration.Data["firstName"], user_registration.Data["firstName"])
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
 	Service level test for filtering user registrations in the db
 */
 func TestGetFilteredUserRegistrationsService(t *testing.T) {

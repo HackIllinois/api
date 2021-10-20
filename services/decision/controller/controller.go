@@ -19,6 +19,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/", GetCurrentDecision).Methods("GET")
 	router.HandleFunc("/", UpdateDecision).Methods("POST")
 	router.HandleFunc("/finalize/", FinalizeDecision).Methods("POST")
+	router.HandleFunc("/finalize/batch/", FinalizeDecisionBatch).Methods("POST")
 	router.HandleFunc("/filter/", GetFilteredDecisions).Methods("GET")
 	router.HandleFunc("/batch/", UpdateDecisionBatch).Methods("POST")
 	router.HandleFunc("/{id}/", GetDecision).Methods("GET")
@@ -198,6 +199,11 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	// Assuming we are working on the specified user's decision
 	existing_decision_history, err := service.GetDecision(id)
 
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get current user's existing decision history."))
+		return
+	}
+
 	// It is an error to finalize a finalized decision, or unfinalize an unfinalized decision.
 	if existing_decision_history.Finalized == decision_finalized.Finalized {
 		errors.WriteError(w, r, errors.AttributeMismatchError("Superfluous request. Existing decision already at desired state of finalization.", "Superfluous request. Existing decision already at desired state of finalization."))
@@ -244,6 +250,89 @@ func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_decision)
+}
+
+func FinalizeDecisionBatch(w http.ResponseWriter, r *http.Request) {
+	var decisions_finalized models.DecisionsFinalized // decisions which need to be finalized
+	json.NewDecoder(r.Body).Decode(&decisions_finalized)
+
+	var decisions models.FilteredDecisions // decisions which have been finalized
+
+	// Check if any of the IDs are missing, or if any of the requests are superfluous. If so, fail early.
+	for _, decision_finalized := range decisions_finalized.DecisionsFinalized {
+		if decision_finalized.ID == "" {
+			errors.WriteError(w, r, errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
+			return
+		}
+
+		// Assuming we are working on the specified user's decision
+		existing_decision_history, err := service.GetDecision(decision_finalized.ID)
+
+		if err != nil {
+			errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get current user's existing decision history."))
+			return
+		}
+
+		// It is an error to finalize a finalized decision, or unfinalize an unfinalized decision.
+		if existing_decision_history.Finalized == decision_finalized.Finalized {
+			errors.WriteError(w, r, errors.AttributeMismatchError("Superfluous request. Existing decision already at desired state of finalization.", "Superfluous request. Existing decision already at desired state of finalization."))
+			return
+		}
+	}
+
+	for _, decision_finalized := range decisions_finalized.DecisionsFinalized {
+		id := decision_finalized.ID
+
+		existing_decision_history, err := service.GetDecision(id)
+
+		if err != nil {
+			errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get current user's existing decision history."))
+			return
+		}
+
+		var latest_decision models.Decision
+		latest_decision.Finalized = decision_finalized.Finalized
+		latest_decision.ID = decision_finalized.ID
+		latest_decision.Status = existing_decision_history.Status
+		latest_decision.Wave = existing_decision_history.Wave
+		latest_decision.Reviewer = r.Header.Get("HackIllinois-Identity")
+		latest_decision.Timestamp = time.Now().Unix()
+		latest_decision.ExpiresAt = latest_decision.Timestamp + utils.HoursToUnixSeconds(config.DECISION_EXPIRATION_HOURS)
+
+		err = service.UpdateDecision(id, latest_decision)
+
+		if err != nil {
+			errors.WriteError(w, r, errors.InternalError(err.Error(), "Error updating the decision, in an attempt to alter its finalized status."))
+			return
+		}
+
+		updated_decision, err := service.GetDecision(id)
+
+		if err != nil {
+			errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated decision."))
+			return
+		}
+
+		if updated_decision.Finalized {
+			err = service.AddUserToMailList(id, updated_decision)
+
+			if err != nil {
+				errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not add user to mail list."))
+				return
+			}
+		} else {
+			err = service.RemoveUserFromMailList(id, updated_decision)
+
+			if err != nil {
+				errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not remove user from mail list."))
+				return
+			}
+		}
+
+		decisions.Decisions = append(decisions.Decisions, *updated_decision)
+	}
+
+	json.NewEncoder(w).Encode(decisions)
 }
 
 /*

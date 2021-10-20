@@ -44,6 +44,12 @@ var DecisionRoutes = arbor.RouteCollection{
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(FinalizeDecision).ServeHTTP,
 	},
 	arbor.Route{
+		"FinalizeDecisionBatch",
+		"POST",
+		"/decision/finalize/batch/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(FinalizeDecision).ServeHTTP,
+	},
+	arbor.Route{
 		"GetDecision",
 		"GET",
 		"/decision/{id}/",
@@ -72,5 +78,9 @@ func GetFilteredDecisions(w http.ResponseWriter, r *http.Request) {
 }
 
 func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.DECISION_SERVICE+r.URL.String(), DecisionFormat, "", r)
+}
+
+func FinalizeDecisionBatch(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, config.DECISION_SERVICE+r.URL.String(), DecisionFormat, "", r)
 }

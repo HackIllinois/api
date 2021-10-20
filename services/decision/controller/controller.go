@@ -20,6 +20,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/", UpdateDecision).Methods("POST")
 	router.HandleFunc("/finalize/", FinalizeDecision).Methods("POST")
 	router.HandleFunc("/filter/", GetFilteredDecisions).Methods("GET")
+	router.HandleFunc("/batch/", UpdateDecisionBatch).Methods("POST")
 	router.HandleFunc("/{id}/", GetDecision).Methods("GET")
 
 	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
@@ -110,6 +111,73 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(updated_decision)
+}
+
+/*
+	Endpoint to update the decisions for specified users.
+	If any of the existing decisions are already finalized, an error is reported.
+*/
+func UpdateDecisionBatch(w http.ResponseWriter, r *http.Request) {
+	var decisions models.Decisions
+	json.NewDecoder(r.Body).Decode(&decisions)
+
+	var updated_decisions models.FilteredDecisions
+
+	// Check if any of the decisions have been finalized already. If so, fail early.
+	for _, decision := range decisions.Decisions {
+		if decision.ID == "" {
+			errors.WriteError(w, r, errors.MalformedRequestError("Must provide id parameter in request.", "Must provide id parameter in request."))
+			return
+		}
+
+		has_decision, err := service.HasDecision(decision.ID)
+
+		if err != nil {
+			errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not determine user's decision."))
+			return
+		}
+
+		if has_decision {
+			existing_decision_history, err := service.GetDecision(decision.ID)
+
+			if err != nil {
+				errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get current user's existing decision history."))
+				return
+			}
+
+			if existing_decision_history.Finalized {
+				errors.WriteError(w, r, errors.AttributeMismatchError("Cannot modify finalized decision for user ID "+decision.ID, "Cannot modify finalized decision for user ID "+decision.ID))
+				return
+			}
+		}
+	}
+
+	for _, decision := range decisions.Decisions {
+
+		decision.Reviewer = r.Header.Get("HackIllinois-Identity")
+		decision.Timestamp = time.Now().Unix()
+		decision.ExpiresAt = decision.Timestamp + utils.HoursToUnixSeconds(config.DECISION_EXPIRATION_HOURS)
+		// Finalized is always false, unless explicitly set to true via the appropriate endpoint.
+		decision.Finalized = false
+
+		err := service.UpdateDecision(decision.ID, decision)
+
+		if err != nil {
+			errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not update decision."))
+			return
+		}
+
+		updated_decision, err := service.GetDecision(decision.ID)
+
+		if err != nil {
+			errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch updated decision."))
+			return
+		}
+
+		updated_decisions.Decisions = append(updated_decisions.Decisions, *updated_decision)
+	}
+
+	json.NewEncoder(w).Encode(updated_decisions)
 }
 
 /*

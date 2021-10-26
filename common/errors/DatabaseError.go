@@ -1,7 +1,6 @@
 package errors
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -11,7 +10,6 @@ const MONGO_NOT_FOUND_ERR = "Error: NOT_FOUND"
 func DatabaseError(raw_error string, message string) ApiError {
 	http_status_error := http.StatusInternalServerError
 	if raw_error == MONGO_NOT_FOUND_ERR {
-		fmt.Println(raw_error)
 		http_status_error = http.StatusNotFound
 	}
 

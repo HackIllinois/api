@@ -1,12 +1,13 @@
 package project
 
 import (
+	"log"
+
 	"github.com/HackIllinois/api/common/apiserver"
 	"github.com/HackIllinois/api/services/project/config"
 	"github.com/HackIllinois/api/services/project/controller"
 	"github.com/HackIllinois/api/services/project/service"
 	"github.com/gorilla/mux"
-	"log"
 )
 
 func Initialize() error {

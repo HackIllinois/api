@@ -1,5 +1,5 @@
 # Contributing
-Thank you for your interest in contributing to out project. The following are guidelines on how to best contribute to development of the HackIllinois API. Any contibution, wheather it be a bug report, feature request, bug fix, feature addition, or additional documentation, is greatly appreciated.
+Thank you for your interest in contributing to out project. The following are guidelines on how to best contribute to development of the HackIllinois API. Any contribution, wheather it be a bug report, feature request, bug fix, feature addition, or additional documentation, is greatly appreciated.
 
 1. [How to Contribute](#how-to-contribute)
 2. [Styleguides](#styleguides)
@@ -25,7 +25,7 @@ Feature suggestions include everything from minor improvements to adding complet
 - An explanation of why this feature would be useful
 
 ### Pull Requests
-Take a look at the GitHub issues and leave a comment on one that you would like to work on. We have tagged some issues as `beginner` that are a good introduction to working on the API. Once you have made the appropiate changes open a pull request.
+Take a look at the GitHub issues and leave a comment on one that you would like to work on. We have tagged some issues as `beginner` that are a good introduction to working on the API. Once you have made the appropiate changes, open a pull request.
 
 #### What to Include in a Pull Request
 - The base branch set to `staging`

@@ -1,7 +1,7 @@
 # Documentation System
 
 We use [MkDocs](https://www.mkdocs.org/) for our documentation, and host at [HackIllinois API Docs](https://docs.api.hackillinois.org).
-MkDocs is a Python module generates a static website, and/or a live-reloading server, from our Markdown-based documentation. It relies on a configuration file called `mkdocs.yml`, that is located the `documentation`. This configuration file can be used to specify the theme as well as menu structure of the documentation.
+MkDocs is a Python module which generates a static website, and/or a live-reloading server, from our Markdown-based documentation. It relies on a configuration file called `mkdocs.yml`, that is located in the `documentation` folder. This configuration file can be used to specify the theme as well as menu structure of the documentation.
 
 ## Commands
 Here are the commands that can be used for interfacing with MkDocs.

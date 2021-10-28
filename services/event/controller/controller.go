@@ -16,8 +16,8 @@ func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
 	router.HandleFunc("/favorite/", GetEventFavorites).Methods("GET")
-	router.HandleFunc("/favorite/add/", AddEventFavorite).Methods("POST")
-	router.HandleFunc("/favorite/remove/", RemoveEventFavorite).Methods("POST")
+	router.HandleFunc("/favorite/", AddEventFavorite).Methods("POST")
+	router.HandleFunc("/favorite/", RemoveEventFavorite).Methods("DELETE")
 
 	router.HandleFunc("/filter/", GetFilteredEvents).Methods("GET")
 	router.HandleFunc("/{id}/", GetEvent).Methods("GET")

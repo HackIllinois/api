@@ -15,8 +15,8 @@ func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
 	router.HandleFunc("/favorite/", GetProjectFavorites).Methods("GET")
-	router.HandleFunc("/favorite/add/", AddProjectFavorite).Methods("POST")
-	router.HandleFunc("/favorite/remove/", RemoveProjectFavorite).Methods("POST")
+	router.HandleFunc("/favorite/", AddProjectFavorite).Methods("POST")
+	router.HandleFunc("/favorite/", RemoveProjectFavorite).Methods("DELETE")
 
 	router.HandleFunc("/filter/", GetFilteredProjects).Methods("GET")
 	router.HandleFunc("/{id}/", GetProject).Methods("GET")

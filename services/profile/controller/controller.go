@@ -28,8 +28,8 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/points/award/", AwardPoints).Methods("POST")
 
 	router.HandleFunc("/favorite/", GetProfileFavorites).Methods("GET")
-	router.HandleFunc("/favorite/add/", AddProfileFavorite).Methods("POST")
-	router.HandleFunc("/favorite/remove/", RemoveProfileFavorite).Methods("POST")
+	router.HandleFunc("/favorite/", AddProfileFavorite).Methods("POST")
+	router.HandleFunc("/favorite/", RemoveProfileFavorite).Methods("DELETE")
 
 	router.HandleFunc("/{id}/", GetProfileById).Methods("GET")
 }

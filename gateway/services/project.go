@@ -22,13 +22,13 @@ var ProjectRoutes = arbor.RouteCollection{
 	arbor.Route{
 		"AddProjectFavorite",
 		"POST",
-		"/project/favorite/add/",
+		"/project/favorite/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(AddProjectFavorite).ServeHTTP,
 	},
 	arbor.Route{
 		"RemoveProjectFavorite",
-		"POST",
-		"/project/favorite/remove/",
+		"DELETE",
+		"/project/favorite/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveProjectFavorite).ServeHTTP,
 	},
 	arbor.Route{
@@ -98,5 +98,5 @@ func AddProjectFavorite(w http.ResponseWriter, r *http.Request) {
 }
 
 func RemoveProjectFavorite(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, config.PROJECT_SERVICE+r.URL.String(), ProjectFormat, "", r)
+	arbor.DELETE(w, config.PROJECT_SERVICE+r.URL.String(), ProjectFormat, "", r)
 }

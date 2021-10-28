@@ -22,13 +22,13 @@ var EventRoutes = arbor.RouteCollection{
 	arbor.Route{
 		"AddEventFavorite",
 		"POST",
-		"/event/favorite/add/",
+		"/event/favorite/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(AddEventFavorite).ServeHTTP,
 	},
 	arbor.Route{
 		"RemoveEventFavorite",
-		"POST",
-		"/event/favorite/remove/",
+		"DELETE",
+		"/event/favorite/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveEventFavorite).ServeHTTP,
 	},
 	arbor.Route{
@@ -158,5 +158,5 @@ func AddEventFavorite(w http.ResponseWriter, r *http.Request) {
 }
 
 func RemoveEventFavorite(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
+	arbor.DELETE(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }

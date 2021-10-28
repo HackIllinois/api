@@ -368,7 +368,7 @@ Response format:
 }
 ```
 
-POST /profile/favorite/add/
+POST /profile/favorite/
 -------------------------
 Adds the specified profile to the current user's favorite list, and returns the updated list of favorite profiles.
 
@@ -390,7 +390,7 @@ Response format:
 }
 ```
 
-POST /profile/favorite/remove/
+DELETE /profile/favorite/
 -------------------------
 Removes the specified profile from the current user's favorite list, and returns the updated list of favorite profiles.
 

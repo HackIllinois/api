@@ -2,12 +2,13 @@ package service
 
 import (
 	"errors"
+	"strconv"
+	"strings"
+
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 	"gopkg.in/go-playground/validator.v9"
-	"strconv"
-	"strings"
 )
 
 var validate *validator.Validate
@@ -85,6 +86,23 @@ func UpdateUserRegistration(id string, user_registration models.UserRegistration
 	selector := database.QuerySelector{"id": id}
 
 	err = db.Update("attendees", selector, &user_registration)
+
+	return err
+}
+
+/*
+	Patches the user registration associated with the given user id
+*/
+func PatchUserRegistration(id string, registration_patch models.UserRegistration) error {
+	err := registration_patch.ValidateNonEmpty()
+
+	if err != nil {
+		return err
+	}
+
+	selector := database.QuerySelector{"id": id}
+
+	err = db.Patch("attendees", selector, &registration_patch)
 
 	return err
 }
@@ -210,6 +228,23 @@ func UpdateMentorRegistration(id string, mentor_registration models.MentorRegist
 	selector := database.QuerySelector{"id": id}
 
 	err = db.Update("mentors", selector, &mentor_registration)
+
+	return err
+}
+
+/*
+	Patches the mentor registration associated with the given user id
+*/
+func PatchMentorRegistration(id string, mentor_registration_patch models.MentorRegistration) error {
+	err := mentor_registration_patch.ValidateNonEmpty()
+
+	if err != nil {
+		return err
+	}
+
+	selector := database.QuerySelector{"id": id}
+
+	err = db.Patch("mentors", selector, &mentor_registration_patch)
 
 	return err
 }

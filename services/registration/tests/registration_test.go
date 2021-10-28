@@ -163,6 +163,44 @@ func TestUpdateUserRegistrationService(t *testing.T) {
 }
 
 /*
+	Service level test for patching user registration in the db
+*/
+func TestPatchUserRegistrationService(t *testing.T) {
+	SetupTestDB(t)
+	test_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
+	json.Unmarshal([]byte(patch_registration_data), &test_registration)
+	test_data := make (map[string]interface{})
+	test_data["firstName"] = "John"
+	test_data["lastName"] = "Smith"
+	test_data["email"] = "new_test@gmail.com"
+	test_registration.Data = test_data
+	fmt.Println(test_registration)
+	err := service.PatchUserRegistration("testid", test_registration)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	user_registration, err := service.GetUserRegistration("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_registration := getBaseUserRegistration()
+	expected_registration.Data["id"] = "testid"
+	expected_registration.Data["firstName"] = "John"
+	expected_registration.Data["lastName"] = "Smith"
+	expected_registration.Data["email"] = "new_test@gmail.com"
+
+	if !reflect.DeepEqual(user_registration.Data["firstName"], expected_registration.Data["firstName"]) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registration.Data["firstName"], user_registration.Data["firstName"])
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
 	Service level test for getting mentor registration from db
 */
 func TestGetMentorRegistrationService(t *testing.T) {
@@ -246,6 +284,44 @@ func TestUpdateMentorRegistrationService(t *testing.T) {
 
 	if !reflect.DeepEqual(mentor_registration.Data["firstName"], expected_registration.Data["firstName"]) {
 		t.Errorf("Wrong mentor info.\nExpected %v\ngot %v\n", expected_registration.Data["firstName"], mentor_registration.Data["firstName"])
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Service level test for patching user registration in the db
+*/
+func TestPatchMentorRegistrationService(t *testing.T) {
+	SetupTestDB(t)
+	test_registration := datastore.NewDataStore(config.MENTOR_REGISTRATION_DEFINITION)
+	json.Unmarshal([]byte(patch_registration_data), &test_registration)
+	test_data := make (map[string]interface{})
+	test_data["firstName"] = "John"
+	test_data["lastName"] = "Smith"
+	test_data["email"] = "new_test@gmail.com"
+	test_registration.Data = test_data
+	fmt.Println(test_registration)
+	err := service.PatchMentorRegistration("testid", test_registration)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	user_registration, err := service.GetMentorRegistration("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_registration := getBaseMentorRegistration()
+	expected_registration.Data["id"] = "testid"
+	expected_registration.Data["firstName"] = "John"
+	expected_registration.Data["lastName"] = "Smith"
+	expected_registration.Data["email"] = "new_test@gmail.com"
+
+	if !reflect.DeepEqual(user_registration.Data["firstName"], expected_registration.Data["firstName"]) {
+		t.Errorf("Wrong user info.\nExpected %v\ngot %v\n", expected_registration.Data["firstName"], user_registration.Data["firstName"])
 	}
 
 	CleanupTestDB(t)
@@ -438,6 +514,15 @@ var user_registration_data string = `
 	"age": 20,
 	"createdAt": 10,
 	"updatedAt": 15
+}
+`
+
+var patch_registration_data string = `
+{
+	"id": "testid",
+	"firstName": "John",
+	"lastName": "Smith",
+	"email": "new_test@gmail.com"
 }
 `
 

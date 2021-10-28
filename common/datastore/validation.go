@@ -2,16 +2,28 @@ package datastore
 
 import (
 	"fmt"
+
 	"gopkg.in/go-playground/validator.v9"
 )
 
 func (datastore *DataStore) Validate() error {
 	validate := validator.New()
 
-	return validateField(datastore.Data, datastore.Definition, validate)
+	return validateField(datastore.Data, datastore.Definition, validate, false)
 }
 
-func validateField(data interface{}, definition DataStoreDefinition, validate *validator.Validate) error {
+func (datastore *DataStore) ValidateNonEmpty() error {
+	validate := validator.New()
+
+	return validateField(datastore.Data, datastore.Definition, validate, true)
+}
+
+func validateField(
+	data interface{},
+	definition DataStoreDefinition,
+	validate *validator.Validate,
+	ignore_empty bool,
+) error {
 	err := validate.Var(data, definition.Validations)
 
 	if err != nil {
@@ -26,7 +38,7 @@ func validateField(data interface{}, definition DataStoreDefinition, validate *v
 			return NewErrTypeMismatch(data, "map[string]interface{}")
 		}
 
-		return validateFieldArray(mapped_data, definition, validate)
+		return validateFieldArray(mapped_data, definition, validate, ignore_empty)
 	case "[]object":
 		data_array, ok := data.([]map[string]interface{})
 
@@ -35,7 +47,7 @@ func validateField(data interface{}, definition DataStoreDefinition, validate *v
 		}
 
 		for _, mapped_data := range data_array {
-			err = validateFieldArray(mapped_data, definition, validate)
+			err = validateFieldArray(mapped_data, definition, validate, ignore_empty)
 
 			if err != nil {
 				return err
@@ -48,9 +60,20 @@ func validateField(data interface{}, definition DataStoreDefinition, validate *v
 	}
 }
 
-func validateFieldArray(data map[string]interface{}, definition DataStoreDefinition, validate *validator.Validate) error {
+func validateFieldArray(
+	data map[string]interface{},
+	definition DataStoreDefinition,
+	validate *validator.Validate,
+	ignore_empty bool,
+) error {
 	for _, field := range definition.Fields {
-		err := validateField(data[field.Name], field, validate)
+		if ignore_empty {
+			if _, ok := data[field.Name]; !ok {
+				continue
+			}
+		}
+
+		err := validateField(data[field.Name], field, validate, ignore_empty)
 
 		if err != nil {
 			return err

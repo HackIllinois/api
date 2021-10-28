@@ -76,13 +76,13 @@ var ProfileRoutes = arbor.RouteCollection{
 	arbor.Route{
 		"AddProfileFavorite",
 		"POST",
-		"/profile/favorite/add/",
+		"/profile/favorite/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(AddProfileFavorite).ServeHTTP,
 	},
 	arbor.Route{
 		"RemoveProfileFavorite",
-		"POST",
-		"/profile/favorite/remove/",
+		"DELETE",
+		"/profile/favorite/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveProfileFavorite).ServeHTTP,
 	},
 	// This needs to be the last route in order to prevent endpoints like "search", "leaderboard" from accidentally being routed as the {id} variable.
@@ -143,5 +143,5 @@ func AddProfileFavorite(w http.ResponseWriter, r *http.Request) {
 }
 
 func RemoveProfileFavorite(w http.ResponseWriter, r *http.Request) {
-	arbor.POST(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+	arbor.DELETE(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
 }

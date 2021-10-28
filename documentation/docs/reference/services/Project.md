@@ -176,7 +176,7 @@ Response format:
 }
 ```
 
-POST /project/favorite/add/
+POST /project/favorite/
 -------------------------
 
 Adds the given project to the favorites for the current user.
@@ -199,7 +199,7 @@ Response format:
 }
 ```
 
-POST /project/favorite/remove/
+DELETE /project/favorite/
 ----------------------------
 
 Removes the given project from the favorites for the current user.

@@ -163,6 +163,50 @@ func TestUpdateUserRegistrationService(t *testing.T) {
 }
 
 /*
+	Service level test for updating user registration in the db
+*/
+func TestPatchUserRegistrationService(t *testing.T) {
+	SetupTestDB(t)
+	updated_registration := getEmptyUserRegistration()
+	updated_registration.Data["email"] = "edited@gmail.com"
+	updated_registration.Data["isBeginner"] = true
+	updated_registration.Data["priorAttendance"] = false
+	updated_registration.Data["age"] = 22
+
+	err := service.PatchUserRegistration("testid", updated_registration)
+
+	// if err != nil {
+	// 	t.Fatal(err)
+	// }
+
+	user_registration, err := service.GetUserRegistration("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_registration := getBaseUserRegistration()
+	expected_registration.Data["id"] = "testid"
+	expected_registration.Data["firstName"] = "first"
+	expected_registration.Data["lastName"] = "last"
+	expected_registration.Data["shirtSize"] = "M"
+	expected_registration.Data["github"] = "githubusername"
+	expected_registration.Data["linkedin"] = "linkedinusername"
+	expected_registration.Data["createdAt"] = int64(10)
+
+	expected_registration.Data["email"] = "edited@gmail.com"
+	expected_registration.Data["isBeginner"] = true
+	expected_registration.Data["priorAttendance"] = false
+	expected_registration.Data["age"] = 22
+
+	if !reflect.DeepEqual(user_registration.Data, expected_registration.Data) {
+		t.Errorf("Wrong user info.\nExpected %v\nGot %v\n", expected_registration.Data, user_registration.Data)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
 	Service level test for getting mentor registration from db
 */
 func TestGetMentorRegistrationService(t *testing.T) {
@@ -426,6 +470,16 @@ func getBaseMentorRegistration() datastore.DataStore {
 	return base_mentor_registration
 }
 
+/*
+	Returns an empty user registration
+*/
+func getEmptyUserRegistration() datastore.DataStore {
+	empty_user_registration := datastore.NewDataStore(config.REGISTRATION_DEFINITION)
+	json.Unmarshal([]byte(empty_registration_data), &empty_user_registration)
+	return empty_user_registration
+}
+
+var empty_registration_data string = `{}`
 var user_registration_data string = `
 {
 	"id": "testid",

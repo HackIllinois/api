@@ -423,6 +423,71 @@ Response format:
 }
 ```
 
+PATCH /registration/attendee/
+------------------
+
+Updates only the provided fields the registration for the user with the `id` in the JWT token provided in the Authorization header.
+
+Request format:
+```
+{
+	"email": "edited@gmail.com",
+	"lastName": "editedLastName",
+	"github": "editedGithub",
+	"graduationYear": 2023,
+	"interests": [
+        "INTERNSHIP",
+        "JOB"
+    ],
+    "isOSContributor": true
+}
+```
+
+Response format:
+```
+{
+    "age": 19,
+    "beginnerInfo": {
+        "pullRequest": 1,
+        "technicalSkills": [
+            "Java"
+        ],
+        "versionControl": 3,
+        "yearsExperience": 3
+    },
+    "createdAt": 111111111,
+    "diet": [
+        "VEGAN"
+    ],
+    "email": "edited@gmail.com",
+    "extraInfo": "",
+    "firstName": "John",
+    "gender": "MALE",
+    "github": "editedGithub",
+    "graduationYear": 2023,
+    "id": "github0000001",
+    "interests": [
+        "INTERNSHIP",
+        "JOB"
+    ],
+    "isBeginner": false,
+    "isOSContributor": true,
+    "lastName": "editedLastName",
+    "linkedin": "",
+    "major": "Computer Science",
+    "phone": "0000000000",
+    "priorAttendance": true,
+    "school": "UIUC",
+    "shirtSize": "M",
+    "skills": [
+        "C++"
+    ],
+    "teamMembers": null,
+    "transportation": "NONE",
+    "updatedAt": 1574291036
+}
+```
+
 GET /registration/mentor/USERID/
 -------------------------
 

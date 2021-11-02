@@ -164,6 +164,8 @@ Response format:
 DELETE /profile/
 ------------------
 
+**Temporarily disabled**
+
 Deletes the profile for the user with the `id` in the JWT token provided in the Authorization header.
 This returns the deleted profile information.
 

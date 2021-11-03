@@ -21,12 +21,12 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/attendee/", GetCurrentUserRegistration).Methods("GET")
 	router.HandleFunc("/attendee/", CreateCurrentUserRegistration).Methods("POST")
 	router.HandleFunc("/attendee/", UpdateCurrentUserRegistration).Methods("PUT")
-	router.HandleFunc("/attendee/filter/", GetFilteredUserRegistrations).Methods("GET")
+	router.HandleFunc("/attendee/list/", GetFilteredUserRegistrations).Methods("GET")
 
 	router.HandleFunc("/mentor/", GetCurrentMentorRegistration).Methods("GET")
 	router.HandleFunc("/mentor/", CreateCurrentMentorRegistration).Methods("POST")
 	router.HandleFunc("/mentor/", UpdateCurrentMentorRegistration).Methods("PUT")
-	router.HandleFunc("/mentor/filter/", GetFilteredMentorRegistrations).Methods("GET")
+	router.HandleFunc("/mentor/list/", GetFilteredMentorRegistrations).Methods("GET")
 
 	router.HandleFunc("/{id}/", GetAllRegistrations).Methods("GET")
 	router.HandleFunc("/attendee/{id}/", GetUserRegistration).Methods("GET")

@@ -14,6 +14,8 @@ var validate *validator.Validate
 
 var db database.Database
 
+const RegistrationAlreadyExists = "Registration already exists."
+
 func Initialize() error {
 	if db != nil {
 		db.Close()
@@ -64,7 +66,7 @@ func CreateUserRegistration(id string, user_registration models.UserRegistration
 		if err != nil {
 			return err
 		}
-		return errors.New("Registration already exists.")
+		return errors.New(RegistrationAlreadyExists)
 	}
 
 	err = db.Insert("attendees", &user_registration)
@@ -189,7 +191,7 @@ func CreateMentorRegistration(id string, mentor_registration models.MentorRegist
 		if err != nil {
 			return err
 		}
-		return errors.New("Registration already exists")
+		return errors.New(RegistrationAlreadyExists)
 	}
 
 	err = db.Insert("mentors", &mentor_registration)

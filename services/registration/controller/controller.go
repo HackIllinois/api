@@ -126,7 +126,13 @@ func CreateCurrentUserRegistration(w http.ResponseWriter, r *http.Request) {
 	err = service.CreateUserRegistration(id, user_registration)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not create user registration."))
+		var apiError errors.ApiError
+		if err.Error() == service.RegistrationAlreadyExists {
+			apiError = errors.ConflictError(err.Error(), "Could not create user registration.")
+		} else {
+			apiError = errors.InternalError(err.Error(), "Could not create user registration.")
+		}
+		errors.WriteError(w, r, apiError)
 		return
 	}
 
@@ -324,7 +330,13 @@ func CreateCurrentMentorRegistration(w http.ResponseWriter, r *http.Request) {
 	err = service.CreateMentorRegistration(id, mentor_registration)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not create mentor registration."))
+		var apiError errors.ApiError
+		if err.Error() == service.RegistrationAlreadyExists {
+			apiError = errors.ConflictError(err.Error(), "Could not create mentor registration.")
+		} else {
+			apiError = errors.InternalError(err.Error(), "Could not create mentor registration.")
+		}
+		errors.WriteError(w, r, apiError)
 		return
 	}
 

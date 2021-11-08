@@ -149,7 +149,7 @@ func CreateFilterQuery(
 		case "string":
 			qs, err = UpdateQuerySelectorString(qs, query_type, values)
 			query[key] = qs
-		case "int64":
+		case "int", "int64":
 			cast_values := make([]int64, len(values))
 			for i, value := range values {
 				value_int, err := strconv.ParseInt(value, 10, 64)

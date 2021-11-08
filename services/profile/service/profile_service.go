@@ -205,25 +205,6 @@ func UpdateProfile(profile_id string, profile models.Profile) error {
 }
 
 /*
-	Returns the list of all accessible profiles
-*/
-func GetAllProfiles() (*models.ProfileList, error) {
-	profiles := []models.Profile{}
-
-	err := db.FindAll("profiles", nil, &profiles)
-
-	if err != nil {
-		return nil, err
-	}
-
-	profile_list := models.ProfileList{
-		Profiles: profiles,
-	}
-
-	return &profile_list, nil
-}
-
-/*
 	Returns a list of "limit" profiles sorted decesending by points.
 	If "limit" is not provided, this will return a list of all profiles.
 */

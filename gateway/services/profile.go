@@ -41,7 +41,7 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetAllProfiles",
 		"GET",
 		"/profile/list/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetAllProfiles).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetFilteredProfiles).ServeHTTP,
 	},
 	arbor.Route{
 		"GetProfileLeaderboard",
@@ -54,12 +54,6 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GET",
 		"/profile/search/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetValidFilteredProfiles).ServeHTTP,
-	},
-	arbor.Route{
-		"GetFilteredProfiles",
-		"GET",
-		"/profile/filtered/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetFilteredProfiles).ServeHTTP,
 	},
 	arbor.Route{
 		"RedeemEvent",
@@ -105,10 +99,6 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetProfileById(w http.ResponseWriter, r *http.Request) {
-	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
-}
-
-func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
 }
 

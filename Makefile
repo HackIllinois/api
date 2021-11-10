@@ -109,5 +109,5 @@ test-e2e:
 	@echo "Checking if the API is running...";
 	@curl --silent --output /dev/null localhost:8000 || (echo "Failed to connect to the API. Is it running?"; exit 1;)
 	@echo "Running end-to-end tests";
-	@HI_CONFIG=file://$(REPO_ROOT)/config/test_config.json go test $(BASE_PACKAGE)/services/user/tests/end_to_end || exit 1;
+	@HI_CONFIG=file://$(REPO_ROOT)/config/test_config.json go test $(BASE_PACKAGE)/tests || exit 1;
 	

@@ -44,13 +44,13 @@ func (db *MongoDatabase) Connect(host string) error {
 		return ErrConnection
 	}
 
+	dial_info.Timeout = 60 * time.Second
 	if config.IS_PRODUCTION {
 		dial_info.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
 			tls_config := &tls.Config{}
 			connection, err := tls.Dial("tcp", addr.String(), tls_config)
 			return connection, err
 		}
-		dial_info.Timeout = 60 * time.Second
 	}
 
 	session, err := mgo.DialWithInfo(dial_info)

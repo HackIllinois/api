@@ -360,6 +360,70 @@ func RegisterDeviceToUser(token string, platform string, id string) error {
 }
 
 /*
+	Unregisters the device token with SNS and remove the arn from the associated user
+*/
+func UnregisterDeviceFromUser(token string, platform string, id string) error {
+	var platform_arn string
+
+	switch strings.ToLower(platform) {
+	case "android":
+		platform_arn = config.ANDROID_PLATFORM_ARN
+	case "ios":
+		platform_arn = config.IOS_PLATFORM_ARN
+	default:
+		return errors.New("Invalid platform")
+	}
+
+	var device_arn string
+
+	if config.IS_PRODUCTION {
+		response, err := client.CreatePlatformEndpoint(
+			&sns.CreatePlatformEndpointInput{
+				CustomUserData:         &id,
+				Token:                  &token,
+				PlatformApplicationArn: &platform_arn,
+			},
+		)
+
+		if err != nil {
+			return err
+		}
+
+		device_arn = *response.EndpointArn
+
+		_, err = client.DeleteEndpoint(
+			&sns.DeleteEndpointInput{
+				EndpointArn: &device_arn,
+			},
+		)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	devices, err := GetUserDevices(id)
+
+	if err != nil {
+		return err
+	}
+
+	devices, err = utils.RemoveString(devices, device_arn)
+
+	if err != nil {
+		return err
+	}
+
+	err = SetUserDevices(id, devices)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+/*
 	Returns a list of userids to receive a notification to the specified topic
 */
 func GetNotificationRecipients(topicId string) ([]string, error) {

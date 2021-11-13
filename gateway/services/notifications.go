@@ -5,14 +5,27 @@ import (
 	"github.com/HackIllinois/api/gateway/middleware"
 	"github.com/HackIllinois/api/gateway/models"
 
+	"net/http"
+
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 const NotificationsFormat string = "JSON"
 
 var NotificationsRoutes = arbor.RouteCollection{
+	arbor.Route{
+		"GetUserSubscriptions",
+		"GET",
+		"/notifications/subscriptions/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(GetUserSubscriptions).ServeHTTP,
+	},
+	arbor.Route{
+		"GetUserRegisteredDevices",
+		"GET",
+		"/notifications/devices/",
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(GetUserRegisteredDevices).ServeHTTP,
+	},
 	arbor.Route{
 		"GetAllTopics",
 		"GET",
@@ -79,6 +92,14 @@ var NotificationsRoutes = arbor.RouteCollection{
 		"/notifications/order/{id}/",
 		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(GetNotificationOrder).ServeHTTP,
 	},
+}
+
+func GetUserSubscriptions(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
+}
+
+func GetUserRegisteredDevices(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.NOTIFICATIONS_SERVICE+r.URL.String(), NotificationsFormat, "", r)
 }
 
 func GetAllTopics(w http.ResponseWriter, r *http.Request) {

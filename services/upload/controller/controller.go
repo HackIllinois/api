@@ -22,6 +22,7 @@ func SetupController(route *mux.Route) {
 
 	router.HandleFunc("/blobstore/", CreateBlob).Methods("POST")
 	router.HandleFunc("/blobstore/", UpdateBlob).Methods("PUT")
+	router.HandleFunc("/blobstore/", PatchBlob).Methods("PATCH")
 	router.HandleFunc("/blobstore/{id}/", GetBlob).Methods("GET")
 	router.HandleFunc("/blobstore/{id}/", DeleteBlob).Methods("DELETE")
 }
@@ -183,6 +184,35 @@ func UpdateBlob(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		errors.WriteError(w, r, errors.InternalError(err.Error(), "Unable to update blob."))
+		return
+	}
+
+	stored_blob, err := service.GetBlob(blob.ID)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Unable to retrieve blob."))
+		return
+	}
+
+	json.NewEncoder(w).Encode(stored_blob)
+}
+
+/*
+	Endpoint to patch a blob
+*/
+func PatchBlob(w, http.ResponseWriter, r *http.Request) {
+	var blob models.Blob
+	json.NewDecoder(r.Body).Decode(&Blob)	
+
+	if blob.ID == "" {
+		errors.WriteError(w, r, errors.InternalError("Must set an id for the blob.", "Must set an id for the blob."))
+		return
+	}
+
+	err := service.PatchBlob(blob)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Unable to create blob."))
 		return
 	}
 

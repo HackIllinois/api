@@ -61,6 +61,12 @@ var UploadRoutes = arbor.RouteCollection{
 		"/upload/blobstore/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole, models.BlobstoreRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateBlob).ServeHTTP,
 	},
+	arbor.Route {
+		"PatchBlob",
+		"PATCH",
+		"/upload/blobstore/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(PatchBlob).ServeHTTP,
+	},
 	arbor.Route{
 		"GetBlob",
 		"GET",
@@ -101,4 +107,8 @@ func GetBlob(w http.ResponseWriter, r *http.Request) {
 
 func DeleteBlob(w http.ResponseWriter, r *http.Request) {
 	arbor.DELETE(w, config.UPLOAD_SERVICE+r.URL.String(), InfoFormat, "", r)
+}
+
+func PatchBlob(w http.ResponseWriter, r *http.Request) {
+	arbor.PATCH(w, config.UPLOAD_SERVICE+r.URL.String(), InfoFormat, "", r)
 }

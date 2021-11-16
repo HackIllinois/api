@@ -478,7 +478,7 @@ func GetStats() (map[string]interface{}, error) {
 	Check if an event can be redeemed for points, i.e., that the point timeout has not been reached
 	Returns true if the current time is between `PreEventCheckinIntervalInMinutes` number of minutes before the event, and the end of event.
 */
-func CanRedeemPoints(event_code string) (bool, string, error) {
+func CanRedeemPoints(event_code string) (bool, bool, string, error) {
 	query := database.QuerySelector{
 		"code": event_code,
 	}
@@ -487,13 +487,13 @@ func CanRedeemPoints(event_code string) (bool, string, error) {
 	err := db.FindOne("eventcodes", query, &eventCode)
 
 	if err != nil {
-		return false, "invalid", err
+		return false, false, "invalid", err
 	}
 
 	expiration_time := eventCode.Expiration
 	current_time := time.Now().Unix()
 
-	return current_time < expiration_time, eventCode.ID, nil
+	return current_time < expiration_time, eventCode.IsVirtual, eventCode.ID, nil
 }
 
 /*

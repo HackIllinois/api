@@ -219,7 +219,7 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 	var checkin_request models.CheckinRequest
 	json.NewDecoder(r.Body).Decode(&checkin_request)
 
-	valid, event_id, err := service.CanRedeemPoints(checkin_request.Code)
+	valid, is_virtual, event_id, err := service.CanRedeemPoints(checkin_request.Code)
 
 	result := models.CheckinResult{
 		NewPoints:   -1,
@@ -264,10 +264,17 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result.NewPoints = event.Points
+	points_to_award := 0
+	if is_virtual {
+		points_to_award = event.VirtualPoints
+	} else {
+		points_to_award = event.InPersonPoints
+	}
+
+	result.NewPoints = points_to_award
 
 	// Add this point value to given profile
-	profile, err := service.AwardPoints(id, event.Points)
+	profile, err := service.AwardPoints(id, points_to_award)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to award user with points"))

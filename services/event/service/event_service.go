@@ -499,30 +499,32 @@ func CanRedeemPoints(event_code string) (bool, bool, string, error) {
 /*
 	Returns the eventcode struct for the event with the given id
 */
-func GetEventCode(id string) (*models.EventCode, error) {
+func GetEventCode(id string) (*[]models.EventCode, error) {
 	query := database.QuerySelector{
 		"id": id,
 	}
 
-	var eventCode models.EventCode
-	err := db.FindOne("eventcodes", query, &eventCode)
+	eventCodes := []models.EventCode{}
+
+	err := db.FindAll("eventcodes", query, &eventCodes)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &eventCode, nil
+	return &eventCodes, nil
 }
 
 /*
 	Updates the event code and end time with the given id
+	If no matching code is not found, then it is a new code and add it
 */
-func UpdateEventCode(id string, eventCode models.EventCode) error {
+func UpdateEventCode(code string, eventCode models.EventCode) error {
 	selector := database.QuerySelector{
-		"id": id,
+		"code": code,
 	}
 
-	err := db.Update("eventcodes", selector, &eventCode)
+	_, err := db.Upsert("eventcodes", selector, &eventCode)
 
 	return err
 }

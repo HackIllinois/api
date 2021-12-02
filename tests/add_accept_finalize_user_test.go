@@ -13,9 +13,11 @@ import (
 	decision_models "github.com/HackIllinois/api/services/decision/models"
 	user_models "github.com/HackIllinois/api/services/user/models"
 	"github.com/dghubble/sling"
+	"gopkg.in/mgo.v2"
 )
 
 var admin_client *sling.Sling
+var mongo_session *mgo.Session
 
 func GetAdminClient() *sling.Sling {
 	// First, get an admin authorization token by running `make setup`.
@@ -35,14 +37,24 @@ func GetAdminClient() *sling.Sling {
 	out_lines := strings.Split(string(out[:]), "\n")
 	admin_token := out_lines[len(out_lines)-3]
 
-	fmt.Printf(admin_token)
-
 	return sling.New().Base("http://localhost:8000").Client(nil).Add("Authorization", admin_token)
 }
 
+func GetLocalMongoSession() *mgo.Session {
+	session, err := mgo.Dial("localhost")
+	if err != nil {
+		fmt.Println("Failed to connect to database:", err)
+		os.Exit(1)
+	}
+	return session
+}
+
 func TestMain(m *testing.M) {
-	fmt.Printf("in testmain")
 	admin_client = GetAdminClient()
+
+	mongo_session = GetLocalMongoSession()
+	mongo_session.DB("user").DropDatabase()
+	mongo_session.DB("decision").DropDatabase()
 
 	return_code := m.Run()
 	os.Exit(return_code)

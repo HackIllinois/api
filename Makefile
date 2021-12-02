@@ -109,7 +109,7 @@ docs:
 	$(MAKE) -C $(REPO_ROOT)/documentation build
 
 .PHONY: integration-test
-integration-test: run-test
+integration-test:
 	@echo "Beginning integration tests";
 	@echo "Checking if the API is running...";
 	@curl --silent --output /dev/null localhost:8000 || (echo "Failed to connect to the API. Is it running?"; exit 1;)

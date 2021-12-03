@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/HackIllinois/api/common/configloader"
 	decision_models "github.com/HackIllinois/api/services/decision/models"
 	user_models "github.com/HackIllinois/api/services/user/models"
 	"github.com/dghubble/sling"
@@ -17,7 +18,7 @@ import (
 )
 
 var admin_client *sling.Sling
-var mongo_session *mgo.Session
+var session *mgo.Session
 
 func GetAdminClient() *sling.Sling {
 	// First, get an admin authorization token by running `make setup`.
@@ -50,11 +51,31 @@ func GetLocalMongoSession() *mgo.Session {
 }
 
 func TestMain(m *testing.M) {
+
+	cfg, err := configloader.Load(os.Getenv("HI_CONFIG"))
+
+	if err != nil {
+		fmt.Printf("ERROR: %v\n", err)
+		os.Exit(1)
+	}
+
 	admin_client = GetAdminClient()
 
-	mongo_session = GetLocalMongoSession()
-	mongo_session.DB("user").DropDatabase()
-	mongo_session.DB("decision").DropDatabase()
+	session = GetLocalMongoSession()
+
+	user_db_name, err := cfg.Get("USER_DB_NAME")
+	if err != nil {
+		fmt.Printf("ERROR: %v\n", err)
+		os.Exit(1)
+	}
+	session.DB(user_db_name).DropDatabase()
+
+	decision_db_name, err := cfg.Get("DECISION_DB_NAME")
+	if err != nil {
+		fmt.Printf("ERROR: %v\n", err)
+		os.Exit(1)
+	}
+	session.DB(decision_db_name).DropDatabase()
 
 	return_code := m.Run()
 	os.Exit(return_code)

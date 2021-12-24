@@ -1,16 +1,17 @@
 package models
 
 type Event struct {
-	ID             string          `json:"id"                  validate:"required"`
-	Name           string          `json:"name"                validate:"required"`
-	Description    string          `json:"description"         validate:"required"`
-	StartTime      int64           `json:"startTime"           validate:"required"`
-	EndTime        int64           `json:"endTime"             validate:"required"`
-	Locations      []EventLocation `json:"locations"           validate:"required,dive,required"`
-	Sponsor        string          `json:"sponsor"`
-	EventType      string          `json:"eventType"           validate:"required,oneof=MEAL SPEAKER WORKSHOP MINIEVENT QNA OTHER"`
-	InPersonPoints int             `json:"inPersonPoints"`
-	VirtualPoints  int             `json:"virtualPoints"`
+	ID                 string          `json:"id"                  validate:"required"`
+	Name               string          `json:"name"                validate:"required"`
+	Description        string          `json:"description"         validate:"required"`
+	StartTime          int64           `json:"startTime"           validate:"required"`
+	EndTime            int64           `json:"endTime"             validate:"required"`
+	Locations          []EventLocation `json:"locations"           validate:"required,dive,required"`
+	Sponsor            string          `json:"sponsor"`
+	EventType          string          `json:"eventType"           validate:"required,oneof=MEAL SPEAKER WORKSHOP MINIEVENT QNA OTHER"`
+	InPersonPoints     int             `json:"inPersonPoints"`
+	InPersonVirtPoints int             `json:"inPersonVirtPoints"`
+	VirtualPoints      int             `json:"virtualPoints"`
 }
 
 type EventLocation struct {

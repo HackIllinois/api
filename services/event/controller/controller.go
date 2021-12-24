@@ -210,7 +210,7 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 	var checkin_request models.CheckinRequest
 	json.NewDecoder(r.Body).Decode(&checkin_request)
 
-	valid, is_virtual, event_id, err := service.CanRedeemPoints(checkin_request.Code)
+	valid, is_code_virtual, event_id, err := service.CanRedeemPoints(checkin_request.Code)
 
 	result := models.CheckinResult{
 		NewPoints:   -1,
@@ -225,6 +225,13 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 		return
 	} else if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
+		return
+	}
+
+	is_user_virtual, err := service.GetIsUserVirtual(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to retreive if user is virtual or in-person"))
 		return
 	}
 
@@ -256,8 +263,10 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	points_to_award := 0
-	if is_virtual {
+	if is_user_virtual {
 		points_to_award = event.VirtualPoints
+	} else if is_code_virtual {
+		points_to_award = event.InPersonVirtPoints
 	} else {
 		points_to_award = event.InPersonPoints
 	}

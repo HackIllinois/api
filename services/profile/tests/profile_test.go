@@ -53,16 +53,11 @@ func SetupTestDB(t *testing.T) {
 	profile_id := "testid"
 
 	profile := models.Profile{
-		ID:          profile_id,
-		FirstName:   "testfirstname",
-		LastName:    "testlastname",
-		Points:      0,
-		Timezone:    "America/Chicago",
-		Description: "Hi",
-		Discord:     "testdiscordusername",
-		AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
-		TeamStatus:  "LOOKING_FOR_TEAM",
-		Interests:   []string{"testinterest1", "testinterest2"},
+		ID:        profile_id,
+		FirstName: "testfirstname",
+		LastName:  "testlastname",
+		Points:    0,
+		IsVirtual: false,
 	}
 
 	id_map := models.IdMap{
@@ -121,18 +116,14 @@ func CleanupTestDB(t *testing.T) {
 */
 func TestGetAllProfilesService(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	profile := models.Profile{
-		ID:          "testid2",
-		FirstName:   "testfirstname2",
-		LastName:    "testlastname2",
-		Points:      340,
-		Timezone:    "America/New York",
-		Description: "Hello",
-		Discord:     "testdiscordusername2",
-		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "NOT_LOOKING",
-		Interests:   []string{"testinterest2"},
+		ID:        "testid2",
+		FirstName: "testfirstname2",
+		LastName:  "testlastname2",
+		Points:    340,
+		IsVirtual: true,
 	}
 
 	err := db.Insert("profiles", &profile)
@@ -152,28 +143,18 @@ func TestGetAllProfilesService(t *testing.T) {
 	expected_profile_list := models.ProfileList{
 		Profiles: []models.Profile{
 			{
-				ID:          "testid",
-				FirstName:   "testfirstname",
-				LastName:    "testlastname",
-				Points:      0,
-				Timezone:    "America/Chicago",
-				Description: "Hi",
-				Discord:     "testdiscordusername",
-				AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
-				TeamStatus:  "LOOKING_FOR_TEAM",
-				Interests:   []string{"testinterest1", "testinterest2"},
+				ID:        "testid",
+				FirstName: "testfirstname",
+				LastName:  "testlastname",
+				Points:    0,
+				IsVirtual: false,
 			},
 			{
-				ID:          "testid2",
-				FirstName:   "testfirstname2",
-				LastName:    "testlastname2",
-				Points:      340,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername2",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "NOT_LOOKING",
-				Interests:   []string{"testinterest2"},
+				ID:        "testid2",
+				FirstName: "testfirstname2",
+				LastName:  "testlastname2",
+				Points:    340,
+				IsVirtual: true,
 			},
 		},
 	}
@@ -197,9 +178,6 @@ func TestGetAllProfilesService(t *testing.T) {
 	if !reflect.DeepEqual(actual_profile_list, &expected_profile_list) {
 		t.Errorf("Wrong profile list. Expected %v, got %v", expected_profile_list, actual_profile_list)
 	}
-
-	CleanupTestDB(t)
-
 }
 
 /*
@@ -207,6 +185,7 @@ func TestGetAllProfilesService(t *testing.T) {
 */
 func TestGetProfileService(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	profile, err := service.GetProfile("testid")
 
@@ -215,23 +194,16 @@ func TestGetProfileService(t *testing.T) {
 	}
 
 	expected_profile := models.Profile{
-		ID:          "testid",
-		FirstName:   "testfirstname",
-		LastName:    "testlastname",
-		Points:      0,
-		Timezone:    "America/Chicago",
-		Description: "Hi",
-		Discord:     "testdiscordusername",
-		AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
-		TeamStatus:  "LOOKING_FOR_TEAM",
-		Interests:   []string{"testinterest1", "testinterest2"},
+		ID:        "testid",
+		FirstName: "testfirstname",
+		LastName:  "testlastname",
+		Points:    0,
+		IsVirtual: false,
 	}
 
 	if !reflect.DeepEqual(profile, &expected_profile) {
 		t.Errorf("Wrong profile info. Expected %v, got %v", &expected_profile, profile)
 	}
-
-	CleanupTestDB(t)
 }
 
 /*
@@ -239,18 +211,14 @@ func TestGetProfileService(t *testing.T) {
 */
 func TestCreateProfileService(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	new_profile := models.Profile{
-		ID:          "testid2",
-		FirstName:   "testfirstname2",
-		LastName:    "testlastname2",
-		Points:      340,
-		Timezone:    "America/New York",
-		Description: "Hello",
-		Discord:     "testdiscordusername2",
-		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "NOT_LOOKING",
-		Interests:   []string{"testinterest2"},
+		ID:        "testid2",
+		FirstName: "testfirstname2",
+		LastName:  "testlastname2",
+		Points:    340,
+		IsVirtual: true,
 	}
 
 	err := service.CreateProfile("testuserid2", "testid2", new_profile)
@@ -266,16 +234,11 @@ func TestCreateProfileService(t *testing.T) {
 	}
 
 	expected_profile := models.Profile{
-		ID:          "testid2",
-		FirstName:   "testfirstname2",
-		LastName:    "testlastname2",
-		Points:      340,
-		Timezone:    "America/New York",
-		Description: "Hello",
-		Discord:     "testdiscordusername2",
-		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "NOT_LOOKING",
-		Interests:   []string{"testinterest2"},
+		ID:        "testid2",
+		FirstName: "testfirstname2",
+		LastName:  "testlastname2",
+		Points:    340,
+		IsVirtual: true,
 	}
 
 	if !reflect.DeepEqual(profile, &expected_profile) {
@@ -292,8 +255,6 @@ func TestCreateProfileService(t *testing.T) {
 	if profile_id1 != "testid2" {
 		t.Errorf("Wrong profile mapping found for user %s. Expected %s but got %s", "testuserid2", "testid2", profile_id1)
 	}
-
-	CleanupTestDB(t)
 }
 
 /*
@@ -301,6 +262,7 @@ func TestCreateProfileService(t *testing.T) {
 */
 func TestDeleteProfileService(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	profile_id := "testid"
 
@@ -318,8 +280,6 @@ func TestDeleteProfileService(t *testing.T) {
 	if err == nil {
 		t.Errorf("Found profile %v in profiles database.", profile)
 	}
-
-	CleanupTestDB(t)
 }
 
 /*
@@ -327,18 +287,14 @@ func TestDeleteProfileService(t *testing.T) {
 */
 func TestUpdateProfileService(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	profile := models.Profile{
-		ID:          "testid",
-		FirstName:   "testfirstname2",
-		LastName:    "testlastname2",
-		Points:      340,
-		Timezone:    "America/New York",
-		Description: "Hello",
-		Discord:     "testdiscordusername2",
-		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "NOT_LOOKING",
-		Interests:   []string{"testinterest2"},
+		ID:        "testid",
+		FirstName: "testfirstname2",
+		LastName:  "testlastname2",
+		Points:    340,
+		IsVirtual: true,
 	}
 
 	err := service.UpdateProfile("testid", profile)
@@ -354,61 +310,44 @@ func TestUpdateProfileService(t *testing.T) {
 	}
 
 	expected_profile := models.Profile{
-		ID:          "testid",
-		FirstName:   "testfirstname2",
-		LastName:    "testlastname2",
-		Points:      340,
-		Timezone:    "America/New York",
-		Description: "Hello",
-		Discord:     "testdiscordusername2",
-		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "NOT_LOOKING",
-		Interests:   []string{"testinterest2"},
+		ID:        "testid",
+		FirstName: "testfirstname2",
+		LastName:  "testlastname2",
+		Points:    340,
+		IsVirtual: true,
 	}
 
 	if !reflect.DeepEqual(updated_profile, &expected_profile) {
 		t.Errorf("Wrong profile info. Expected %v, got %v", expected_profile, updated_profile)
 	}
-
-	CleanupTestDB(t)
 }
 
 func TestGetFilteredProfiles(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	profile := models.Profile{
-		ID:          "testid2",
-		FirstName:   "testfirstname2",
-		LastName:    "testlastname2",
-		Points:      340,
-		Timezone:    "America/New York",
-		Description: "Hello",
-		Discord:     "testdiscordusername2",
-		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "NOT_LOOKING",
-		Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
+		ID:        "testid2",
+		FirstName: "testfirstname2",
+		LastName:  "testlastname2",
+		Points:    340,
+		IsVirtual: true,
 	}
 
 	err := db.Insert("profiles", &profile)
 
 	profile = models.Profile{
-		ID:          "testid3",
-		FirstName:   "testfirstname3",
-		LastName:    "testlastname3",
-		Points:      342,
-		Timezone:    "America/New York",
-		Description: "Hello",
-		Discord:     "testdiscordusername3",
-		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "NOT_LOOKING",
-		Interests:   []string{"Cpp", "Machine Learning"},
+		ID:        "testid3",
+		FirstName: "testfirstname3",
+		LastName:  "testlastname3",
+		Points:    342,
+		IsVirtual: true,
 	}
 	err = db.Insert("profiles", &profile)
 
 	parameters := map[string][]string{
-		"teamStatus": {"NOT_LOOKING"},
-		"interests":  {"Cpp,Machine Learning"},
-		"limit":      {"0"},
+		"IsVirtual": {"true"},
+		"limit":     {"0"},
 	}
 
 	filtered_profile_list, err := service.GetFilteredProfiles(parameters)
@@ -420,28 +359,18 @@ func TestGetFilteredProfiles(t *testing.T) {
 	expected_filtered_profile_list := models.ProfileList{
 		Profiles: []models.Profile{
 			{
-				ID:          "testid2",
-				FirstName:   "testfirstname2",
-				LastName:    "testlastname2",
-				Points:      340,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername2",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "NOT_LOOKING",
-				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
+				ID:        "testid2",
+				FirstName: "testfirstname2",
+				LastName:  "testlastname2",
+				Points:    340,
+				IsVirtual: true,
 			},
 			{
-				ID:          "testid3",
-				FirstName:   "testfirstname3",
-				LastName:    "testlastname3",
-				Points:      342,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername3",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "NOT_LOOKING",
-				Interests:   []string{"Cpp", "Machine Learning"},
+				ID:        "testid3",
+				FirstName: "testfirstname3",
+				LastName:  "testlastname3",
+				Points:    342,
+				IsVirtual: true,
 			},
 		},
 	}
@@ -452,9 +381,8 @@ func TestGetFilteredProfiles(t *testing.T) {
 
 	// Add a limit and test that
 	parameters = map[string][]string{
-		"teamStatus": {"NOT_LOOKING"},
-		"interests":  {"Cpp,Machine Learning"},
-		"limit":      {"1"},
+		"IsVirtual": {"true"},
+		"limit":     {"1"},
 	}
 
 	filtered_profile_list, err = service.GetFilteredProfiles(parameters)
@@ -462,16 +390,11 @@ func TestGetFilteredProfiles(t *testing.T) {
 	expected_filtered_profile_list = models.ProfileList{
 		Profiles: []models.Profile{
 			{
-				ID:          "testid2",
-				FirstName:   "testfirstname2",
-				LastName:    "testlastname2",
-				Points:      340,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername2",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "NOT_LOOKING",
-				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
+				ID:        "testid2",
+				FirstName: "testfirstname2",
+				LastName:  "testlastname2",
+				Points:    340,
+				IsVirtual: true,
 			},
 		},
 	}
@@ -480,11 +403,9 @@ func TestGetFilteredProfiles(t *testing.T) {
 		t.Errorf("Wrong profile list. Expected %v, got %v", expected_filtered_profile_list, filtered_profile_list)
 	}
 
-	// Change the interests to be off by one
+	// Remove filter by virtual status
 	parameters = map[string][]string{
-		"teamStatus": {"NOT_LOOKING"},
-		"interests":  {"Cpp,Machine Learning,Additional Interest"},
-		"limit":      {"0"},
+		"limit": {"0"},
 	}
 
 	filtered_profile_list, err = service.GetFilteredProfiles(parameters)
@@ -492,16 +413,25 @@ func TestGetFilteredProfiles(t *testing.T) {
 	expected_filtered_profile_list = models.ProfileList{
 		Profiles: []models.Profile{
 			{
-				ID:          "testid2",
-				FirstName:   "testfirstname2",
-				LastName:    "testlastname2",
-				Points:      340,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername2",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "NOT_LOOKING",
-				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
+				ID:        "testid",
+				FirstName: "testfirstname",
+				LastName:  "testlastname",
+				Points:    0,
+				IsVirtual: false,
+			},
+			{
+				ID:        "testid2",
+				FirstName: "testfirstname2",
+				LastName:  "testlastname2",
+				Points:    340,
+				IsVirtual: true,
+			},
+			{
+				ID:        "testid3",
+				FirstName: "testfirstname3",
+				LastName:  "testlastname3",
+				Points:    342,
+				IsVirtual: true,
 			},
 		},
 	}
@@ -509,94 +439,18 @@ func TestGetFilteredProfiles(t *testing.T) {
 	if !reflect.DeepEqual(filtered_profile_list, &expected_filtered_profile_list) {
 		t.Errorf("Wrong profile list. Expected %v, got %v", expected_filtered_profile_list, filtered_profile_list)
 	}
-
-	// Remove filter by interests
-	parameters = map[string][]string{
-		"teamStatus": {"NOT_LOOKING"},
-		"limit":      {"0"},
-	}
-
-	filtered_profile_list, err = service.GetFilteredProfiles(parameters)
-
-	expected_filtered_profile_list = models.ProfileList{
-		Profiles: []models.Profile{
-			{
-				ID:          "testid2",
-				FirstName:   "testfirstname2",
-				LastName:    "testlastname2",
-				Points:      340,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername2",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "NOT_LOOKING",
-				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
-			},
-			{
-				ID:          "testid3",
-				FirstName:   "testfirstname3",
-				LastName:    "testlastname3",
-				Points:      342,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername3",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "NOT_LOOKING",
-				Interests:   []string{"Cpp", "Machine Learning"},
-			},
-		},
-	}
-
-	if !reflect.DeepEqual(filtered_profile_list, &expected_filtered_profile_list) {
-		t.Errorf("Wrong profile list. Expected %v, got %v", expected_filtered_profile_list, filtered_profile_list)
-	}
-
-	// Remove filter by teamStatus
-	parameters = map[string][]string{
-		"interests": {"Cpp,Machine Learning,Additional Interest"},
-		"limit":     {"0"},
-	}
-
-	filtered_profile_list, err = service.GetFilteredProfiles(parameters)
-
-	expected_filtered_profile_list = models.ProfileList{
-		Profiles: []models.Profile{
-			{
-				ID:          "testid2",
-				FirstName:   "testfirstname2",
-				LastName:    "testlastname2",
-				Points:      340,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername2",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "NOT_LOOKING",
-				Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
-			},
-		},
-	}
-
-	if !reflect.DeepEqual(filtered_profile_list, &expected_filtered_profile_list) {
-		t.Errorf("Wrong profile list. Expected %v, got %v", expected_filtered_profile_list, filtered_profile_list)
-	}
-
-	CleanupTestDB(t)
 }
 
 func TestGetProfileLeaderboard(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	profile := models.Profile{
-		ID:          "testid2",
-		FirstName:   "testfirstname2",
-		LastName:    "testlastname2",
-		Points:      340,
-		Timezone:    "America/New York",
-		Description: "Hello",
-		Discord:     "testdiscordusername2",
-		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "NOT_LOOKING",
-		Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
+		ID:        "testid2",
+		FirstName: "testfirstname2",
+		LastName:  "testlastname2",
+		Points:    340,
+		IsVirtual: true,
 	}
 
 	err := db.Insert("profiles", &profile)
@@ -636,16 +490,11 @@ func TestGetProfileLeaderboard(t *testing.T) {
 
 	// Insert another profile and test
 	profile = models.Profile{
-		ID:          "testid3",
-		FirstName:   "testfirstname3",
-		LastName:    "testlastname3",
-		Points:      999,
-		Timezone:    "America/New York",
-		Description: "Hello",
-		Discord:     "testdiscordusername3",
-		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "NOT_LOOKING",
-		Interests:   []string{"Cpp"},
+		ID:        "testid3",
+		FirstName: "testfirstname3",
+		LastName:  "testlastname3",
+		Points:    999,
+		IsVirtual: true,
 	}
 
 	err = db.Insert("profiles", &profile)
@@ -720,44 +569,33 @@ func TestGetProfileLeaderboard(t *testing.T) {
 	if !reflect.DeepEqual(leaderboard, &expected_leaderboard) {
 		t.Errorf("Wrong profile info. Expected %v, got %v", expected_leaderboard, leaderboard)
 	}
-
-	CleanupTestDB(t)
 }
 
 func TestGetValidFilteredProfiles(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	profile := models.Profile{
-		ID:          "testid2",
-		FirstName:   "testfirstname2",
-		LastName:    "testlastname2",
-		Points:      340,
-		Timezone:    "America/New York",
-		Description: "Hello",
-		Discord:     "testdiscordusername2",
-		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "NOT_LOOKING",
-		Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
+		ID:        "testid2",
+		FirstName: "testfirstname2",
+		LastName:  "testlastname2",
+		Points:    340,
+		IsVirtual: false,
 	}
 
 	err := db.Insert("profiles", &profile)
 
 	profile = models.Profile{
-		ID:          "testid3",
-		FirstName:   "testfirstname3",
-		LastName:    "testlastname3",
-		Points:      342,
-		Timezone:    "America/New York",
-		Description: "Hello",
-		Discord:     "testdiscordusername3",
-		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "NOT_LOOKING",
-		Interests:   []string{"Cpp", "Machine Learning"},
+		ID:        "testid3",
+		FirstName: "testfirstname3",
+		LastName:  "testlastname3",
+		Points:    342,
+		IsVirtual: true,
 	}
 	err = db.Insert("profiles", &profile)
 
 	parameters := map[string][]string{
-		"interests": {"Cpp,Machine Learning"},
+		"IsVirtual": {"true"},
 		"limit":     {"0"},
 	}
 
@@ -770,35 +608,29 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 	expected_filtered_profile_list := models.ProfileList{
 		Profiles: []models.Profile{
 			{
-				ID:          "testid3",
-				FirstName:   "testfirstname3",
-				LastName:    "testlastname3",
-				Points:      342,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername3",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "NOT_LOOKING",
-				Interests:   []string{"Cpp", "Machine Learning"},
+				ID:        "testid3",
+				FirstName: "testfirstname3",
+				LastName:  "testlastname3",
+				Points:    342,
+				IsVirtual: true,
 			},
 		},
 	}
 
+	if !reflect.DeepEqual(filtered_profile_list, &expected_filtered_profile_list) {
+		t.Errorf("Wrong profile list. Expected %v, got %v", expected_filtered_profile_list, filtered_profile_list)
+	}
+
 	profile = models.Profile{
-		ID:          "testid4",
-		FirstName:   "testfirstname3",
-		LastName:    "testlastname3",
-		Points:      342,
-		Timezone:    "America/New York",
-		Description: "Hello",
-		Discord:     "testdiscordusername3",
-		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "LOOKING_FOR_TEAM",
-		Interests:   []string{},
+		ID:        "testid4",
+		FirstName: "testfirstname4",
+		LastName:  "testlastname4",
+		Points:    342,
+		IsVirtual: false,
 	}
 	err = db.Insert("profiles", &profile)
 
-	// Remove the interests filter. Now every profile should show up except for those that are "NOT_LOOKING" for a team.
+	// Remove the virtual status filter. Now every profile should show up.
 
 	parameters = map[string][]string{
 		"limit": {"0"},
@@ -813,98 +645,50 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 	expected_filtered_profile_list = models.ProfileList{
 		Profiles: []models.Profile{
 			{
-				ID:          "testid",
-				FirstName:   "testfirstname",
-				LastName:    "testlastname",
-				Points:      0,
-				Timezone:    "America/Chicago",
-				Description: "Hi",
-				Discord:     "testdiscordusername",
-				AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
-				TeamStatus:  "LOOKING_FOR_TEAM",
-				Interests:   []string{"testinterest1", "testinterest2"},
+				ID:        "testid",
+				FirstName: "testfirstname",
+				LastName:  "testlastname",
+				Points:    0,
+				IsVirtual: false,
 			},
 			{
-				ID:          "testid4",
-				FirstName:   "testfirstname3",
-				LastName:    "testlastname3",
-				Points:      342,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername3",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "LOOKING_FOR_TEAM",
-				Interests:   []string{},
+				ID:        "testid2",
+				FirstName: "testfirstname2",
+				LastName:  "testlastname2",
+				Points:    340,
+				IsVirtual: false,
+			},
+			{
+				ID:        "testid3",
+				FirstName: "testfirstname3",
+				LastName:  "testlastname3",
+				Points:    342,
+				IsVirtual: true,
+			},
+			{
+				ID:        "testid4",
+				FirstName: "testfirstname4",
+				LastName:  "testlastname4",
+				Points:    342,
+				IsVirtual: false,
 			},
 		},
 	}
 	if !reflect.DeepEqual(filtered_profile_list, &expected_filtered_profile_list) {
 		t.Errorf("Wrong profile list. Expected %v, got %v", expected_filtered_profile_list, filtered_profile_list)
 	}
-
-	// Add a TeamStatus filter.
-
-	parameters = map[string][]string{
-		"teamStatus": {"LOOKING_FOR_TEAM"},
-		"limit":      {"0"},
-	}
-
-	filtered_profile_list, err = service.GetValidFilteredProfiles(parameters)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected_filtered_profile_list = models.ProfileList{
-		Profiles: []models.Profile{
-			{
-				ID:          "testid",
-				FirstName:   "testfirstname",
-				LastName:    "testlastname",
-				Points:      0,
-				Timezone:    "America/Chicago",
-				Description: "Hi",
-				Discord:     "testdiscordusername",
-				AvatarUrl:   "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
-				TeamStatus:  "LOOKING_FOR_TEAM",
-				Interests:   []string{"testinterest1", "testinterest2"},
-			},
-			{
-				ID:          "testid4",
-				FirstName:   "testfirstname3",
-				LastName:    "testlastname3",
-				Points:      342,
-				Timezone:    "America/New York",
-				Description: "Hello",
-				Discord:     "testdiscordusername3",
-				AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-				TeamStatus:  "LOOKING_FOR_TEAM",
-				Interests:   []string{},
-			},
-		},
-	}
-
-	if !reflect.DeepEqual(filtered_profile_list, &expected_filtered_profile_list) {
-		t.Errorf("Wrong profile list. Expected %v, got %v", expected_filtered_profile_list, filtered_profile_list)
-	}
-
-	CleanupTestDB(t)
 }
 
 func TestProfileFavorites(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	profile := models.Profile{
-		ID:          "testid2",
-		FirstName:   "testfirstname2",
-		LastName:    "testlastname2",
-		Points:      340,
-		Timezone:    "America/New York",
-		Description: "Hello",
-		Discord:     "testdiscordusername2",
-		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Not Looking",
-		Interests:   []string{"Cpp", "Machine Learning", "Additional Interest"},
+		ID:        "testid2",
+		FirstName: "testfirstname2",
+		LastName:  "testlastname2",
+		Points:    340,
+		IsVirtual: true,
 	}
 
 	err := db.Insert("profiles", &profile)
@@ -967,16 +751,11 @@ func TestProfileFavorites(t *testing.T) {
 
 	// Favorite another profile
 	profile = models.Profile{
-		ID:          "testid3",
-		FirstName:   "testfirstname3",
-		LastName:    "testlastname3",
-		Points:      342,
-		Timezone:    "America/New York",
-		Description: "Hello",
-		Discord:     "testdiscordusername3",
-		AvatarUrl:   "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
-		TeamStatus:  "Found Team",
-		Interests:   []string{"Cpp", "Machine Learning"},
+		ID:        "testid3",
+		FirstName: "testfirstname3",
+		LastName:  "testlastname3",
+		Points:    342,
+		IsVirtual: true,
 	}
 	err = db.Insert("profiles", &profile)
 	if err != nil {
@@ -1013,6 +792,4 @@ func TestProfileFavorites(t *testing.T) {
 	if !reflect.DeepEqual(profile_favorites, &expected_profile_favorites) {
 		t.Errorf("Wrong favorite profile list. Expected %v, got %v", expected_profile_favorites, profile_favorites)
 	}
-
-	CleanupTestDB(t)
 }

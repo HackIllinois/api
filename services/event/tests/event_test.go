@@ -66,8 +66,9 @@ func SetupTestDB(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
-		InPersonPoints: 10,
-		VirtualPoints:  5,
+		InPersonPoints:     10,
+		InPersonVirtPoints: 7,
+		VirtualPoints:      5,
 	}
 
 	err := db.Insert("events", &event)
@@ -154,8 +155,9 @@ func TestGetAllEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
-				InPersonPoints: 10,
-				VirtualPoints:  5,
+				InPersonPoints:     10,
+				InPersonVirtPoints: 7,
+				VirtualPoints:      5,
 			},
 			{
 				ID:          "testid2",
@@ -174,8 +176,9 @@ func TestGetAllEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
-				InPersonPoints: 0,
-				VirtualPoints:  0,
+				InPersonPoints:     0,
+				InPersonVirtPoints: 0,
+				VirtualPoints:      0,
 			},
 		},
 	}
@@ -227,8 +230,9 @@ func TestGetFilteredEventsService(t *testing.T) {
 				Longitude: 123.456,
 			},
 		},
-		InPersonPoints: 0,
-		VirtualPoints:  0,
+		InPersonPoints:     0,
+		InPersonVirtPoints: 0,
+		VirtualPoints:      0,
 	}
 
 	err := db.Insert("events", &event)
@@ -266,8 +270,9 @@ func TestGetFilteredEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
-				InPersonPoints: 0,
-				VirtualPoints:  0,
+				InPersonPoints:     0,
+				InPersonVirtPoints: 0,
+				VirtualPoints:      0,
 			},
 		},
 	}
@@ -305,8 +310,9 @@ func TestGetFilteredEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
-				InPersonPoints: 0,
-				VirtualPoints:  0,
+				InPersonPoints:     10,
+				InPersonVirtPoints: 7,
+				VirtualPoints:      5,
 			},
 			{
 				ID:          "testid2",
@@ -325,8 +331,9 @@ func TestGetFilteredEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
-				InPersonPoints: 0,
-				VirtualPoints:  0,
+				InPersonPoints:     0,
+				InPersonVirtPoints: 0,
+				VirtualPoints:      0,
 			},
 		},
 	}
@@ -384,8 +391,9 @@ func TestGetEventService(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
-		InPersonPoints: 10,
-		VirtualPoints:  5,
+		InPersonPoints:     10,
+		InPersonVirtPoints: 7,
+		VirtualPoints:      5,
 	}
 
 	if !reflect.DeepEqual(event, &expected_event) {
@@ -447,8 +455,9 @@ func TestCreateEventService(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
-		InPersonPoints: 0,
-		VirtualPoints:  0,
+		InPersonPoints:     0,
+		InPersonVirtPoints: 0,
+		VirtualPoints:      0,
 	}
 
 	if !reflect.DeepEqual(event, &expected_event) {
@@ -545,8 +554,9 @@ func TestUpdateEventService(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
-		InPersonPoints: 100,
-		VirtualPoints:  50,
+		InPersonPoints:     100,
+		InPersonVirtPoints: 70,
+		VirtualPoints:      50,
 	}
 
 	err := service.UpdateEvent("testid", event)
@@ -577,8 +587,9 @@ func TestUpdateEventService(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
-		InPersonPoints: 100,
-		VirtualPoints:  50,
+		InPersonPoints:     100,
+		InPersonVirtPoints: 70,
+		VirtualPoints:      50,
 	}
 
 	if !reflect.DeepEqual(updated_event, &expected_event) {

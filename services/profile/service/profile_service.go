@@ -323,10 +323,11 @@ func RedeemEvent(profile_id string, event_id string) (*models.RedeemEventRespons
 
 	if err != nil {
 		if err == database.ErrNotFound {
-			err = db.Insert("profileattendance", &models.AttendanceTracker{
+			attended_events = models.AttendanceTracker{
 				ID:     profile_id,
 				Events: []string{},
-			})
+			}
+			err = db.Insert("profileattendance", &attended_events)
 
 			if err != nil {
 				redemption_status.Status = "Could not add tracker to db"

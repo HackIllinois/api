@@ -83,7 +83,7 @@ func GetProfileByUserId(w http.ResponseWriter, r *http.Request) {
 	profile_id, err := service.GetProfileIdFromUserId(user_id)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user id "+user_id))
 		return
 	}
 

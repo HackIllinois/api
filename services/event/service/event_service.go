@@ -499,7 +499,7 @@ func CanRedeemPoints(event_code string) (bool, bool, string, error) {
 /*
 	Returns the eventcode struct for the event with the given id
 */
-func GetEventCode(id string) (*[]models.EventCode, error) {
+func GetEventCodes(id string) (*[]models.EventCode, error) {
 	query := database.QuerySelector{
 		"id": id,
 	}

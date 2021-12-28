@@ -162,7 +162,7 @@ func GetEventCode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	codes, err := service.GetEventCode(id)
+	codes, err := service.GetEventCodes(id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
@@ -186,7 +186,7 @@ func UpdateEventCode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updated_codes, err := service.GetEventCode(eventCode.ID)
+	updated_codes, err := service.GetEventCodes(eventCode.ID)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated event code and timestamp details."))

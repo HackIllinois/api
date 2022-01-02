@@ -25,7 +25,7 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/", CreateEvent).Methods("POST")
 	router.HandleFunc("/", UpdateEvent).Methods("PUT")
 	router.HandleFunc("/", GetAllEvents).Methods("GET")
-	router.HandleFunc("/code/{id}/", GetEventCode).Methods("GET")
+	router.HandleFunc("/code/{id}/", GetEventCodes).Methods("GET")
 	router.HandleFunc("/code/", UpsertEventCode).Methods("POST")
 
 	router.HandleFunc("/checkin/", Checkin).Methods("POST")
@@ -154,7 +154,7 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 /*
 	Endpoint to get the code associated with an event (or nil)
 */
-func GetEventCode(w http.ResponseWriter, r *http.Request) {
+func GetEventCodes(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
 	if id == "" {

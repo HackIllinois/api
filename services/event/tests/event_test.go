@@ -122,6 +122,9 @@ func TestGetAllEventsService(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
+		InPersonPoints:     0,
+		InPersonVirtPoints: 0,
+		VirtualPoints:      0,
 	}
 
 	err := db.Insert("events", &event)
@@ -425,6 +428,9 @@ func TestCreateEventService(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
+		InPersonPoints:     0,
+		InPersonVirtPoints: 0,
+		VirtualPoints:      0,
 	}
 
 	err := service.CreateEvent("testid2", "testcode2", new_event)
@@ -720,6 +726,9 @@ func TestIsEventActive(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
+		InPersonPoints:     10,
+		InPersonVirtPoints: 7,
+		VirtualPoints:      5,
 	}
 
 	service.CreateEvent(new_event.ID, "testcode3", new_event)

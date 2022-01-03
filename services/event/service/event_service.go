@@ -520,11 +520,17 @@ func GetEventCodes(id string) (*[]models.EventCode, error) {
 	If no matching code is found, then it is a new code and add it
 */
 func UpsertEventCode(code string, eventCode models.EventCode) error {
+	err := validate.Struct(eventCode)
+
+	if err != nil {
+		return err
+	}
+
 	selector := database.QuerySelector{
 		"codeid": code,
 	}
 
-	_, err := db.Upsert("eventcodes", selector, &eventCode)
+	_, err = db.Upsert("eventcodes", selector, &eventCode)
 
 	return err
 }

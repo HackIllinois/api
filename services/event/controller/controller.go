@@ -179,14 +179,14 @@ func UpsertEventCode(w http.ResponseWriter, r *http.Request) {
 	var eventCode models.EventCode
 	json.NewDecoder(r.Body).Decode(&eventCode)
 
-	err := service.UpdateEventCode(eventCode.Code, eventCode)
+	err := service.UpdateEventCode(eventCode.CodeID, eventCode)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the code and timestamp of the event."))
 		return
 	}
 
-	updated_codes, err := service.GetEventCodes(eventCode.ID)
+	updated_codes, err := service.GetEventCodes(eventCode.EventID)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated event code and timestamp details."))

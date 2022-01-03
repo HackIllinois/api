@@ -181,8 +181,8 @@ func CreateEvent(id string, code string, event models.Event) error {
 	}
 
 	event_code := models.EventCode{
-		ID:         id,
-		Code:       code,
+		CodeID:     code,
+		EventID:    id,
 		Expiration: event.EndTime,
 	}
 
@@ -480,7 +480,7 @@ func GetStats() (map[string]interface{}, error) {
 */
 func CanRedeemPoints(event_code string) (bool, bool, string, error) {
 	query := database.QuerySelector{
-		"code": event_code,
+		"codeID": event_code,
 	}
 
 	var eventCode models.EventCode
@@ -493,7 +493,7 @@ func CanRedeemPoints(event_code string) (bool, bool, string, error) {
 	expiration_time := eventCode.Expiration
 	current_time := time.Now().Unix()
 
-	return current_time < expiration_time, eventCode.IsVirtual, eventCode.ID, nil
+	return current_time < expiration_time, eventCode.IsVirtual, eventCode.EventID, nil
 }
 
 /*
@@ -501,7 +501,7 @@ func CanRedeemPoints(event_code string) (bool, bool, string, error) {
 */
 func GetEventCodes(id string) (*[]models.EventCode, error) {
 	query := database.QuerySelector{
-		"id": id,
+		"eventID": id,
 	}
 
 	eventCodes := []models.EventCode{}
@@ -521,7 +521,7 @@ func GetEventCodes(id string) (*[]models.EventCode, error) {
 */
 func UpdateEventCode(code string, eventCode models.EventCode) error {
 	selector := database.QuerySelector{
-		"code": code,
+		"codeID": code,
 	}
 
 	_, err := db.Upsert("eventcodes", selector, &eventCode)

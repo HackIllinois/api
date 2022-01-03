@@ -423,10 +423,12 @@ POST /event/code/
 
 Upserts a struct that contains information about the event code (generated upon event creation) and expiration time.
 
+NOTE: Once created, the code ID cannot be changed.
+
 Request format:
 ```
 {
-	"codeID": "new_code",
+	"codeID": "code",
 	"eventID": "52fdfc072182654f163f5f0f9a621d72",
 	"isVirtual": true,
 	"expiration": 1521388800
@@ -437,7 +439,7 @@ Request format:
 Response format:
 ```
 {
-	"codeID": "new_code",
+	"codeID": "code",
 	"eventID": "52fdfc072182654f163f5f0f9a621d72",
 	"isVirtual": true,
 	"expiration": 1521388800

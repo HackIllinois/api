@@ -404,14 +404,14 @@ Response format:
 ```
 [
 	{
-		"id": "52fdfc072182654f163f5f0f9a621d72",
-		"code": "sample_code_1",
+		"codeID": "sample_code_1",
+		"eventID": "52fdfc072182654f163f5f0f9a621d72",
 		"isVirtual": false,
 		"expiration": 1521388800
 	},
 	{
-		"id": "52fdfc072182654f163f5f0f9a621d72",
-		"code": "sample_code_2",
+		"codeID": "sample_code_2",
+		"eventID": "52fdfc072182654f163f5f0f9a621d72",
 		"isVirtual": true,
 		"expiration": 1521388800
 	}
@@ -426,10 +426,10 @@ Upserts a struct that contains information about the event code (generated upon 
 Request format:
 ```
 {
-	"id": "52fdfc072182654f163f5f0f9a621d72",
-    "code": "new_code",
+	"codeID": "new_code",
+	"eventID": "52fdfc072182654f163f5f0f9a621d72",
 	"isVirtual": true,
-    "expiration": 1521388800
+	"expiration": 1521388800
 }
 
 ```
@@ -437,10 +437,10 @@ Request format:
 Response format:
 ```
 {
-	"id": "52fdfc072182654f163f5f0f9a621d72",
-    "code": "new_code",
+	"codeID": "new_code",
+	"eventID": "52fdfc072182654f163f5f0f9a621d72",
 	"isVirtual": true,
-    "expiration": 1521388800
+	"expiration": 1521388800
 }
 ```
 

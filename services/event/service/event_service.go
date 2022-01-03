@@ -480,7 +480,7 @@ func GetStats() (map[string]interface{}, error) {
 */
 func CanRedeemPoints(event_code string) (bool, bool, string, error) {
 	query := database.QuerySelector{
-		"codeID": event_code,
+		"codeid": event_code,
 	}
 
 	var eventCode models.EventCode
@@ -501,7 +501,7 @@ func CanRedeemPoints(event_code string) (bool, bool, string, error) {
 */
 func GetEventCodes(id string) (*[]models.EventCode, error) {
 	query := database.QuerySelector{
-		"eventID": id,
+		"eventid": id,
 	}
 
 	eventCodes := []models.EventCode{}
@@ -521,7 +521,7 @@ func GetEventCodes(id string) (*[]models.EventCode, error) {
 */
 func UpdateEventCode(code string, eventCode models.EventCode) error {
 	selector := database.QuerySelector{
-		"codeID": code,
+		"codeid": code,
 	}
 
 	_, err := db.Upsert("eventcodes", selector, &eventCode)

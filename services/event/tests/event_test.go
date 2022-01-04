@@ -919,7 +919,7 @@ func TestUpdateEventCode(t *testing.T) {
 	event_code.IsVirtual = true
 	event_code.Expiration = 1609735934
 
-	err = service.UpsertEventCode("abcdef", event_code)
+	err = service.UpsertEventCode(event_code)
 
 	if err != nil {
 		t.Fatal(err)
@@ -982,7 +982,7 @@ func TestInsertEventCode(t *testing.T) {
 	event_code_1.IsVirtual = true
 	event_code_1.Expiration = 1609735934
 
-	err = service.UpsertEventCode("123456", event_code_2)
+	err = service.UpsertEventCode(event_code_2)
 
 	if err != nil {
 		t.Fatal(err)

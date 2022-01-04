@@ -279,7 +279,7 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	points_to_award := 0
+	var points_to_award uint = 0
 	if is_user_virtual {
 		points_to_award = event.VirtualPoints
 	} else if is_code_virtual {
@@ -288,10 +288,10 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 		points_to_award = event.InPersonPoints
 	}
 
-	result.NewPoints = points_to_award
+	result.NewPoints = int(points_to_award)
 
 	// Add this point value to given profile
-	profile, err := service.AwardPoints(id, points_to_award)
+	profile, err := service.AwardPoints(id, int(points_to_award))
 
 	if err != nil {
 		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to award user with points"))

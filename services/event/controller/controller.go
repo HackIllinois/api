@@ -108,12 +108,29 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&event)
 
 	event.ID = utils.GenerateUniqueID()
-	var code = utils.GenerateUniqueCode()
 
-	err := service.CreateEvent(event.ID, code, event)
+	err := service.CreateEvent(event.ID, event)
+
+	// It would be good to check if the error is due to failing validation (should be a 422)
+	//  Tried using errors.Is(), but ironcally so we have a package common/errors which conflicts
+	//  with the built-in errors package.
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not create new event."))
+		return
+	}
+
+	err = service.GenerateEventCode(false, event)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to create in-person code."))
+		return
+	}
+
+	err = service.GenerateEventCode(true, event)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to create virtual code."))
 		return
 	}
 

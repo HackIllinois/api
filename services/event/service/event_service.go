@@ -147,7 +147,7 @@ func GetFilteredEvents(parameters map[string][]string) (*models.EventList, error
 /*
 	Creates an event with the given id
 */
-func CreateEvent(id string, code string, event models.Event) error {
+func CreateEvent(id string, event models.Event) error {
 	err := validate.Struct(event)
 
 	if err != nil {
@@ -175,18 +175,6 @@ func CreateEvent(id string, code string, event models.Event) error {
 	}
 
 	err = db.Insert("eventtrackers", &event_tracker)
-
-	if err != nil {
-		return err
-	}
-
-	event_code := models.EventCode{
-		CodeID:     code,
-		EventID:    id,
-		Expiration: event.EndTime,
-	}
-
-	err = db.Insert("eventcodes", &event_code)
 
 	return err
 }
@@ -533,4 +521,45 @@ func UpsertEventCode(code string, eventCode models.EventCode) error {
 	_, err = db.Upsert("eventcodes", selector, &eventCode)
 
 	return err
+}
+
+func GenerateEventCode(isVirtual bool, event models.Event) error {
+	// The probability of a generated code colliding with an existing
+	//  code is (N / 2^24) where N is the number of existing codes.
+	//  We will attempt to insert the row 10 times each with a new random
+	//  code, making the success rate 1 - ((N / 2^24)^10)
+	var code string
+
+	for i := 0; i < 10; i++ {
+		code = utils.GenerateUniqueCode()
+
+		query := database.QuerySelector{
+			"codeid": code,
+		}
+
+		err := db.FindOne("eventcodes", query, models.EventCode{})
+
+		if err == database.ErrNotFound {
+			eventCode := models.EventCode{
+				CodeID:     code,
+				EventID:    event.ID,
+				IsVirtual:  isVirtual,
+				Expiration: event.EndTime,
+			}
+
+			err = db.Insert("eventcodes", &eventCode)
+
+			return err
+		}
+	}
+
+	err_str := "Failed to generate a unique "
+
+	if isVirtual {
+		err_str += "virtual event code."
+	} else {
+		err_str += "in-person event code."
+	}
+
+	return errors.New(err_str)
 }

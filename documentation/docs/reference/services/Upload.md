@@ -149,7 +149,7 @@ Response format:
 }
 ```
 
-DELETE /upload/blobstore/ID
+DELETE /upload/blobstore/ID/
 ----------------------
 
 Deletes the blob with the specified `id`.

@@ -519,10 +519,10 @@ Response format:
 }
 ```
 
-GET /registration/attendee/filter/?key=value
+GET /registration/attendee/list/?key=value
 -----------------------------------
 
-Returns the user registrations, filtered with the given key-value pairs
+Returns the user registrations, filtered with the given key-value pairs (optional)
 
 Response format:
 ```
@@ -616,10 +616,10 @@ Response format:
 }
 ```
 
-GET /registration/mentor/filter/?key=value
+GET /registration/mentor/list/?key=value
 -----------------------------------
 
-Returns the mentor registrations, filtered with the given key-value pairs
+Returns the mentor registrations, filtered with the given key-value pairs (optional)
 
 Response format:
 ```

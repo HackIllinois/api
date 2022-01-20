@@ -47,6 +47,9 @@ func AddEntryToStats(stats map[string]interface{}, entry map[string]interface{},
 			AddEntryToStats(mapped_stats, value, stripped_fields)
 		default:
 			reflect_type := reflect.TypeOf(value)
+			if reflect_type == nil {
+				return nil
+			}
 			switch reflect_type.Kind() {
 			case reflect.Array:
 				fallthrough

@@ -19,17 +19,16 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/", UpdateProfile).Methods("PUT")
 	router.HandleFunc("/", DeleteProfile).Methods("DELETE")
 
-	router.HandleFunc("/list/", GetAllProfiles).Methods("GET")
+	router.HandleFunc("/list/", GetFilteredProfiles).Methods("GET")
 	router.HandleFunc("/leaderboard/", GetProfileLeaderboard).Methods("GET")
 	router.HandleFunc("/search/", GetValidFilteredProfiles).Methods("GET")
-	router.HandleFunc("/filtered/", GetFilteredProfiles).Methods("GET")
 
 	router.HandleFunc("/event/checkin/", RedeemEvent).Methods("POST")
 	router.HandleFunc("/points/award/", AwardPoints).Methods("POST")
 
 	router.HandleFunc("/favorite/", GetProfileFavorites).Methods("GET")
-	router.HandleFunc("/favorite/add/", AddProfileFavorite).Methods("POST")
-	router.HandleFunc("/favorite/remove/", RemoveProfileFavorite).Methods("POST")
+	router.HandleFunc("/favorite/", AddProfileFavorite).Methods("POST")
+	router.HandleFunc("/favorite/", RemoveProfileFavorite).Methods("DELETE")
 
 	router.HandleFunc("/{id}/", GetProfileById).Methods("GET")
 }
@@ -189,20 +188,6 @@ func DeleteProfile(w http.ResponseWriter, r *http.Request) {
 
 	// json.NewEncoder(w).Encode(deleted_profile)
 	errors.WriteError(w, r, errors.InternalError("Endpoint temporarily disabled.", "Endpoint temporarily disabled."))
-}
-
-/*
-	GetAllProfiles is the endpoint to get all active user profiles
-*/
-func GetAllProfiles(w http.ResponseWriter, r *http.Request) {
-	user_profile_list, err := service.GetAllProfiles()
-
-	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not list all user profiles."))
-		return
-	}
-
-	json.NewEncoder(w).Encode(user_profile_list)
 }
 
 /*

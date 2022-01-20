@@ -319,7 +319,7 @@ Response format:
 }
 ```
 
-POST /event/favorite/add/
+POST /event/favorite/
 -------------------------
 
 Adds the given event to the favorites for the current user.
@@ -342,7 +342,7 @@ Response format:
 }
 ```
 
-POST /event/favorite/remove/
+DELETE /event/favorite/
 ----------------------------
 
 Removes the given event from the favorites for the current user.

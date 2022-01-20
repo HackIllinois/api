@@ -50,10 +50,22 @@ Response format:
 }
 ```
 
-GET /profile/list/
+GET /profile/list/?teamStatus=value&interests=value,value,value&limit=value
 -------------------------
 
-Returns all profiles that are in the database.
+**Internal use only.**
+
+Returns a list of profiles matching the filter conditions.
+
+teamStatus is a string matching the user's team status.
+
+interests is a comma-separated string representing the user's interests.
+
+- i.e if the user's interests are ["C++", "Machine Learning"], you can filter on this by sending ``interests="C++,Machine Learning"``
+
+If a ``limit`` parameter is provided, it will return the first matching ``limit`` profiles. Otherwise, it will return all of the matched profiles.
+
+If no parameters are provided, it returns all profiles that are in the database.
 
 Response format:
 ```
@@ -86,7 +98,6 @@ Response format:
     ]
 }
 ```
-
 
 POST /profile/
 -------------------
@@ -163,6 +174,8 @@ Response format:
 
 DELETE /profile/
 ------------------
+
+**Temporarily disabled**
 
 Deletes the profile for the user with the `id` in the JWT token provided in the Authorization header.
 This returns the deleted profile information.
@@ -245,53 +258,6 @@ Response format:
 }
 ```
 
-GET /profile/filtered/?teamStatus=value&interests=value,value,value&limit=value
--------------------------
-
-**Internal use only.**
-
-Returns a list of profiles matching the filter conditions. 
-
-teamStatus is a string matching the user's team status.
-
-interests is a comma-separated string representing the user's interests.
-
-- i.e if the user's interests are ["C++", "Machine Learning"], you can filter on this by sending ``interests="C++,Machine Learning"``
-
-If a ``limit`` parameter is provided, it will return the first matching ``limit`` profiles. Otherwise, it will return all of the matched profiles.
-
-Response format:
-```
-{
-    profiles: [
-        {
-            "id": "profileid123456",
-            "firstName": "John",
-            "lastName": "Doe",
-            "points": 2021,
-            "timezone": "Americas UTC+8",
-            "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234",
-            "teamStatus": "LOOKING_FOR_TEAM",
-            "description": "Lorem Ipsum…",
-            "interests": ["C++", "Machine Learning"]
-        },
-        {
-            "id": "profileid123456",
-            "firstName": "John",
-            "lastName": "Doe",
-            "points": 2021,
-            "timezone": "Americas UTC+8",
-            "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234",
-            "teamStatus": "NOT_LOOKING",
-            "description": "Lorem Ipsum…",
-            "interests": ["C++", "Machine Learning"]
-        },
-    ]
-}
-```
-
 POST /profile/event/checkin/
 ----------------------------
 
@@ -368,7 +334,7 @@ Response format:
 }
 ```
 
-POST /profile/favorite/add/
+POST /profile/favorite/
 -------------------------
 Adds the specified profile to the current user's favorite list, and returns the updated list of favorite profiles.
 
@@ -390,7 +356,7 @@ Response format:
 }
 ```
 
-POST /profile/favorite/remove/
+DELETE /profile/favorite/
 -------------------------
 Removes the specified profile from the current user's favorite list, and returns the updated list of favorite profiles.
 

@@ -141,7 +141,9 @@ func TestGetAllProfilesService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	actual_profile_list, err := service.GetAllProfiles()
+	parameters := map[string][]string{}
+
+	actual_profile_list, err := service.GetFilteredProfiles(parameters)
 
 	if err != nil {
 		t.Fatal(err)
@@ -182,7 +184,7 @@ func TestGetAllProfilesService(t *testing.T) {
 
 	db.RemoveAll("profiles", nil)
 
-	actual_profile_list, err = service.GetAllProfiles()
+	actual_profile_list, err = service.GetFilteredProfiles(parameters)
 
 	if err != nil {
 		t.Fatal(err)

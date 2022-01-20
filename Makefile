@@ -63,6 +63,11 @@ setup: all
 run:
 	@$(REPO_ROOT)/scripts/run.sh
 
+# Runs the API with each service in a separate process using the test config
+.PHONY: run-test
+run-test:
+	@$(REPO_ROOT)/scripts/run-test.sh &
+
 # Runs the API with all services in a single process
 .PHONY: run-single
 run-single:
@@ -102,3 +107,11 @@ container-push:
 .PHONY: docs
 docs:
 	$(MAKE) -C $(REPO_ROOT)/documentation build
+
+.PHONY: integration-test
+integration-test:
+	@echo "Beginning integration tests";
+	@echo "Checking if the API is running...";
+	@curl --silent --output /dev/null localhost:8000 || (echo "Failed to connect to the API. Is it running?"; exit 1;)
+	@echo "Running end-to-end tests";
+	@HI_CONFIG=file://$(REPO_ROOT)/config/test_config.json go test -v $(BASE_PACKAGE)/tests || exit 1;	

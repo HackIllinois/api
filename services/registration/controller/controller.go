@@ -7,32 +7,38 @@ import (
 
 	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 	"github.com/HackIllinois/api/services/registration/service"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.HandleFunc("/", GetAllCurrentRegistrations).Methods("GET")
+	router.Handle("/metrics/", promhttp.Handler()).Methods("GET")
 
-	router.HandleFunc("/attendee/", GetCurrentUserRegistration).Methods("GET")
-	router.HandleFunc("/attendee/", CreateCurrentUserRegistration).Methods("POST")
-	router.HandleFunc("/attendee/", UpdateCurrentUserRegistration).Methods("PUT")
-	router.HandleFunc("/attendee/list/", GetFilteredUserRegistrations).Methods("GET")
+	metrics.RegisterHandler("/", GetAllCurrentRegistrations, "GET", router)
 
-	router.HandleFunc("/mentor/", GetCurrentMentorRegistration).Methods("GET")
-	router.HandleFunc("/mentor/", CreateCurrentMentorRegistration).Methods("POST")
-	router.HandleFunc("/mentor/", UpdateCurrentMentorRegistration).Methods("PUT")
-	router.HandleFunc("/mentor/list/", GetFilteredMentorRegistrations).Methods("GET")
+	metrics.RegisterHandler("/attendee/", GetCurrentUserRegistration, "GET", router)
+	metrics.RegisterHandler("/attendee/", CreateCurrentUserRegistration, "POST", router)
+	metrics.RegisterHandler("/attendee/", UpdateCurrentUserRegistration, "PUT", router)
 
-	router.HandleFunc("/{id}/", GetAllRegistrations).Methods("GET")
-	router.HandleFunc("/attendee/{id}/", GetUserRegistration).Methods("GET")
-	router.HandleFunc("/mentor/{id}/", GetMentorRegistration).Methods("GET")
+	metrics.RegisterHandler("/attendee/list/", GetFilteredUserRegistrations, "GET", router)
 
-	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
+	metrics.RegisterHandler("/mentor/", GetFilteredUserRegistrations, "GET", router)
+	metrics.RegisterHandler("/mentor/", CreateCurrentMentorRegistration, "POST", router)
+	metrics.RegisterHandler("/mentor/", UpdateCurrentMentorRegistration, "PUT", router)
+
+	metrics.RegisterHandler("/mentor/list/", GetFilteredMentorRegistrations, "GET", router)
+
+	metrics.RegisterHandler("/{id}/", GetAllRegistrations, "GET", router)
+	metrics.RegisterHandler("/attendee/{id}/", GetUserRegistration, "GET", router)
+	metrics.RegisterHandler("/mentor/{id}/", GetMentorRegistration, "GET", router)
+
+	metrics.RegisterHandler("/internal/stats/", GetStats, "GET", router)
 }
 
 /*

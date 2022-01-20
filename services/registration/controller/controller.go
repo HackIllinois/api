@@ -18,7 +18,7 @@ import (
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/metrics/", promhttp.Handler()).Methods("GET")
+	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
 
 	metrics.RegisterHandler("/", GetAllCurrentRegistrations, "GET", router)
 

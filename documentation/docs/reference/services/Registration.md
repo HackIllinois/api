@@ -242,41 +242,22 @@ Request format:
 	"firstName": "John",
 	"lastName": "Smith",
 	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"diet": "NONE",
-	"age": 19,
+	"github": "JohnSmith",
+	"location": "Urbana, IL",
+	"timezone": "CST",
+	"gender": [
+		"Prefer not to answer"
+	],
+	"race": "MALE",
 	"graduationYear": 2019,
-	"transportation": "NONE",
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
-	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
-	"github": "JSmith",
-	"linkedin": "john-smith",
-	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
-	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
+	"graduationYear": 2019,
+	"programmingYears": 5,
+	"programmingAbility": 10,
+	"interests": [
+		"corporate engagement",
+		"learning"
 	]
 }
 ```
@@ -288,41 +269,22 @@ Response format:
 	"firstName": "John",
 	"lastName": "Smith",
 	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"diet": "NONE",
-	"age": 19,
+	"github": "JohnSmith",
+	"location": "Urbana, IL",
+	"timezone": "CST",
+	"gender": [
+		"Prefer not to answer"
+	],
+	"race": "MALE",
 	"graduationYear": 2019,
-	"transportation": "NONE",
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
-	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
-	"github": "JSmith",
-	"linkedin": "john-smith",
-	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
-	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
-	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
+	"graduationYear": 2019,
+	"programmingYears": 5,
+	"programmingAbility": 10,
+	"interests": [
+		"corporate engagement",
+		"learning"
 	]
 }
 ```

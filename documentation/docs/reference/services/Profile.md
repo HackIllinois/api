@@ -6,8 +6,6 @@ GET /profile/
 
 Returns the profile stored for the current user.
 
-Valid values for ``teamStatus`` are ``LOOKING_FOR_MEMBERS``, ``LOOKING_FOR_TEAM``, and ``NOT_LOOKING``.
-
 ***The `id` in the profile service refers to a separate, randomly-generated, profile-only id. This is different from the (user) `id` used in other services. When a profile is created, a mapping from the user `id` to the profile `id` is stored in the database.***
 
 We will distinguish user id and profile id by using `github123456` and `profileid123456` for each, respectively, in the examples below.
@@ -19,12 +17,7 @@ Response format:
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
-    "timezone": "Americas UTC+8",
-    "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "isVirtual": false
 }
 
 ```
@@ -32,7 +25,7 @@ Response format:
 GET /profile/{id}/
 -------------------------
 
-Returns the profile stored for user that has the ID ``{id}``.
+Returns the profile stored for user that has the profile ID ``{id}``.
 
 Response format:
 ```
@@ -41,16 +34,29 @@ Response format:
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
-    "timezone": "Americas UTC+8",
-    "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "isVirtual": false
 }
 ```
 
-GET /profile/list/?teamStatus=value&interests=value,value,value&limit=value
+GET /profile/user/{id}/
+-------------------------
+
+**Internal use only.**
+
+Returns the profile stored for user that has the user ID ``{id}``.
+
+Response format:
+```
+{
+    "id": "profileid123456",
+    "firstName": "John",
+    "lastName": "Doe",
+    "points": 2021,
+    "isVirtual": false
+}
+```
+
+GET /profile/list/?isVirtual=value&interests=value,value,value&limit=value
 -------------------------
 
 **Internal use only.**
@@ -60,8 +66,6 @@ Returns a list of profiles matching the filter conditions.
 teamStatus is a string matching the user's team status.
 
 interests is a comma-separated string representing the user's interests.
-
-- i.e if the user's interests are ["C++", "Machine Learning"], you can filter on this by sending ``interests="C++,Machine Learning"``
 
 If a ``limit`` parameter is provided, it will return the first matching ``limit`` profiles. Otherwise, it will return all of the matched profiles.
 
@@ -76,24 +80,14 @@ Response format:
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
-            "timezone": "Americas UTC+8",
-            "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234",
-            "teamStatus": "LOOKING_FOR_TEAM",
-            "description": "Lorem Ipsum…",
-            "interests": ["C++", "Machine Learning"]
+            "isVirtual": false
         },
         {
             "id": "profileid123456",
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
-            "timezone": "Americas UTC+8",
-            "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234",
-            "teamStatus": "LOOKING_FOR_MEMBERS",
-            "description": "Lorem Ipsum…",
-            "interests": ["C++", "Machine Learning"]
+            "isVirtual": false
         },
     ]
 }
@@ -109,12 +103,7 @@ Request format:
 {
     "firstName": "John",
     "lastName": "Doe",
-    "timezone": "Americas UTC+8",
-    "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "isVirtual": false
 }
 ```
 
@@ -124,13 +113,8 @@ Response format:
     "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
-    "points": 2021,
-    "timezone": "Americas UTC+8",
-    "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "points": 0,
+    "isVirtual": false
 }
 ```
 
@@ -144,14 +128,10 @@ Note you can not edit the ``points`` field through this.
 Request format:
 ```
 {
+    "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
-    "timezone": "Americas UTC+8",
-    "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "isVirtual": true
 }
 ```
 
@@ -161,13 +141,8 @@ Response format:
     "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
-    "points": 2021,
-    "timezone": "Americas UTC+8",
-    "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "points": 0,
+    "isVirtual": true
 }
 ```
 
@@ -186,13 +161,8 @@ Response format:
     "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
-    "points": 2021,
-    "timezone": "Americas UTC+8",
-    "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "points": 0,
+    "isVirtual": false
 }
 ```
 
@@ -223,20 +193,12 @@ Response format:
 }
 ```
 
-GET /profile/search/?teamStatus=value&interests=value,value,value&limit=value
+GET /profile/search/?isVirtual=value&interests=value,value,value&limit=value
 -------------------------
 
-Returns a list of profiles matching the filter conditions. 
-
-``teamStatus`` is a string matching the user's team status. Valid values for ``teamStatus`` are ``LOOKING_FOR_MEMBERS``, ``LOOKING_FOR_TEAM``, and ``NOT_LOOKING``.
-
-interests is a comma-separated string representing the user's interests.
-
-- i.e if the user's interests are ["C++", "Machine Learning"], you can filter on this by sending ``interests="C++,Machine Learning"``
+Returns a list of profiles matching the filter conditions.
 
 If a ``limit`` parameter is provided, it will return the first matching ``limit`` profiles. Otherwise, it will return all of the matched profiles.
-
-Any users with the TeamStatus "NOT_LOOKING" will be removed.
 
 Response format:
 ```
@@ -247,12 +209,14 @@ Response format:
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
+            "isVirtual": false
         },
         {
             "id": "profileid123456",
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
+            "isVirtual": false
         },
     ]
 }
@@ -308,14 +272,8 @@ Response format:
     "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
-    "points": 2021,
-    "timezone": "Americas UTC+8",
-    "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
-    "points": 10
+    "points": 10,
+    "isVirtual": false
 }
 ```
 

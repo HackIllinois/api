@@ -25,8 +25,8 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/", CreateEvent).Methods("POST")
 	router.HandleFunc("/", UpdateEvent).Methods("PUT")
 	router.HandleFunc("/", GetAllEvents).Methods("GET")
-	router.HandleFunc("/code/{id}/", GetEventCode).Methods("GET")
-	router.HandleFunc("/code/{id}/", UpdateEventCode).Methods("PUT")
+	router.HandleFunc("/code/{id}/", GetEventCodes).Methods("GET")
+	router.HandleFunc("/code/", UpsertEventCode).Methods("POST")
 
 	router.HandleFunc("/checkin/", Checkin).Methods("POST")
 
@@ -108,12 +108,29 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&event)
 
 	event.ID = utils.GenerateUniqueID()
-	var code = utils.GenerateUniqueCode()
 
-	err := service.CreateEvent(event.ID, code, event)
+	err := service.CreateEvent(event.ID, event)
+
+	// It would be good to check if the error is due to failing validation (should be a 422)
+	//  Tried using errors.Is(), but ironcally so we have a package common/errors which conflicts
+	//  with the built-in errors package.
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not create new event."))
+		return
+	}
+
+	err = service.GenerateEventCode(false, event)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to create in-person code."))
+		return
+	}
+
+	err = service.GenerateEventCode(true, event)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to create virtual code."))
 		return
 	}
 
@@ -154,7 +171,7 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 /*
 	Endpoint to get the code associated with an event (or nil)
 */
-func GetEventCode(w http.ResponseWriter, r *http.Request) {
+func GetEventCodes(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
 	if id == "" {
@@ -162,47 +179,38 @@ func GetEventCode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	code, err := service.GetEventCode(id)
+	codes, err := service.GetEventCodes(id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
 		return
 	}
 
-	json.NewEncoder(w).Encode(code)
+	json.NewEncoder(w).Encode(codes)
 }
 
 /*
-	Endpoint to update an event code and end time
+	Endpoint to upsert an event code and end time
 */
-func UpdateEventCode(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-
-	if id == "" {
-		errors.WriteError(w, r, errors.MalformedRequestError("Must provide event id in request url.", "Must provide event id in request url."))
-		return
-	}
-
+func UpsertEventCode(w http.ResponseWriter, r *http.Request) {
 	var eventCode models.EventCode
 	json.NewDecoder(r.Body).Decode(&eventCode)
 
-	eventCode.ID = id
-
-	err := service.UpdateEventCode(id, eventCode)
+	err := service.UpsertEventCode(eventCode)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the code and timestamp of the event."))
 		return
 	}
 
-	updated_event, err := service.GetEventCode(id)
+	updated_codes, err := service.GetEventCodes(eventCode.EventID)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated event code and timestamp details."))
 		return
 	}
 
-	json.NewEncoder(w).Encode(updated_event)
+	json.NewEncoder(w).Encode(updated_codes)
 }
 
 /*
@@ -219,7 +227,7 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 	var checkin_request models.CheckinRequest
 	json.NewDecoder(r.Body).Decode(&checkin_request)
 
-	valid, event_id, err := service.CanRedeemPoints(checkin_request.Code)
+	valid, is_code_virtual, event_id, err := service.CanRedeemPoints(checkin_request.Code)
 
 	result := models.CheckinResult{
 		NewPoints:   -1,
@@ -234,6 +242,13 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 		return
 	} else if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
+		return
+	}
+
+	is_user_virtual, err := service.GetIsUserVirtual(id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to retreive if user is virtual or in-person"))
 		return
 	}
 
@@ -264,10 +279,19 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result.NewPoints = event.Points
+	var points_to_award uint = 0
+	if is_user_virtual {
+		points_to_award = event.VirtualPoints
+	} else if is_code_virtual {
+		points_to_award = event.InPersonVirtPoints
+	} else {
+		points_to_award = event.InPersonPoints
+	}
+
+	result.NewPoints = int(points_to_award)
 
 	// Add this point value to given profile
-	profile, err := service.AwardPoints(id, event.Points)
+	profile, err := service.AwardPoints(id, int(points_to_award))
 
 	if err != nil {
 		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to award user with points"))

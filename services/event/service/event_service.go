@@ -147,7 +147,7 @@ func GetFilteredEvents(parameters map[string][]string) (*models.EventList, error
 /*
 	Creates an event with the given id
 */
-func CreateEvent(id string, code string, event models.Event) error {
+func CreateEvent(id string, event models.Event) error {
 	err := validate.Struct(event)
 
 	if err != nil {
@@ -175,18 +175,6 @@ func CreateEvent(id string, code string, event models.Event) error {
 	}
 
 	err = db.Insert("eventtrackers", &event_tracker)
-
-	if err != nil {
-		return err
-	}
-
-	event_code := models.EventCode{
-		ID:         id,
-		Code:       code,
-		Expiration: event.EndTime,
-	}
-
-	err = db.Insert("eventcodes", &event_code)
 
 	return err
 }
@@ -478,51 +466,100 @@ func GetStats() (map[string]interface{}, error) {
 	Check if an event can be redeemed for points, i.e., that the point timeout has not been reached
 	Returns true if the current time is between `PreEventCheckinIntervalInMinutes` number of minutes before the event, and the end of event.
 */
-func CanRedeemPoints(event_code string) (bool, string, error) {
+func CanRedeemPoints(event_code string) (bool, bool, string, error) {
 	query := database.QuerySelector{
-		"code": event_code,
+		"codeid": event_code,
 	}
 
 	var eventCode models.EventCode
 	err := db.FindOne("eventcodes", query, &eventCode)
 
 	if err != nil {
-		return false, "invalid", err
+		return false, false, "invalid", err
 	}
 
 	expiration_time := eventCode.Expiration
 	current_time := time.Now().Unix()
 
-	return current_time < expiration_time, eventCode.ID, nil
+	return current_time < expiration_time, eventCode.IsVirtual, eventCode.EventID, nil
 }
 
 /*
 	Returns the eventcode struct for the event with the given id
 */
-func GetEventCode(id string) (*models.EventCode, error) {
+func GetEventCodes(id string) (*[]models.EventCode, error) {
 	query := database.QuerySelector{
-		"id": id,
+		"eventid": id,
 	}
 
-	var eventCode models.EventCode
-	err := db.FindOne("eventcodes", query, &eventCode)
+	eventCodes := []models.EventCode{}
+
+	err := db.FindAll("eventcodes", query, &eventCodes)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &eventCode, nil
+	return &eventCodes, nil
 }
 
 /*
-	Updates the event code and end time with the given id
+	Upserts the event code and end time with the given id
+	If no matching code is found, then it is a new code and add it
 */
-func UpdateEventCode(id string, eventCode models.EventCode) error {
-	selector := database.QuerySelector{
-		"id": id,
+func UpsertEventCode(eventCode models.EventCode) error {
+	err := validate.Struct(eventCode)
+
+	if err != nil {
+		return err
 	}
 
-	err := db.Update("eventcodes", selector, &eventCode)
+	selector := database.QuerySelector{
+		"codeid": eventCode.CodeID,
+	}
+
+	_, err = db.Upsert("eventcodes", selector, &eventCode)
 
 	return err
+}
+
+func GenerateEventCode(isVirtual bool, event models.Event) error {
+	// The probability of a generated code colliding with an existing
+	//  code is (N / 2^24) where N is the number of existing codes.
+	//  We will attempt to insert the row 10 times each with a new random
+	//  code, making the success rate 1 - ((N / 2^24)^10)
+	var code string
+
+	for i := 0; i < 10; i++ {
+		code = utils.GenerateUniqueCode()
+
+		query := database.QuerySelector{
+			"codeid": code,
+		}
+
+		err := db.FindOne("eventcodes", query, models.EventCode{})
+
+		if err == database.ErrNotFound {
+			eventCode := models.EventCode{
+				CodeID:     code,
+				EventID:    event.ID,
+				IsVirtual:  isVirtual,
+				Expiration: event.EndTime,
+			}
+
+			err = db.Insert("eventcodes", &eventCode)
+
+			return err
+		}
+	}
+
+	err_str := "Failed to generate a unique "
+
+	if isVirtual {
+		err_str += "virtual event code."
+	} else {
+		err_str += "in-person event code."
+	}
+
+	return errors.New(err_str)
 }

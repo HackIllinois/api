@@ -1,7 +1,8 @@
 package models
 
 type EventCode struct {
-	ID         string `json:"id"`
-	Code       string `json:"code"`
-	Expiration int64  `json:"expiration"`
+	CodeID     string `json:"codeID"     validate:"required"`
+	EventID    string `json:"eventID"    validate:"required"`
+	IsVirtual  bool   `json:"isVirtual"  validate:"required"`
+	Expiration int64  `json:"expiration" validate:"required"`
 }

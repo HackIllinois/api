@@ -23,7 +23,10 @@ Response format:
 		}
 	],
 	"sponsor": "Example sponsor",
-	"eventType": "WORKSHOP"
+	"eventType": "WORKSHOP",
+	"inPersonPoints": 10,
+	"inPersonVirtPoints": 5,
+	"virtualPoints": 3
 }
 ```
 
@@ -51,7 +54,10 @@ Response format:
 				}
 			],
 			"sponsor": "Example sponsor",
-			"eventType": "WORKSHOP"
+			"eventType": "WORKSHOP",
+			"inPersonPoints": 10,
+			"inPersonVirtPoints": 5,
+			"virtualPoints": 3
 		},
 		{
 			"id": "52fdfcab71282654f163f5f0f9a621d72",
@@ -68,7 +74,10 @@ Response format:
 				}
 			],
 			"sponsor": "Example sponsor",
-			"eventType": "WORKSHOP"
+			"eventType": "WORKSHOP",
+			"inPersonPoints": 20,
+			"inPersonVirtPoints": 10,
+			"virtualPoints": 5
 		}
 	]
 }
@@ -98,11 +107,14 @@ Response format:
                 }
             ],
             "sponsor": "Example sponsor",
-            "eventType": "WORKSHOP"
+            "eventType": "WORKSHOP",
+			"inPersonPoints": 10,
+			"inPersonVirtPoints": 5,
+			"virtualPoints": 3
         },
         {
             "id": "9566c74d10037c4d7bbb0407d1e2c649",
-            "name": "Example Event 10",
+            "name": "Example Event 11",
             "description": "This is a description",
             "startTime": 1532202702,
             "endTime": 1532212702,
@@ -115,7 +127,10 @@ Response format:
                 }
             ],
             "sponsor": "Example sponsor",
-            "eventType": "WORKSHOP"
+            "eventType": "WORKSHOP",
+			"inPersonPoints": 20,
+			"inPersonVirtPoints": 10,
+			"virtualPoints": 5
         }
     ]
 }
@@ -144,7 +159,10 @@ Request format:
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}
-	]
+	],
+	"inPersonPoints": 10,
+	"inPersonVirtPoints": 5,
+	"virtualPoints": 3
 }
 ```
 
@@ -165,7 +183,10 @@ Response format:
 		}
 	],
 	"sponsor": "Example sponsor",
-	"eventType": "WORKSHOP"
+	"eventType": "WORKSHOP",
+	"inPersonPoints": 10,
+	"inPersonVirtPoints": 5,
+	"virtualPoints": 3
 }
 ```
 
@@ -191,7 +212,10 @@ Response format:
 		}
 	],
 	"sponsor": "Example sponsor",
-	"eventType": "WORKSHOP"
+	"eventType": "WORKSHOP",
+	"inPersonPoints": 10,
+	"inPersonVirtPoints": 7,
+	"virtualPoints": 3
 }
 ```
 
@@ -217,7 +241,10 @@ Request format:
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}
-	]
+	],
+	"inPersonPoints": 20,
+	"inPersonVirtPoints": 10,
+	"virtualPoints": 5
 }
 ```
 
@@ -238,7 +265,10 @@ Response format:
 		}
 	],
 	"sponsor": "Example sponsor",
-	"eventType": "WORKSHOP"
+	"eventType": "WORKSHOP",
+	"inPersonPoints": 20,
+	"inPersonVirtPoints": 10,
+	"virtualPoints": 5
 }
 ```
 
@@ -367,29 +397,41 @@ Response format:
 GET /event/code/{id}/
 ----------------------------
 
-Gets a struct that contains information about the event code (generated upon event creation) and expiration time.
+Gets an array of structs that contains information about the event codes (generated upon event creation) and expiration times.
 By convention, event checkin codes will be 6 bytes long.
 
 Response format:
 ```
-{
-    "id": "52fdfc072182654f163f5f0f9a621d72",
-    "code": "sample_code",
-    "expiration": 1521388800
-}
-
+[
+	{
+		"codeID": "sample_code_1",
+		"eventID": "52fdfc072182654f163f5f0f9a621d72",
+		"isVirtual": false,
+		"expiration": 1521388800
+	},
+	{
+		"codeID": "sample_code_2",
+		"eventID": "52fdfc072182654f163f5f0f9a621d72",
+		"isVirtual": true,
+		"expiration": 1521388800
+	}
+]
 ```
 
-PUT /event/code/{id}/
+POST /event/code/
 ----------------------------
 
-Updates a struct that contains information about the event code (generated upon event creation) and expiration time.
+Upserts a struct that contains information about the event code (generated upon event creation) and expiration time.
+
+NOTE: Once created, the code ID cannot be changed.
 
 Request format:
 ```
 {
-    "code": "new_code",
-    "expiration": 1521388800
+	"codeID": "code",
+	"eventID": "52fdfc072182654f163f5f0f9a621d72",
+	"isVirtual": true,
+	"expiration": 1521388800
 }
 
 ```
@@ -397,9 +439,10 @@ Request format:
 Response format:
 ```
 {
-    "id": "52fdfc072182654f163f5f0f9a621d72",
-    "code": "new_code",
-    "expiration": 1521388800
+	"codeID": "code",
+	"eventID": "52fdfc072182654f163f5f0f9a621d72",
+	"isVirtual": true,
+	"expiration": 1521388800
 }
 ```
 
@@ -408,6 +451,8 @@ POST /event/checkin/
 
 Retrieves a struct that contains information about the event checkin status, point increment value, and total point number.
 Takes in a struct that contains an event checkin code.
+
+The endpoint will check the use HackIllinois-Identity field to determine if the user redeeming the points registered for virtual or in-person. It will compare this to the scanned code and will award points accordingly. (e.g. If registered for virtual, give `virtualPoints`. If registered for in-person but attended virtually, give `inPersonVirtPoints`. If registered for in-person and attended in-person, give `inPersonPoints`.)
 
 Valid values for `status` are `Success`, `InvalidCode`, `InvalidTime`, `AlreadyCheckedIn`. When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.
 

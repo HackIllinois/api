@@ -295,9 +295,10 @@ func GetFilteredProfiles(parameters map[string][]string) (*models.ProfileList, e
 /*
 	Returns a list of profiles filtered upon teamStatus and interests. Will be limited to only include the first "limit" results.
 	Will also remove profiles with a TeamStatus set to "NOT_LOOKING"
+
+	Sorta redundant since the Profile model doesn't have team status or interest fields anymore
 */
 func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileList, error) {
-	parameters["teamStatusNot"] = append(parameters["teamStatusNot"], "NOT_LOOKING")
 	filtered_profile_list, err := GetFilteredProfiles(parameters)
 
 	if err != nil {
@@ -323,10 +324,11 @@ func RedeemEvent(profile_id string, event_id string) (*models.RedeemEventRespons
 
 	if err != nil {
 		if err == database.ErrNotFound {
-			err = db.Insert("profileattendance", &models.AttendanceTracker{
+			attended_events = models.AttendanceTracker{
 				ID:     profile_id,
 				Events: []string{},
-			})
+			}
+			err = db.Insert("profileattendance", &attended_events)
 
 			if err != nil {
 				redemption_status.Status = "Could not add tracker to db"

@@ -66,7 +66,9 @@ func SetupTestDB(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
-		Points: 10,
+		InPersonPoints:     10,
+		InPersonVirtPoints: 7,
+		VirtualPoints:      5,
 	}
 
 	err := db.Insert("events", &event)
@@ -153,7 +155,9 @@ func TestGetAllEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
-				Points: 10,
+				InPersonPoints:     10,
+				InPersonVirtPoints: 7,
+				VirtualPoints:      5,
 			},
 			{
 				ID:          "testid2",
@@ -172,7 +176,9 @@ func TestGetAllEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
-				Points: 0,
+				InPersonPoints:     0,
+				InPersonVirtPoints: 0,
+				VirtualPoints:      0,
 			},
 		},
 	}
@@ -224,7 +230,9 @@ func TestGetFilteredEventsService(t *testing.T) {
 				Longitude: 123.456,
 			},
 		},
-		Points: 0,
+		InPersonPoints:     0,
+		InPersonVirtPoints: 0,
+		VirtualPoints:      0,
 	}
 
 	err := db.Insert("events", &event)
@@ -262,7 +270,9 @@ func TestGetFilteredEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
-				Points: 0,
+				InPersonPoints:     0,
+				InPersonVirtPoints: 0,
+				VirtualPoints:      0,
 			},
 		},
 	}
@@ -300,7 +310,9 @@ func TestGetFilteredEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
-				Points: 10,
+				InPersonPoints:     10,
+				InPersonVirtPoints: 7,
+				VirtualPoints:      5,
 			},
 			{
 				ID:          "testid2",
@@ -319,7 +331,9 @@ func TestGetFilteredEventsService(t *testing.T) {
 						Longitude: 123.456,
 					},
 				},
-				Points: 0,
+				InPersonPoints:     0,
+				InPersonVirtPoints: 0,
+				VirtualPoints:      0,
 			},
 		},
 	}
@@ -377,7 +391,9 @@ func TestGetEventService(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
-		Points: 10,
+		InPersonPoints:     10,
+		InPersonVirtPoints: 7,
+		VirtualPoints:      5,
 	}
 
 	if !reflect.DeepEqual(event, &expected_event) {
@@ -411,7 +427,7 @@ func TestCreateEventService(t *testing.T) {
 		},
 	}
 
-	err := service.CreateEvent("testid2", "testcode2", new_event)
+	err := service.CreateEvent("testid2", new_event)
 
 	if err != nil {
 		t.Fatal(err)
@@ -439,7 +455,9 @@ func TestCreateEventService(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
-		Points: 0,
+		InPersonPoints:     0,
+		InPersonVirtPoints: 0,
+		VirtualPoints:      0,
 	}
 
 	if !reflect.DeepEqual(event, &expected_event) {
@@ -536,7 +554,9 @@ func TestUpdateEventService(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
-		Points: 100,
+		InPersonPoints:     100,
+		InPersonVirtPoints: 70,
+		VirtualPoints:      50,
 	}
 
 	err := service.UpdateEvent("testid", event)
@@ -567,7 +587,9 @@ func TestUpdateEventService(t *testing.T) {
 				Longitude:   123.456,
 			},
 		},
-		Points: 100,
+		InPersonPoints:     100,
+		InPersonVirtPoints: 70,
+		VirtualPoints:      50,
 	}
 
 	if !reflect.DeepEqual(updated_event, &expected_event) {
@@ -700,7 +722,7 @@ func TestIsEventActive(t *testing.T) {
 		},
 	}
 
-	service.CreateEvent(new_event.ID, "testcode3", new_event)
+	service.CreateEvent(new_event.ID, new_event)
 
 	is_active, err := service.IsEventActive("testid3")
 
@@ -719,7 +741,7 @@ func TestIsEventActive(t *testing.T) {
 	new_event.StartTime = TestTime
 	new_event.EndTime = TestTime + ONE_MINUTE_IN_SECONDS*20
 
-	service.CreateEvent(new_event.ID, "testcode4", new_event)
+	service.CreateEvent(new_event.ID, new_event)
 
 	is_active, err = service.IsEventActive("testid4")
 
@@ -820,6 +842,241 @@ func TestRemoveEventFavorite(t *testing.T) {
 
 	if !reflect.DeepEqual(event_favorites, &expected_event_favorites) {
 		t.Errorf("Wrong tracker info. Expected %v, got %v", &expected_event_favorites, event_favorites)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests event code generation for a given event id
+*/
+func TestGenerateEventCode(t *testing.T) {
+	SetupTestDB(t)
+
+	event, err := service.GetEvent("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = service.GenerateEventCode(false, *event)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	query := database.QuerySelector{
+		"eventid": event.ID,
+	}
+
+	event_codes := []models.EventCode{}
+
+	err = db.FindAll("eventcodes", query, &event_codes)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_codes := []models.EventCode{
+		{
+			CodeID:     "some random code that's gonna get replaced here",
+			EventID:    event.ID,
+			IsVirtual:  false,
+			Expiration: event.EndTime,
+		},
+	}
+
+	for i, code := range event_codes {
+		expected_event_codes[i].CodeID = code.CodeID
+	}
+
+	if !reflect.DeepEqual(&event_codes, &expected_event_codes) {
+		t.Errorf("Wrong event codes. Expected %v, got %v", &expected_event_codes, &event_codes)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests updating an event code
+*/
+func TestUpdateEventCode(t *testing.T) {
+	SetupTestDB(t)
+
+	event_code := models.EventCode{
+		CodeID:     "abcdef",
+		EventID:    "testid",
+		IsVirtual:  false,
+		Expiration: 3133535820,
+	}
+
+	err := db.Insert("eventcodes", &event_code)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	event_code.IsVirtual = true
+	event_code.Expiration = 1609735934
+
+	err = service.UpsertEventCode(event_code)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	query := database.QuerySelector{
+		"eventid": "testid",
+	}
+
+	event_codes := []models.EventCode{}
+
+	err = db.FindAll("eventcodes", query, &event_codes)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_codes := []models.EventCode{
+		{
+			CodeID:     "abcdef",
+			EventID:    "testid",
+			IsVirtual:  true,
+			Expiration: 1609735934,
+		},
+	}
+
+	if !reflect.DeepEqual(&event_codes, &expected_event_codes) {
+		t.Errorf("Wrong event codes. Expected %v, got %v", &expected_event_codes, &event_codes)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests inserting a new event code
+*/
+func TestInsertEventCode(t *testing.T) {
+	SetupTestDB(t)
+
+	event_code_1 := models.EventCode{
+		CodeID:     "abcdef",
+		EventID:    "testid",
+		IsVirtual:  false,
+		Expiration: 3133535820,
+	}
+
+	err := db.Insert("eventcodes", &event_code_1)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	event_code_2 := models.EventCode{
+		CodeID:     "123456",
+		EventID:    "testid",
+		IsVirtual:  true,
+		Expiration: 3133535820,
+	}
+
+	event_code_1.IsVirtual = true
+	event_code_1.Expiration = 1609735934
+
+	err = service.UpsertEventCode(event_code_2)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	query := database.QuerySelector{
+		"eventid": "testid",
+	}
+
+	event_codes := []models.EventCode{}
+
+	err = db.FindAll("eventcodes", query, &event_codes)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_codes := []models.EventCode{
+		{
+			CodeID:     "abcdef",
+			EventID:    "testid",
+			IsVirtual:  false,
+			Expiration: 3133535820,
+		},
+		{
+			CodeID:     "123456",
+			EventID:    "testid",
+			IsVirtual:  true,
+			Expiration: 3133535820,
+		},
+	}
+
+	if !reflect.DeepEqual(&event_codes, &expected_event_codes) {
+		t.Errorf("Wrong event codes. Expected %v, got %v", &expected_event_codes, &event_codes)
+	}
+
+	CleanupTestDB(t)
+}
+
+/*
+	Tests getting all event codes for a given event id
+*/
+func TestGetEventCodes(t *testing.T) {
+	SetupTestDB(t)
+
+	event_code_1 := models.EventCode{
+		CodeID:     "abcdef",
+		EventID:    "testid",
+		IsVirtual:  false,
+		Expiration: 3133535820,
+	}
+
+	event_code_2 := models.EventCode{
+		CodeID:     "123456",
+		EventID:    "testid",
+		IsVirtual:  true,
+		Expiration: 3133535820,
+	}
+
+	err := db.Insert("eventcodes", &event_code_1)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = db.Insert("eventcodes", &event_code_2)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	event_codes, err := service.GetEventCodes("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_codes := []models.EventCode{
+		{
+			CodeID:     "abcdef",
+			EventID:    "testid",
+			IsVirtual:  false,
+			Expiration: 3133535820,
+		},
+		{
+			CodeID:     "123456",
+			EventID:    "testid",
+			IsVirtual:  true,
+			Expiration: 3133535820,
+		},
+	}
+
+	if !reflect.DeepEqual(event_codes, &expected_event_codes) {
+		t.Errorf("Wrong event codes. Expected %v, got %v", &expected_event_codes, &event_codes)
 	}
 
 	CleanupTestDB(t)

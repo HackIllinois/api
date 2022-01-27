@@ -53,3 +53,19 @@ func AwardPoints(id string, points int) (*models.Profile, error) {
 
 	return &profile, nil
 }
+
+func GetIsUserVirtual(id string) (bool, error) {
+	var profile models.Profile
+
+	status, err := apirequest.Get(config.PROFILE_SERVICE+"/profile/user/"+id+"/", &profile)
+
+	if err != nil {
+		return false, err
+	}
+
+	if status != http.StatusOK {
+		return false, errors.New("Unable to retrieve if user is virtual or in-person")
+	}
+
+	return profile.IsVirtual, nil
+}

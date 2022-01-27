@@ -30,6 +30,8 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/favorite/", AddProfileFavorite).Methods("POST")
 	router.HandleFunc("/favorite/", RemoveProfileFavorite).Methods("DELETE")
 
+	router.HandleFunc("/user/{id}/", GetProfileByUserId).Methods("GET")
+
 	router.HandleFunc("/{id}/", GetProfileById).Methods("GET")
 }
 
@@ -66,6 +68,29 @@ func GetProfileById(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile for profile id "+profile_id))
+		return
+	}
+
+	json.NewEncoder(w).Encode(user_profile)
+}
+
+/*
+	GetProfileByUserId is used to get a profile for a provided user id.
+*/
+func GetProfileByUserId(w http.ResponseWriter, r *http.Request) {
+	user_id := mux.Vars(r)["id"]
+
+	profile_id, err := service.GetProfileIdFromUserId(user_id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user id "+user_id))
+		return
+	}
+
+	user_profile, err := service.GetProfile(profile_id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile for user id "+user_id))
 		return
 	}
 

@@ -3,52 +3,20 @@ package tests
 import (
 	"fmt"
 	"os"
-	"os/exec"
-	"path/filepath"
 	"reflect"
 	"strconv"
-	"strings"
 	"testing"
 
 	"github.com/HackIllinois/api/common/configloader"
 	decision_models "github.com/HackIllinois/api/services/decision/models"
 	user_models "github.com/HackIllinois/api/services/user/models"
+	"github.com/HackIllinois/api/tests/common"
 	"github.com/dghubble/sling"
 	"gopkg.in/mgo.v2"
 )
 
 var admin_client *sling.Sling
 var session *mgo.Session
-
-func GetAdminClient() *sling.Sling {
-	// First, get an admin authorization token by running `make setup`.
-	path, err := os.Getwd()
-	if err != nil {
-		fmt.Printf("ERROR: %v\n", err)
-	}
-
-	cmd := exec.Command("make", "setup")
-	cmd.Dir = filepath.Dir(path)
-	out, err := cmd.Output()
-
-	if err != nil {
-		fmt.Printf("ERROR: %v\n", err)
-	}
-
-	out_lines := strings.Split(string(out[:]), "\n")
-	admin_token := out_lines[len(out_lines)-3]
-
-	return sling.New().Base("http://localhost:8000").Client(nil).Add("Authorization", admin_token)
-}
-
-func GetLocalMongoSession() *mgo.Session {
-	session, err := mgo.Dial("localhost")
-	if err != nil {
-		fmt.Println("Failed to connect to database:", err)
-		os.Exit(1)
-	}
-	return session
-}
 
 func TestMain(m *testing.M) {
 
@@ -59,9 +27,9 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	admin_client = GetAdminClient()
+	admin_client = common.GetSlingClient("Admin")
 
-	session = GetLocalMongoSession()
+	session = common.GetLocalMongoSession()
 
 	user_db_name, err := cfg.Get("USER_DB_NAME")
 	if err != nil {

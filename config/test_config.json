@@ -256,5 +256,16 @@
 				"fields": []
 			}
 		]
-	}
+	},
+
+	"TIER_THRESHOLDS": [
+		{
+			"name": "cookie",
+			"threshold": 0
+		},
+		{
+			"name": "cupcake",
+			"threshold": 50
+		}
+	]
 }

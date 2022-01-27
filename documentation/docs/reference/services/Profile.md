@@ -376,3 +376,21 @@ Response format:
     ]
 }
 ```
+
+GET /profile/tier/threshold/
+-------------------------
+Returns the profile tier name to minimum point threshold mapping.
+
+Response format:
+```
+[
+  {
+    "name": "cookie",
+    "threshold": 0
+  },
+  {
+    "name": "cupcake",
+    "threshold": 50
+  }
+]
+```

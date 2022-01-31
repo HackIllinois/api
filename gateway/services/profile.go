@@ -85,6 +85,12 @@ var ProfileRoutes = arbor.RouteCollection{
 		"/profile/favorite/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.AttendeeRole, models.ApplicantRole, models.StaffRole, models.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveProfileFavorite).ServeHTTP,
 	},
+	arbor.Route{
+		"GetTierThresholds",
+		"GET",
+		"/profile/tier/threshold/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(RemoveProfileFavorite).ServeHTTP,
+	},
 	// This needs to be the last route in order to prevent endpoints like "search", "leaderboard" from accidentally being routed as the {id} variable.
 	arbor.Route{
 		"GetUserProfileById",
@@ -144,4 +150,8 @@ func AddProfileFavorite(w http.ResponseWriter, r *http.Request) {
 
 func RemoveProfileFavorite(w http.ResponseWriter, r *http.Request) {
 	arbor.DELETE(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
+func GetTierThresholds(w http.ResponseWriter, r *http.Request) {
+	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
 }

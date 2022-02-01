@@ -2,23 +2,28 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/services/mail/models"
 	"github.com/HackIllinois/api/services/mail/service"
 	"github.com/gorilla/mux"
-	"net/http"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.HandleFunc("/send/", SendMail).Methods("POST")
-	router.HandleFunc("/send/list/", SendMailList).Methods("POST")
-	router.HandleFunc("/list/", GetAllMailLists).Methods("GET")
-	router.HandleFunc("/list/create/", CreateMailList).Methods("POST")
-	router.HandleFunc("/list/add/", AddToMailList).Methods("POST")
-	router.HandleFunc("/list/remove/", RemoveFromMailList).Methods("POST")
-	router.HandleFunc("/list/{id}/", GetMailList).Methods("GET")
+	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
+
+	metrics.RegisterHandler("/send/", SendMail, "POST", router)
+	metrics.RegisterHandler("/send/list/", SendMailList, "POST", router)
+	metrics.RegisterHandler("/list/", GetAllMailLists, "GET", router)
+	metrics.RegisterHandler("/list/create/", CreateMailList, "POST", router)
+	metrics.RegisterHandler("/list/add/", AddToMailList, "POST", router)
+	metrics.RegisterHandler("/list/remove/", RemoveFromMailList, "POST", router)
+	metrics.RegisterHandler("/list/{id}/", GetMailList, "GET", router)
 }
 
 /*

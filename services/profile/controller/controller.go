@@ -5,35 +5,39 @@ import (
 	"net/http"
 
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/profile/config"
 	"github.com/HackIllinois/api/services/profile/models"
 	"github.com/HackIllinois/api/services/profile/service"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.HandleFunc("/", GetProfile).Methods("GET")
-	router.HandleFunc("/", CreateProfile).Methods("POST")
-	router.HandleFunc("/", UpdateProfile).Methods("PUT")
-	router.HandleFunc("/", DeleteProfile).Methods("DELETE")
+	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
 
-	router.HandleFunc("/list/", GetFilteredProfiles).Methods("GET")
-	router.HandleFunc("/leaderboard/", GetProfileLeaderboard).Methods("GET")
-	router.HandleFunc("/search/", GetValidFilteredProfiles).Methods("GET")
+	metrics.RegisterHandler("/", GetProfile, "GET", router)
+	metrics.RegisterHandler("/", CreateProfile, "POST", router)
+	metrics.RegisterHandler("/", UpdateProfile, "PUT", router)
+	metrics.RegisterHandler("/", DeleteProfile, "DELETE", router)
 
-	router.HandleFunc("/event/checkin/", RedeemEvent).Methods("POST")
-	router.HandleFunc("/points/award/", AwardPoints).Methods("POST")
+	metrics.RegisterHandler("/list/", GetFilteredProfiles, "GET", router)
+	metrics.RegisterHandler("/leaderboard/", GetProfileLeaderboard, "GET", router)
+	metrics.RegisterHandler("/search/", GetValidFilteredProfiles, "GET", router)
 
-	router.HandleFunc("/favorite/", GetProfileFavorites).Methods("GET")
-	router.HandleFunc("/favorite/", AddProfileFavorite).Methods("POST")
-	router.HandleFunc("/favorite/", RemoveProfileFavorite).Methods("DELETE")
+	metrics.RegisterHandler("/event/checkin/", RedeemEvent, "POST", router)
+	metrics.RegisterHandler("/points/award/", AwardPoints, "POST", router)
 
-	router.HandleFunc("/{id}/", GetProfileById).Methods("GET")
+	metrics.RegisterHandler("/favorite/", GetProfileFavorites, "GET", router)
+	metrics.RegisterHandler("/favorite/", AddProfileFavorite, "POST", router)
+	metrics.RegisterHandler("/favorite/", RemoveProfileFavorite, "DELETE", router)
 
-	router.HandleFunc("/tier/threshold/", GetTierThresholds).Methods("GET")
+	metrics.RegisterHandler("/{id}/", GetProfileById, "GET", router)
+
+	metrics.RegisterHandler("/tier/threshold/", GetTierThresholds, "GET", router)
 }
 
 /*

@@ -2,29 +2,34 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+	"time"
+
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/notifications/models"
 	"github.com/HackIllinois/api/services/notifications/service"
 	"github.com/gorilla/mux"
-	"net/http"
-	"time"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.HandleFunc("/topic/", GetAllTopics).Methods("GET")
-	router.HandleFunc("/topic/", CreateTopic).Methods("POST")
-	router.HandleFunc("/topic/all/", GetAllNotifications).Methods("GET")
-	router.HandleFunc("/topic/public/", GetAllPublicNotifications).Methods("GET")
-	router.HandleFunc("/topic/{id}/", GetNotificationsForTopic).Methods("GET")
-	router.HandleFunc("/topic/{id}/", PublishNotificationToTopic).Methods("POST")
-	router.HandleFunc("/topic/{id}/", DeleteTopic).Methods("DELETE")
-	router.HandleFunc("/topic/{id}/subscribe/", SubscribeToTopic).Methods("POST")
-	router.HandleFunc("/topic/{id}/unsubscribe/", UnsubscribeToTopic).Methods("POST")
-	router.HandleFunc("/device/", RegisterDeviceToUser).Methods("POST")
-	router.HandleFunc("/order/{id}/", GetNotificationOrder).Methods("GET")
+	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
+
+	metrics.RegisterHandler("/topic/", GetAllTopics, "GET", router)
+	metrics.RegisterHandler("/topic/", CreateTopic, "POST", router)
+	metrics.RegisterHandler("/topic/all/", GetAllNotifications, "GET", router)
+	metrics.RegisterHandler("/topic/public/", GetAllPublicNotifications, "GET", router)
+	metrics.RegisterHandler("/topic/{id}/", GetNotificationsForTopic, "GET", router)
+	metrics.RegisterHandler("/topic/{id}/", PublishNotificationToTopic, "POST", router)
+	metrics.RegisterHandler("/topic/{id}/", DeleteTopic, "DELETE", router)
+	metrics.RegisterHandler("/topic/{id}/subscribe/", SubscribeToTopic, "POST", router)
+	metrics.RegisterHandler("/topic/{id}/unsubscribe/", UnsubscribeToTopic, "POST", router)
+	metrics.RegisterHandler("/device/", RegisterDeviceToUser, "POST", router)
+	metrics.RegisterHandler("/order/{id}/", GetNotificationOrder, "GET", router)
 }
 
 /*

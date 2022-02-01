@@ -2,24 +2,29 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/services/rsvp/config"
 	"github.com/HackIllinois/api/services/rsvp/service"
 	"github.com/gorilla/mux"
-	"net/http"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.HandleFunc("/filter/", GetFilteredRsvps).Methods("GET")
-	router.HandleFunc("/{id}/", GetUserRsvp).Methods("GET")
-	router.HandleFunc("/", GetCurrentUserRsvp).Methods("GET")
-	router.HandleFunc("/", CreateCurrentUserRsvp).Methods("POST")
-	router.HandleFunc("/", UpdateCurrentUserRsvp).Methods("PUT")
+	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
 
-	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
+	metrics.RegisterHandler("/filter/", GetFilteredRsvps, "GET", router)
+	metrics.RegisterHandler("/{id}/", GetUserRsvp, "GET", router)
+	metrics.RegisterHandler("/", GetCurrentUserRsvp, "GET", router)
+	metrics.RegisterHandler("/", CreateCurrentUserRsvp, "POST", router)
+	metrics.RegisterHandler("/", UpdateCurrentUserRsvp, "PUT", router)
+
+	metrics.RegisterHandler("/internal/stats/", GetStats, "GET", router)
 }
 
 /*

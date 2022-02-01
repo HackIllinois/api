@@ -6,23 +6,26 @@ import (
 	"time"
 
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/decision/config"
 	"github.com/HackIllinois/api/services/decision/models"
 	"github.com/HackIllinois/api/services/decision/service"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.HandleFunc("/", GetCurrentDecision).Methods("GET")
-	router.HandleFunc("/", UpdateDecision).Methods("POST")
-	router.HandleFunc("/finalize/", FinalizeDecision).Methods("POST")
-	router.HandleFunc("/filter/", GetFilteredDecisions).Methods("GET")
-	router.HandleFunc("/{id}/", GetDecision).Methods("GET")
+	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
 
-	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
+	metrics.RegisterHandler("/", GetCurrentDecision, "GET", router)
+	metrics.RegisterHandler("/", UpdateDecision, "POST", router)
+	metrics.RegisterHandler("/finalize/", FinalizeDecision, "POST", router)
+	metrics.RegisterHandler("/filter/", GetFilteredDecisions, "GET", router)
+	metrics.RegisterHandler("/{id}/", GetDecision, "GET", router)
+	metrics.RegisterHandler("/internal/stats/", GetStats, "GET", router)
 }
 
 /*

@@ -6,6 +6,7 @@ import (
 
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/utils"
+	"github.com/HackIllinois/api/services/profile/config"
 	"github.com/HackIllinois/api/services/profile/models"
 	"github.com/HackIllinois/api/services/profile/service"
 	"github.com/gorilla/mux"
@@ -31,6 +32,8 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/favorite/", RemoveProfileFavorite).Methods("DELETE")
 
 	router.HandleFunc("/{id}/", GetProfileById).Methods("GET")
+
+	router.HandleFunc("/tier/threshold/", GetTierThresholds).Methods("GET")
 }
 
 /*
@@ -406,4 +409,11 @@ func RemoveProfileFavorite(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(favorites)
+}
+
+/*
+	Returns the tier name to threshold mapping
+*/
+func GetTierThresholds(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(config.TIER_THRESHOLDS)
 }

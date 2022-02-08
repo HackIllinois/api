@@ -26,6 +26,12 @@ var DecisionRoutes = arbor.RouteCollection{
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateDecision).ServeHTTP,
 	},
 	arbor.Route{
+		"UpdateDecisionBatch",
+		"POST",
+		"/decision/batch/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateDecisionBatch).ServeHTTP,
+	},
+	arbor.Route{
 		"GetFilteredDecisions",
 		"GET",
 		"/decision/filter/",
@@ -35,6 +41,12 @@ var DecisionRoutes = arbor.RouteCollection{
 		"FinalizeDecision",
 		"POST",
 		"/decision/finalize/",
+		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(FinalizeDecision).ServeHTTP,
+	},
+	arbor.Route{
+		"FinalizeDecisionBatch",
+		"POST",
+		"/decision/finalize/batch/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(FinalizeDecision).ServeHTTP,
 	},
 	arbor.Route{
@@ -57,10 +69,18 @@ func UpdateDecision(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, config.DECISION_SERVICE+r.URL.String(), DecisionFormat, "", r)
 }
 
+func UpdateDecisionBatch(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.DECISION_SERVICE+r.URL.String(), DecisionFormat, "", r)
+}
+
 func GetFilteredDecisions(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, config.DECISION_SERVICE+r.URL.String(), DecisionFormat, "", r)
 }
 
 func FinalizeDecision(w http.ResponseWriter, r *http.Request) {
+	arbor.POST(w, config.DECISION_SERVICE+r.URL.String(), DecisionFormat, "", r)
+}
+
+func FinalizeDecisionBatch(w http.ResponseWriter, r *http.Request) {
 	arbor.POST(w, config.DECISION_SERVICE+r.URL.String(), DecisionFormat, "", r)
 }

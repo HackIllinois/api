@@ -101,6 +101,91 @@ Response format:
 }
 ```
 
+POST /decision/batch/
+--------------------------
+
+Updates the decision for each of the users as specified in the `id` field of each of the decisions. The list of updated decisions is returned in the response.
+
+**Batched version of the above.**
+
+Request format:
+```
+{
+	"decisions": [
+		{
+			"id": "github9279532",
+			"status": "ACCEPTED",
+			"wave": 1
+		},
+		{
+			"id": "github1234567",
+			"status": "ACCEPTED",
+			"wave": 1
+		}
+	]	
+}
+```
+
+Response format:
+```
+{
+	"decisions": [
+		{
+			"finalized": false,
+			"id": "github9279532",
+			"status": "ACCEPTED",
+			"wave": 1,
+			"reviewer": "github9279532",
+			"timestamp": 1526673862,
+			"history": [
+				{
+					"finalized": false,
+					"id": "github9279532",
+					"status": "PENDING",
+					"wave": 0,
+					"reviewer": "github9279532",
+					"timestamp": 1526673845
+				},
+				{
+					"finalized": true,
+					"id": "github9279532",
+					"status": "ACCEPTED",
+					"wave": 1,
+					"reviewer": "github9279532",
+					"timestamp": 1526673862
+				}
+			]
+		},
+		{
+			"finalized": false,
+			"id": "github1234567",
+			"status": "ACCEPTED",
+			"wave": 1,
+			"reviewer": "github9279532",
+			"timestamp": 1526673862,
+			"history": [
+				{
+					"finalized": false,
+					"id": "github1234567",
+					"status": "PENDING",
+					"wave": 0,
+					"reviewer": "github9279532",
+					"timestamp": 1526673845
+				},
+				{
+					"finalized": true,
+					"id": "github1234567",
+					"status": "ACCEPTED",
+					"wave": 1,
+					"reviewer": "github9279532",
+					"timestamp": 1526673862
+				}
+			]
+		}
+	]
+}
+```
+
 POST /decision/finalize/
 --------------------------
 
@@ -144,6 +229,90 @@ Response format:
 
 }
 ```
+
+POST /decision/finalize/batch/
+--------------------------
+
+Finalizes / unfinalizes the decisions for the list of provided users. The full decision history is returned in the response. This endpoint will return an AttributeMismatchError if the requested action results in a Finalized status matching the current Finalized status. 
+
+**Batched version of the above.**
+
+Request format:
+```
+{
+	"decisions:", [
+		{
+			"id": "github9279532",
+			"finalized": true
+		},
+		{
+			"id": "github1234567",
+			"finalized": true
+		}
+	]
+}
+```
+
+Response format:
+```
+{
+	"decisions": [
+		{
+			"finalized": true,
+			"id": "github9279532",
+			"status": "ACCEPTED",
+			"wave": 1,
+			"reviewer": "github9279532",
+			"timestamp": 1526673862,
+			"history": [
+				{
+					"finalized": false,
+					"id": "github9279532",
+					"status": "PENDING",
+					"wave": 0,
+					"reviewer": "github9279532",
+					"timestamp": 1526673845
+				},
+				{
+					"finalized": true,
+					"id": "github9279532",
+					"status": "ACCEPTED",
+					"wave": 1,
+					"reviewer": "github9279532",
+					"timestamp": 1526673862
+				}
+			]
+		},
+		{
+			"finalized": true,
+			"id": "github1234567",
+			"status": "ACCEPTED",
+			"wave": 1,
+			"reviewer": "github9279532",
+			"timestamp": 1526673862,
+			"history": [
+				{
+					"finalized": false,
+					"id": "github1234567",
+					"status": "PENDING",
+					"wave": 0,
+					"reviewer": "github9279532",
+					"timestamp": 1526673845
+				},
+				{
+					"finalized": true,
+					"id": "github1234567",
+					"status": "ACCEPTED",
+					"wave": 1,
+					"reviewer": "github9279532",
+					"timestamp": 1526673862
+				}
+			]
+		}
+	]
+}
+```
+
 GET /decision/filter/?key=value
 ----------------------------------
 

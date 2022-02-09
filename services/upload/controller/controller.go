@@ -2,28 +2,33 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/services/upload/models"
 	"github.com/HackIllinois/api/services/upload/service"
 	"github.com/gorilla/mux"
-	"net/http"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.HandleFunc("/resume/upload/", GetUpdateUserResume).Methods("GET")
-	router.HandleFunc("/resume/", GetCurrentUserResume).Methods("GET")
-	router.HandleFunc("/resume/{id}/", GetUserResume).Methods("GET")
+	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
 
-	router.HandleFunc("/photo/upload/", GetUpdateUserPhoto).Methods("GET")
-	router.HandleFunc("/photo/", GetCurrentUserPhoto).Methods("GET")
-	router.HandleFunc("/photo/{id}/", GetUserPhoto).Methods("GET")
+	metrics.RegisterHandler("/resume/upload/", GetUpdateUserResume, "GET", router)
+	metrics.RegisterHandler("/resume/", GetCurrentUserResume, "GET", router)
+	metrics.RegisterHandler("/resume/{id}/", GetUserResume, "GET", router)
 
-	router.HandleFunc("/blobstore/", CreateBlob).Methods("POST")
-	router.HandleFunc("/blobstore/", UpdateBlob).Methods("PUT")
-	router.HandleFunc("/blobstore/{id}/", GetBlob).Methods("GET")
-	router.HandleFunc("/blobstore/{id}/", DeleteBlob).Methods("DELETE")
+	metrics.RegisterHandler("/photo/upload/", GetUpdateUserPhoto, "GET", router)
+	metrics.RegisterHandler("/photo/", GetCurrentUserPhoto, "GET", router)
+	metrics.RegisterHandler("/photo/{id}/", GetUserPhoto, "GET", router)
+
+	metrics.RegisterHandler("/blobstore/", CreateBlob, "POST", router)
+	metrics.RegisterHandler("/blobstore/", UpdateBlob, "PUT", router)
+	metrics.RegisterHandler("/blobstore/{id}/", GetBlob, "GET", router)
+	metrics.RegisterHandler("/blobstore/{id}/", DeleteBlob, "DELETE", router)
 }
 
 /*

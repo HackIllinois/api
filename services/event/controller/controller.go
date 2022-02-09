@@ -6,35 +6,39 @@ import (
 
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/event/models"
 	"github.com/HackIllinois/api/services/event/service"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.HandleFunc("/favorite/", GetEventFavorites).Methods("GET")
-	router.HandleFunc("/favorite/", AddEventFavorite).Methods("POST")
-	router.HandleFunc("/favorite/", RemoveEventFavorite).Methods("DELETE")
+	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
 
-	router.HandleFunc("/filter/", GetFilteredEvents).Methods("GET")
-	router.HandleFunc("/{id}/", GetEvent).Methods("GET")
-	router.HandleFunc("/{id}/", DeleteEvent).Methods("DELETE")
-	router.HandleFunc("/", CreateEvent).Methods("POST")
-	router.HandleFunc("/", UpdateEvent).Methods("PUT")
-	router.HandleFunc("/", GetAllEvents).Methods("GET")
-	router.HandleFunc("/code/{id}/", GetEventCode).Methods("GET")
-	router.HandleFunc("/code/{id}/", UpdateEventCode).Methods("PUT")
+	metrics.RegisterHandler("/favorite/", GetEventFavorites, "GET", router)
+	metrics.RegisterHandler("/favorite/", AddEventFavorite, "POST", router)
+	metrics.RegisterHandler("/favorite/", RemoveEventFavorite, "DELETE", router)
 
-	router.HandleFunc("/checkin/", Checkin).Methods("POST")
+	metrics.RegisterHandler("/filter/", GetFilteredEvents, "GET", router)
+	metrics.RegisterHandler("/{id}/", GetEvent, "GET", router)
+	metrics.RegisterHandler("/{id}/", DeleteEvent, "DELETE", router)
+	metrics.RegisterHandler("/", CreateEvent, "POST", router)
+	metrics.RegisterHandler("/", UpdateEvent, "PUT", router)
+	metrics.RegisterHandler("/", GetAllEvents, "GET", router)
+	metrics.RegisterHandler("/code/{id}/", GetEventCode, "GET", router)
+	metrics.RegisterHandler("/code/{id}/", UpdateEventCode, "PUT", router)
 
-	router.HandleFunc("/track/", MarkUserAsAttendingEvent).Methods("POST")
-	router.HandleFunc("/track/event/{id}/", GetEventTrackingInfo).Methods("GET")
-	router.HandleFunc("/track/user/{id}/", GetUserTrackingInfo).Methods("GET")
+	metrics.RegisterHandler("/checkin/", Checkin, "POST", router)
 
-	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
+	metrics.RegisterHandler("/track/", MarkUserAsAttendingEvent, "POST", router)
+	metrics.RegisterHandler("/track/event/{id}/", GetEventTrackingInfo, "GET", router)
+	metrics.RegisterHandler("/track/user/{id}/", GetUserTrackingInfo, "GET", router)
+
+	metrics.RegisterHandler("/internal/stats/", GetStats, "GET", router)
 }
 
 /*

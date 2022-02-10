@@ -32,15 +32,6 @@ func SetupController(route *mux.Route) {
 	router.HandleFunc("/code/{id}/", GetEventCode).Methods("GET")
 	router.HandleFunc("/code/", UpsertEventCode).Methods("POST")
 
-	metrics.RegisterHandler("/filter/", GetFilteredEvents, "GET", router)
-	metrics.RegisterHandler("/{id}/", GetEvent, "GET", router)
-	metrics.RegisterHandler("/{id}/", DeleteEvent, "DELETE", router)
-	metrics.RegisterHandler("/", CreateEvent, "POST", router)
-	metrics.RegisterHandler("/", UpdateEvent, "PUT", router)
-	metrics.RegisterHandler("/", GetAllEvents, "GET", router)
-	metrics.RegisterHandler("/code/{id}/", GetEventCode, "GET", router)
-	metrics.RegisterHandler("/code/{id}/", UpsertEventCode, "PUT", router)
-
 	metrics.RegisterHandler("/checkin/", Checkin, "POST", router)
 
 	metrics.RegisterHandler("/track/", MarkUserAsAttendingEvent, "POST", router)

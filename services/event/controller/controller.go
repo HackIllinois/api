@@ -166,14 +166,14 @@ func GetEventCode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	codes, err := service.GetEventCode(id)
+	code, err := service.GetEventCode(id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
 		return
 	}
 
-	json.NewEncoder(w).Encode(codes)
+	json.NewEncoder(w).Encode(code)
 }
 
 /*

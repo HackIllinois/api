@@ -515,14 +515,15 @@ func GetEventCode(id string) (*models.EventCode, error) {
 }
 
 /*
-	Updates the event code and end time with the given id
+	Upserts the event code and end time with the given id
+	If no matching code is not found, then it is a new code and add it
 */
-func UpdateEventCode(id string, eventCode models.EventCode) error {
+func UpsertEventCode(id string, eventCode models.EventCode) error {
 	selector := database.QuerySelector{
 		"id": id,
 	}
 
-	err := db.Update("eventcodes", selector, &eventCode)
+	_, err := db.Upsert("eventcodes", selector, &eventCode)
 
 	return err
 }

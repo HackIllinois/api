@@ -93,8 +93,8 @@ var EventRoutes = arbor.RouteCollection{
 	},
 	arbor.Route{
 		"UpdateEventCode",
-		"PUT",
-		"/event/code/{id}/",
+		"POST",
+		"/event/code/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(PutEventCode).ServeHTTP,
 	},
 	arbor.Route{
@@ -122,7 +122,7 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateEvent(w http.ResponseWriter, r *http.Request) {
-	arbor.PUT(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
+	arbor.POST(w, config.EVENT_SERVICE+r.URL.String(), EventFormat, "", r)
 }
 
 func GetEventCode(w http.ResponseWriter, r *http.Request) {

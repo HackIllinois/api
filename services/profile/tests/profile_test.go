@@ -620,12 +620,14 @@ func TestGetProfileLeaderboard(t *testing.T) {
 				FirstName: "testfirstname2",
 				LastName:  "testlastname2",
 				Points:    340,
+				Discord:   "testdiscordusername2",
 			},
 			{
 				ID:        "testid",
 				FirstName: "testfirstname",
 				LastName:  "testlastname",
 				Points:    0,
+				Discord:   "testdiscordusername",
 			},
 		},
 	}
@@ -671,18 +673,21 @@ func TestGetProfileLeaderboard(t *testing.T) {
 				FirstName: "testfirstname3",
 				LastName:  "testlastname3",
 				Points:    999,
+				Discord:   "testdiscordusername3",
 			},
 			{
 				ID:        "testid2",
 				FirstName: "testfirstname2",
 				LastName:  "testlastname2",
 				Points:    340,
+				Discord:   "testdiscordusername2",
 			},
 			{
 				ID:        "testid",
 				FirstName: "testfirstname",
 				LastName:  "testlastname",
 				Points:    0,
+				Discord:   "testdiscordusername",
 			},
 		},
 	}
@@ -708,12 +713,14 @@ func TestGetProfileLeaderboard(t *testing.T) {
 				FirstName: "testfirstname3",
 				LastName:  "testlastname3",
 				Points:    999,
+				Discord:   "testdiscordusername3",
 			},
 			{
 				ID:        "testid2",
 				FirstName: "testfirstname2",
 				LastName:  "testlastname2",
 				Points:    340,
+				Discord:   "testdiscordusername2",
 			},
 		},
 	}

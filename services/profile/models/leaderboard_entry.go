@@ -5,4 +5,5 @@ type LeaderboardEntry struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Points    int    `json:"points"`
+	Discord   string `json:"discord"`
 }

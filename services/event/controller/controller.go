@@ -23,15 +23,6 @@ func SetupController(route *mux.Route) {
 	metrics.RegisterHandler("/favorite/", AddEventFavorite, "POST", router)
 	metrics.RegisterHandler("/favorite/", RemoveEventFavorite, "DELETE", router)
 
-	router.HandleFunc("/filter/", GetFilteredEvents).Methods("GET")
-	router.HandleFunc("/{id}/", GetEvent).Methods("GET")
-	router.HandleFunc("/{id}/", DeleteEvent).Methods("DELETE")
-	router.HandleFunc("/", CreateEvent).Methods("POST")
-	router.HandleFunc("/", UpdateEvent).Methods("PUT")
-	router.HandleFunc("/", GetAllEvents).Methods("GET")
-	router.HandleFunc("/code/{id}/", GetEventCode).Methods("GET")
-	router.HandleFunc("/code/", UpsertEventCode).Methods("POST")
-
 	metrics.RegisterHandler("/filter/", GetFilteredEvents, "GET", router)
 	metrics.RegisterHandler("/{id}/", GetEvent, "GET", router)
 	metrics.RegisterHandler("/{id}/", DeleteEvent, "DELETE", router)
@@ -39,7 +30,7 @@ func SetupController(route *mux.Route) {
 	metrics.RegisterHandler("/", UpdateEvent, "PUT", router)
 	metrics.RegisterHandler("/", GetAllEvents, "GET", router)
 	metrics.RegisterHandler("/code/{id}/", GetEventCode, "GET", router)
-	metrics.RegisterHandler("/code/{id}/", UpsertEventCode, "PUT", router)
+	metrics.RegisterHandler("/code/", UpsertEventCode, "POST", router)
 
 	metrics.RegisterHandler("/checkin/", Checkin, "POST", router)
 

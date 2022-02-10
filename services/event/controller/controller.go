@@ -190,14 +190,14 @@ func UpsertEventCode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updated_codes, err := service.GetEventCode(eventCode.ID)
+	updated_code, err := service.GetEventCode(eventCode.ID)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated event code and timestamp details."))
 		return
 	}
 
-	json.NewEncoder(w).Encode(updated_codes)
+	json.NewEncoder(w).Encode(updated_code)
 }
 
 /*

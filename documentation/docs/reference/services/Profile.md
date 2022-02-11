@@ -209,15 +209,13 @@ Response format:
     profiles: [
         {
             "id": "profileid123456",
-            "firstName": "John",
-            "lastName": "Doe",
             "points": 2021,
+            "discord": "patrick#1234"
         },
         {
             "id": "profileid123456",
-            "firstName": "John",
-            "lastName": "Doe",
             "points": 2021,
+            "discord": "patrick#1234"
         },
     ]
 }

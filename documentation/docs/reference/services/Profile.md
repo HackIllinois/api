@@ -231,8 +231,6 @@ Response format:
 }
 ```
 
-<<<<<<< HEAD
-=======
 GET /profile/filtered/?teamStatus=value&interests=value,value,value&limit=value
 -------------------------
 
@@ -274,7 +272,6 @@ Response format:
 }
 ```
 
->>>>>>> a008bff... Refactored profile struct along with tests and docs
 POST /profile/event/checkin/
 ----------------------------
 

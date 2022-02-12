@@ -297,7 +297,6 @@ func GetFilteredProfiles(parameters map[string][]string) (*models.ProfileList, e
 	Will also remove profiles with a TeamStatus set to "NOT_LOOKING"
 */
 func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileList, error) {
-	parameters["teamStatusNot"] = append(parameters["teamStatusNot"], "NOT_LOOKING")
 	filtered_profile_list, err := GetFilteredProfiles(parameters)
 
 	if err != nil {

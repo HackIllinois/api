@@ -5,25 +5,29 @@ import (
 	"net/http"
 
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/project/models"
 	"github.com/HackIllinois/api/services/project/service"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.HandleFunc("/favorite/", GetProjectFavorites).Methods("GET")
-	router.HandleFunc("/favorite/", AddProjectFavorite).Methods("POST")
-	router.HandleFunc("/favorite/", RemoveProjectFavorite).Methods("DELETE")
+	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
 
-	router.HandleFunc("/filter/", GetFilteredProjects).Methods("GET")
-	router.HandleFunc("/{id}/", GetProject).Methods("GET")
-	router.HandleFunc("/{id}/", DeleteProject).Methods("DELETE")
-	router.HandleFunc("/", CreateProject).Methods("POST")
-	router.HandleFunc("/", UpdateProject).Methods("PUT")
-	router.HandleFunc("/", GetAllProjects).Methods("GET")
+	metrics.RegisterHandler("/favorite/", GetProjectFavorites, "GET", router)
+	metrics.RegisterHandler("/favorite/", AddProjectFavorite, "POST", router)
+	metrics.RegisterHandler("/favorite/", RemoveProjectFavorite, "DELETE", router)
+
+	metrics.RegisterHandler("/filter/", GetFilteredProjects, "GET", router)
+	metrics.RegisterHandler("/{id}/", GetProject, "GET", router)
+	metrics.RegisterHandler("/{id}/", DeleteProject, "DELETE", router)
+	metrics.RegisterHandler("/", CreateProject, "POST", router)
+	metrics.RegisterHandler("/", UpdateProject, "PUT", router)
+	metrics.RegisterHandler("/", GetAllProjects, "GET", router)
 }
 
 /*

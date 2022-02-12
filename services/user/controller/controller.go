@@ -2,26 +2,31 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/services/user/models"
 	"github.com/HackIllinois/api/services/user/service"
 	"github.com/gorilla/mux"
-	"net/http"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.HandleFunc("/", GetCurrentUserInfo).Methods("GET")
-	router.HandleFunc("/", SetUserInfo).Methods("POST")
-	router.HandleFunc("/filter/", GetFilteredUserInfo).Methods("GET")
+	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
 
-	router.HandleFunc("/qr/", GetCurrentQrCodeInfo).Methods("GET")
-	router.HandleFunc("/qr/{id}/", GetQrCodeInfo).Methods("GET")
+	metrics.RegisterHandler("/", GetCurrentUserInfo, "GET", router)
+	metrics.RegisterHandler("/", SetUserInfo, "POST", router)
+	metrics.RegisterHandler("/filter/", GetFilteredUserInfo, "GET", router)
 
-	router.HandleFunc("/{id}/", GetUserInfo).Methods("GET")
+	metrics.RegisterHandler("/qr/", GetCurrentQrCodeInfo, "GET", router)
+	metrics.RegisterHandler("/qr/{id}/", GetQrCodeInfo, "GET", router)
 
-	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
+	metrics.RegisterHandler("/{id}/", GetUserInfo, "GET", router)
+
+	metrics.RegisterHandler("/internal/stats/", GetStats, "GET", router)
 }
 
 /*

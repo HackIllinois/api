@@ -2,18 +2,22 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/services/stat/service"
 	"github.com/gorilla/mux"
-	"net/http"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.HandleFunc("/{name}/", GetStat).Methods("GET")
-	router.HandleFunc("/", GetAllStat).Methods("GET")
+	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
 
+	metrics.RegisterHandler("/{name}/", GetStat, "GET", router)
+	metrics.RegisterHandler("/", GetAllStat, "GET", router)
 }
 
 /*

@@ -5,21 +5,24 @@ import (
 	"net/http"
 
 	"github.com/HackIllinois/api/common/errors"
+	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/services/checkin/models"
 	"github.com/HackIllinois/api/services/checkin/service"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.HandleFunc("/", CreateUserCheckin).Methods("POST")
-	router.HandleFunc("/", UpdateUserCheckin).Methods("PUT")
-	router.HandleFunc("/", GetCurrentUserCheckin).Methods("GET")
-	router.HandleFunc("/list/", GetAllCheckedInUsers).Methods("GET")
-	router.HandleFunc("/{id}/", GetUserCheckin).Methods("GET")
+	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
 
-	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
+	metrics.RegisterHandler("/", CreateUserCheckin, "POST", router)
+	metrics.RegisterHandler("/", UpdateUserCheckin, "PUT", router)
+	metrics.RegisterHandler("/", GetCurrentUserCheckin, "GET", router)
+	metrics.RegisterHandler("/list/", GetAllCheckedInUsers, "GET", router)
+	metrics.RegisterHandler("/{id}/", GetUserCheckin, "GET", router)
+	metrics.RegisterHandler("/internal/stats/", GetStats, "GET", router)
 }
 
 /*

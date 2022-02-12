@@ -21,10 +21,7 @@ Response format:
     "points": 2021,
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "discord": "patrick#1234"
 }
 
 ```
@@ -43,10 +40,7 @@ Response format:
     "points": 2021,
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "discord": "patrick#1234"
 }
 ```
 
@@ -78,10 +72,7 @@ Response format:
             "points": 2021,
             "timezone": "Americas UTC+8",
             "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234",
-            "teamStatus": "LOOKING_FOR_TEAM",
-            "description": "Lorem Ipsum…",
-            "interests": ["C++", "Machine Learning"]
+            "discord": "patrick#1234"
         },
         {
             "id": "profileid123456",
@@ -90,10 +81,7 @@ Response format:
             "points": 2021,
             "timezone": "Americas UTC+8",
             "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234",
-            "teamStatus": "LOOKING_FOR_MEMBERS",
-            "description": "Lorem Ipsum…",
-            "interests": ["C++", "Machine Learning"]
+            "discord": "patrick#1234"
         },
     ]
 }
@@ -111,10 +99,7 @@ Request format:
     "lastName": "Doe",
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "discord": "patrick#1234"
 }
 ```
 
@@ -127,10 +112,7 @@ Response format:
     "points": 2021,
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "discord": "patrick#1234"
 }
 ```
 
@@ -148,10 +130,7 @@ Request format:
     "lastName": "Doe",
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "discord": "patrick#1234"
 }
 ```
 
@@ -164,10 +143,7 @@ Response format:
     "points": 2021,
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "discord": "patrick#1234"
 }
 ```
 
@@ -189,10 +165,7 @@ Response format:
     "points": 2021,
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "discord": "patrick#1234"
 }
 ```
 
@@ -209,15 +182,13 @@ Response format:
     profiles: [
         {
             "id": "profileid123456",
-            "firstName": "John",
-            "lastName": "Doe",
             "points": 2021,
+            "discord": "patrick#1234"
         },
         {
             "id": "profileid123456",
-            "firstName": "John",
-            "lastName": "Doe",
             "points": 2021,
+            "discord": "patrick#1234"
         },
     ]
 }
@@ -253,6 +224,47 @@ Response format:
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
+        },
+    ]
+}
+```
+
+GET /profile/filtered/?teamStatus=value&interests=value,value,value&limit=value
+-------------------------
+
+**Internal use only.**
+
+Returns a list of profiles matching the filter conditions. 
+
+teamStatus is a string matching the user's team status.
+
+interests is a comma-separated string representing the user's interests.
+
+- i.e if the user's interests are ["C++", "Machine Learning"], you can filter on this by sending ``interests="C++,Machine Learning"``
+
+If a ``limit`` parameter is provided, it will return the first matching ``limit`` profiles. Otherwise, it will return all of the matched profiles.
+
+Response format:
+```
+{
+    profiles: [
+        {
+            "id": "profileid123456",
+            "firstName": "John",
+            "lastName": "Doe",
+            "points": 2021,
+            "timezone": "Americas UTC+8",
+            "avatarUrl": "https://github.com/.../profile.jpg",
+            "discord": "patrick#1234"
+        },
+        {
+            "id": "profileid123456",
+            "firstName": "John",
+            "lastName": "Doe",
+            "points": 2021,
+            "timezone": "Americas UTC+8",
+            "avatarUrl": "https://github.com/.../profile.jpg",
+            "discord": "patrick#1234"
         },
     ]
 }
@@ -311,10 +323,7 @@ Response format:
     "points": 2021,
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234",
-    "teamStatus": "LOOKING_FOR_TEAM",
-    "description": "Lorem Ipsum…",
-    "interests": ["C++", "Machine Learning"]
+    "discord": "patrick#1234"
     "points": 10
 }
 ```

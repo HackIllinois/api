@@ -54,6 +54,7 @@ func (db *MongoDatabase) Connect(host string) error {
 	}
 
 	session, err := mgo.DialWithInfo(dial_info)
+	session.SetPoolLimit(25)
 
 	if err != nil {
 		return ErrConnection

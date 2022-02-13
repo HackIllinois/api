@@ -5,28 +5,25 @@ import (
 	"net/http"
 
 	"github.com/HackIllinois/api/common/errors"
-	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
 	"github.com/HackIllinois/api/services/auth/service"
 	"github.com/gorilla/mux"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func SetupController(route *mux.Route) {
 	router := route.Subrouter()
 
-	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
-
-	metrics.RegisterHandler("/roles/list/", GetRolesLists, "GET", router)
-	metrics.RegisterHandler("/roles/list/{role}/", GetUserListByRole, "GET", router)
-	metrics.RegisterHandler("/{provider}/", Authorize, "GET", router)
-	metrics.RegisterHandler("/code/{provider}/", Login, "POST", router)
-	metrics.RegisterHandler("/roles/{id}/", GetRoles, "GET", router)
-	metrics.RegisterHandler("/roles/add/", AddRole, "PUT", router)
-	metrics.RegisterHandler("/roles/remove/", RemoveRole, "PUT", router)
-	metrics.RegisterHandler("/token/refresh/", RefreshToken, "GET", router)
-	metrics.RegisterHandler("/internal/stats/", GetStats, "GET", router)
+	router.HandleFunc("/roles/", GetCurrentUserRoles).Methods("GET")
+	router.HandleFunc("/roles/list/", GetRolesLists).Methods("GET")
+	router.HandleFunc("/roles/list/{role}/", GetUserListByRole).Methods("GET")
+	router.HandleFunc("/{provider}/", Authorize).Methods("GET")
+	router.HandleFunc("/code/{provider}/", Login).Methods("POST")
+	router.HandleFunc("/roles/{id}/", GetRoles).Methods("GET")
+	router.HandleFunc("/roles/add/", AddRole).Methods("PUT")
+	router.HandleFunc("/roles/remove/", RemoveRole).Methods("PUT")
+	router.HandleFunc("/token/refresh/", RefreshToken).Methods("GET")
+	router.HandleFunc("/internal/stats/", GetStats).Methods("GET")
 }
 
 /*

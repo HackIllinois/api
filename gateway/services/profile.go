@@ -47,7 +47,7 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetProfileLeaderboard",
 		"GET",
 		"/profile/leaderboard/",
-		http.HandlerFunc(GetProfileLeaderboard).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetProfileLeaderboard).ServeHTTP,
 	},
 	arbor.Route{
 		"GetValidFilteredProfiles",
@@ -89,7 +89,7 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetTierThresholds",
 		"GET",
 		"/profile/tier/threshold/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(RemoveProfileFavorite).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetTierThresholds).ServeHTTP,
 	},
 	// This needs to be the last route in order to prevent endpoints like "search", "leaderboard" from accidentally being routed as the {id} variable.
 	arbor.Route{

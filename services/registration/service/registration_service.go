@@ -2,12 +2,13 @@ package service
 
 import (
 	"errors"
+	"strconv"
+	"strings"
+
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
-	"gopkg.in/go-playground/validator.v9"
-	"strconv"
-	"strings"
+	"github.com/go-playground/validator/v10"
 )
 
 var validate *validator.Validate

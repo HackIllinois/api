@@ -447,6 +447,61 @@ func TestCreateEventService(t *testing.T) {
 	}
 
 	CleanupTestDB(t)
+
+	SetupTestDB(t)
+
+	new_event_async := models.Event{
+		ID:          "testid2",
+		Name:        "testname2",
+		Description: "testdescription2",
+		Sponsor:     "testsponsor",
+		EventType:   "WORKSHOP",
+		Locations: []models.EventLocation{
+			{
+				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL0", "ECEB1"},
+				Latitude:    123.456,
+				Longitude:   123.456,
+			},
+		},
+		IsAsync: true,
+	}
+
+	err = service.CreateEvent("testid2", "testcode2", new_event_async)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	event_async, err := service.GetEvent("testid2")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_async := models.Event{
+		ID:          "testid2",
+		Name:        "testname2",
+		Description: "testdescription2",
+		Sponsor:     "testsponsor",
+		EventType:   "WORKSHOP",
+		Locations: []models.EventLocation{
+			{
+				Description: "testlocationdescription",
+				Tags:        []string{"SIEBEL0", "ECEB1"},
+				Latitude:    123.456,
+				Longitude:   123.456,
+			},
+		},
+		IsAsync: true,
+		Points:  0,
+	}
+
+	if !reflect.DeepEqual(event_async, &expected_event_async) {
+		t.Errorf("Wrong user info. Expected %v, got %v", expected_event, event)
+	}
+
+	CleanupTestDB(t)
 }
 
 /*

@@ -18,6 +18,7 @@ func SetupController(route *mux.Route) {
 
 	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
 
+	metrics.RegisterHandler("/roles/", GetCurrentUserRoles, "GET", router)
 	metrics.RegisterHandler("/roles/list/", GetRolesLists, "GET", router)
 	metrics.RegisterHandler("/roles/list/{role}/", GetUserListByRole, "GET", router)
 	metrics.RegisterHandler("/{provider}/", Authorize, "GET", router)

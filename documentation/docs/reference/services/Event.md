@@ -1,6 +1,8 @@
 Event
 =====
 
+The isAsync field for events is optional. If it is not specified or is false, then startTime and endTime are required. Otherwise, startTime and endTime are optional.
+
 GET /event/EVENTID/
 ---------------------
 
@@ -144,7 +146,8 @@ Request format:
 			"latitude": 40.1138,
 			"longitude": -88.2249
 		}
-	]
+	],
+	"isAsync": false
 }
 ```
 

@@ -7,7 +7,7 @@ import (
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/project/config"
 	"github.com/HackIllinois/api/services/project/models"
-	"gopkg.in/go-playground/validator.v9"
+	"github.com/go-playground/validator/v10"
 )
 
 var validate *validator.Validate

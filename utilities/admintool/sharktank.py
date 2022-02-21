@@ -16,7 +16,7 @@ def get_tier_by_points(pts):
         if pts >= threshold:
             return tier_name
     
-    return tier_thresholds[0]['name'] # lowest tier
+    return min(tier_thresholds, key=tier_thresholds.get) # lowest tier
 
 def select_n_profiles_per_tier(n):
     print_verbose('Getting all profiles ... ')

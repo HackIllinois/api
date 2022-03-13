@@ -30,7 +30,7 @@ func SetupController(route *mux.Route) {
 	metrics.RegisterHandler("/", UpdateEvent, "PUT", router)
 	metrics.RegisterHandler("/", GetAllEvents, "GET", router)
 	metrics.RegisterHandler("/code/{id}/", GetEventCode, "GET", router)
-	metrics.RegisterHandler("/code/{id}/", UpdateEventCode, "PUT", router)
+	metrics.RegisterHandler("/code/", UpsertEventCode, "POST", router)
 
 	metrics.RegisterHandler("/checkin/", Checkin, "POST", router)
 
@@ -177,36 +177,27 @@ func GetEventCode(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Endpoint to update an event code and end time
+	Endpoint to upsert an event code and end time
 */
-func UpdateEventCode(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-
-	if id == "" {
-		errors.WriteError(w, r, errors.MalformedRequestError("Must provide event id in request url.", "Must provide event id in request url."))
-		return
-	}
-
+func UpsertEventCode(w http.ResponseWriter, r *http.Request) {
 	var eventCode models.EventCode
 	json.NewDecoder(r.Body).Decode(&eventCode)
 
-	eventCode.ID = id
-
-	err := service.UpdateEventCode(id, eventCode)
+	err := service.UpsertEventCode(eventCode.Code, eventCode)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the code and timestamp of the event."))
 		return
 	}
 
-	updated_event, err := service.GetEventCode(id)
+	updated_code, err := service.GetEventCode(eventCode.ID)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated event code and timestamp details."))
 		return
 	}
 
-	json.NewEncoder(w).Encode(updated_event)
+	json.NewEncoder(w).Encode(updated_code)
 }
 
 /*

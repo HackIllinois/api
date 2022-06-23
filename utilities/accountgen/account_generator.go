@@ -47,7 +47,7 @@ func PopulateAuthInfo(id string, roles []string) error {
 		"id": id,
 	}
 
-	_, err := auth_db.Upsert("roles", selector, &user_roles)
+	_, err := auth_db.Upsert("roles", selector, &user_roles, nil)
 
 	return err
 }
@@ -65,7 +65,7 @@ func PopulateUserInfo(id string, username string, firstName string, lastName str
 		"id": id,
 	}
 
-	_, err := user_db.Upsert("info", selector, &user_info)
+	_, err := user_db.Upsert("info", selector, &user_info, nil)
 
 	return err
 }

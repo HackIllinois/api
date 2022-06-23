@@ -59,7 +59,7 @@ func SetupTestDB(t *testing.T) {
 		Room:        "testroom",
 	}
 
-	err := db.Insert("projects", &project)
+	err := db.Insert("projects", &project, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -70,7 +70,7 @@ func SetupTestDB(t *testing.T) {
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	err := db.DropDatabase()
+	err := db.DropDatabase(nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -93,7 +93,7 @@ func TestGetAllProjectsService(t *testing.T) {
 		Room:        "testroom2",
 	}
 
-	err := db.Insert("projects", &project)
+	err := db.Insert("projects", &project, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -132,7 +132,7 @@ func TestGetAllProjectsService(t *testing.T) {
 		t.Errorf("Wrong project list. Expected %v, got %v", expected_project_list, actual_project_list)
 	}
 
-	db.RemoveAll("projects", nil)
+	db.RemoveAll("projects", nil, nil)
 
 	actual_project_list, err = service.GetAllProjects()
 
@@ -168,7 +168,7 @@ func TestGetFilteredProjectsService(t *testing.T) {
 		Room:        "testroom2",
 	}
 
-	err := db.Insert("projects", &project)
+	err := db.Insert("projects", &project, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -265,7 +265,7 @@ func TestGetFilteredProjectsService(t *testing.T) {
 		t.Errorf("Wrong project list. Expected %v, got %v", expected_project_list, actual_project_list)
 	}
 
-	db.RemoveAll("projects", nil)
+	db.RemoveAll("projects", nil, nil)
 
 	// Filter again, with no projects remaining
 	actual_project_list, err = service.GetFilteredProjects(parameters)

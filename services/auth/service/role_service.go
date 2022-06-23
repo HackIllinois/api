@@ -2,10 +2,10 @@ package service
 
 import (
 	"errors"
-	"github.com/HackIllinois/api/common/utils"
 	"strings"
 
 	"github.com/HackIllinois/api/common/database"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
 )
@@ -39,16 +39,16 @@ func GetUserRoles(id string, create_user bool) ([]string, error) {
 	}
 
 	var roles models.UserRoles
-	err := db.FindOne("roles", query, &roles)
+	err := db.FindOne("roles", query, &roles, nil)
 
 	if err != nil {
 		if err == database.ErrNotFound && create_user {
 			db.Insert("roles", &models.UserRoles{
 				ID:    id,
 				Roles: []string{"User"},
-			})
+			}, nil)
 
-			err := db.FindOne("roles", query, &roles)
+			err := db.FindOne("roles", query, &roles, nil)
 
 			if err != nil {
 				return nil, err
@@ -82,7 +82,7 @@ func AddUserRole(id string, role string) error {
 	err = db.Update("roles", selector, &models.UserRoles{
 		ID:    id,
 		Roles: roles,
-	})
+	}, nil)
 
 	return err
 }
@@ -110,7 +110,7 @@ func RemoveUserRole(id string, role string) error {
 	err = db.Update("roles", selector, &models.UserRoles{
 		ID:    id,
 		Roles: roles,
-	})
+	}, nil)
 
 	return err
 }
@@ -166,7 +166,7 @@ func GetUsersByRole(role models.Role) ([]string, error) {
 	}
 
 	var users []models.UserRoles
-	err := db.FindAll("roles", query, &users)
+	err := db.FindAll("roles", query, &users, nil)
 
 	if err != nil {
 		return nil, err
@@ -185,7 +185,7 @@ func GetUsersByRole(role models.Role) ([]string, error) {
 	Returns role stats
 */
 func GetStats() (map[string]interface{}, error) {
-	stats, err := db.GetStats("roles", []string{"roles"})
+	stats, err := db.GetStats("roles", []string{"roles"}, nil)
 	if err != nil {
 		return nil, err
 	}

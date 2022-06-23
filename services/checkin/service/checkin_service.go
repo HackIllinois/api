@@ -36,7 +36,7 @@ func GetUserCheckin(id string) (*models.UserCheckin, error) {
 	}
 
 	var user_checkin models.UserCheckin
-	err := db.FindOne("checkins", query, &user_checkin)
+	err := db.FindOne("checkins", query, &user_checkin, nil)
 
 	if err != nil {
 		return nil, err
@@ -58,7 +58,7 @@ func CreateUserCheckin(id string, user_checkin models.UserCheckin) error {
 		return errors.New("Checkin already exists")
 	}
 
-	err = db.Insert("checkins", &user_checkin)
+	err = db.Insert("checkins", &user_checkin, nil)
 
 	return err
 }
@@ -71,7 +71,7 @@ func UpdateUserCheckin(id string, user_checkin models.UserCheckin) error {
 		"id": id,
 	}
 
-	err := db.Update("checkins", selector, &user_checkin)
+	err := db.Update("checkins", selector, &user_checkin, nil)
 
 	return err
 }
@@ -122,7 +122,7 @@ func GetAllCheckedInUsers() (*models.CheckinList, error) {
 	}
 
 	var check_ins []models.UserCheckin
-	err := db.FindAll("checkins", query, &check_ins)
+	err := db.FindAll("checkins", query, &check_ins, nil)
 
 	if err != nil {
 		return nil, err
@@ -140,5 +140,5 @@ func GetAllCheckedInUsers() (*models.CheckinList, error) {
 	Returns all checkin stats
 */
 func GetStats() (map[string]interface{}, error) {
-	return db.GetStats("checkins", []string{"override", "hascheckedin", "haspickedupswag"})
+	return db.GetStats("checkins", []string{"override", "hascheckedin", "haspickedupswag"}, nil)
 }

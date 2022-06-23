@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var SNS_MESSAGE_STRUCTURE string = "json"
@@ -47,7 +48,7 @@ func Initialize() error {
 */
 func GetAllTopicIDs() ([]string, error) {
 	var topics []models.Topic
-	err := db.FindAll("topics", nil, &topics)
+	err := db.FindAll("topics", nil, &topics, nil)
 
 	if err != nil {
 		return nil, err
@@ -71,7 +72,7 @@ func GetTopic(id string) (*models.Topic, error) {
 	}
 
 	var topic models.Topic
-	err := db.FindOne("topics", selector, &topic)
+	err := db.FindOne("topics", selector, &topic, nil)
 
 	if err != nil {
 		return nil, err
@@ -99,7 +100,7 @@ func CreateTopic(id string) error {
 		UserIDs: []string{},
 	}
 
-	err = db.Insert("topics", &topic)
+	err = db.Insert("topics", &topic, nil)
 
 	if err != nil {
 		return err
@@ -116,7 +117,7 @@ func DeleteTopic(id string) error {
 		"id": id,
 	}
 
-	err := db.RemoveOne("topics", selector)
+	err := db.RemoveOne("topics", selector, nil)
 
 	if err != nil {
 		return err
@@ -134,7 +135,7 @@ func GetAllNotificationsForTopic(topic string) ([]models.Notification, error) {
 	}
 
 	var notifications []models.Notification
-	err := db.FindAll("notifications", selector, &notifications)
+	err := db.FindAll("notifications", selector, &notifications, nil)
 
 	if err != nil {
 		return nil, err
@@ -182,7 +183,7 @@ func GetSubscriptions(id string) ([]string, error) {
 	}
 
 	var topics []models.Topic
-	err := db.FindAll("topics", selector, &topics)
+	err := db.FindAll("topics", selector, &topics, nil)
 
 	if err != nil {
 		return nil, err
@@ -213,13 +214,13 @@ func SubscribeToTopic(userId string, topicId string) error {
 		"id": topicId,
 	}
 
-	modifier := database.QuerySelector{
-		"$addToSet": database.QuerySelector{
+	modifier := bson.M{
+		"$addToSet": bson.M{
 			"userids": userId,
 		},
 	}
 
-	err := db.Update("topics", selector, &modifier)
+	err := db.Update("topics", selector, &modifier, nil)
 
 	if err != nil {
 		return err
@@ -236,13 +237,13 @@ func UnsubscribeToTopic(userId string, topicId string) error {
 		"id": topicId,
 	}
 
-	modifier := database.QuerySelector{
-		"$pull": database.QuerySelector{
+	modifier := bson.M{
+		"$pull": bson.M{
 			"userids": userId,
 		},
 	}
 
-	err := db.Update("topics", selector, &modifier)
+	err := db.Update("topics", selector, &modifier, nil)
 
 	if err != nil {
 		return err
@@ -260,20 +261,20 @@ func GetUserDevices(id string) ([]string, error) {
 	}
 
 	var user models.User
-	err := db.FindOne("users", selector, &user)
+	err := db.FindOne("users", selector, &user, nil)
 
 	if err != nil {
 		if err == database.ErrNotFound {
 			err = db.Insert("users", &models.User{
 				ID:      id,
 				Devices: []string{},
-			})
+			}, nil)
 
 			if err != nil {
 				return nil, err
 			}
 
-			err = db.FindOne("users", selector, &user)
+			err = db.FindOne("users", selector, &user, nil)
 
 			if err != nil {
 				return nil, err
@@ -298,7 +299,7 @@ func SetUserDevices(id string, devices []string) error {
 		Devices: devices,
 	}
 
-	err := db.Update("users", selector, &user)
+	err := db.Update("users", selector, &user, nil)
 
 	if err != nil {
 		return err
@@ -409,7 +410,7 @@ func GetNotificationOrder(id string) (*models.NotificationOrder, error) {
 	}
 
 	var order models.NotificationOrder
-	err := db.FindOne("orders", selector, &order)
+	err := db.FindOne("orders", selector, &order, nil)
 
 	if err != nil {
 		return nil, err
@@ -422,7 +423,7 @@ func GetNotificationOrder(id string) (*models.NotificationOrder, error) {
 	Publishes a notification to the specified topic
 */
 func PublishNotificationToTopic(notification models.Notification) (*models.NotificationOrder, error) {
-	err := db.Insert("notifications", &notification)
+	err := db.Insert("notifications", &notification, nil)
 
 	if err != nil {
 		return nil, err
@@ -458,7 +459,7 @@ func PublishNotificationToTopic(notification models.Notification) (*models.Notif
 		Time:       notification.Time,
 	}
 
-	err = db.Insert("orders", &order)
+	err = db.Insert("orders", &order, nil)
 
 	if err != nil {
 		return nil, err
@@ -512,7 +513,7 @@ func PublishNotification(id string, payload string, arns []string) error {
 		"id": id,
 	}
 
-	err = db.Update("orders", selector, &order)
+	err = db.Update("orders", selector, &order, nil)
 
 	if err != nil {
 		return err

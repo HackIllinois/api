@@ -51,7 +51,7 @@ func SetupTestDB(t *testing.T) {
 		ID:       "testid",
 		Username: "testusername",
 		Email:    "testemail@domain.com",
-	})
+	}, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -61,7 +61,7 @@ func SetupTestDB(t *testing.T) {
 		ID:       "testid2",
 		Username: "testusername",
 		Email:    "testemail@domain.com",
-	})
+	}, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -77,7 +77,7 @@ func SetupFilterTestDB(t *testing.T) {
 		FirstName: "Alex",
 		Username:  "testusername",
 		Email:     "testemail@domain.com",
-	})
+	}, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -88,28 +88,28 @@ func SetupFilterTestDB(t *testing.T) {
 		FirstName: "Charlie",
 		Username:  "testusername",
 		Email:     "testemail@domain.com",
-	})
+	}, nil)
 
 	err = db.Insert("info", &models.UserInfo{
 		ID:        "testid3",
 		FirstName: "Bobby",
 		Username:  "testusername",
 		Email:     "testemail@domain.com",
-	})
+	}, nil)
 
 	err = db.Insert("info", &models.UserInfo{
 		ID:        "testid4",
 		FirstName: "Bobby",
 		LastName:  "Adamson",
 		Username:  "test-two-parameter-filter",
-	})
+	}, nil)
 
 	err = db.Insert("info", &models.UserInfo{
 		ID:        "testid5",
 		FirstName: "Bobby",
 		LastName:  "Zulu",
 		Username:  "test-two-parameter-filter",
-	})
+	}, nil)
 }
 
 /*
@@ -120,7 +120,7 @@ func SetupPaginationDB(t *testing.T) {
 		ID:       "testid",
 		Username: "testusername",
 		Email:    "testemail@domain.com",
-	})
+	}, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -130,32 +130,32 @@ func SetupPaginationDB(t *testing.T) {
 		ID:       "testid2",
 		Username: "testusername",
 		Email:    "testemail@domain.com",
-	})
+	}, nil)
 
 	err = db.Insert("info", &models.UserInfo{
 		ID:       "testid3",
 		Username: "testusername",
 		Email:    "testemail@domain.com",
-	})
+	}, nil)
 
 	err = db.Insert("info", &models.UserInfo{
 		ID:       "testid4",
 		Username: "testusername",
 		Email:    "testemail@domain.com",
-	})
+	}, nil)
 
 	err = db.Insert("info", &models.UserInfo{
 		ID:       "testid5",
 		Username: "testusername",
 		Email:    "testemail@domain.com",
-	})
+	}, nil)
 }
 
 /*
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	err := db.DropDatabase()
+	err := db.DropDatabase(nil)
 
 	if err != nil {
 		t.Fatal(err)

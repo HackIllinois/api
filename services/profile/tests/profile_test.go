@@ -67,13 +67,13 @@ func SetupTestDB(t *testing.T) {
 		ProfileID: profile_id,
 	}
 
-	err := db.Insert("profileids", &id_map)
+	err := db.Insert("profileids", &id_map, nil)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = db.Insert("profiles", &profile)
+	err = db.Insert("profiles", &profile, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -84,7 +84,7 @@ func SetupTestDB(t *testing.T) {
 		Events: []string{},
 	}
 
-	err = db.Insert("profileattendance", &attendance_tracker)
+	err = db.Insert("profileattendance", &attendance_tracker, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -95,7 +95,7 @@ func SetupTestDB(t *testing.T) {
 		Profiles: []string{},
 	}
 
-	err = db.Insert("profilefavorites", &profile_favorites)
+	err = db.Insert("profilefavorites", &profile_favorites, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -106,7 +106,7 @@ func SetupTestDB(t *testing.T) {
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	err := db.DropDatabase()
+	err := db.DropDatabase(nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -129,7 +129,7 @@ func TestGetAllProfilesService(t *testing.T) {
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 	}
 
-	err := db.Insert("profiles", &profile)
+	err := db.Insert("profiles", &profile, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -170,7 +170,7 @@ func TestGetAllProfilesService(t *testing.T) {
 		t.Errorf("Wrong profile list. Expected %v, got %v", expected_profile_list, actual_profile_list)
 	}
 
-	db.RemoveAll("profiles", nil)
+	db.RemoveAll("profiles", nil, nil)
 
 	actual_profile_list, err = service.GetFilteredProfiles(parameters)
 
@@ -359,7 +359,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 	}
 
-	err := db.Insert("profiles", &profile)
+	err := db.Insert("profiles", &profile, nil)
 
 	profile = models.Profile{
 		ID:        "testid3",
@@ -370,7 +370,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 		Discord:   "testdiscordusername3",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 	}
-	err = db.Insert("profiles", &profile)
+	err = db.Insert("profiles", &profile, nil)
 
 	parameters := map[string][]string{
 		"timezone": {"America/New York"},
@@ -452,7 +452,7 @@ func TestGetProfileLeaderboard(t *testing.T) {
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 	}
 
-	err := db.Insert("profiles", &profile)
+	err := db.Insert("profiles", &profile, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -496,7 +496,7 @@ func TestGetProfileLeaderboard(t *testing.T) {
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 	}
 
-	err = db.Insert("profiles", &profile)
+	err = db.Insert("profiles", &profile, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -580,7 +580,7 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 	}
 
-	err := db.Insert("profiles", &profile)
+	err := db.Insert("profiles", &profile, nil)
 
 	profile = models.Profile{
 		ID:        "testid3",
@@ -591,7 +591,7 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 		Discord:   "testdiscordusername3",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 	}
-	err = db.Insert("profiles", &profile)
+	err = db.Insert("profiles", &profile, nil)
 
 	parameters := map[string][]string{
 		"firstName": {"testfirstname3"},
@@ -631,7 +631,7 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 		Discord:   "testdiscordusername3",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 	}
-	err = db.Insert("profiles", &profile)
+	err = db.Insert("profiles", &profile, nil)
 
 	// Remove the interests filter. Now every profile should show up except for those that are "NOT_LOOKING" for a team.
 
@@ -705,7 +705,7 @@ func TestProfileFavorites(t *testing.T) {
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 	}
 
-	err := db.Insert("profiles", &profile)
+	err := db.Insert("profiles", &profile, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -773,7 +773,7 @@ func TestProfileFavorites(t *testing.T) {
 		Discord:   "testdiscordusername3",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
 	}
-	err = db.Insert("profiles", &profile)
+	err = db.Insert("profiles", &profile, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

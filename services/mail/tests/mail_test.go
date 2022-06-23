@@ -2,13 +2,14 @@ package tests
 
 import (
 	"fmt"
+	"os"
+	"reflect"
+	"testing"
+
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/mail/config"
 	"github.com/HackIllinois/api/services/mail/models"
 	"github.com/HackIllinois/api/services/mail/service"
-	"os"
-	"reflect"
-	"testing"
 )
 
 var db database.Database
@@ -48,7 +49,7 @@ func SetupTestDB(t *testing.T) {
 	err := db.Insert("lists", &models.MailList{
 		ID:      "testlist",
 		UserIDs: []string{"userid1", "userid2"},
-	})
+	}, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -59,7 +60,7 @@ func SetupTestDB(t *testing.T) {
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	err := db.DropDatabase()
+	err := db.DropDatabase(nil)
 
 	if err != nil {
 		t.Fatal(err)

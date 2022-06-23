@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/mail/config"
 	"github.com/HackIllinois/api/services/mail/models"
-	"net/http"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var db database.Database
@@ -163,7 +165,7 @@ func CreateMailList(mail_list models.MailList) error {
 	_, err := GetMailList(mail_list.ID)
 
 	if err == database.ErrNotFound {
-		return db.Insert("lists", &mail_list)
+		return db.Insert("lists", &mail_list, nil)
 	} else if err != nil {
 		return err
 	} else {
@@ -179,15 +181,15 @@ func AddToMailList(mail_list models.MailList) error {
 		"id": mail_list.ID,
 	}
 
-	modifier := database.QuerySelector{
-		"$addToSet": database.QuerySelector{
-			"userids": database.QuerySelector{
+	modifier := bson.M{
+		"$addToSet": bson.M{
+			"userids": bson.M{
 				"$each": mail_list.UserIDs,
 			},
 		},
 	}
 
-	return db.Update("lists", selector, &modifier)
+	return db.Update("lists", selector, &modifier, nil)
 }
 
 /*
@@ -198,15 +200,15 @@ func RemoveFromMailList(mail_list models.MailList) error {
 		"id": mail_list.ID,
 	}
 
-	modifier := database.QuerySelector{
-		"$pull": database.QuerySelector{
-			"userids": database.QuerySelector{
+	modifier := bson.M{
+		"$pull": bson.M{
+			"userids": bson.M{
 				"$in": mail_list.UserIDs,
 			},
 		},
 	}
 
-	return db.Update("lists", selector, &modifier)
+	return db.Update("lists", selector, &modifier, nil)
 }
 
 /*
@@ -218,7 +220,7 @@ func GetMailList(id string) (*models.MailList, error) {
 	}
 
 	var mail_list models.MailList
-	err := db.FindOne("lists", query, &mail_list)
+	err := db.FindOne("lists", query, &mail_list, nil)
 
 	if err != nil {
 		return nil, err
@@ -234,7 +236,7 @@ func GetAllMailLists() (*models.MailListList, error) {
 	var mail_lists []models.MailList
 
 	// nil in this case means that we return everything in the lists collection
-	err := db.FindAll("lists", nil, &mail_lists)
+	err := db.FindAll("lists", nil, &mail_lists, nil)
 
 	if err != nil {
 		return nil, err

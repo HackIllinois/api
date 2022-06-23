@@ -38,7 +38,7 @@ func GetDecision(id string) (*models.DecisionHistory, error) {
 	query := database.QuerySelector{"id": id}
 
 	var decision models.DecisionHistory
-	err := db.FindOne("decision", query, &decision)
+	err := db.FindOne("decision", query, &decision, nil)
 
 	if err != nil {
 		return nil, err
@@ -86,10 +86,10 @@ func UpdateDecision(id string, decision models.Decision) error {
 
 	selector := database.QuerySelector{"id": id}
 
-	err = db.Update("decision", selector, &decision_history)
+	err = db.Update("decision", selector, &decision_history, nil)
 
 	if err == database.ErrNotFound {
-		err = db.Insert("decision", &decision_history)
+		err = db.Insert("decision", &decision_history, nil)
 	}
 
 	return err
@@ -121,7 +121,7 @@ func GetFilteredDecisions(parameters map[string][]string) (*models.FilteredDecis
 	}
 
 	var filtered_decisions models.FilteredDecisions
-	err = db.FindAll("decision", query, &filtered_decisions.Decisions)
+	err = db.FindAll("decision", query, &filtered_decisions.Decisions, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -133,5 +133,5 @@ func GetFilteredDecisions(parameters map[string][]string) (*models.FilteredDecis
 	Returns all decision stats
 */
 func GetStats() (map[string]interface{}, error) {
-	return db.GetStats("decision", []string{"status", "finalized", "wave"})
+	return db.GetStats("decision", []string{"status", "finalized", "wave"}, nil)
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var db database.Database
@@ -39,7 +40,7 @@ func GetUserInfo(id string) (*models.UserInfo, error) {
 	}
 
 	var user_info models.UserInfo
-	err := db.FindOne("info", query, &user_info)
+	err := db.FindOne("info", query, &user_info, nil)
 
 	if err != nil {
 		return nil, err
@@ -57,10 +58,10 @@ func SetUserInfo(id string, user_info models.UserInfo) error {
 		"id": id,
 	}
 
-	err := db.Update("info", selector, &user_info)
+	err := db.Update("info", selector, &user_info, nil)
 
 	if err == database.ErrNotFound {
-		err = db.Insert("info", &user_info)
+		err = db.Insert("info", &user_info, nil)
 	}
 
 	return err
@@ -91,24 +92,27 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 		// i.e FirstName, LastName --> ["FirstName", "LastName"]
 		sort_parameters = strings.Split(sort_parameters[0], ",")
 
-		var sort_fields []database.SortField
+		var sort_fields bson.D
 
 		for _, field := range sort_parameters {
 			// Push to lowercase because MongoDB columns are all lowercase
 			field = strings.ToLower(field)
 			field = strings.TrimSpace(field)
 
-			sort_fields = append(sort_fields,
-				database.SortField{
-					Name:     field,
-					Reversed: false,
-				})
+			if len(field) > 0 {
+				order := 1
+				if field[0] == '-' {
+					order = -1
+					field = field[1:]
+				}
+				sort_fields = append(sort_fields, bson.E{field, order})
+			}
 		}
 
 		// Fetch and Sort
-		err = db.FindAllSorted("info", query, sort_fields, &filtered_users.Users)
+		err = db.FindAllSorted("info", query, sort_fields, &filtered_users.Users, nil)
 	} else {
-		err = db.FindAll("info", query, &filtered_users.Users)
+		err = db.FindAll("info", query, &filtered_users.Users, nil)
 	}
 
 	if err != nil {
@@ -159,5 +163,5 @@ func GetQrInfo(id string) (string, error) {
 	Returns all user stats
 */
 func GetStats() (map[string]interface{}, error) {
-	return db.GetStats("info", []string{})
+	return db.GetStats("info", []string{}, nil)
 }

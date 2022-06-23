@@ -3,14 +3,15 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"reflect"
+	"testing"
+
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/services/registration/config"
 	"github.com/HackIllinois/api/services/registration/models"
 	"github.com/HackIllinois/api/services/registration/service"
-	"os"
-	"reflect"
-	"testing"
 )
 
 var db database.Database
@@ -48,14 +49,14 @@ func TestMain(m *testing.M) {
 */
 func SetupTestDB(t *testing.T) {
 	user_registration := getBaseUserRegistration()
-	err := db.Insert("attendees", &user_registration)
+	err := db.Insert("attendees", &user_registration, nil)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	mentor_registration := getBaseMentorRegistration()
-	err = db.Insert("mentors", &mentor_registration)
+	err = db.Insert("mentors", &mentor_registration, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -66,7 +67,7 @@ func SetupTestDB(t *testing.T) {
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	err := db.DropDatabase()
+	err := db.DropDatabase(nil)
 
 	if err != nil {
 		t.Fatal(err)

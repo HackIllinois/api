@@ -1,7 +1,5 @@
 module github.com/HackIllinois/api
 
-replace github.com/arbor-dev/arbor => ../../arbor-dev/arbor
-
 require (
 	github.com/arbor-dev/arbor v0.3.0
 	github.com/aws/aws-sdk-go v1.16.18
@@ -12,6 +10,8 @@ require (
 	github.com/gorilla/websocket v1.5.0
 	github.com/justinas/alice v0.0.0-20171023064455-03f45bd4b7da
 	github.com/levigross/grequests v0.0.0-20181123014746-f3f67e7783bb
+	github.com/onsi/ginkgo v1.16.5 // indirect
+	github.com/onsi/gomega v1.19.0 // indirect
 	github.com/prometheus/client_golang v1.11.0
 	github.com/thoas/stats v0.0.0-20181218120333-e97827ebd7ca
 	go.mongodb.org/mongo-driver v1.9.1

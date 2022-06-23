@@ -91,6 +91,10 @@ func (db *MongoDatabase) GetSession() (*mongo.Session, error) {
 	return &session, nil
 }
 
+func (db *MongoDatabase) StartSession() (*mongo.Session, error) {
+	return db.GetSession()
+}
+
 /*
 	Find one element matching the given query parameters
 */

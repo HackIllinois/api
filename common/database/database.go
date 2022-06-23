@@ -11,6 +11,7 @@ import (
 type Database interface {
 	Connect(host string) error
 	Close()
+	StartSession() (*mongo.Session, error)
 	FindOne(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error
 	FindAll(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error
 	FindAllSorted(collection_name string, query interface{}, sort_fields bson.D, result interface{}, session *mongo.SessionContext) error

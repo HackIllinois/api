@@ -1,6 +1,8 @@
 package database
 
 import (
+	"context"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -12,6 +14,7 @@ type Database interface {
 	Connect(host string) error
 	Close()
 	StartSession() (*mongo.Session, error)
+	GetNewContext() (context.Context, context.CancelFunc)
 	FindOne(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error
 	FindAll(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error
 	FindAllSorted(collection_name string, query interface{}, sort_fields bson.D, result interface{}, session *mongo.SessionContext) error

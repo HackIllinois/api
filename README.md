@@ -11,10 +11,10 @@ This repository contains the code which runs the backend services supporting Hac
 5. [Documentation](#documentation)
 
 ## Developer Environment Setup
-In order to work on the API there are a few setups neccessary in order to setup your developer environemnt.
+In order to work on the API there are a few steps neccessary in order to setup your developer environemnt.
 
 ### Installing Dependencies
-We highly reccommend that you use Ubuntu 18.04 when working on API development. The API is written and Go and makes use of MongoDB for storing data. You will have to install both of these before working on the API. You will also need a few common development tools including `make` and `git`.
+We highly reccommend that you use Ubuntu when working on API development. The API is written in Go and makes use of MongoDB for storing data. You will have to install both of these before working on the API. You will also need a few common development tools including `make` and `git`.
 
 #### Installing Development Tools
 Both `make` and `git` can be installed from the default ubuntu package repositories. Run the following commands to install both tools. You may need to run the commands under `sudo`.
@@ -30,7 +30,7 @@ Follow the [Go Installation Instructions](https://golang.org/doc/install#install
 Follow the [MongoDB Installation Instructions](https://docs.mongodb.com/manual/installation/#mongodb-community-edition) for installing MongoDB. Once MongoDB is installed ensure `mongod` is running. If it is not running then start the service.
 
 #### Downloading the API source and dependencies
-Run the following command to retrieve the API and all it's dependencies. The API source will be cloned to a folder called `api` in your current directory.
+Run the following command to retrieve the API and all its dependencies. The API source will be cloned to a folder called `api` in your current directory.
 ```
 git clone https://github.com/HackIllinois/api.git
 ```
@@ -72,13 +72,13 @@ make run
 There are also `make` targets provided for building a containerized version of the API for usage in production deployments.
 
 ### Building the API Container
-Building a container requires that docker and go have already been installed. The following command should be run from the root of the api repository.
+Building a container requires that Docker and Go have already been installed. The following command should be run from the root of the API repository.
 ```
 make container
 ```
 
 ### Running the API Container
-You can obtain all released versions and the latest version of the container from [DockerHub](https://hub.docker.com/r/hackillinois/api). The API container takes the name of the service to run as it's command arguement in the following docker run command. Ensure that the correct environment variables are set to load the configuration file and overwrite any secret configuration variables.
+You can obtain all released versions and the latest version of the container from [DockerHub](https://hub.docker.com/r/hackillinois/api). The API container takes the name of the service to run as its command argument in the following `docker run` command. Ensure that the correct environment variables are set to load the configuration file and overwrite any secret configuration variables.
 ```
 docker run -d --env-file env.config hackillinois/api:latest <servicename>
 ```

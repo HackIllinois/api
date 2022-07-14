@@ -52,7 +52,7 @@ Response format:
 GET /auth/roles/
 -----------------------
 
-Gets the roles of the user with the `id` in the jwt.
+Gets the roles of the current user.
 
 Response format:
 ```

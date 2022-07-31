@@ -35,7 +35,7 @@ func SetupController(route *mux.Route) {
 func GetCurrentUserInfo(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
-	user_info, err := service.GetUserInfo(id)
+	user_info, err := service.GetUserInfo(id, nil)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch user info by ID."))
@@ -57,18 +57,10 @@ func SetUserInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := service.SetUserInfo(user_info.ID, user_info)
+	updated_info, err := service.UpsertUserInfo(user_info.ID, user_info)
 
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not upsert user info."))
-		return
-	}
-
-	updated_info, err := service.GetUserInfo(user_info.ID)
-
-	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch user info by ID."))
-		return
+		errors.WriteError(w, r, *err)
 	}
 
 	json.NewEncoder(w).Encode(updated_info)
@@ -95,7 +87,7 @@ func GetFilteredUserInfo(w http.ResponseWriter, r *http.Request) {
 func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
-	user_info, err := service.GetUserInfo(id)
+	user_info, err := service.GetUserInfo(id, nil)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch user information by user id."))

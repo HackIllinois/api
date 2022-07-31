@@ -1,16 +1,19 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"net/url"
 	"strconv"
 	"strings"
 
 	"github.com/HackIllinois/api/common/database"
+	hack_errors "github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var db database.Database
@@ -34,13 +37,13 @@ func Initialize() error {
 /*
 	Returns the info associated with the given user id
 */
-func GetUserInfo(id string) (*models.UserInfo, error) {
+func GetUserInfo(id string, sessCtx *mongo.SessionContext) (*models.UserInfo, error) {
 	query := database.QuerySelector{
 		"id": id,
 	}
 
 	var user_info models.UserInfo
-	err := db.FindOne("info", query, &user_info, nil)
+	err := db.FindOne("info", query, &user_info, sessCtx)
 
 	if err != nil {
 		return nil, err
@@ -53,18 +56,47 @@ func GetUserInfo(id string) (*models.UserInfo, error) {
 	Set the info associated with the given user id
 	The record will be created if it does not already exist
 */
-func SetUserInfo(id string, user_info models.UserInfo) error {
+func SetUserInfo(id string, user_info models.UserInfo, sessCtx *mongo.SessionContext) error {
 	selector := database.QuerySelector{
 		"id": id,
 	}
 
-	err := db.Update("info", selector, &user_info, nil)
-
-	if err == database.ErrNotFound {
-		err = db.Insert("info", &user_info, nil)
-	}
+	_, err := db.Upsert("info", selector, &user_info, sessCtx)
 
 	return err
+}
+
+func UpsertUserInfo(id string, user_info models.UserInfo) (*models.UserInfo, *hack_errors.ApiError) {
+	sess, err := db.StartSession()
+
+	if err != nil {
+		hack_err := hack_errors.InternalError(err.Error(), "Could not fetch user info by ID.")
+		return nil, &hack_err
+	}
+
+	data, err := (*sess).WithTransaction(context.Background(), func(sessCtx mongo.SessionContext) (interface{}, error) {
+		err := SetUserInfo(user_info.ID, user_info, &sessCtx)
+
+		if err != nil {
+			hack_err := hack_errors.DatabaseError(err.Error(), "Could not upsert user info.")
+			return nil, &hack_err
+		}
+
+		updated_info, err := GetUserInfo(user_info.ID, &sessCtx)
+
+		if err != nil {
+			hack_err := hack_errors.DatabaseError(err.Error(), "Could not fetch user info by ID.")
+			return nil, &hack_err
+		}
+
+		return updated_info, nil
+	})
+
+	if err != nil {
+		return nil, err.(*hack_errors.ApiError)
+	}
+
+	return data.(*models.UserInfo), nil
 }
 
 /*
@@ -135,7 +167,7 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 	Generates a QR string for a user with the provided ID, as a URI
 */
 func GetQrInfo(id string) (string, error) {
-	_, err := GetUserInfo(id)
+	_, err := GetUserInfo(id, nil)
 
 	if err != nil {
 		return "", errors.New("User does not exist.")

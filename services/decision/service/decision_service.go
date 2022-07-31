@@ -7,6 +7,7 @@ import (
 	"github.com/HackIllinois/api/services/decision/config"
 	"github.com/HackIllinois/api/services/decision/models"
 	"github.com/go-playground/validator/v10"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var validate *validator.Validate
@@ -64,33 +65,24 @@ func UpdateDecision(id string, decision models.Decision) error {
 		return errors.New("Cannot set a wave for non-accepted attendee")
 	}
 
-	decision_history, err := GetDecision(id)
-
-	if err != nil {
-		if err == database.ErrNotFound {
-			decision_history = &models.DecisionHistory{
-				ID: id,
-			}
-		} else {
-			return err
-		}
-	}
-
-	decision_history.Finalized = decision.Finalized
-	decision_history.Status = decision.Status
-	decision_history.Wave = decision.Wave
-	decision_history.History = append(decision_history.History, decision)
-	decision_history.Reviewer = decision.Reviewer
-	decision_history.Timestamp = decision.Timestamp
-	decision_history.ExpiresAt = decision.ExpiresAt
-
 	selector := database.QuerySelector{"id": id}
 
-	err = db.Update("decision", selector, &decision_history, nil)
-
-	if err == database.ErrNotFound {
-		err = db.Insert("decision", &decision_history, nil)
+	// TODO: Change to some dedi struct for mongo operations
+	decision_history := bson.M{
+		"$set": bson.M{
+			"finalized": decision.Finalized,
+			"status":    decision.Status,
+			"wave":      decision.Wave,
+			"reviewer":  decision.Reviewer,
+			"timestamp": decision.Timestamp,
+			"expiresAt": decision.ExpiresAt,
+		},
+		"$addToSet": bson.M{
+			"history": decision,
+		},
 	}
+
+	_, err = db.Upsert("decision", selector, &decision_history, nil)
 
 	return err
 }

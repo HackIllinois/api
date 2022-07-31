@@ -168,7 +168,7 @@ func CleanupTestDB(t *testing.T) {
 func TestGetUserInfoService(t *testing.T) {
 	SetupTestDB(t)
 
-	user_info, err := service.GetUserInfo("testid")
+	user_info, err := service.GetUserInfo("testid", nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -197,13 +197,13 @@ func TestSetUserInfoService(t *testing.T) {
 		ID:       "testid2",
 		Username: "testusername2",
 		Email:    "testemail2@domain.com",
-	})
+	}, nil)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	user_info, err := service.GetUserInfo("testid2")
+	user_info, err := service.GetUserInfo("testid2", nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -228,12 +228,12 @@ func TestSetUserInfoService(t *testing.T) {
 func TestGetFilteredUserInfoService(t *testing.T) {
 	SetupTestDB(t)
 
-	user_info_1, err := service.GetUserInfo("testid")
+	user_info_1, err := service.GetUserInfo("testid", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	user_info_2, err := service.GetUserInfo("testid2")
+	user_info_2, err := service.GetUserInfo("testid2", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -266,12 +266,12 @@ func TestGetFilteredUserInfoService(t *testing.T) {
 func TestGetFilteredUserInfoWithSortingService(t *testing.T) {
 	SetupFilterTestDB(t)
 
-	user_info_1, err := service.GetUserInfo("testid1")
+	user_info_1, err := service.GetUserInfo("testid1", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	user_info_2, err := service.GetUserInfo("testid2")
-	user_info_3, err := service.GetUserInfo("testid3")
+	user_info_2, err := service.GetUserInfo("testid2", nil)
+	user_info_3, err := service.GetUserInfo("testid3", nil)
 
 	// Sort by first name and expect: Alex, Bobby, Charlie
 
@@ -323,8 +323,8 @@ func TestGetFilteredUserInfoWithSortingService(t *testing.T) {
 
 	// Sort by two parameters and expect: Bobby Adamson, Bobby Zulu
 
-	user_info_1, err = service.GetUserInfo("testid5")
-	user_info_2, err = service.GetUserInfo("testid4")
+	user_info_1, err = service.GetUserInfo("testid5", nil)
+	user_info_2, err = service.GetUserInfo("testid4", nil)
 	parameters = map[string][]string{
 		"username": {"test-two-parameter-filter"},
 		"sortby":   {"firstName,lastName"},
@@ -355,27 +355,27 @@ func TestGetFilteredUserInfoWithSortingService(t *testing.T) {
 func TestGetFilteredUserInfoServicePagination(t *testing.T) {
 	SetupPaginationDB(t)
 
-	user_info_1, err := service.GetUserInfo("testid")
+	user_info_1, err := service.GetUserInfo("testid", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	user_info_2, err := service.GetUserInfo("testid2")
+	user_info_2, err := service.GetUserInfo("testid2", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	user_info_3, err := service.GetUserInfo("testid3")
+	user_info_3, err := service.GetUserInfo("testid3", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	user_info_4, err := service.GetUserInfo("testid4")
+	user_info_4, err := service.GetUserInfo("testid4", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	user_info_5, err := service.GetUserInfo("testid5")
+	user_info_5, err := service.GetUserInfo("testid5", nil)
 	if err != nil {
 		t.Fatal(err)
 	}

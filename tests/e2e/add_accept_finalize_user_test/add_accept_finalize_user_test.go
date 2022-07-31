@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"reflect"
@@ -12,11 +13,11 @@ import (
 	user_models "github.com/HackIllinois/api/services/user/models"
 	"github.com/HackIllinois/api/tests/common"
 	"github.com/dghubble/sling"
-	"gopkg.in/mgo.v2"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var admin_client *sling.Sling
-var session *mgo.Session
+var client *mongo.Client
 
 func TestMain(m *testing.M) {
 
@@ -29,21 +30,21 @@ func TestMain(m *testing.M) {
 
 	admin_client = common.GetSlingClient("Admin")
 
-	session = common.GetLocalMongoSession()
+	client = common.GetLocalMongoSession()
 
 	user_db_name, err := cfg.Get("USER_DB_NAME")
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
 	}
-	session.DB(user_db_name).DropDatabase()
+	client.Database(user_db_name).Drop(context.Background())
 
 	decision_db_name, err := cfg.Get("DECISION_DB_NAME")
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
 	}
-	session.DB(decision_db_name).DropDatabase()
+	client.Database(decision_db_name).Drop(context.Background())
 
 	return_code := m.Run()
 	os.Exit(return_code)

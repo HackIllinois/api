@@ -127,6 +127,33 @@ func (db *MongoDatabase) FindOne(collection_name string, query interface{}, resu
 }
 
 /*
+	Finds and deletes one element matching the given query parameters atomically
+*/
+func (db *MongoDatabase) FindOneAndDelete(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error {
+	var s *mongo.Session
+	if session == nil {
+		var err error
+		s, err = db.GetSession()
+
+		if err != nil {
+			return convertMgoError(err)
+		}
+
+		defer (*s).EndSession(context.TODO())
+		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		session = &sess_ctx
+	}
+
+	query = nilToEmptyBson(query)
+
+	res := db.client.Database(db.name).Collection(collection_name).FindOneAndDelete(*session, query)
+
+	err := res.Decode(result)
+
+	return convertMgoError(err)
+}
+
+/*
 	Find all elements matching the given query parameters
 */
 func (db *MongoDatabase) FindAll(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error {

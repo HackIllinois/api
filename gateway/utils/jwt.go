@@ -2,10 +2,11 @@ package utils
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/models"
-	jwt "github.com/dgrijalva/jwt-go"
-	"time"
+	jwt "github.com/golang-jwt/jwt/v4"
 )
 
 func ExtractFieldFromJWT(token string, field string) ([]string, error) {

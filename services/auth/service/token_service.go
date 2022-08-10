@@ -1,10 +1,11 @@
 package service
 
 import (
+	"time"
+
 	"github.com/HackIllinois/api/services/auth/config"
 	"github.com/HackIllinois/api/services/auth/models"
-	jwt "github.com/dgrijalva/jwt-go"
-	"time"
+	jwt "github.com/golang-jwt/jwt/v4"
 )
 
 /*

@@ -9,6 +9,7 @@ import (
 
 var (
 	ErrNotFound        = errors.New("Error: NOT_FOUND")
+	ErrDuplicateKey    = errors.New("Error: DUPLICATE_KEY")
 	ErrConnection      = errors.New("Error: CONNECTION_FAILED")
 	ErrDisconnected    = errors.New("Error: CLIENT_DISCONNECTED")
 	ErrUnknown         = errors.New("Error: UNKNOWN")
@@ -30,7 +31,19 @@ func convertMgoError(err error) error {
 	case mongo.ErrNoDocuments:
 		return ErrNotFound
 	default:
+		{
+			var e mongo.WriteException
+			if errors.As(err, &e) {
+				for _, we := range e.WriteErrors {
+					if we.Code == 11000 { // Error code for duplicate key error
+						return ErrDuplicateKey
+					}
+				}
+			}
+		}
 		fmt.Println("Unhandled error: ", err)
+		// TODO: How can we embed error information into here?
+		// It'll help a lot if an unexpected error comes up
 		return ErrUnknown
 	}
 }

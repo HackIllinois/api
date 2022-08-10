@@ -1121,6 +1121,103 @@ func TestGetFavoriteEventsNone(t *testing.T) {
 	}
 }
 
+func TestDeleteFavoriteEventsNormal(t *testing.T) {
+	CreateEvents()
+	defer ClearEvents()
+
+	favorite_events := event_models.EventFavorites{
+		ID: "localadmin",
+		Events: []string{
+			"event1",
+			"event2",
+		},
+	}
+
+	client.Database(events_db_name).Collection("favorites").InsertOne(context.Background(), favorite_events)
+
+	req := event_models.EventFavoriteModification{
+		EventID: "event2",
+	}
+	recieved_favorites := event_models.EventFavorites{}
+	response, err := user_client.New().Delete("/event/favorite/").BodyJSON(req).ReceiveSuccess(&recieved_favorites)
+
+	if err != nil {
+		t.Fatal("Unable to make request")
+		return
+	}
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
+		return
+	}
+
+	expected_favorites := event_models.EventFavorites{
+		ID: "localadmin",
+		Events: []string{
+			"event1",
+		},
+	}
+
+	if !reflect.DeepEqual(recieved_favorites, expected_favorites) {
+		t.Fatalf("Wrong result received from database. Expected %v, got %v", expected_favorites, recieved_favorites)
+	}
+
+	res := client.Database(events_db_name).Collection("favorites").FindOne(context.Background(), bson.M{"id": "localadmin"})
+
+	err = res.Decode(&recieved_favorites)
+
+	if err != nil {
+		t.Fatalf("Had trouble finding favorites in database: %v", err)
+		return
+	}
+
+	if !reflect.DeepEqual(recieved_favorites, expected_favorites) {
+		t.Fatalf("Wrong result received from database. Expected %v, got %v", expected_favorites, recieved_favorites)
+	}
+}
+
+func TestDeleteFavoriteEventsNone(t *testing.T) {
+	CreateEvents()
+	defer ClearEvents()
+
+	favorite_events := event_models.EventFavorites{
+		ID: "localadmin",
+		Events: []string{
+			"event1",
+			"event2",
+		},
+	}
+
+	client.Database(events_db_name).Collection("favorites").InsertOne(context.Background(), favorite_events)
+
+	req := event_models.EventFavoriteModification{
+		EventID: "nonexistantevent",
+	}
+	recieved_favorites := event_models.EventFavorites{}
+	response, err := user_client.New().Delete("/event/favorite/").BodyJSON(req).ReceiveSuccess(&recieved_favorites)
+
+	if err != nil {
+		t.Fatal("Unable to make request")
+		return
+	}
+	if response.StatusCode != http.StatusInternalServerError {
+		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
+		return
+	}
+
+	res := client.Database(events_db_name).Collection("favorites").FindOne(context.Background(), bson.M{"id": "localadmin"})
+
+	err = res.Decode(&recieved_favorites)
+
+	if err != nil {
+		t.Fatalf("Had trouble finding favorites in database: %v", err)
+		return
+	}
+
+	if !reflect.DeepEqual(recieved_favorites, favorite_events) {
+		t.Fatalf("Wrong result received from database. Expected %v, got %v", favorite_events, recieved_favorites)
+	}
+}
+
 func TestStaffActions(t *testing.T) {
 	// 1. Create event
 	event_info := event_models.Event{

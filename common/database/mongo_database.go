@@ -79,6 +79,10 @@ func (db *MongoDatabase) Close() {
 	db.client.Disconnect(context.TODO())
 }
 
+func (db *MongoDatabase) GetRaw() *mongo.Client {
+	return db.client
+}
+
 /*
 	Returns a copy of the global session for use by a connection
 */
@@ -147,6 +151,38 @@ func (db *MongoDatabase) FindOneAndDelete(collection_name string, query interfac
 	query = nilToEmptyBson(query)
 
 	res := db.client.Database(db.name).Collection(collection_name).FindOneAndDelete(*session, query)
+
+	err := res.Decode(result)
+
+	return convertMgoError(err)
+}
+
+func (db *MongoDatabase) FindOneAndUpdate(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, session *mongo.SessionContext) error {
+	var s *mongo.Session
+	if session == nil {
+		var err error
+		s, err = db.GetSession()
+
+		if err != nil {
+			return convertMgoError(err)
+		}
+
+		defer (*s).EndSession(context.TODO())
+		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		session = &sess_ctx
+	}
+
+	query = nilToEmptyBson(query)
+	update = addReplaceWrapper(update)
+
+	ret_doc_opt := options.Before
+	if return_new_doc {
+		ret_doc_opt = options.After
+	}
+
+	opts := options.FindOneAndUpdate().SetReturnDocument(ret_doc_opt)
+
+	res := db.client.Database(db.name).Collection(collection_name).FindOneAndUpdate(*session, query, update, opts)
 
 	err := res.Decode(result)
 
@@ -365,9 +401,17 @@ func (db *MongoDatabase) Update(collection_name string, selector interface{}, up
 	selector = nilToEmptyBson(selector)
 	update = addReplaceWrapper(update)
 
-	_, err := db.client.Database(db.name).Collection(collection_name).UpdateOne(*session, selector, update)
+	res, err := db.client.Database(db.name).Collection(collection_name).UpdateOne(*session, selector, update)
 
-	return convertMgoError(err)
+	if err != nil {
+		return convertMgoError(err)
+	}
+
+	if res.MatchedCount == 0 {
+		return ErrNotFound
+	}
+
+	return nil
 }
 
 /*
@@ -403,6 +447,39 @@ func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{},
 	}
 
 	return &change_results, nil
+}
+
+/*
+	Finds an item based on the given selector and replaces it with the data in update
+*/
+func (db *MongoDatabase) Replace(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) error {
+	var s *mongo.Session
+	if session == nil {
+		var err error
+		s, err = db.GetSession()
+
+		if err != nil {
+			return convertMgoError(err)
+		}
+
+		defer (*s).EndSession(context.TODO())
+		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		session = &sess_ctx
+	}
+
+	selector = nilToEmptyBson(selector)
+
+	res, err := db.client.Database(db.name).Collection(collection_name).ReplaceOne(*session, selector, update)
+
+	if err != nil {
+		return convertMgoError(err)
+	}
+
+	if res.MatchedCount == 0 {
+		return ErrNotFound
+	}
+
+	return nil
 }
 
 /*

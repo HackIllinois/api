@@ -951,7 +951,7 @@ func TestCheckinAlreadyCheckedIn(t *testing.T) {
 	client.Database(profile_db_name).Collection("profileattendance").UpdateOne(
 		context.Background(),
 		bson.M{"id": "theadminprofile"},
-		bson.M{"$push": bson.M{
+		bson.M{"$addToSet": bson.M{
 			"events": "testeventid12345",
 		}},
 		options.Update().SetUpsert(true),

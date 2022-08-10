@@ -12,6 +12,7 @@
 	"NOTIFICATIONS_SERVICE": "http://localhost:8012",
 	"PROJECT_SERVICE": "http://localhost:8013",
 	"PROFILE_SERVICE": "http://localhost:8014",
+	"PRIZE_SERVICE": "http://localhost:8015",
 
 	"GATEWAY_PORT": "8000",
 	"AUTH_PORT": ":8002",
@@ -27,6 +28,7 @@
 	"NOTIFICATIONS_PORT": ":8012",
 	"PROJECT_PORT": ":8013",
 	"PROFILE_PORT": ":8014",
+	"PRIZE_PORT": ":8015",
 
 	"AUTH_DB_HOST": "localhost",
 	"USER_DB_HOST": "localhost",
@@ -41,6 +43,7 @@
 	"NOTIFICATIONS_DB_HOST": "localhost",
 	"PROJECT_DB_HOST": "localhost",
 	"PROFILE_DB_HOST": "localhost",
+	"PRIZE_DB_HOST": "localhost",
 
 	"AUTH_DB_NAME": "auth",
 	"USER_DB_NAME": "user",
@@ -55,6 +58,7 @@
 	"NOTIFICATIONS_DB_NAME": "notifications",
 	"PROJECT_DB_NAME": "project",
 	"PROFILE_DB_NAME": "profile",
+	"PRIZE_DB_NAME": "prize",
 
 	"S3_REGION": "us-east-1",
 	"S3_BUCKET": "hackillinois-upload-2019",

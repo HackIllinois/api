@@ -14,6 +14,7 @@ import (
 	"github.com/HackIllinois/api/services/event"
 	"github.com/HackIllinois/api/services/mail"
 	"github.com/HackIllinois/api/services/notifications"
+	"github.com/HackIllinois/api/services/prize"
 	"github.com/HackIllinois/api/services/profile"
 	"github.com/HackIllinois/api/services/project"
 	"github.com/HackIllinois/api/services/registration"
@@ -38,6 +39,7 @@ var SERVICE_ENTRYPOINTS = map[string](func()){
 	"notifications": notifications.Entry,
 	"project":       project.Entry,
 	"profile":       profile.Entry,
+	"prize":         prize.Entry,
 }
 
 func StartAll() {

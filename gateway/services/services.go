@@ -26,6 +26,7 @@ func Initialize() error {
 		"notifications": config.NOTIFICATIONS_SERVICE,
 		"project":       config.PROJECT_SERVICE,
 		"profile":       config.PROFILE_SERVICE,
+		"prize":         config.PRIZE_SERVICE,
 	}
 
 	return nil
@@ -70,6 +71,7 @@ func RegisterAPIs() arbor.RouteCollection {
 	Routes = append(Routes, ProfileRoutes...)
 	Routes = append(Routes, HealthRoutes...)
 	Routes = append(Routes, ReloadRoutes...)
+	Routes = append(Routes, PrizeRoutes...)
 	return Routes
 }
 

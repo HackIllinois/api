@@ -452,7 +452,7 @@ func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{},
 /*
 	Finds an item based on the given selector and replaces it with the data in update
 */
-func (db *MongoDatabase) Replace(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) error {
+func (db *MongoDatabase) Replace(collection_name string, selector interface{}, update interface{}, upsert bool, session *mongo.SessionContext) error {
 	var s *mongo.Session
 	if session == nil {
 		var err error
@@ -469,13 +469,15 @@ func (db *MongoDatabase) Replace(collection_name string, selector interface{}, u
 
 	selector = nilToEmptyBson(selector)
 
-	res, err := db.client.Database(db.name).Collection(collection_name).ReplaceOne(*session, selector, update)
+	options := options.Replace().SetUpsert(upsert)
+
+	res, err := db.client.Database(db.name).Collection(collection_name).ReplaceOne(*session, selector, update, options)
 
 	if err != nil {
 		return convertMgoError(err)
 	}
 
-	if res.MatchedCount == 0 {
+	if res.MatchedCount == 0 && !upsert {
 		return ErrNotFound
 	}
 

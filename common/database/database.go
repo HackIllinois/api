@@ -27,7 +27,7 @@ type Database interface {
 	Upsert(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) (*ChangeResults, error)
 	Update(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) error
 	UpdateAll(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) (*ChangeResults, error)
-	Replace(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) error
+	Replace(collection_name string, selector interface{}, update interface{}, upsert bool, session *mongo.SessionContext) error
 	DropDatabase(session *mongo.SessionContext) error
 	GetStats(collection_name string, fields []string, session *mongo.SessionContext) (map[string]interface{}, error)
 }

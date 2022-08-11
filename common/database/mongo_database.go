@@ -157,7 +157,7 @@ func (db *MongoDatabase) FindOneAndDelete(collection_name string, query interfac
 	return convertMgoError(err)
 }
 
-func (db *MongoDatabase) FindOneAndUpdate(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, session *mongo.SessionContext) error {
+func (db *MongoDatabase) FindOneAndUpdate(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, upsert bool, session *mongo.SessionContext) error {
 	var s *mongo.Session
 	if session == nil {
 		var err error
@@ -180,7 +180,7 @@ func (db *MongoDatabase) FindOneAndUpdate(collection_name string, query interfac
 		ret_doc_opt = options.After
 	}
 
-	opts := options.FindOneAndUpdate().SetReturnDocument(ret_doc_opt)
+	opts := options.FindOneAndUpdate().SetReturnDocument(ret_doc_opt).SetUpsert(upsert)
 
 	res := db.client.Database(db.name).Collection(collection_name).FindOneAndUpdate(*session, query, update, opts)
 

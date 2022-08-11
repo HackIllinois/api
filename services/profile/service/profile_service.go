@@ -200,7 +200,7 @@ func UpdateProfile(profile_id string, profile models.Profile) error {
 		"id": profile_id,
 	}
 
-	err = db.Update("profiles", selector, &profile, nil)
+	err = db.Replace("profiles", selector, &profile, false, nil)
 
 	return err
 }
@@ -348,7 +348,7 @@ func RedeemEvent(profile_id string, event_id string) (*models.RedeemEventRespons
 		attended_events.Events = append(attended_events.Events, event_id)
 	}
 
-	err = db.Update("profileattendance", selector, attended_events, nil)
+	err = db.Replace("profileattendance", selector, attended_events, false, nil)
 
 	return &redemption_status, err
 }
@@ -399,7 +399,7 @@ func AddProfileFavorite(profile_id string, profile string) error {
 		profile_favorites.Profiles = append(profile_favorites.Profiles, profile)
 	}
 
-	err = db.Update("profilefavorites", selector, profile_favorites, nil)
+	err = db.Replace("profilefavorites", selector, profile_favorites, false, nil)
 
 	return err
 }
@@ -424,7 +424,7 @@ func RemoveProfileFavorite(profile_id string, profile string) error {
 		return errors.New("User's profile favorites does not have specified profile")
 	}
 
-	err = db.Update("profilefavorites", selector, profile_favorites, nil)
+	err = db.Replace("profilefavorites", selector, profile_favorites, false, nil)
 
 	return err
 }

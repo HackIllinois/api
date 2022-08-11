@@ -202,7 +202,7 @@ func UpdateBlob(blob models.Blob) error {
 		"id": blob.ID,
 	}
 
-	err := db.Update("blobstore", selector, &blob, nil)
+	err := db.Replace("blobstore", selector, &blob, false, nil)
 
 	return err
 }

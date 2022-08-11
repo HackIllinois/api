@@ -158,7 +158,7 @@ func UpdateProject(id string, project models.Project) error {
 		"id": id,
 	}
 
-	err = db.Update("projects", selector, &project, nil)
+	err = db.Replace("projects", selector, &project, false, nil)
 
 	return err
 }
@@ -222,7 +222,7 @@ func AddProjectFavorite(id string, project string) error {
 		project_favorites.Projects = append(project_favorites.Projects, project)
 	}
 
-	err = db.Update("favorites", selector, project_favorites, nil)
+	err = db.Replace("favorites", selector, project_favorites, false, nil)
 
 	return err
 }
@@ -247,7 +247,7 @@ func RemoveProjectFavorite(id string, project string) error {
 		return errors.New("User's project favorites does not have specified project")
 	}
 
-	err = db.Update("favorites", selector, project_favorites, nil)
+	err = db.Replace("favorites", selector, project_favorites, false, nil)
 
 	return err
 }

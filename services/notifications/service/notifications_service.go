@@ -299,7 +299,7 @@ func SetUserDevices(id string, devices []string) error {
 		Devices: devices,
 	}
 
-	err := db.Update("users", selector, &user, nil)
+	err := db.Replace("users", selector, &user, false, nil)
 
 	if err != nil {
 		return err
@@ -513,7 +513,7 @@ func PublishNotification(id string, payload string, arns []string) error {
 		"id": id,
 	}
 
-	err = db.Update("orders", selector, &order, nil)
+	err = db.Replace("orders", selector, &order, false, nil)
 
 	if err != nil {
 		return err

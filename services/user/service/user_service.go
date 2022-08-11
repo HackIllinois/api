@@ -61,7 +61,7 @@ func SetUserInfo(id string, user_info models.UserInfo, sessCtx *mongo.SessionCon
 		"id": id,
 	}
 
-	_, err := db.Upsert("info", selector, &user_info, sessCtx)
+	err := db.Replace("info", selector, user_info, true, sessCtx)
 
 	return err
 }

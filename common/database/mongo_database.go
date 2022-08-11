@@ -8,7 +8,6 @@ import (
 	"github.com/HackIllinois/api/common/config"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -173,7 +172,6 @@ func (db *MongoDatabase) FindOneAndUpdate(collection_name string, query interfac
 	}
 
 	query = nilToEmptyBson(query)
-	update = addReplaceWrapper(update)
 
 	ret_doc_opt := options.Before
 	if return_new_doc {
@@ -362,7 +360,6 @@ func (db *MongoDatabase) Upsert(collection_name string, selector interface{}, up
 	}
 
 	selector = nilToEmptyBson(selector)
-	update = addReplaceWrapper(update)
 
 	options := options.Update().SetUpsert(true)
 
@@ -399,7 +396,6 @@ func (db *MongoDatabase) Update(collection_name string, selector interface{}, up
 	}
 
 	selector = nilToEmptyBson(selector)
-	update = addReplaceWrapper(update)
 
 	res, err := db.client.Database(db.name).Collection(collection_name).UpdateOne(*session, selector, update)
 
@@ -433,7 +429,6 @@ func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{},
 	}
 
 	selector = nilToEmptyBson(selector)
-	update = addReplaceWrapper(update)
 
 	res, err := db.client.Database(db.name).Collection(collection_name).UpdateMany(*session, selector, update)
 
@@ -556,23 +551,6 @@ func (db *MongoDatabase) GetStats(collection_name string, fields []string, sessi
 	stats["count"] = count
 
 	return stats, nil
-}
-
-/*
-	Adds the $replaceWith update operator to make passing in direct structs safe to use
-	($replaceWith is effectlively the behavior we used whenever updating an item)
-*/
-func addReplaceWrapper(update interface{}) interface{} {
-	// TODO: Right now, we are using bson.M as the main type to use $ operators, but
-	// it's probably better to just make this a separate type
-	switch update.(type) {
-	case nil:
-		return bson.D{}
-	case *primitive.M:
-		return update
-	default:
-		return bson.A{bson.D{{"$replaceWith", update}}}
-	}
 }
 
 /*

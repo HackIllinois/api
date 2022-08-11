@@ -206,7 +206,7 @@ func UpdateEvent(id string, event models.Event) error {
 		"id": id,
 	}
 
-	err = db.Update("events", selector, &event, nil)
+	err = db.Replace("events", selector, &event, false, nil)
 
 	return err
 }
@@ -423,7 +423,7 @@ func AddEventFavorite(id string, event string) error {
 		event_favorites.Events = append(event_favorites.Events, event)
 	}
 
-	err = db.Update("favorites", selector, event_favorites, nil)
+	err = db.Replace("favorites", selector, event_favorites, false, nil)
 
 	return err
 }
@@ -448,7 +448,7 @@ func RemoveEventFavorite(id string, event string) error {
 		return errors.New("User's event favorites does not have specified event")
 	}
 
-	err = db.Update("favorites", selector, event_favorites, nil)
+	err = db.Replace("favorites", selector, event_favorites, false, nil)
 
 	return err
 }
@@ -523,7 +523,7 @@ func UpdateEventCode(id string, eventCode models.EventCode) error {
 		"id": id,
 	}
 
-	err := db.Update("eventcodes", selector, &eventCode, nil)
+	err := db.Replace("eventcodes", selector, &eventCode, false, nil)
 
 	return err
 }

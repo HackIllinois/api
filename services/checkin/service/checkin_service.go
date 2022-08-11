@@ -71,7 +71,7 @@ func UpdateUserCheckin(id string, user_checkin models.UserCheckin) error {
 		"id": id,
 	}
 
-	err := db.Update("checkins", selector, &user_checkin, nil)
+	err := db.Replace("checkins", selector, &user_checkin, false, nil)
 
 	return err
 }

@@ -85,7 +85,7 @@ func UpdateUserRegistration(id string, user_registration models.UserRegistration
 
 	selector := database.QuerySelector{"id": id}
 
-	err = db.Update("attendees", selector, &user_registration, nil)
+	err = db.Replace("attendees", selector, &user_registration, false, nil)
 
 	return err
 }
@@ -210,7 +210,7 @@ func UpdateMentorRegistration(id string, mentor_registration models.MentorRegist
 
 	selector := database.QuerySelector{"id": id}
 
-	err = db.Update("mentors", selector, &mentor_registration, nil)
+	err = db.Replace("mentors", selector, &mentor_registration, false, nil)
 
 	return err
 }

@@ -187,6 +187,37 @@ func (db *MongoDatabase) FindOneAndUpdate(collection_name string, query interfac
 	return convertMgoError(err)
 }
 
+func (db *MongoDatabase) FindOneAndReplace(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, upsert bool, session *mongo.SessionContext) error {
+	var s *mongo.Session
+	if session == nil {
+		var err error
+		s, err = db.GetSession()
+
+		if err != nil {
+			return convertMgoError(err)
+		}
+
+		defer (*s).EndSession(context.TODO())
+		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		session = &sess_ctx
+	}
+
+	query = nilToEmptyBson(query)
+
+	ret_doc_opt := options.Before
+	if return_new_doc {
+		ret_doc_opt = options.After
+	}
+
+	opts := options.FindOneAndReplace().SetReturnDocument(ret_doc_opt).SetUpsert(upsert)
+
+	res := db.client.Database(db.name).Collection(collection_name).FindOneAndReplace(*session, query, update, opts)
+
+	err := res.Decode(result)
+
+	return convertMgoError(err)
+}
+
 /*
 	Find all elements matching the given query parameters
 */

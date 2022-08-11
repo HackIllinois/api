@@ -19,6 +19,7 @@ type Database interface {
 	FindOne(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error
 	FindOneAndDelete(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error
 	FindOneAndUpdate(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, upsert bool, session *mongo.SessionContext) error
+	FindOneAndReplace(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, upsert bool, session *mongo.SessionContext) error
 	FindAll(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error
 	FindAllSorted(collection_name string, query interface{}, sort_fields bson.D, result interface{}, session *mongo.SessionContext) error
 	RemoveOne(collection_name string, query interface{}, session *mongo.SessionContext) error

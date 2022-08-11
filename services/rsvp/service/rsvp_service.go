@@ -98,7 +98,7 @@ func UpdateUserRsvp(id string, rsvp models.UserRsvp) error {
 		"id": id,
 	}
 
-	err := db.Update("rsvps", selector, &rsvp, nil)
+	err := db.Replace("rsvps", selector, &rsvp, false, nil)
 
 	return err
 }

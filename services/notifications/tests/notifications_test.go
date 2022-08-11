@@ -488,7 +488,7 @@ func TestPublishNotificationToTopic(t *testing.T) {
 		ID:      "User",
 		UserIDs: []string{"test_user", "test_user_2"},
 	}
-	err = db.Update("topics", selector, &topic, nil)
+	err = db.Replace("topics", selector, &topic, false, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

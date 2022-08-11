@@ -18,7 +18,8 @@ type Database interface {
 	GetNewContext() (context.Context, context.CancelFunc)
 	FindOne(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error
 	FindOneAndDelete(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error
-	FindOneAndUpdate(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, session *mongo.SessionContext) error
+	FindOneAndUpdate(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, upsert bool, session *mongo.SessionContext) error
+	FindOneAndReplace(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, upsert bool, session *mongo.SessionContext) error
 	FindAll(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error
 	FindAllSorted(collection_name string, query interface{}, sort_fields bson.D, result interface{}, session *mongo.SessionContext) error
 	RemoveOne(collection_name string, query interface{}, session *mongo.SessionContext) error
@@ -27,7 +28,7 @@ type Database interface {
 	Upsert(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) (*ChangeResults, error)
 	Update(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) error
 	UpdateAll(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) (*ChangeResults, error)
-	Replace(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) error
+	Replace(collection_name string, selector interface{}, update interface{}, upsert bool, session *mongo.SessionContext) error
 	DropDatabase(session *mongo.SessionContext) error
 	GetStats(collection_name string, fields []string, session *mongo.SessionContext) (map[string]interface{}, error)
 }

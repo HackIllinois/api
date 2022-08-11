@@ -79,10 +79,10 @@ func AddUserRole(id string, role string) error {
 		roles = append(roles, role)
 	}
 
-	err = db.Update("roles", selector, &models.UserRoles{
+	err = db.Replace("roles", selector, &models.UserRoles{
 		ID:    id,
 		Roles: roles,
-	}, nil)
+	}, false, nil)
 
 	return err
 }
@@ -107,10 +107,10 @@ func RemoveUserRole(id string, role string) error {
 		return errors.New("User does not have specified role")
 	}
 
-	err = db.Update("roles", selector, &models.UserRoles{
+	err = db.Replace("roles", selector, &models.UserRoles{
 		ID:    id,
 		Roles: roles,
-	}, nil)
+	}, false, nil)
 
 	return err
 }

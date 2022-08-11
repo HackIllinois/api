@@ -8,7 +8,6 @@ import (
 	"github.com/HackIllinois/api/common/config"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -157,7 +156,7 @@ func (db *MongoDatabase) FindOneAndDelete(collection_name string, query interfac
 	return convertMgoError(err)
 }
 
-func (db *MongoDatabase) FindOneAndUpdate(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, session *mongo.SessionContext) error {
+func (db *MongoDatabase) FindOneAndUpdate(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, upsert bool, session *mongo.SessionContext) error {
 	var s *mongo.Session
 	if session == nil {
 		var err error
@@ -173,16 +172,46 @@ func (db *MongoDatabase) FindOneAndUpdate(collection_name string, query interfac
 	}
 
 	query = nilToEmptyBson(query)
-	update = addReplaceWrapper(update)
 
 	ret_doc_opt := options.Before
 	if return_new_doc {
 		ret_doc_opt = options.After
 	}
 
-	opts := options.FindOneAndUpdate().SetReturnDocument(ret_doc_opt)
+	opts := options.FindOneAndUpdate().SetReturnDocument(ret_doc_opt).SetUpsert(upsert)
 
 	res := db.client.Database(db.name).Collection(collection_name).FindOneAndUpdate(*session, query, update, opts)
+
+	err := res.Decode(result)
+
+	return convertMgoError(err)
+}
+
+func (db *MongoDatabase) FindOneAndReplace(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, upsert bool, session *mongo.SessionContext) error {
+	var s *mongo.Session
+	if session == nil {
+		var err error
+		s, err = db.GetSession()
+
+		if err != nil {
+			return convertMgoError(err)
+		}
+
+		defer (*s).EndSession(context.TODO())
+		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		session = &sess_ctx
+	}
+
+	query = nilToEmptyBson(query)
+
+	ret_doc_opt := options.Before
+	if return_new_doc {
+		ret_doc_opt = options.After
+	}
+
+	opts := options.FindOneAndReplace().SetReturnDocument(ret_doc_opt).SetUpsert(upsert)
+
+	res := db.client.Database(db.name).Collection(collection_name).FindOneAndReplace(*session, query, update, opts)
 
 	err := res.Decode(result)
 
@@ -362,7 +391,6 @@ func (db *MongoDatabase) Upsert(collection_name string, selector interface{}, up
 	}
 
 	selector = nilToEmptyBson(selector)
-	update = addReplaceWrapper(update)
 
 	options := options.Update().SetUpsert(true)
 
@@ -399,7 +427,6 @@ func (db *MongoDatabase) Update(collection_name string, selector interface{}, up
 	}
 
 	selector = nilToEmptyBson(selector)
-	update = addReplaceWrapper(update)
 
 	res, err := db.client.Database(db.name).Collection(collection_name).UpdateOne(*session, selector, update)
 
@@ -433,7 +460,6 @@ func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{},
 	}
 
 	selector = nilToEmptyBson(selector)
-	update = addReplaceWrapper(update)
 
 	res, err := db.client.Database(db.name).Collection(collection_name).UpdateMany(*session, selector, update)
 
@@ -452,7 +478,7 @@ func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{},
 /*
 	Finds an item based on the given selector and replaces it with the data in update
 */
-func (db *MongoDatabase) Replace(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) error {
+func (db *MongoDatabase) Replace(collection_name string, selector interface{}, update interface{}, upsert bool, session *mongo.SessionContext) error {
 	var s *mongo.Session
 	if session == nil {
 		var err error
@@ -469,13 +495,15 @@ func (db *MongoDatabase) Replace(collection_name string, selector interface{}, u
 
 	selector = nilToEmptyBson(selector)
 
-	res, err := db.client.Database(db.name).Collection(collection_name).ReplaceOne(*session, selector, update)
+	options := options.Replace().SetUpsert(upsert)
+
+	res, err := db.client.Database(db.name).Collection(collection_name).ReplaceOne(*session, selector, update, options)
 
 	if err != nil {
 		return convertMgoError(err)
 	}
 
-	if res.MatchedCount == 0 {
+	if res.MatchedCount == 0 && !upsert {
 		return ErrNotFound
 	}
 
@@ -554,23 +582,6 @@ func (db *MongoDatabase) GetStats(collection_name string, fields []string, sessi
 	stats["count"] = count
 
 	return stats, nil
-}
-
-/*
-	Adds the $replaceWith update operator to make passing in direct structs safe to use
-	($replaceWith is effectlively the behavior we used whenever updating an item)
-*/
-func addReplaceWrapper(update interface{}) interface{} {
-	// TODO: Right now, we are using bson.M as the main type to use $ operators, but
-	// it's probably better to just make this a separate type
-	switch update.(type) {
-	case nil:
-		return bson.D{}
-	case *primitive.M:
-		return update
-	default:
-		return bson.A{bson.D{{"$replaceWith", update}}}
-	}
 }
 
 /*

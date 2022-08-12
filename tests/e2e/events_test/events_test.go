@@ -84,6 +84,16 @@ func ResetDatabase() {
 			Keys:    bson.M{"eventid": 1},
 			Options: options.Index().SetUnique(true),
 		})
+
+		db.Collection("usertrackers").Indexes().CreateOne(context.Background(), mongo.IndexModel{
+			Keys:    bson.M{"userid": 1},
+			Options: options.Index().SetUnique(true),
+		})
+
+		db.Collection("favorites").Indexes().CreateOne(context.Background(), mongo.IndexModel{
+			Keys:    bson.M{"id": 1},
+			Options: options.Index().SetUnique(true),
+		})
 	}
 }
 
@@ -135,11 +145,22 @@ func CreateEvents() {
 	}
 	event_tracker2 := event_models.EventTracker{
 		EventID: "testeventid67890",
-		Users:   []string{},
+		Users: []string{
+			"localadmin",
+		},
 	}
 
 	client.Database(events_db_name).Collection("eventtrackers").InsertOne(context.Background(), event_tracker1)
 	client.Database(events_db_name).Collection("eventtrackers").InsertOne(context.Background(), event_tracker2)
+
+	user_tracker := event_models.UserTracker{
+		UserID: "localadmin",
+		Events: []string{
+			"testeventid67890",
+		},
+	}
+
+	client.Database(events_db_name).Collection("usertrackers").InsertOne(context.Background(), user_tracker)
 
 	event_code1 := event_models.EventCode{
 		ID:         "testeventid12345",
@@ -182,6 +203,7 @@ func ClearProfiles() {
 func ClearEvents() {
 	client.Database(events_db_name).Collection("events").DeleteMany(context.Background(), bson.D{})
 	client.Database(events_db_name).Collection("eventtrackers").DeleteMany(context.Background(), bson.D{})
+	client.Database(events_db_name).Collection("usertrackers").DeleteMany(context.Background(), bson.D{})
 	client.Database(events_db_name).Collection("eventcodes").DeleteMany(context.Background(), bson.D{})
 	client.Database(events_db_name).Collection("favorites").DeleteMany(context.Background(), bson.D{})
 }

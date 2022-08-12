@@ -1093,8 +1093,8 @@ func TestGetFavoriteEventsNormal(t *testing.T) {
 	favorite_events := event_models.EventFavorites{
 		ID: "localadmin",
 		Events: []string{
-			"event1",
-			"event2",
+			"testeventid12345",
+			"testeventid67890",
 		},
 	}
 
@@ -1150,15 +1150,15 @@ func TestDeleteFavoriteEventsNormal(t *testing.T) {
 	favorite_events := event_models.EventFavorites{
 		ID: "localadmin",
 		Events: []string{
-			"event1",
-			"event2",
+			"testeventid12345",
+			"testeventid67890",
 		},
 	}
 
 	client.Database(events_db_name).Collection("favorites").InsertOne(context.Background(), favorite_events)
 
 	req := event_models.EventFavoriteModification{
-		EventID: "event2",
+		EventID: "testeventid67890",
 	}
 	recieved_favorites := event_models.EventFavorites{}
 	response, err := user_client.New().Delete("/event/favorite/").BodyJSON(req).ReceiveSuccess(&recieved_favorites)
@@ -1175,12 +1175,12 @@ func TestDeleteFavoriteEventsNormal(t *testing.T) {
 	expected_favorites := event_models.EventFavorites{
 		ID: "localadmin",
 		Events: []string{
-			"event1",
+			"testeventid12345",
 		},
 	}
 
 	if !reflect.DeepEqual(recieved_favorites, expected_favorites) {
-		t.Fatalf("Wrong result received from database. Expected %v, got %v", expected_favorites, recieved_favorites)
+		t.Fatalf("Wrong result received. Expected %v, got %v", expected_favorites, recieved_favorites)
 	}
 
 	res := client.Database(events_db_name).Collection("favorites").FindOne(context.Background(), bson.M{"id": "localadmin"})
@@ -1204,8 +1204,8 @@ func TestDeleteFavoriteEventsNone(t *testing.T) {
 	favorite_events := event_models.EventFavorites{
 		ID: "localadmin",
 		Events: []string{
-			"event1",
-			"event2",
+			"testeventid12345",
+			"testeventid67890",
 		},
 	}
 

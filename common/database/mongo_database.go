@@ -59,7 +59,9 @@ func (db *MongoDatabase) Connect(host string) error {
 
 	client_options.SetMaxPoolSize(25) // default is 100, but this was set to 25 by us on the old driver
 
-	client, err := mongo.Connect(context.TODO(), client_options)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+	client, err := mongo.Connect(ctx, client_options)
 
 	if err != nil {
 		// failed to connect to database
@@ -75,7 +77,7 @@ func (db *MongoDatabase) Connect(host string) error {
 	Close the global session to the given mongo database
 */
 func (db *MongoDatabase) Close() {
-	db.client.Disconnect(context.TODO())
+	db.client.Disconnect(context.Background())
 }
 
 func (db *MongoDatabase) GetRaw() *mongo.Client {
@@ -106,17 +108,17 @@ func (db *MongoDatabase) GetNewContext() (context.Context, context.CancelFunc) {
 	Find one element matching the given query parameters
 */
 func (db *MongoDatabase) FindOne(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 
@@ -133,17 +135,17 @@ func (db *MongoDatabase) FindOne(collection_name string, query interface{}, resu
 	Finds and deletes one element matching the given query parameters atomically
 */
 func (db *MongoDatabase) FindOneAndDelete(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 
@@ -157,17 +159,17 @@ func (db *MongoDatabase) FindOneAndDelete(collection_name string, query interfac
 }
 
 func (db *MongoDatabase) FindOneAndUpdate(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, upsert bool, session *mongo.SessionContext) error {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 
@@ -188,17 +190,17 @@ func (db *MongoDatabase) FindOneAndUpdate(collection_name string, query interfac
 }
 
 func (db *MongoDatabase) FindOneAndReplace(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, upsert bool, session *mongo.SessionContext) error {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 
@@ -222,17 +224,17 @@ func (db *MongoDatabase) FindOneAndReplace(collection_name string, query interfa
 	Find all elements matching the given query parameters
 */
 func (db *MongoDatabase) FindAll(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 
@@ -244,7 +246,7 @@ func (db *MongoDatabase) FindAll(collection_name string, query interface{}, resu
 		return convertMgoError(err)
 	}
 
-	if err = cursor.All(context.TODO(), result); err != nil {
+	if err = cursor.All(*session, result); err != nil {
 		return convertMgoError(err)
 	}
 
@@ -256,17 +258,17 @@ func (db *MongoDatabase) FindAll(collection_name string, query interface{}, resu
         The first sort field is highest priority, each subsequent field breaks ties
 */
 func (db *MongoDatabase) FindAllSorted(collection_name string, query interface{}, sort_fields bson.D, result interface{}, session *mongo.SessionContext) error {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 
@@ -280,7 +282,7 @@ func (db *MongoDatabase) FindAllSorted(collection_name string, query interface{}
 		return convertMgoError(err)
 	}
 
-	if err = cursor.All(context.TODO(), result); err != nil {
+	if err = cursor.All(*session, result); err != nil {
 		return convertMgoError(err)
 	}
 
@@ -291,17 +293,17 @@ func (db *MongoDatabase) FindAllSorted(collection_name string, query interface{}
 	Remove one element matching the given query parameters
 */
 func (db *MongoDatabase) RemoveOne(collection_name string, query interface{}, session *mongo.SessionContext) error {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 
@@ -316,17 +318,17 @@ func (db *MongoDatabase) RemoveOne(collection_name string, query interface{}, se
 	Remove all elements matching the given query parameters
 */
 func (db *MongoDatabase) RemoveAll(collection_name string, query interface{}, session *mongo.SessionContext) (*ChangeResults, error) {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return nil, convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 
@@ -350,17 +352,17 @@ func (db *MongoDatabase) RemoveAll(collection_name string, query interface{}, se
 	Insert the given item into the collection
 */
 func (db *MongoDatabase) Insert(collection_name string, item interface{}, session *mongo.SessionContext) error {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 
@@ -376,17 +378,17 @@ func (db *MongoDatabase) Insert(collection_name string, item interface{}, sessio
 	if the item exists, it is updated with the given values, else a new item with those values is created.
 */
 func (db *MongoDatabase) Upsert(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) (*ChangeResults, error) {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return nil, convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 
@@ -412,17 +414,17 @@ func (db *MongoDatabase) Upsert(collection_name string, selector interface{}, up
 	Finds an item based on the given selector and updates it with the data in update
 */
 func (db *MongoDatabase) Update(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) error {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 
@@ -445,17 +447,17 @@ func (db *MongoDatabase) Update(collection_name string, selector interface{}, up
 	Finds all items based on the given selector and updates them with the data in update
 */
 func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) (*ChangeResults, error) {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return nil, convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 
@@ -479,17 +481,17 @@ func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{},
 	Finds an item based on the given selector and replaces it with the data in update
 */
 func (db *MongoDatabase) Replace(collection_name string, selector interface{}, update interface{}, upsert bool, session *mongo.SessionContext) error {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 
@@ -514,17 +516,17 @@ func (db *MongoDatabase) Replace(collection_name string, selector interface{}, u
 	Drops the entire database
 */
 func (db *MongoDatabase) DropDatabase(session *mongo.SessionContext) error {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 
@@ -537,17 +539,17 @@ func (db *MongoDatabase) DropDatabase(session *mongo.SessionContext) error {
 	Returns a map of statistics for a given collection
 */
 func (db *MongoDatabase) GetStats(collection_name string, fields []string, session *mongo.SessionContext) (map[string]interface{}, error) {
-	var s *mongo.Session
 	if session == nil {
-		var err error
-		s, err = db.GetSession()
+		s, err := db.GetSession()
 
 		if err != nil {
 			return nil, convertMgoError(err)
 		}
 
-		defer (*s).EndSession(context.TODO())
-		sess_ctx := mongo.NewSessionContext(context.TODO(), *s)
+		ctx, cancel := db.GetNewContext()
+		defer cancel()
+		defer (*s).EndSession(ctx)
+		sess_ctx := mongo.NewSessionContext(ctx, *s)
 		session = &sess_ctx
 	}
 

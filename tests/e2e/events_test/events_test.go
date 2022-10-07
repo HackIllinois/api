@@ -2,6 +2,7 @@
 package tests
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"reflect"
@@ -11,11 +12,11 @@ import (
 	event_models "github.com/HackIllinois/api/services/event/models"
 	"github.com/HackIllinois/api/tests/common"
 	"github.com/dghubble/sling"
-	"gopkg.in/mgo.v2"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var staff_client *sling.Sling
-var session *mgo.Session
+var client *mongo.Client
 
 func TestMain(m *testing.M) {
 
@@ -28,14 +29,14 @@ func TestMain(m *testing.M) {
 
 	staff_client = common.GetSlingClient("Staff")
 
-	session = common.GetLocalMongoSession()
+	client = common.GetLocalMongoSession()
 
 	events_db_name, err := cfg.Get("EVENT_DB_NAME")
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
 	}
-	session.DB(events_db_name).DropDatabase()
+	client.Database(events_db_name).Drop(context.Background())
 
 	return_code := m.Run()
 	os.Exit(return_code)

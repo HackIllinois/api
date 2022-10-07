@@ -40,7 +40,7 @@ func GetUserRegistration(id string) (*models.UserRegistration, error) {
 	query := database.QuerySelector{"id": id}
 
 	var user_registration models.UserRegistration
-	err := db.FindOne("attendees", query, &user_registration)
+	err := db.FindOne("attendees", query, &user_registration, nil)
 
 	if err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func CreateUserRegistration(id string, user_registration models.UserRegistration
 		return errors.New("Registration already exists.")
 	}
 
-	err = db.Insert("attendees", &user_registration)
+	err = db.Insert("attendees", &user_registration, nil)
 
 	return err
 }
@@ -85,7 +85,7 @@ func UpdateUserRegistration(id string, user_registration models.UserRegistration
 
 	selector := database.QuerySelector{"id": id}
 
-	err = db.Update("attendees", selector, &user_registration)
+	err = db.Replace("attendees", selector, &user_registration, false, nil)
 
 	return err
 }
@@ -127,7 +127,7 @@ func GetFilteredUserRegistrations(parameters map[string][]string) (*models.Filte
 	}
 
 	var filtered_registrations models.FilteredUserRegistrations
-	err = db.FindAll("attendees", query, &filtered_registrations.Registrations)
+	err = db.FindAll("attendees", query, &filtered_registrations.Registrations, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func GetMentorRegistration(id string) (*models.MentorRegistration, error) {
 	query := database.QuerySelector{"id": id}
 
 	var mentor_registration models.MentorRegistration
-	err := db.FindOne("mentors", query, &mentor_registration)
+	err := db.FindOne("mentors", query, &mentor_registration, nil)
 
 	if err != nil {
 		return nil, err
@@ -193,7 +193,7 @@ func CreateMentorRegistration(id string, mentor_registration models.MentorRegist
 		return errors.New("Registration already exists")
 	}
 
-	err = db.Insert("mentors", &mentor_registration)
+	err = db.Insert("mentors", &mentor_registration, nil)
 
 	return err
 }
@@ -210,7 +210,7 @@ func UpdateMentorRegistration(id string, mentor_registration models.MentorRegist
 
 	selector := database.QuerySelector{"id": id}
 
-	err = db.Update("mentors", selector, &mentor_registration)
+	err = db.Replace("mentors", selector, &mentor_registration, false, nil)
 
 	return err
 }
@@ -225,7 +225,7 @@ func GetFilteredMentorRegistrations(parameters map[string][]string) (*models.Fil
 	}
 
 	var filtered_registrations models.FilteredMentorRegistrations
-	err = db.FindAll("mentors", query, &filtered_registrations.Registrations)
+	err = db.FindAll("mentors", query, &filtered_registrations.Registrations, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -237,13 +237,13 @@ func GetFilteredMentorRegistrations(parameters map[string][]string) (*models.Fil
 	Returns all registration stats
 */
 func GetStats() (map[string]interface{}, error) {
-	attendee_stats, err := db.GetStats("attendees", config.REGISTRATION_STAT_FIELDS)
+	attendee_stats, err := db.GetStats("attendees", config.REGISTRATION_STAT_FIELDS, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	mentor_stats, err := db.GetStats("mentors", []string{})
+	mentor_stats, err := db.GetStats("mentors", []string{}, nil)
 
 	if err != nil {
 		return nil, err

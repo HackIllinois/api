@@ -65,7 +65,7 @@ func SetupTestDB(t *testing.T) {
 				ExpiresAt: 5,
 			},
 		},
-	})
+	}, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -76,7 +76,7 @@ func SetupTestDB(t *testing.T) {
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	err := db.DropDatabase()
+	err := db.DropDatabase(nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -210,7 +210,7 @@ func TestGetFilteredDecisionsService(t *testing.T) {
 			},
 		},
 	}
-	err := db.Insert("decision", &decision2)
+	err := db.Insert("decision", &decision2, nil)
 
 	if err != nil {
 		t.Fatal(err)

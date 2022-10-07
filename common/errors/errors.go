@@ -3,9 +3,10 @@ package errors
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/HackIllinois/api/common/config"
 	"net/http"
 	"runtime/debug"
+
+	"github.com/HackIllinois/api/common/config"
 )
 
 /**
@@ -21,6 +22,10 @@ type ApiError struct {
 	Type     string `json:"type"`
 	Message  string `json:"message"`
 	RawError string `json:"raw_error,omitempty"`
+}
+
+func (err *ApiError) Error() string {
+	return err.Message
 }
 
 type ErrorLogEntry struct {

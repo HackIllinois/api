@@ -41,7 +41,7 @@ func GetProject(id string) (*models.Project, error) {
 	}
 
 	var project models.Project
-	err := db.FindOne("projects", query, &project)
+	err := db.FindOne("projects", query, &project, nil)
 
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func DeleteProject(id string) (*models.Project, error) {
 
 	// Remove project from projects database
 
-	err = db.RemoveOne("projects", query)
+	err = db.RemoveOne("projects", query, nil)
 
 	if err != nil {
 		return nil, err
@@ -86,7 +86,7 @@ func DeleteProject(id string) (*models.Project, error) {
 func GetAllProjects() (*models.ProjectList, error) {
 	projects := []models.Project{}
 	// nil implies there are no filters on the query, therefore everything in the "projects" collection is returned.
-	err := db.FindAll("projects", nil, &projects)
+	err := db.FindAll("projects", nil, &projects, nil)
 
 	if err != nil {
 		return nil, err
@@ -111,7 +111,7 @@ func GetFilteredProjects(parameters map[string][]string) (*models.ProjectList, e
 
 	projects := []models.Project{}
 	filtered_projects := models.ProjectList{Projects: projects}
-	err = db.FindAll("projects", query, &filtered_projects.Projects)
+	err = db.FindAll("projects", query, &filtered_projects.Projects, nil)
 
 	if err != nil {
 		return nil, err
@@ -139,7 +139,7 @@ func CreateProject(id string, project models.Project) error {
 		return errors.New("Project already exists")
 	}
 
-	err = db.Insert("projects", &project)
+	err = db.Insert("projects", &project, nil)
 
 	return err
 }
@@ -158,7 +158,7 @@ func UpdateProject(id string, project models.Project) error {
 		"id": id,
 	}
 
-	err = db.Update("projects", selector, &project)
+	err = db.Replace("projects", selector, &project, false, nil)
 
 	return err
 }
@@ -172,20 +172,20 @@ func GetProjectFavorites(id string) (*models.ProjectFavorites, error) {
 	}
 
 	var project_favorites models.ProjectFavorites
-	err := db.FindOne("favorites", query, &project_favorites)
+	err := db.FindOne("favorites", query, &project_favorites, nil)
 
 	if err != nil {
 		if err == database.ErrNotFound {
 			err = db.Insert("favorites", &models.ProjectFavorites{
 				ID:       id,
 				Projects: []string{},
-			})
+			}, nil)
 
 			if err != nil {
 				return nil, err
 			}
 
-			err = db.FindOne("favorites", query, &project_favorites)
+			err = db.FindOne("favorites", query, &project_favorites, nil)
 
 			if err != nil {
 				return nil, err
@@ -222,7 +222,7 @@ func AddProjectFavorite(id string, project string) error {
 		project_favorites.Projects = append(project_favorites.Projects, project)
 	}
 
-	err = db.Update("favorites", selector, project_favorites)
+	err = db.Replace("favorites", selector, project_favorites, false, nil)
 
 	return err
 }
@@ -247,7 +247,7 @@ func RemoveProjectFavorite(id string, project string) error {
 		return errors.New("User's project favorites does not have specified project")
 	}
 
-	err = db.Update("favorites", selector, project_favorites)
+	err = db.Replace("favorites", selector, project_favorites, false, nil)
 
 	return err
 }

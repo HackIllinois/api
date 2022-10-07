@@ -1,13 +1,15 @@
 package common
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
 
 	"github.com/dghubble/sling"
-	"gopkg.in/mgo.v2"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func formatCommand(command string) *exec.Cmd {
@@ -54,11 +56,12 @@ func GetSlingClient(role string) *sling.Sling {
 	return sling.New().Base("http://localhost:8000").Client(nil).Add("Authorization", token)
 }
 
-func GetLocalMongoSession() *mgo.Session {
-	session, err := mgo.Dial("localhost")
+func GetLocalMongoSession() *mongo.Client {
+	client_options := options.Client().ApplyURI("mongodb://localhost:27017")
+	client, err := mongo.Connect(context.Background(), client_options)
 	if err != nil {
 		fmt.Println("Failed to connect to database:", err)
 		os.Exit(1)
 	}
-	return session
+	return client
 }

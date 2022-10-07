@@ -69,7 +69,7 @@ func SetupTestDB(t *testing.T) {
 		Points: 10,
 	}
 
-	err := db.Insert("events", &event)
+	err := db.Insert("events", &event, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -80,7 +80,7 @@ func SetupTestDB(t *testing.T) {
 		Users:   []string{},
 	}
 
-	err = db.Insert("eventtrackers", &event_tracker)
+	err = db.Insert("eventtrackers", &event_tracker, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -91,7 +91,7 @@ func SetupTestDB(t *testing.T) {
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	err := db.DropDatabase()
+	err := db.DropDatabase(nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -122,7 +122,7 @@ func TestGetAllEventsService(t *testing.T) {
 		},
 	}
 
-	err := db.Insert("events", &event)
+	err := db.Insert("events", &event, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -181,7 +181,7 @@ func TestGetAllEventsService(t *testing.T) {
 		t.Errorf("Wrong event list. Expected %v, got %v", expected_event_list, actual_event_list)
 	}
 
-	db.RemoveAll("events", nil)
+	db.RemoveAll("events", nil, nil)
 
 	actual_event_list, err = service.GetAllEvents()
 
@@ -227,7 +227,7 @@ func TestGetFilteredEventsService(t *testing.T) {
 		Points: 0,
 	}
 
-	err := db.Insert("events", &event)
+	err := db.Insert("events", &event, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -328,7 +328,7 @@ func TestGetFilteredEventsService(t *testing.T) {
 		t.Errorf("Wrong event list. Expected %v, got %v", expected_event_list, actual_event_list)
 	}
 
-	db.RemoveAll("events", nil)
+	db.RemoveAll("events", nil, nil)
 
 	// Filter again, with no events remaining
 	actual_event_list, err = service.GetFilteredEvents(parameters)
@@ -556,7 +556,7 @@ func TestDeleteEventService(t *testing.T) {
 
 	// Try to find the event in the usertrackers db
 	var user_trackers []models.UserTracker
-	db.FindAll("usertrackers", nil, &user_trackers)
+	db.FindAll("usertrackers", nil, &user_trackers, nil)
 
 	for _, user_tracker := range user_trackers {
 		for _, event := range user_tracker.Events {

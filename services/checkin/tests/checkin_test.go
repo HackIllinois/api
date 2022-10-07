@@ -2,13 +2,14 @@ package tests
 
 import (
 	"fmt"
+	"os"
+	"reflect"
+	"testing"
+
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/checkin/config"
 	"github.com/HackIllinois/api/services/checkin/models"
 	"github.com/HackIllinois/api/services/checkin/service"
-	"os"
-	"reflect"
-	"testing"
 )
 
 var db database.Database
@@ -52,7 +53,7 @@ func SetupTestDB(t *testing.T) {
 		RsvpData:        map[string]interface{}{},
 	}
 
-	err := db.Insert("checkins", &checkin)
+	err := db.Insert("checkins", &checkin, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -63,7 +64,7 @@ func SetupTestDB(t *testing.T) {
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	err := db.DropDatabase()
+	err := db.DropDatabase(nil)
 
 	if err != nil {
 		t.Fatal(err)

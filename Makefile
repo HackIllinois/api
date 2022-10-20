@@ -66,7 +66,7 @@ run:
 # Runs the API with each service in a separate process using the test config
 .PHONY: run-test
 run-test:
-	@$(REPO_ROOT)/scripts/run-test.sh &
+	@$(REPO_ROOT)/scripts/run-test.sh
 
 # Runs the API with all services in a single process
 .PHONY: run-single
@@ -108,10 +108,7 @@ container-push:
 docs:
 	$(MAKE) -C $(REPO_ROOT)/documentation build
 
+# Starts up the API on the test config and runs the E2E integration tests
 .PHONY: integration-test
 integration-test:
-	@echo "Beginning integration tests";
-	@echo "Checking if the API is running...";
-	@curl --silent --output /dev/null localhost:8000 || (echo "Failed to connect to the API. Is it running? If it's not, start it with 'make run-test'"; exit 1;)
-	@echo "Running end-to-end tests";
-	@find $(REPO_ROOT)/tests/e2e/ -maxdepth 1 -type d \( ! -name . \) -exec bash -c "cd '{}' && HI_CONFIG=file://$(REPO_ROOT)/config/test_config.json go test -v " \;
+	@$(REPO_ROOT)/scripts/run-integration.sh || exit 1;

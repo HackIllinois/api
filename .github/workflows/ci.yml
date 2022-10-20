@@ -45,8 +45,11 @@ jobs:
       - name: build api
         run: make all
 
-      - name: run tests
+      - name: run unit tests
         run: make test
+
+      - name: run E2E tests
+        run: make integration-test
 
   deploy:
     runs-on: ubuntu-18.04

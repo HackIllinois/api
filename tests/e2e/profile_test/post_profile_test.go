@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"net/http"
 	"testing"
 
 	profile_models "github.com/HackIllinois/api/services/profile/models"
@@ -24,7 +25,7 @@ func TestPostProfile(t *testing.T) {
 		t.Errorf("Unable to make request")
 	}
 
-	if response.StatusCode != 200 {
+	if response.StatusCode != http.StatusOK {
 		t.Errorf("Request returned HTTP error %d", response.StatusCode)
 	}
 }

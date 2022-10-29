@@ -3,6 +3,7 @@ package tests
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"reflect"
 	"testing"
 
@@ -29,7 +30,7 @@ func TestGetProfile(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unable to make request")
 	}
-	if response.StatusCode != 200 {
+	if response.StatusCode != http.StatusOK {
 		t.Errorf("Request returned HTTP error %d", response.StatusCode)
 	}
 	if !reflect.DeepEqual(recieved_profile, profile_info) {

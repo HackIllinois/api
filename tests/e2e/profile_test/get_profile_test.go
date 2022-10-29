@@ -9,7 +9,7 @@ import (
 	profile_models "github.com/HackIllinois/api/services/profile/models"
 )
 
-func GetProfileTest(t *testing.T) {
+func TestGetProfile(t *testing.T) {
 	profile_info := profile_models.Profile{
 		ID:        "12345",
 		FirstName: "John",
@@ -19,7 +19,7 @@ func GetProfileTest(t *testing.T) {
 		Discord:   "discord",
 		AvatarUrl: "url",
 	}
-	client.Database(profile_db_name).Collection("profile").InsertOne(context.Background(), profile_info)
+	client.Database(profile_db_name).Collection("profiles").InsertOne(context.Background(), profile_info)
 
 	endpoint_address := fmt.Sprintf("/profile/%s/", "12345")
 

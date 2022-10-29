@@ -29,7 +29,7 @@ func TestMain(m *testing.M) {
 
 	client = common.GetLocalMongoSession()
 
-	profile_db_name, err := cfg.Get("PROFILE_DB_NAME")
+	profile_db_name, err = cfg.Get("PROFILE_DB_NAME")
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)

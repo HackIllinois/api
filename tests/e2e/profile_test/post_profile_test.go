@@ -6,7 +6,7 @@ import (
 	profile_models "github.com/HackIllinois/api/services/profile/models"
 )
 
-func PostProfileTest(t *testing.T) {
+func TestPostProfile(t *testing.T) {
 	profile_info := profile_models.Profile{
 		ID:        "12345",
 		FirstName: "John",

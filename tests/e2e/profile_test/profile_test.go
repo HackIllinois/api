@@ -15,6 +15,7 @@ import (
 var admin_client *sling.Sling
 var client *mongo.Client
 var profile_db_name string
+var unauthenticated_client *sling.Sling
 
 func TestMain(m *testing.M) {
 
@@ -26,6 +27,7 @@ func TestMain(m *testing.M) {
 	}
 
 	admin_client = common.GetSlingClient("Admin")
+	unauthenticated_client = sling.New().Base("http://localhost:8000").Client(nil).Add("Authorization", "FAKE_TOKEN")
 
 	client = common.GetLocalMongoSession()
 

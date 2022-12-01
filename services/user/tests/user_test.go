@@ -44,7 +44,7 @@ func TestMain(m *testing.M) {
 }
 
 /*
-	Initialize database with test user info
+Initialize database with test user info
 */
 func SetupTestDB(t *testing.T) {
 	err := db.Insert("info", &models.UserInfo{
@@ -69,7 +69,7 @@ func SetupTestDB(t *testing.T) {
 }
 
 /*
-  Initialize db for sortby filter tests
+Initialize db for sortby filter tests
 */
 func SetupFilterTestDB(t *testing.T) {
 	err := db.Insert("info", &models.UserInfo{
@@ -113,7 +113,7 @@ func SetupFilterTestDB(t *testing.T) {
 }
 
 /*
-  Initialize db for pagination, filter tests
+Initialize db for pagination, filter tests
 */
 func SetupPaginationDB(t *testing.T) {
 	err := db.Insert("info", &models.UserInfo{
@@ -152,7 +152,7 @@ func SetupPaginationDB(t *testing.T) {
 }
 
 /*
-	Drop test db
+Drop test db
 */
 func CleanupTestDB(t *testing.T) {
 	err := db.DropDatabase(nil)
@@ -163,7 +163,7 @@ func CleanupTestDB(t *testing.T) {
 }
 
 /*
-	Service level test for getting user info from db
+Service level test for getting user info from db
 */
 func TestGetUserInfoService(t *testing.T) {
 	SetupTestDB(t)
@@ -188,7 +188,7 @@ func TestGetUserInfoService(t *testing.T) {
 }
 
 /*
-	Service level test for setting user info in the db
+Service level test for setting user info in the db
 */
 func TestSetUserInfoService(t *testing.T) {
 	SetupTestDB(t)
@@ -223,7 +223,7 @@ func TestSetUserInfoService(t *testing.T) {
 }
 
 /*
-	Service level test for getting filtered user info from db
+Service level test for getting filtered user info from db
 */
 func TestGetFilteredUserInfoService(t *testing.T) {
 	SetupTestDB(t)
@@ -261,7 +261,7 @@ func TestGetFilteredUserInfoService(t *testing.T) {
 }
 
 /*
-  Test Sortby parameter
+Test Sortby parameter
 */
 func TestGetFilteredUserInfoWithSortingService(t *testing.T) {
 	SetupFilterTestDB(t)
@@ -350,7 +350,7 @@ func TestGetFilteredUserInfoWithSortingService(t *testing.T) {
 }
 
 /*
-  Test Pagination parameter
+Test Pagination parameter
 */
 func TestGetFilteredUserInfoServicePagination(t *testing.T) {
 	SetupPaginationDB(t)
@@ -472,7 +472,7 @@ func TestGetFilteredUserInfoServicePagination(t *testing.T) {
 }
 
 /*
-	Service level test for generating QR code URI
+Service level test for generating QR code URI
 */
 func TestGetQrInfo(t *testing.T) {
 	SetupTestDB(t)

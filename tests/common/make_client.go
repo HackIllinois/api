@@ -32,26 +32,31 @@ func getProjectRootPath() string {
 
 // Returns a Sling client configured with the desired role
 func GetSlingClient(role string) *sling.Sling {
-	root_path := getProjectRootPath()
 
-	// accountgen
-	accountgen_cmd := formatCommand(fmt.Sprintf("bin/hackillinois-utility-accountgen -role %v", role))
-	accountgen_cmd.Dir = root_path
-	_, err := accountgen_cmd.Output()
-	if err != nil {
-		fmt.Printf("ERROR: %v\n", err)
+	token := "FAKE_TOKEN" // Unauthenticated by default
+
+	if role != "Unauthenticated" {
+		root_path := getProjectRootPath()
+
+		// accountgen
+		accountgen_cmd := formatCommand(fmt.Sprintf("bin/hackillinois-utility-accountgen -role %v", role))
+		accountgen_cmd.Dir = root_path
+		_, err := accountgen_cmd.Output()
+		if err != nil {
+			fmt.Printf("ERROR: %v\n", err)
+		}
+
+		// tokengen
+		tokengen_cmd := formatCommand(fmt.Sprintf("bin/hackillinois-utility-tokengen -role %v", role))
+		tokengen_cmd.Dir = root_path
+		out, err := tokengen_cmd.Output()
+		if err != nil {
+			fmt.Printf("ERROR: %v\n", err)
+		}
+
+		out_lines := string(out)
+		token = strings.Trim(strings.Split(out_lines, "Token:")[1], "\n")
 	}
-
-	// tokengen
-	tokengen_cmd := formatCommand(fmt.Sprintf("bin/hackillinois-utility-tokengen -role %v", role))
-	tokengen_cmd.Dir = root_path
-	out, err := tokengen_cmd.Output()
-	if err != nil {
-		fmt.Printf("ERROR: %v\n", err)
-	}
-
-	out_lines := string(out)
-	token := strings.Trim(strings.Split(out_lines, "Token:")[1], "\n")
 
 	return sling.New().Base("http://localhost:8000").Client(nil).Add("Authorization", token)
 }

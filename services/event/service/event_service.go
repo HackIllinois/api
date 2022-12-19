@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"reflect"
 	"time"
 
 	"github.com/HackIllinois/api/common/database"
@@ -37,12 +38,17 @@ func Initialize() error {
 /*
 	Returns the event with the given id
 */
-func GetEvent(id string) (*models.Event, error) {
+func GetEvent[T models.Event](id string) (*T, error) {
 	query := database.QuerySelector{
 		"id": id,
 	}
 
-	var event models.Event
+	switch reflect.TypeOf(*new(T)).Name() {
+	case reflect.TypeOf(*new(models.EventPublic)).Name():
+		query["isprivate"] = false
+	}
+
+	var event T
 	err := db.FindOne("events", query, &event, nil)
 
 	if err != nil {
@@ -57,11 +63,11 @@ func GetEvent(id string) (*models.Event, error) {
 	Removes the event from event trackers and every user's tracker.
 	Returns the event that was deleted.
 */
-func DeleteEvent(id string) (*models.Event, error) {
+func DeleteEvent(id string) (*models.EventDB, error) {
 
 	// Gets event to be able to return it later
 
-	event, err := GetEvent(id)
+	event, err := GetEvent[models.EventDB](id)
 
 	if err != nil {
 		return nil, err
@@ -108,16 +114,25 @@ func DeleteEvent(id string) (*models.Event, error) {
 /*
 	Returns all the events
 */
-func GetAllEvents() (*models.EventList, error) {
-	events := []models.Event{}
+func GetAllEvents[T models.Event]() (*models.EventList[T], error) {
+	var query database.QuerySelector = nil
+
+	switch reflect.TypeOf(*new(T)).Name() {
+	case reflect.TypeOf(*new(models.EventPublic)).Name():
+		query = database.QuerySelector{
+			"isprivate": false,
+		}
+	}
+
+	events := []T{}
 	// nil implies there are no filters on the query, therefore everything in the "events" collection is returned.
-	err := db.FindAll("events", nil, &events, nil)
+	err := db.FindAll("events", query, &events, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	event_list := models.EventList{
+	event_list := models.EventList[T]{
 		Events: events,
 	}
 
@@ -127,15 +142,20 @@ func GetAllEvents() (*models.EventList, error) {
 /*
 	Returns all the events
 */
-func GetFilteredEvents(parameters map[string][]string) (*models.EventList, error) {
-	query, err := database.CreateFilterQuery(parameters, models.Event{})
+func GetFilteredEvents[T models.Event](parameters map[string][]string) (*models.EventList[T], error) {
+	query, err := database.CreateFilterQuery(parameters, *new(T))
 
 	if err != nil {
 		return nil, err
 	}
 
-	events := []models.Event{}
-	filtered_events := models.EventList{Events: events}
+	switch reflect.TypeOf(*new(T)).Name() {
+	case reflect.TypeOf(*new(models.EventPublic)).Name():
+		query["isprivate"] = false
+	}
+
+	events := []T{}
+	filtered_events := models.EventList[T]{Events: events}
 	err = db.FindAll("events", query, &filtered_events.Events, nil)
 
 	if err != nil {
@@ -148,14 +168,14 @@ func GetFilteredEvents(parameters map[string][]string) (*models.EventList, error
 /*
 	Creates an event with the given id
 */
-func CreateEvent(id string, code string, event models.Event) error {
+func CreateEvent(id string, code string, event models.EventDB) error {
 	err := validate.Struct(event)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = GetEvent(id)
+	_, err = GetEvent[models.EventDB](id)
 
 	if err != database.ErrNotFound {
 		if err != nil {
@@ -195,7 +215,7 @@ func CreateEvent(id string, code string, event models.Event) error {
 /*
 	Updates the event with the given id
 */
-func UpdateEvent(id string, event models.Event) error {
+func UpdateEvent(id string, event models.EventDB) error {
 	err := validate.Struct(event)
 
 	if err != nil {
@@ -347,7 +367,7 @@ const PreEventCheckinIntervalInSeconds = PreEventCheckinIntervalInMinutes * 60
 	Returns true if the current time is between `PreEventCheckinIntervalInMinutes` number of minutes before the event, and the end of event.
 */
 func IsEventActive(event_id string) (bool, error) {
-	event, err := GetEvent(event_id)
+	event, err := GetEvent[models.EventDB](event_id)
 
 	if err != nil {
 		return false, err
@@ -407,7 +427,7 @@ func AddEventFavorite(id string, event string) error {
 		"id": id,
 	}
 
-	_, err := GetEvent(event)
+	_, err := GetEvent[models.EventPublic](event)
 
 	if err != nil {
 		return errors.New("Could not find event with the given id.")

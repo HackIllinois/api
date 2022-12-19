@@ -17,6 +17,8 @@ var PROFILE_SERVICE string
 
 var EVENT_CHECKIN_TIME_RESTRICTED bool
 
+var TOKEN_SECRET string
+
 func Initialize() error {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
 
@@ -61,6 +63,12 @@ func Initialize() error {
 	}
 
 	EVENT_CHECKIN_TIME_RESTRICTED = (checkin_time_res_str == "true")
+
+	TOKEN_SECRET, err = cfg_loader.Get("TOKEN_SECRET")
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

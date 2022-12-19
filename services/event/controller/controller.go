@@ -46,8 +46,16 @@ func SetupController(route *mux.Route) {
 */
 func GetEvent(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
+	is_staff := service.IsRequestFromStaffOrHigher(r)
 
-	event, err := service.GetEvent(id)
+	var event interface{}
+	var err error
+
+	if is_staff {
+		event, err = service.GetEvent[models.EventDB](id)
+	} else {
+		event, err = service.GetEvent[models.EventPublic](id)
+	}
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch the event details."))
@@ -79,7 +87,16 @@ func DeleteEvent(w http.ResponseWriter, r *http.Request) {
 	Endpoint to get all events
 */
 func GetAllEvents(w http.ResponseWriter, r *http.Request) {
-	event_list, err := service.GetAllEvents()
+	is_staff := service.IsRequestFromStaffOrHigher(r)
+
+	var event_list interface{}
+	var err error
+
+	if is_staff {
+		event_list, err = service.GetAllEvents[models.EventDB]()
+	} else {
+		event_list, err = service.GetAllEvents[models.EventPublic]()
+	}
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get all events."))
@@ -94,7 +111,16 @@ func GetAllEvents(w http.ResponseWriter, r *http.Request) {
 */
 func GetFilteredEvents(w http.ResponseWriter, r *http.Request) {
 	parameters := r.URL.Query()
-	event, err := service.GetFilteredEvents(parameters)
+	is_staff := service.IsRequestFromStaffOrHigher(r)
+
+	var event interface{}
+	var err error
+
+	if is_staff {
+		event, err = service.GetFilteredEvents[models.EventDB](parameters)
+	} else {
+		event, err = service.GetFilteredEvents[models.EventPublic](parameters)
+	}
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch filtered list of events."))
@@ -108,7 +134,7 @@ func GetFilteredEvents(w http.ResponseWriter, r *http.Request) {
 	Endpoint to create an event
 */
 func CreateEvent(w http.ResponseWriter, r *http.Request) {
-	var event models.Event
+	var event models.EventDB
 	json.NewDecoder(r.Body).Decode(&event)
 
 	event.ID = utils.GenerateUniqueID()
@@ -121,7 +147,7 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updated_event, err := service.GetEvent(event.ID)
+	updated_event, err := service.GetEvent[models.EventDB](event.ID)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated event."))
@@ -135,7 +161,7 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	Endpoint to update an event
 */
 func UpdateEvent(w http.ResponseWriter, r *http.Request) {
-	var event models.Event
+	var event models.EventDB
 	json.NewDecoder(r.Body).Decode(&event)
 
 	err := service.UpdateEvent(event.ID, event)
@@ -145,7 +171,7 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updated_event, err := service.GetEvent(event.ID)
+	updated_event, err := service.GetEvent[models.EventDB](event.ID)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated event details."))
@@ -261,7 +287,7 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Determine the current event and its point value
-	event, err := service.GetEvent(event_id)
+	event, err := service.GetEvent[models.EventDB](event_id)
 
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch the event details and point value."))

@@ -1,19 +1,46 @@
-package utils
+package authtoken
 
 import (
 	"fmt"
-	"github.com/HackIllinois/api/gateway/config"
-	"github.com/HackIllinois/api/gateway/models"
-	jwt "github.com/dgrijalva/jwt-go"
 	"time"
+
+	jwt "github.com/dgrijalva/jwt-go"
 )
 
-func ExtractFieldFromJWT(token string, field string) ([]string, error) {
+type Role = string
+
+const (
+	AdminRole     = "Admin"
+	StaffRole     = "Staff"
+	MentorRole    = "Mentor"
+	ApplicantRole = "Applicant"
+	AttendeeRole  = "Attendee"
+	UserRole      = "User"
+	BlobstoreRole = "Blobstore"
+)
+
+func IsAuthorized(secret string, token string, authorized_roles []Role) (bool, error) {
+	for _, role := range authorized_roles {
+		is_authorized, err := HasRole(secret, token, role)
+
+		if err != nil {
+			return false, err
+		}
+
+		if is_authorized {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+func ExtractFieldFromJWT(secret string, token string, field string) ([]string, error) {
 	jwt_token, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(config.TOKEN_SECRET), nil
+		return []byte(secret), nil
 	})
 
 	if err != nil {
@@ -40,8 +67,8 @@ func ExtractFieldFromJWT(token string, field string) ([]string, error) {
 	return nil, fmt.Errorf("Invalid token")
 }
 
-func HasRole(token string, required_role models.Role) (bool, error) {
-	roles, err := ExtractFieldFromJWT(token, "roles")
+func HasRole(secret string, token string, required_role Role) (bool, error) {
+	roles, err := ExtractFieldFromJWT(secret, token, "roles")
 
 	if err != nil {
 		return false, err

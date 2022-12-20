@@ -50,23 +50,26 @@ var TestTime = time.Now().Unix()
 	Initialize db with a test event
 */
 func SetupTestDB(t *testing.T) {
-	event := models.Event{
-		ID:          "testid",
-		Name:        "testname",
-		Description: "testdescription",
-		StartTime:   TestTime,
-		EndTime:     TestTime + 60000,
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"ECEB1"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	event := models.EventDB{
+		EventPublic: models.EventPublic{
+			ID:          "testid",
+			Name:        "testname",
+			Description: "testdescription",
+			StartTime:   TestTime,
+			EndTime:     TestTime + 60000,
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"ECEB1"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 10,
 		},
-		Points: 10,
+		IsPrivate: false,
 	}
 
 	err := db.Insert("events", &event, nil)
@@ -103,23 +106,42 @@ func CleanupTestDB(t *testing.T) {
 */
 func TestGetAllEventsService(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
-	event := models.Event{
-		ID:          "testid2",
-		Name:        "testname2",
-		Description: "testdescription2",
-		StartTime:   TestTime,
-		EndTime:     TestTime + 60000,
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"SIEBEL0", "ECEB1"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	event := models.EventDB{
+		EventPublic: models.EventPublic{
+			ID:          "testid2",
+			Name:        "testname2",
+			Description: "testdescription2",
+			StartTime:   TestTime,
+			EndTime:     TestTime + 60000,
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"SIEBEL0", "ECEB1"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
 		},
+		IsPrivate: false,
+	}
+
+	event2 := models.EventDB{
+		EventPublic: models.EventPublic{
+			ID:          "testid3",
+			Name:        "testname3",
+			Description: "testdescription3",
+			StartTime:   TestTime,
+			EndTime:     TestTime + 60000,
+			Sponsor:     "",
+			EventType:   "OTHER",
+			Locations:   []models.EventLocation{},
+			Points:      100,
+		},
+		IsPrivate: true,
 	}
 
 	err := db.Insert("events", &event, nil)
@@ -128,14 +150,93 @@ func TestGetAllEventsService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	actual_event_list, err := service.GetAllEvents()
+	err = db.Insert("events", &event2, nil)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected_event_list := models.EventList{
-		Events: []models.Event{
+	actual_event_list, err := service.GetAllEvents[models.EventDB]()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_list := models.EventList[models.EventDB]{
+		Events: []models.EventDB{
+			{
+				EventPublic: models.EventPublic{
+					ID:          "testid",
+					Name:        "testname",
+					Description: "testdescription",
+					StartTime:   TestTime,
+					EndTime:     TestTime + 60000,
+					Sponsor:     "testsponsor",
+					EventType:   "WORKSHOP",
+					Locations: []models.EventLocation{
+						{
+							Description: "testlocationdescription",
+							Tags:        []string{"ECEB1"},
+
+							Latitude:  123.456,
+							Longitude: 123.456,
+						},
+					},
+					Points: 10,
+				},
+				IsPrivate: false,
+			},
+			{
+				EventPublic: models.EventPublic{
+					ID:          "testid2",
+					Name:        "testname2",
+					Description: "testdescription2",
+					StartTime:   TestTime,
+					EndTime:     TestTime + 60000,
+					Sponsor:     "testsponsor",
+					EventType:   "WORKSHOP",
+					Locations: []models.EventLocation{
+						{
+							Description: "testlocationdescription",
+							Tags:        []string{"SIEBEL0", "ECEB1"},
+
+							Latitude:  123.456,
+							Longitude: 123.456,
+						},
+					},
+					Points: 0,
+				},
+				IsPrivate: false,
+			},
+			{
+				EventPublic: models.EventPublic{
+					ID:          "testid3",
+					Name:        "testname3",
+					Description: "testdescription3",
+					StartTime:   TestTime,
+					EndTime:     TestTime + 60000,
+					Sponsor:     "",
+					EventType:   "OTHER",
+					Locations:   []models.EventLocation{},
+					Points:      100,
+				},
+				IsPrivate: true,
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(actual_event_list, &expected_event_list) {
+		t.Errorf("Wrong event list. Expected %v, got %v", expected_event_list, actual_event_list)
+	}
+
+	actual_public_list, err := service.GetAllEvents[models.EventPublic]()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_public_list := models.EventList[models.EventPublic]{
+		Events: []models.EventPublic{
 			{
 				ID:          "testid",
 				Name:        "testname",
@@ -177,28 +278,25 @@ func TestGetAllEventsService(t *testing.T) {
 		},
 	}
 
-	if !reflect.DeepEqual(actual_event_list, &expected_event_list) {
-		t.Errorf("Wrong event list. Expected %v, got %v", expected_event_list, actual_event_list)
+	if !reflect.DeepEqual(actual_public_list, &expected_public_list) {
+		t.Errorf("Wrong event list. Expected %v, got %v", expected_public_list, actual_public_list)
 	}
 
 	db.RemoveAll("events", nil, nil)
 
-	actual_event_list, err = service.GetAllEvents()
+	actual_event_list, err = service.GetAllEvents[models.EventDB]()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected_event_list = models.EventList{
-		Events: []models.Event{},
+	expected_event_list = models.EventList[models.EventDB]{
+		Events: []models.EventDB{},
 	}
 
 	if !reflect.DeepEqual(actual_event_list, &expected_event_list) {
 		t.Errorf("Wrong event list. Expected %v, got %v", expected_event_list, actual_event_list)
 	}
-
-	CleanupTestDB(t)
-
 }
 
 /*
@@ -206,28 +304,53 @@ func TestGetAllEventsService(t *testing.T) {
 */
 func TestGetFilteredEventsService(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
-	event := models.Event{
-		ID:          "testid2",
-		Name:        "testname2",
-		Description: "testdescription2",
-		StartTime:   TestTime,
-		EndTime:     TestTime + 60000,
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"SIEBEL0", "ECEB1"},
+	event := models.EventDB{
+		EventPublic: models.EventPublic{
+			ID:          "testid2",
+			Name:        "testname2",
+			Description: "testdescription2",
+			StartTime:   TestTime,
+			EndTime:     TestTime + 60000,
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"SIEBEL0", "ECEB1"},
 
-				Latitude:  123.456,
-				Longitude: 123.456,
+					Latitude:  123.456,
+					Longitude: 123.456,
+				},
 			},
+			Points: 0,
 		},
-		Points: 0,
+		IsPrivate: false,
 	}
 
 	err := db.Insert("events", &event, nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	event2 := models.EventDB{
+		EventPublic: models.EventPublic{
+			ID:          "testid3",
+			Name:        "testname3",
+			Description: "testdescription3",
+			StartTime:   TestTime,
+			EndTime:     TestTime + 60000,
+			Sponsor:     "",
+			EventType:   "OTHER",
+			Locations:   []models.EventLocation{},
+			Points:      100,
+		},
+		IsPrivate: true,
+	}
+
+	err = db.Insert("events", &event2, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -237,32 +360,36 @@ func TestGetFilteredEventsService(t *testing.T) {
 	parameters := map[string][]string{
 		"name": {"testname2"},
 	}
-	actual_event_list, err := service.GetFilteredEvents(parameters)
+	actual_event_list, err := service.GetFilteredEvents[models.EventDB](parameters)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected_event_list := models.EventList{
-		Events: []models.Event{
+	expected_event_list := models.EventList[models.EventDB]{
+		Events: []models.EventDB{
 			{
-				ID:          "testid2",
-				Name:        "testname2",
-				Description: "testdescription2",
-				StartTime:   TestTime,
-				EndTime:     TestTime + 60000,
-				Sponsor:     "testsponsor",
-				EventType:   "WORKSHOP",
-				Locations: []models.EventLocation{
-					{
-						Description: "testlocationdescription",
-						Tags:        []string{"SIEBEL0", "ECEB1"},
+				EventPublic: models.EventPublic{
 
-						Latitude:  123.456,
-						Longitude: 123.456,
+					ID:          "testid2",
+					Name:        "testname2",
+					Description: "testdescription2",
+					StartTime:   TestTime,
+					EndTime:     TestTime + 60000,
+					Sponsor:     "testsponsor",
+					EventType:   "WORKSHOP",
+					Locations: []models.EventLocation{
+						{
+							Description: "testlocationdescription",
+							Tags:        []string{"SIEBEL0", "ECEB1"},
+
+							Latitude:  123.456,
+							Longitude: 123.456,
+						},
 					},
+					Points: 0,
 				},
-				Points: 0,
+				IsPrivate: false,
 			},
 		},
 	}
@@ -275,14 +402,14 @@ func TestGetFilteredEventsService(t *testing.T) {
 	parameters = map[string][]string{
 		"sponsor": {"testsponsor"},
 	}
-	actual_event_list, err = service.GetFilteredEvents(parameters)
+	actual_public_list, err := service.GetFilteredEvents[models.EventPublic](parameters)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected_event_list = models.EventList{
-		Events: []models.Event{
+	expected_public_list := models.EventList[models.EventPublic]{
+		Events: []models.EventPublic{
 			{
 				ID:          "testid",
 				Name:        "testname",
@@ -324,29 +451,44 @@ func TestGetFilteredEventsService(t *testing.T) {
 		},
 	}
 
-	if !reflect.DeepEqual(actual_event_list, &expected_event_list) {
-		t.Errorf("Wrong event list. Expected %v, got %v", expected_event_list, actual_event_list)
+	if !reflect.DeepEqual(actual_public_list, &expected_public_list) {
+		t.Errorf("Wrong event list. Expected %v, got %v", expected_public_list, actual_public_list)
 	}
 
-	db.RemoveAll("events", nil, nil)
-
-	// Filter again, with no events remaining
-	actual_event_list, err = service.GetFilteredEvents(parameters)
+	// Try to filter an event that is private
+	parameters = map[string][]string{
+		"name": {"testname3"},
+	}
+	actual_public_list, err = service.GetFilteredEvents[models.EventPublic](parameters)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected_event_list = models.EventList{
-		Events: []models.Event{},
+	expected_public_list = models.EventList[models.EventPublic]{
+		Events: []models.EventPublic{},
+	}
+
+	if !reflect.DeepEqual(actual_public_list, &expected_public_list) {
+		t.Errorf("Wrong event list. Expected %v, got %v", expected_public_list, actual_public_list)
+	}
+
+	db.RemoveAll("events", nil, nil)
+
+	// Filter again, with no events remaining
+	actual_event_list, err = service.GetFilteredEvents[models.EventDB](parameters)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event_list = models.EventList[models.EventDB]{
+		Events: []models.EventDB{},
 	}
 
 	if !reflect.DeepEqual(actual_event_list, &expected_event_list) {
 		t.Errorf("Wrong event list. Expected %v, got %v", expected_event_list, actual_event_list)
 	}
-
-	CleanupTestDB(t)
-
 }
 
 /*
@@ -354,37 +496,67 @@ func TestGetFilteredEventsService(t *testing.T) {
 */
 func TestGetEventService(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
-	event, err := service.GetEvent("testid")
+	hidden_event := models.EventDB{
+		EventPublic: models.EventPublic{
+			ID:          "secreteventid",
+			Name:        "secretevent",
+			Description: "You should not be able to see me",
+			StartTime:   TestTime,
+			EndTime:     TestTime + 60000,
+			Sponsor:     "testsponsor",
+			EventType:   "OTHER",
+			Locations:   []models.EventLocation{},
+			Points:      1337,
+		},
+		IsPrivate: true,
+	}
+
+	err := db.Insert("events", hidden_event, nil)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected_event := models.Event{
-		ID:          "testid",
-		Name:        "testname",
-		Description: "testdescription",
-		StartTime:   TestTime,
-		EndTime:     TestTime + 60000,
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"ECEB1"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	event, err := service.GetEvent[models.EventDB]("testid")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_event := models.EventDB{
+		EventPublic: models.EventPublic{
+
+			ID:          "testid",
+			Name:        "testname",
+			Description: "testdescription",
+			StartTime:   TestTime,
+			EndTime:     TestTime + 60000,
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"ECEB1"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 10,
 		},
-		Points: 10,
+		IsPrivate: false,
 	}
 
 	if !reflect.DeepEqual(event, &expected_event) {
 		t.Errorf("Wrong event info. Expected %v, got %v", &expected_event, event)
 	}
 
-	CleanupTestDB(t)
+	_, err = service.GetEvent[models.EventPublic]("secreteventid")
+
+	if err != database.ErrNotFound {
+		t.Fatalf("Error found was not ErrNotFound (Got: %v)", err)
+	}
 }
 
 /*
@@ -392,23 +564,27 @@ func TestGetEventService(t *testing.T) {
 */
 func TestCreateEventService(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
-	new_event := models.Event{
-		ID:          "testid2",
-		Name:        "testname2",
-		Description: "testdescription2",
-		StartTime:   TestTime,
-		EndTime:     TestTime + 60000,
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"SIEBEL0", "ECEB1"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	new_event := models.EventDB{
+		EventPublic: models.EventPublic{
+			ID:          "testid2",
+			Name:        "testname2",
+			Description: "testdescription2",
+			StartTime:   TestTime,
+			EndTime:     TestTime + 60000,
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"SIEBEL0", "ECEB1"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
 		},
+		IsPrivate: true,
 	}
 
 	err := service.CreateEvent("testid2", "testcode2", new_event)
@@ -417,29 +593,32 @@ func TestCreateEventService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	event, err := service.GetEvent("testid2")
+	event, err := service.GetEvent[models.EventDB]("testid2")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected_event := models.Event{
-		ID:          "testid2",
-		Name:        "testname2",
-		Description: "testdescription2",
-		StartTime:   TestTime,
-		EndTime:     TestTime + 60000,
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"SIEBEL0", "ECEB1"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	expected_event := models.EventDB{
+		EventPublic: models.EventPublic{
+			ID:          "testid2",
+			Name:        "testname2",
+			Description: "testdescription2",
+			StartTime:   TestTime,
+			EndTime:     TestTime + 60000,
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"SIEBEL0", "ECEB1"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 0,
 		},
-		Points: 0,
+		IsPrivate: true,
 	}
 
 	if !reflect.DeepEqual(event, &expected_event) {
@@ -450,21 +629,24 @@ func TestCreateEventService(t *testing.T) {
 
 	SetupTestDB(t)
 
-	new_event_async := models.Event{
-		ID:          "testid2",
-		Name:        "testname2",
-		Description: "testdescription2",
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"SIEBEL0", "ECEB1"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	new_event_async := models.EventDB{
+		EventPublic: models.EventPublic{
+			ID:          "testid2",
+			Name:        "testname2",
+			Description: "testdescription2",
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"SIEBEL0", "ECEB1"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			IsAsync: true,
 		},
-		IsAsync: true,
+		IsPrivate: false,
 	}
 
 	err = service.CreateEvent("testid2", "testcode2", new_event_async)
@@ -473,35 +655,36 @@ func TestCreateEventService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	event_async, err := service.GetEvent("testid2")
+	event_async, err := service.GetEvent[models.EventDB]("testid2")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected_event_async := models.Event{
-		ID:          "testid2",
-		Name:        "testname2",
-		Description: "testdescription2",
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"SIEBEL0", "ECEB1"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	expected_event_async := models.EventDB{
+		EventPublic: models.EventPublic{
+			ID:          "testid2",
+			Name:        "testname2",
+			Description: "testdescription2",
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"SIEBEL0", "ECEB1"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			IsAsync: true,
+			Points:  0,
 		},
-		IsAsync: true,
-		Points:  0,
+		IsPrivate: false,
 	}
 
 	if !reflect.DeepEqual(event_async, &expected_event_async) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_event, event)
 	}
-
-	CleanupTestDB(t)
 }
 
 /*
@@ -509,6 +692,7 @@ func TestCreateEventService(t *testing.T) {
 */
 func TestDeleteEventService(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	event_id := "testid"
 
@@ -541,7 +725,7 @@ func TestDeleteEventService(t *testing.T) {
 	}
 
 	// Try to find the event in the events db
-	event, err := service.GetEvent(event_id)
+	event, err := service.GetEvent[models.EventDB](event_id)
 
 	if err == nil {
 		t.Errorf("Found event %v in events database.", event)
@@ -565,8 +749,6 @@ func TestDeleteEventService(t *testing.T) {
 			}
 		}
 	}
-
-	CleanupTestDB(t)
 }
 
 /*
@@ -574,24 +756,28 @@ func TestDeleteEventService(t *testing.T) {
 */
 func TestUpdateEventService(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
-	event := models.Event{
-		ID:          "testid",
-		Name:        "testname",
-		Description: "testdescription2",
-		StartTime:   TestTime,
-		EndTime:     TestTime + 60000,
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"SIEBEL3", "ECEB2"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	event := models.EventDB{
+		EventPublic: models.EventPublic{
+			ID:          "testid",
+			Name:        "testname",
+			Description: "testdescription2",
+			StartTime:   TestTime,
+			EndTime:     TestTime + 60000,
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 100,
 		},
-		Points: 100,
+		IsPrivate: false,
 	}
 
 	err := service.UpdateEvent("testid", event)
@@ -600,36 +786,37 @@ func TestUpdateEventService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	updated_event, err := service.GetEvent("testid")
+	updated_event, err := service.GetEvent[models.EventDB]("testid")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected_event := models.Event{
-		ID:          "testid",
-		Name:        "testname",
-		Description: "testdescription2",
-		StartTime:   TestTime,
-		EndTime:     TestTime + 60000,
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"SIEBEL3", "ECEB2"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	expected_event := models.EventDB{
+		EventPublic: models.EventPublic{
+			ID:          "testid",
+			Name:        "testname",
+			Description: "testdescription2",
+			StartTime:   TestTime,
+			EndTime:     TestTime + 60000,
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 100,
 		},
-		Points: 100,
+		IsPrivate: false,
 	}
 
 	if !reflect.DeepEqual(updated_event, &expected_event) {
 		t.Errorf("Wrong user info. Expected %v, got %v", expected_event, updated_event)
 	}
-
-	CleanupTestDB(t)
 }
 
 /*
@@ -637,6 +824,7 @@ func TestUpdateEventService(t *testing.T) {
 */
 func TestMarkUserAsAttendingEventService(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	err := service.MarkUserAsAttendingEvent("testid", "testuser")
 
@@ -673,8 +861,6 @@ func TestMarkUserAsAttendingEventService(t *testing.T) {
 	if !reflect.DeepEqual(user_tracker, &expected_user_tracker) {
 		t.Errorf("Wrong tracker info. Expected %v, got %v", expected_user_tracker, user_tracker)
 	}
-
-	CleanupTestDB(t)
 }
 
 /*
@@ -683,6 +869,7 @@ func TestMarkUserAsAttendingEventService(t *testing.T) {
 */
 func TestMarkUserAsAttendingEventErrorService(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	err := service.MarkUserAsAttendingEvent("testid", "testuser")
 
@@ -725,8 +912,6 @@ func TestMarkUserAsAttendingEventErrorService(t *testing.T) {
 	if !reflect.DeepEqual(user_tracker, &expected_user_tracker) {
 		t.Errorf("Wrong tracker info. Expected %v, got %v", expected_user_tracker, user_tracker)
 	}
-
-	CleanupTestDB(t)
 }
 
 /*
@@ -734,25 +919,28 @@ func TestMarkUserAsAttendingEventErrorService(t *testing.T) {
 	Confirms if an event that is known to be inactive (time is in the past), is inactive.
 */
 func TestIsEventActive(t *testing.T) {
-
+	defer CleanupTestDB(t)
 	// Creating a 30 minute long event that SHOULD NOT be active
 	const ONE_MINUTE_IN_SECONDS = 60
-	new_event := models.Event{
-		ID:          "testid3",
-		Name:        "testiseventactive",
-		Description: "testdescription2",
-		StartTime:   TestTime + ONE_MINUTE_IN_SECONDS*40,
-		EndTime:     TestTime + ONE_MINUTE_IN_SECONDS*70,
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"SIEBEL3", "ECEB2"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	new_event := models.EventDB{
+		EventPublic: models.EventPublic{
+			ID:          "testid3",
+			Name:        "testiseventactive",
+			Description: "testdescription2",
+			StartTime:   TestTime + ONE_MINUTE_IN_SECONDS*40,
+			EndTime:     TestTime + ONE_MINUTE_IN_SECONDS*70,
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
 		},
+		IsPrivate: false,
 	}
 
 	service.CreateEvent(new_event.ID, "testcode3", new_event)
@@ -786,8 +974,6 @@ func TestIsEventActive(t *testing.T) {
 		current_time := TestTime
 		t.Errorf("Event was incorrectly deemed inactive. Current time: %v, event start time: %v, time difference: %v", current_time, new_event.StartTime, math.Abs((float64)((current_time - new_event.StartTime))))
 	}
-
-	CleanupTestDB(t)
 }
 
 /*
@@ -795,6 +981,7 @@ func TestIsEventActive(t *testing.T) {
 */
 func TestGetEventFavorites(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	event_favorites, err := service.GetEventFavorites("testid")
 
@@ -810,8 +997,6 @@ func TestGetEventFavorites(t *testing.T) {
 	if !reflect.DeepEqual(event_favorites, &expected_event_favorites) {
 		t.Errorf("Wrong tracker info. Expected %v, got %v", &expected_event_favorites, event_favorites)
 	}
-
-	CleanupTestDB(t)
 }
 
 /*
@@ -819,6 +1004,7 @@ func TestGetEventFavorites(t *testing.T) {
 */
 func TestAddEventFavorite(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	err := service.AddEventFavorite("testid", "testid")
 
@@ -840,8 +1026,6 @@ func TestAddEventFavorite(t *testing.T) {
 	if !reflect.DeepEqual(event_favorites, &expected_event_favorites) {
 		t.Errorf("Wrong tracker info. Expected %v, got %v", &expected_event_favorites, event_favorites)
 	}
-
-	CleanupTestDB(t)
 }
 
 /*
@@ -849,6 +1033,7 @@ func TestAddEventFavorite(t *testing.T) {
 */
 func TestRemoveEventFavorite(t *testing.T) {
 	SetupTestDB(t)
+	defer CleanupTestDB(t)
 
 	err := service.AddEventFavorite("testid", "testid")
 
@@ -876,6 +1061,4 @@ func TestRemoveEventFavorite(t *testing.T) {
 	if !reflect.DeepEqual(event_favorites, &expected_event_favorites) {
 		t.Errorf("Wrong tracker info. Expected %v, got %v", &expected_event_favorites, event_favorites)
 	}
-
-	CleanupTestDB(t)
 }

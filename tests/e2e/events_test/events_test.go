@@ -44,25 +44,28 @@ func TestMain(m *testing.M) {
 
 func TestStaffActions(t *testing.T) {
 	// 1. Create event
-	event_info := event_models.Event{
-		Name:        "testname",
-		Description: "testdescription2",
-		StartTime:   534545,
-		EndTime:     534545 + 60000,
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []event_models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"SIEBEL3", "ECEB2"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	event_info := event_models.EventDB{
+		EventPublic: event_models.EventPublic{
+			Name:        "testname",
+			Description: "testdescription2",
+			StartTime:   534545,
+			EndTime:     534545 + 60000,
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []event_models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 100,
 		},
-		Points: 100,
+		IsPrivate: false,
 	}
 
-	received_event := event_models.Event{}
+	received_event := event_models.EventDB{}
 	response, err := staff_client.New().Post("/event/").BodyJSON(event_info).ReceiveSuccess(&received_event)
 
 	if err != nil {
@@ -74,26 +77,29 @@ func TestStaffActions(t *testing.T) {
 
 	// 2. Update event
 	event_id := received_event.ID
-	event_info_updated := event_models.Event{
-		ID:          event_id,
-		Name:        "testname",
-		Description: "testdescription2",
-		StartTime:   534545,
-		EndTime:     534545 + 60000,
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []event_models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"SIEBEL3", "ECEB2"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	event_info_updated := event_models.EventDB{
+		EventPublic: event_models.EventPublic{
+			ID:          event_id,
+			Name:        "testname",
+			Description: "testdescription2",
+			StartTime:   534545,
+			EndTime:     534545 + 60000,
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []event_models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 200,
 		},
-		Points: 200,
+		IsPrivate: false,
 	}
 
-	received_event = event_models.Event{}
+	received_event = event_models.EventDB{}
 	response, err = staff_client.New().Put("/event/").BodyJSON(event_info_updated).ReceiveSuccess(&received_event)
 
 	if err != nil {
@@ -109,7 +115,7 @@ func TestStaffActions(t *testing.T) {
 	// 3. Fetch event
 	endpoint_address := fmt.Sprintf("/event/%s/", event_id)
 
-	received_event = event_models.Event{}
+	received_event = event_models.EventDB{}
 	response, err = staff_client.New().Get(endpoint_address).ReceiveSuccess(&received_event)
 
 	if err != nil {

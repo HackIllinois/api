@@ -56,7 +56,7 @@ func TestUnauthenticatedGetProfile(t *testing.T) {
 	recieved_profile := profile_models.Profile{}
 	response, _ := unauthenticated_client.New().Get(endpoint_address).ReceiveSuccess(&recieved_profile)
 
-	if response.StatusCode != 403 {
+	if response.StatusCode != http.StatusForbidden {
 		t.Errorf("Unauthenticated attendee able to access endpoint that requires authentication")
 	}
 }
@@ -67,7 +67,7 @@ func TestNonExistantGetProfile(t *testing.T) {
 	recieved_profile := profile_models.Profile{}
 	response, _ := admin_client.New().Get(endpoint_address).ReceiveSuccess(&recieved_profile)
 
-	if response.StatusCode != 404 && response.StatusCode != 500 {
+	if response.StatusCode != http.StatusInternalServerError { // change to http.StatusNotFound once we standardize response codes
 		t.Errorf("Attendee able to access nonexistant profile")
 	}
 }

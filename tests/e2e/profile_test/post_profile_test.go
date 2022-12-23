@@ -18,11 +18,11 @@ func TestPostProfile(t *testing.T) {
 		AvatarUrl: "url",
 	}
 
-	recieved_profile := profile_models.Profile{}
-	response, err := admin_client.New().Post("/profile/").BodyJSON(profile_info).ReceiveSuccess(&recieved_profile)
+	received_profile := profile_models.Profile{}
+	response, err := admin_client.New().Post("/profile/").BodyJSON(profile_info).ReceiveSuccess(&received_profile)
 
 	if err != nil {
-		t.Errorf("Unable to make request")
+		t.Fatalf("Unable to make request")
 	}
 
 	if response.StatusCode != http.StatusOK {
@@ -41,8 +41,11 @@ func TestUnauthenticatedPostProfile(t *testing.T) {
 		AvatarUrl: "url",
 	}
 
-	recieved_profile := profile_models.Profile{}
-	response, _ := unauthenticated_client.New().Post("/profile/").BodyJSON(profile_info).ReceiveSuccess(&recieved_profile)
+	response, err := unauthenticated_client.New().Post("/profile/").BodyJSON(profile_info).ReceiveSuccess(struct{}{})
+
+	if err != nil {
+		t.Fatalf("Unable to make request")
+	}
 
 	if response.StatusCode != http.StatusForbidden {
 		t.Errorf("Unauthenticated attendee able to access endpoint that requires authentication")
@@ -55,8 +58,12 @@ func TestBadPostProfile(t *testing.T) {
 		FirstName: "John",
 	}
 
-	recieved_profile := profile_models.Profile{}
-	response, _ := admin_client.New().Post("/profile/").BodyJSON(profile_info).ReceiveSuccess(&recieved_profile)
+	received_profile := profile_models.Profile{}
+	response, err := admin_client.New().Post("/profile/").BodyJSON(profile_info).ReceiveSuccess(&received_profile)
+
+	if err != nil {
+		t.Fatalf("Unable to make request")
+	}
 
 	if response.StatusCode != http.StatusInternalServerError {
 		t.Errorf("Profile with not enough fields can be inserted")

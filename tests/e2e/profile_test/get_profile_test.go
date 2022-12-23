@@ -24,17 +24,17 @@ func TestGetProfile(t *testing.T) {
 
 	endpoint_address := fmt.Sprintf("/profile/%s/", "12345")
 
-	recieved_profile := profile_models.Profile{}
-	response, err := admin_client.New().Get(endpoint_address).ReceiveSuccess(&recieved_profile)
+	received_profile := profile_models.Profile{}
+	response, err := admin_client.New().Get(endpoint_address).ReceiveSuccess(&received_profile)
 
 	if err != nil {
-		t.Errorf("Unable to make request")
+		t.Fatalf("Unable to make request")
 	}
 	if response.StatusCode != http.StatusOK {
-		t.Errorf("Request returned HTTP error %d", response.StatusCode)
+		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
 	}
-	if !reflect.DeepEqual(recieved_profile, profile_info) {
-		t.Errorf("Wrong event info. Expected %v, got %v", profile_info, recieved_profile)
+	if !reflect.DeepEqual(received_profile, profile_info) {
+		t.Errorf("Wrong event info. Expected %v, got %v", profile_info, received_profile)
 	}
 }
 
@@ -53,8 +53,12 @@ func TestUnauthenticatedGetProfile(t *testing.T) {
 
 	endpoint_address := fmt.Sprintf("/profile/%s/", "12345")
 
-	recieved_profile := profile_models.Profile{}
-	response, _ := unauthenticated_client.New().Get(endpoint_address).ReceiveSuccess(&recieved_profile)
+	received_profile := profile_models.Profile{}
+	response, err := unauthenticated_client.New().Get(endpoint_address).ReceiveSuccess(&received_profile)
+
+	if err != nil {
+		t.Fatalf("Unable to make request")
+	}
 
 	if response.StatusCode != http.StatusForbidden {
 		t.Errorf("Unauthenticated attendee able to access endpoint that requires authentication")
@@ -65,9 +69,13 @@ func TestNonExistantGetProfile(t *testing.T) {
 	endpoint_address := fmt.Sprintf("/profile/%s/", "00000")
 
 	recieved_profile := profile_models.Profile{}
-	response, _ := admin_client.New().Get(endpoint_address).ReceiveSuccess(&recieved_profile)
+	response, err := admin_client.New().Get(endpoint_address).ReceiveSuccess(&recieved_profile)
+
+	if err != nil {
+		t.Fatalf("Unable to make request")
+	}
 
 	if response.StatusCode != http.StatusInternalServerError { // change to http.StatusNotFound once we standardize response codes
-		t.Errorf("Attendee able to access nonexistant profile")
+		t.Errorf("Attendee able to access non-existent profile")
 	}
 }

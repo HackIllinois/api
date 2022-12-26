@@ -60,7 +60,11 @@ func TestPostDecisionBadArg(t *testing.T) {
 	defer DropDatabase()
 
 	received_decision_history := models.DecisionHistory{}
-	response, err := admin_client.New().Post("/decision/").BodyJSON([]byte(`{"someRandomNonsense":"Buy cheese and bread for breakfast."}`)).ReceiveSuccess(&received_decision_history)
+
+	bad_args := map[string]interface{}{
+		"someRandomNonsense": "Buy cheese and bread for breakfast.",
+	}
+	response, err := admin_client.New().Post("/decision/").BodyJSON(bad_args).ReceiveSuccess(&received_decision_history)
 
 	if err != nil {
 		t.Fatalf("Unable to make request")

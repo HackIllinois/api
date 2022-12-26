@@ -47,7 +47,7 @@ func TestPostDecision(t *testing.T) {
 	err = res.Decode(&read_from_database_decision_history)
 
 	if err != nil {
-		t.Fatalf("Had trouble finding favorites in database: %v", err)
+		t.Fatalf("Failed to get element: %v", err)
 		return
 	}
 

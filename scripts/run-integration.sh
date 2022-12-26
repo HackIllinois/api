@@ -65,7 +65,7 @@ echo "Beginning integration tests";
 echo "Checking if the API is running...";
 curl --silent --output /dev/null localhost:8000 || (echo "Failed to connect to the API. Is it running? If it's not, start it with 'make run-test'"; exit 1;)
 echo "Running end-to-end tests";
-HI_CONFIG=file://$REPO_ROOT/config/test_config.json go test $TEST_DIR -v -count 1;
+HI_CONFIG=file://$REPO_ROOT/config/test_config.json go test $TEST_DIR -v -count 1 -p 1;
 STATUS=$?
 
 cleanup

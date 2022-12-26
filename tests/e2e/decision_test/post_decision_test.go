@@ -72,6 +72,16 @@ func TestPostDecisionBadArg(t *testing.T) {
 	if response.StatusCode != http.StatusUnprocessableEntity {
 		t.Fatalf("Request returned HTTP error %s", response.Status)
 	}
+
+	read_from_database_decision_history := models.DecisionHistory{}
+
+	res := client.Database(decision_db_name).Collection("decision").FindOne(context.Background(), bson.D{})
+
+	err = res.Decode(&read_from_database_decision_history)
+
+	if err == nil {
+		t.Fatalf("Request added element!")
+	}
 }
 
 func TestPostDecisionUnauthenticated(t *testing.T) {
@@ -90,5 +100,15 @@ func TestPostDecisionUnauthenticated(t *testing.T) {
 	}
 	if response.StatusCode != http.StatusForbidden {
 		t.Fatalf("Expected forbidden status code, request returned HTTP %s", response.Status)
+	}
+
+	read_from_database_decision_history := models.DecisionHistory{}
+
+	res := client.Database(decision_db_name).Collection("decision").FindOne(context.Background(), bson.D{})
+
+	err = res.Decode(&read_from_database_decision_history)
+
+	if err == nil {
+		t.Fatalf("Request added element!")
 	}
 }

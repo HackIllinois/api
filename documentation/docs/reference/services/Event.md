@@ -406,24 +406,62 @@ Response format:
 }
 ```
 
+POST /event/staff/checkin
+----------------------------
+
+Used for staff to check in attendees to various events.
+
+Request should include a attendee's user token (`userToken`) and an event id (`eventID`).
+
+Returns a status, the user's new points, and the user's total points.
+
+Valid values for `status` are `Success`, `InvalidCode`, `Expired`, `AlreadyCheckedIn`. 
+
+!!! note
+	When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.
+
+!!! note
+	The `userToken` should be retrieved from the `userToken` field of a user QR code (`hackillinois://user?userToken=some_token`)
+
+```json title="Example Request"
+{
+	"userToken": "some_token",
+	"eventID": "some_event_id"
+}
+```
+
+```json title="Example Response"
+{
+    "newPoints": 10,
+    "totalPoints": 10,
+    "status": "Success"
+}
+```
+
 POST /event/checkin/
 ----------------------------
 
-Retrieves a struct that contains information about the event checkin status, point increment value, and total point number.
-Takes in a struct that contains an event checkin code.
+Used for attendees to check in to various events. Like `/event/staff/checkin`, but doesn't require staff verification.
 
-Valid values for `status` are `Success`, `InvalidCode`, `InvalidTime`, `AlreadyCheckedIn`. When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.
+Request should include a event code (`code`).
 
-Request format:
-```
+Returns a status, the user's new points, and the user's total points.
+
+Valid values for `status` are `Success`, `InvalidCode`, `Expired`, `AlreadyCheckedIn`. 
+
+!!! note
+	When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.
+
+!!! note
+	The `code` should be retrieved from the `code` field of a event QR code (`hackillinois://event?code=some_event_code`)
+
+```json title="Example Request"
 {
-    "code": "new_code",
+    "code": "some_event_code"
 }
-
 ```
 
-Response format:
-```
+```json title="Example Response"
 {
     "newPoints": 10,
     "totalPoints": 10,

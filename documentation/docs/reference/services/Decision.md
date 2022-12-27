@@ -142,6 +142,7 @@ Finalizes / unfinalizes the decision for the current user. The full decision his
 
 }
 ```
+
 GET /decision/filter/?key=value
 ----------------------------------
 

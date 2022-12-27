@@ -203,7 +203,6 @@ DELETE /project/favorite/
 
 Removes the given project from the favorites for the current user.
 
-Request format:
 ```json title="Example request"
 {
 	"projectId": "52fdfc072182654f163f5f0f9a621d72",

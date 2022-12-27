@@ -58,7 +58,7 @@ Request requires no body.
 		]
 	},
 	"mentor": {
-		"id": "github0000001"
+		"id": "github0000001",
 		"firstName": "John",
 		"lastName": "Smith",
 		"email": "john@gmail.com",
@@ -80,7 +80,7 @@ Request requires no body.
 ```json title="Example response"
 {
 	"attendee": {
-		"id": "github0000001"
+		"id": "github0000001",
 		"firstName": "John",
 		"lastName": "Smith",
 		"email": "john@gmail.com",
@@ -122,7 +122,7 @@ Request requires no body.
 		]
 	},
 	"mentor": {
-		"id": "github0000001"
+		"id": "github0000001",
 		"firstName": "John",
 		"lastName": "Smith",
 		"email": "john@gmail.com",
@@ -396,7 +396,7 @@ Request requires no body.
 
 ```json title="Example response"
 {
-	"id": "github0000001"
+	"id": "github0000001",
 	"firstName": "John",
 	"lastName": "Smith",
 	"email": "john@gmail.com",
@@ -415,7 +415,7 @@ Request requires no body.
 
 ```json title="Example response"
 {
-	"id": "github0000001"
+	"id": "github0000001",
 	"firstName": "John",
 	"lastName": "Smith",
 	"email": "john@gmail.com",

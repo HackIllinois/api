@@ -402,7 +402,7 @@ Updates a struct that contains information about the event code (generated upon 
 }
 ```
 
-POST /event/staff/checkin
+POST /event/staff/checkin/
 ----------------------------
 
 Used for staff to check in attendees to various events.
@@ -417,7 +417,7 @@ Valid values for `status` are `Success`, `InvalidCode`, `Expired`, `AlreadyCheck
 	When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.
 
 !!! note
-	The `userToken` should be retrieved from the `userToken` field of a user QR code (`hackillinois://user?userToken=some_token`)
+	The `userToken` should be retrieved from the `userToken` field of a user QR code URI (`hackillinois://user?userToken=some_token`)
 
 ```json title="Example request"
 {
@@ -437,9 +437,9 @@ Valid values for `status` are `Success`, `InvalidCode`, `Expired`, `AlreadyCheck
 POST /event/checkin/
 ----------------------------
 
-Used for attendees to check in to various events. Like `/event/staff/checkin`, but doesn't require staff verification.
+Used for attendees to check into various events. Like `/event/staff/checkin/`, but doesn't require staff verification.
 
-Request should include a event code (`code`).
+Request should include an event code (`code`).
 
 Returns a status, the user's new points, and the user's total points.
 
@@ -449,7 +449,7 @@ Valid values for `status` are `Success`, `InvalidCode`, `Expired`, `AlreadyCheck
 	When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.
 
 !!! note
-	The `code` should be retrieved from the `code` field of a event QR code (`hackillinois://event?code=some_event_code`)
+	The `code` should be retrieved from the `code` field of a event QR code URI (`hackillinois://event?code=some_event_code`)
 
 ```json title="Example request"
 {

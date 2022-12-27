@@ -131,7 +131,7 @@ POST /event/
 
 Creates an event with the requested fields. Returns the created event.
 
-Valid values for `eventType` are one of `MEAL SPEAKER WORKSHOP MINIEVENT QNA OTHER`.
+Valid values for `eventType` are `MEAL`, `SPEAKER`, `WORKSHOP`, `MINIEVENT`, `QNA`, or `OTHER`.
 
 ```json title="Example request"
 {

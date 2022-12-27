@@ -407,7 +407,7 @@ POST /event/staff/checkin/
 
 Used for staff to check in attendees to various events.
 
-Request should include a attendee's user token (`userToken`) and an event id (`eventId`).
+Request should include an attendee's user token (`userToken`) and an event id (`eventId`).
 
 Returns a status, the user's new points, and the user's total points.
 

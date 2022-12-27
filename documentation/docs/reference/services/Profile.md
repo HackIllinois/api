@@ -13,7 +13,7 @@ GET /profile/
 
 Returns the profile stored for the current user.
 
-Valid values for ``teamStatus`` are ``LOOKING_FOR_MEMBERS``, ``LOOKING_FOR_TEAM``, and ``NOT_LOOKING``.
+Valid values for `teamStatus` are `LOOKING_FOR_MEMBERS`, `LOOKING_FOR_TEAM`, and `NOT_LOOKING`.
 
 Request requires no body.
 
@@ -182,7 +182,7 @@ GET /profile/leaderboard/?limit=
 !!! note
     This is a public endpoint
 
-Returns a list of profiles sorted by points descending. If a ``limit`` parameter is provided, it will return the first ``limit`` profiles. Otherwise, it will return all of the profiles.
+Returns a list of profiles sorted by points descending. If a `limit` parameter is provided, it will return the first `limit` profiles. Otherwise, it will return all of the profiles.
 
 Request requires no body.
 
@@ -208,11 +208,11 @@ GET /profile/search/?teamStatus=value&interests=value,value,value&limit=value
 
 Returns a list of profiles matching the filter conditions. 
 
-`teamStatus` is a string matching the user's team status. Valid values for ``teamStatus`` are ``LOOKING_FOR_MEMBERS``, ``LOOKING_FOR_TEAM``, and ``NOT_LOOKING``.
+`teamStatus` is a string matching the user's team status. Valid values for `teamStatus` are `LOOKING_FOR_MEMBERS`, `LOOKING_FOR_TEAM`, and `NOT_LOOKING`.
 
 `interests` is a comma-separated string representing the user's interests.
 
-- i.e if the user's interests are ["C++", "Machine Learning"], you can filter on this by sending ``interests="C++,Machine Learning"``
+- i.e if the user's interests are ["C++", "Machine Learning"], you can filter on this by sending `interests="C++,Machine Learning"`
 
 If a `limit` parameter is provided, it will return the first matching `limit` profiles. Otherwise, it will return all of the matched profiles.
 

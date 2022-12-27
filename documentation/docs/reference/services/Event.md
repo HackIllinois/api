@@ -411,7 +411,7 @@ Request should include a attendee's user token (`userToken`) and an event id (`e
 
 Returns a status, the user's new points, and the user's total points.
 
-Valid values for `status` are `Success`, `InvalidCode`, `Expired`, `AlreadyCheckedIn`. 
+Valid values for `status` are `Success`, `InvalidCode`, `ExpiredOrProspective`, `AlreadyCheckedIn`. 
 
 !!! note
 	When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.
@@ -443,7 +443,7 @@ Request should include an event code (`code`).
 
 Returns a status, the user's new points, and the user's total points.
 
-Valid values for `status` are `Success`, `InvalidCode`, `Expired`, `AlreadyCheckedIn`. 
+Valid values for `status` are `Success`, `InvalidCode`, `ExpiredOrProspective`, `AlreadyCheckedIn`. 
 
 !!! note
 	When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.

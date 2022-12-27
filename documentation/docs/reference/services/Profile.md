@@ -156,7 +156,7 @@ DELETE /profile/
 ------------------
 
 !!! danger
-    Temporarily disabled since Dec 2nd, 2021.
+    Temporarily disabled since Apr 2nd, 2021.
 
 Deletes the profile for the currently authenticated user (determined by the JWT in the `Authorization` header).
 

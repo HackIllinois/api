@@ -47,6 +47,8 @@ theme:
     # Palette toggle for dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
+      primary: deep orange
+      accent: amber
       toggle:
         icon: material/brightness-4
         name: Switch to light mode

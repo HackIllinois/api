@@ -422,7 +422,7 @@ Valid values for `status` are `Success`, `InvalidCode`, `ExpiredOrProspective`, 
 ```json title="Example request"
 {
 	"userToken": "some_token",
-	"eventID": "some_event_id"
+	"eventId": "some_event_id"
 }
 ```
 

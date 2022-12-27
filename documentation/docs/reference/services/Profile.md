@@ -54,6 +54,8 @@ GET /profile/list/?teamStatus=value&interests=value,value,value&limit=value
 
 !!! danger
     Internal use only!
+    If you are looking to search for profiles as an attendee, applicant, or mentor, please use
+    [GET /profile/search/](#get-profilesearchteamstatusvalueinterestsvaluevaluevaluelimitvalue).
 
 Returns a list of profiles matching the filter conditions.
 
@@ -63,7 +65,7 @@ Returns a list of profiles matching the filter conditions.
 
 - i.e if the user's interests are ["C++", "Machine Learning"], you can filter on this by sending `interests="C++,Machine Learning"`
 
-If a ``limit`` parameter is provided, it will return the first matching ``limit`` profiles. Otherwise, it will return all of the matched profiles.
+If a `limit` parameter is provided, it will return the first matching `limit` profiles. Otherwise, it will return all of the matched profiles.
 
 If no parameters are provided, it returns all profiles that are in the database.
 

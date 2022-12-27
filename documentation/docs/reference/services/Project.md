@@ -6,8 +6,9 @@ GET /project/PROJECTID/
 
 Returns the project with the id of `PROJECTID`.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Project 10",
@@ -24,8 +25,9 @@ GET /project/
 
 Returns a list of all projects.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"projects": [
 		{
@@ -55,8 +57,9 @@ GET /project/filter/?key=value
 
 Returns all projects, filtered with the given key-value pairs.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"projects": [
 		{
@@ -86,8 +89,7 @@ POST /project/
 
 Creates a project with the requested fields. Returns the created project.
 
-Request format:
-```
+```json title="Example request"
 {
 	"name": "Example Project 10",
 	"description": "Example Project Description",
@@ -98,8 +100,7 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Project 10",
@@ -116,8 +117,9 @@ DELETE /project/PROJECTID/
 
 Endpoint to delete a project with name `PROJECTID`.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Project 10",
@@ -134,8 +136,7 @@ PUT /project/
 
 Updates the project with the id specified in the `id` field of the request. Returns the updated project.
 
-Request format:
-```
+```json title="Example request"
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Project 10",
@@ -147,8 +148,7 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Project 10",
@@ -165,8 +165,9 @@ GET /project/favorite/
 
 Returns the project favorites for the current user.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "github001",
 	"projects": [
@@ -181,15 +182,13 @@ POST /project/favorite/
 
 Adds the given project to the favorites for the current user.
 
-Request format:
-```
+```json title="Example request"
 {
 	"projectId": "52fdfc072182654f163f5f0f9a621d72"
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "github001",
 	"projects": [
@@ -205,14 +204,13 @@ DELETE /project/favorite/
 Removes the given project from the favorites for the current user.
 
 Request format:
-```
+```json title="Example request"
 {
 	"projectId": "52fdfc072182654f163f5f0f9a621d72",
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "github001",
 	"projects": [

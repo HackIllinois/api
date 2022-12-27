@@ -1,19 +1,22 @@
 Registration
 ============
 
-*Note:* The exact fields in the registration requests and responses will change based on the registration definitions provided in the API configuration file.
+!!! warning
+	The exact fields in the registration requests and responses **will change** based on the registration definitions provided in the API configuration file.
+	Please consult them accordingly.
 
 GET /registration/
 -------------------------
 
-Returns all the registrations stored for the current user. If registrations are not found for either Attendee or Mentor,
-that field is set to null.
+Returns all the registrations stored for the currently authenticated user (determined by the JWT in the `Authorization` header).
+If registrations are not found for either Attendee or Mentor, that field is set to null.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"attendee": {
-		"id": "github0000001"
+		"id": "github0000001",
 		"firstName": "John",
 		"lastName": "Smith",
 		"email": "john@gmail.com",
@@ -72,8 +75,9 @@ GET /registration/USERID/
 Returns all registrations stored for the user with the `id` `USERID`.
 If registrations are not found for either Attendee or Mentor, that field is set to null.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"attendee": {
 		"id": "github0000001"
@@ -134,10 +138,11 @@ GET /registration/attendee/USERID/
 
 Returns the user registration stored for the user with the `id` `USERID`.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
-	"id": "github0000001"
+	"id": "github0000001",
 	"firstName": "John",
 	"lastName": "Smith",
 	"email": "john@gmail.com",
@@ -183,12 +188,13 @@ Response format:
 GET /registration/attendee/
 ------------------
 
-Returns the user registration stored for the user with the `id` stored in the given JWT in the Authorization header.
+Returns the user registration stored for the currently authenticated user (determined by the JWT in the `Authorization` header).
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
-	"id": "github0000001"
+	"id": "github0000001",
 	"firstName": "John",
 	"lastName": "Smith",
 	"email": "john@gmail.com",
@@ -234,10 +240,9 @@ Response format:
 POST /registration/attendee/
 -------------------
 
-Creates a registration for the user with the `id` in the JWT token provided in the Authorization header.
+Creates a registration for the currently authenticated user (determined by the JWT in the `Authorization` header).
 
-Request format:
-```
+```json title="Example request"
 {
 	"firstName": "John",
 	"lastName": "Smith",
@@ -262,10 +267,9 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
-	"id": "github0000001"
+	"id": "github0000001",
 	"firstName": "John",
 	"lastName": "Smith",
 	"email": "john@gmail.com",
@@ -292,10 +296,9 @@ Response format:
 PUT /registration/attendee/
 ------------------
 
-Updated the registration for the user with the `id` in the JWT token provided in the Authorization header.
+Update the registration for the currently authenticated user (determined by the JWT in the `Authorization` header).
 
-Request format:
-```
+```json title="Example request"
 {
 	"firstName": "John",
 	"lastName": "Smith",
@@ -339,10 +342,9 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
-	"id": "github0000001"
+	"id": "github0000001",
 	"firstName": "John",
 	"lastName": "Smith",
 	"email": "john@gmail.com",
@@ -390,8 +392,9 @@ GET /registration/mentor/USERID/
 
 Returns the mentor registration stored for the mentor with the `id` `USERID`.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "github0000001"
 	"firstName": "John",
@@ -406,10 +409,11 @@ Response format:
 GET /registration/mentor/
 -------------------------
 
-Returns the mentor registration stored for the mentor with the `id` stored in the given JWT in the Authorization header.
+Returns the mentor registration stored for the currently authenticated mentor (determined by the JWT in the `Authorization` header).
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "github0000001"
 	"firstName": "John",
@@ -424,10 +428,9 @@ Response format:
 POST /registration/mentor/
 --------------------------
 
-Creates a registration for the mentor with the `id` in the JWT token provided in the Authorization header.
+Creates a registration for the currently authenticated mentor (determined by the JWT in the `Authorization` header)
 
-Request format:
-```
+```json title="Example request"
 {
 	"firstName": "John",
 	"lastName": "Smith",
@@ -438,10 +441,9 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
-	"id": "github0000001"
+	"id": "github0000001",
 	"firstName": "John",
 	"lastName": "Smith",
 	"email": "john@gmail.com",
@@ -454,10 +456,9 @@ Response format:
 PUT /registration/mentor/
 -------------------------
 
-Updated the registration for the user with the `id` in the JWT token provided in the Authorization header.
+Updated the registration for the currently authenticated user (determined by the JWT in the `Authorization` header).
 
-Request format:
-```
+```json title="Example request"
 {
 	"firstName": "John",
 	"lastName": "Smith",
@@ -468,10 +469,9 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
-	"id": "github0000001"
+	"id": "github0000001",
 	"firstName": "John",
 	"lastName": "Smith",
 	"email": "john@gmail.com",
@@ -486,12 +486,13 @@ GET /registration/attendee/list/?key=value
 
 Returns the user registrations, filtered with the given key-value pairs (optional)
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"registrations": [
 		{
-			"id": "github0000001"
+			"id": "github0000001",
 			"firstName": "John",
 			"lastName": "Smith",
 			"email": "john@gmail.com",
@@ -533,7 +534,7 @@ Response format:
 			]
 		},
 		{
-			"id": "github0000002"
+			"id": "github0000002",
 			"firstName": "John",
 			"lastName": "Doe",
 			"email": "jdoe@gmail.com",
@@ -583,12 +584,13 @@ GET /registration/mentor/list/?key=value
 
 Returns the mentor registrations, filtered with the given key-value pairs (optional)
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"registrations": [
 		{
-			"id": "github0000001"
+			"id": "github0000001",
 			"firstName": "John",
 			"lastName": "Smith",
 			"email": "john@gmail.com",
@@ -597,7 +599,7 @@ Response format:
 			"linkedin": "john-smith"
 		},
 		{
-			"id": "github0000002"
+			"id": "github0000002",
 			"firstName": "John",
 			"lastName": "Doe",
 			"email": "jdoe@gmail.com",
@@ -607,5 +609,4 @@ Response format:
 		}
 	]
 }
-
 ```

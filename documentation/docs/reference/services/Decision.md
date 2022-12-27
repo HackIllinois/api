@@ -4,10 +4,11 @@ Decision
 GET /decision/USERID/
 ----------------------------
 
-Returns the decision stored for the user with the `id` `USERID`.
+Returns the decision stored for the user with the id `USERID`.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"finalized": false,
 	"id": "github9279532",
@@ -39,10 +40,11 @@ Response format:
 GET /decision/
 ----------------------------------
 
-Returns the decision stored for the user associated with the `id` in the given JWT in the Authorization header.
+Returns the decision stored for the currently authenticated user (determined by the JWT in the `Authorization` header).
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "github9279532",
 	"status": "ACCEPTED"
@@ -54,8 +56,7 @@ POST /decision/
 
 Updates the decision for the user as specified in the `id` field of the request. The full decision history is returned in the response.
 
-Request format:
-```
+```json title="Example request"
 {
 	"id": "github9279532",
 	"status": "ACCEPTED",
@@ -63,8 +64,7 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"finalized": false,
 	"id": "github9279532",
@@ -106,16 +106,14 @@ POST /decision/finalize/
 
 Finalizes / unfinalizes the decision for the current user. The full decision history is returned in the response. This endpoint will return an AttributeMismatchError if the requested action results in a Finalized status matching the current Finalized status. 
 
-Request format:
-```
+```json title="Example request"
 {
 	"id": "github9279532",
 	"finalized": true
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"finalized": true,
 	"id": "github9279532",
@@ -149,8 +147,9 @@ GET /decision/filter/?key=value
 
 Returns the user decisions, filtered with the given key-value pairs.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"decisions": [
 		{

@@ -10,7 +10,7 @@ import (
 )
 
 /*
-	Checks if the user has been checked in already
+	Checks if a user can redeem a certain event by seeing if they've already checked in, marking it redeemed if they haven't already
 */
 func RedeemEvent(id string, event_id string) (*models.RedeemEventResponse, error) {
 	var redemption_status models.RedeemEventResponse

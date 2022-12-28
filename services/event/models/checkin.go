@@ -5,8 +5,8 @@ type CheckinRequest struct {
 }
 
 type CheckinResult struct {
-	NewPoints   int    `json:"newPoints"`
-	TotalPoints int    `json:"totalPoints"`
+	NewPoints   int    `default:"-1" json:"newPoints"`
+	TotalPoints int    `default:"-1" json:"totalPoints"`
 	Status      string `json:"status"`
 }
 

@@ -210,7 +210,50 @@ func UpdateEventCode(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Endpoint to get the code associated with an event (or nil)
+	Processes a checkin by attempting to redeem an event, award points, and write the result
+*/
+func ProcessCheckin(id string, event_id string, r *http.Request, w http.ResponseWriter) {
+	redemption_status, err := service.RedeemEvent(id, event_id)
+
+	if err != nil || redemption_status == nil {
+		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to verify if user already had redeemed event points"))
+		return
+	}
+
+	if redemption_status.Status != "Success" {
+		json.NewEncoder(w).Encode(models.CheckinResult{
+			Status: "AlreadyCheckedIn",
+		})
+		return
+	}
+
+	// Determine the current event and its point value
+	event, err := service.GetEvent(event_id)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch the event details and point value."))
+		return
+	}
+
+	// Add this point value to given profile
+	profile, err := service.AwardPoints(id, event.Points)
+
+	if err != nil {
+		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to award user with points"))
+		return
+	}
+
+	result := models.CheckinResult{
+		Status:      "Success",
+		NewPoints:   event.Points,
+		TotalPoints: profile.Points,
+	}
+
+	json.NewEncoder(w).Encode(result)
+}
+
+/*
+	Endpoint to checkin to a non-staff event using a code. Validates id, then code,
 */
 func Checkin(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
@@ -225,16 +268,11 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 
 	valid, event_id, err := service.CanRedeemPoints(checkin_request.Code)
 
-	result := models.CheckinResult{
-		NewPoints:   -1,
-		TotalPoints: -1,
-		Status:      "Success",
-	}
-
 	// For this specific error, don't return a http error code and populate the `status` field instead.
 	if err == database.ErrNotFound {
-		result.Status = "InvalidCode"
-		json.NewEncoder(w).Encode(result)
+		json.NewEncoder(w).Encode(models.CheckinResult{
+			Status: "InvalidCode",
+		})
 		return
 	} else if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
@@ -242,45 +280,14 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !valid {
-		result.Status = "InvalidTime"
-		json.NewEncoder(w).Encode(result)
+		json.NewEncoder(w).Encode(models.CheckinResult{
+			Status: "ExpiredOrProspective",
+		})
 		return
 	}
 
-	redemption_status, err := service.RedeemEvent(id, event_id)
-
-	if err != nil || redemption_status == nil {
-		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to verify if user already had redeemed event points"))
-		return
-	}
-
-	if redemption_status.Status != "Success" {
-		result.Status = "AlreadyCheckedIn"
-		json.NewEncoder(w).Encode(result)
-		return
-	}
-
-	// Determine the current event and its point value
-	event, err := service.GetEvent(event_id)
-
-	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch the event details and point value."))
-		return
-	}
-
-	result.NewPoints = event.Points
-
-	// Add this point value to given profile
-	profile, err := service.AwardPoints(id, event.Points)
-
-	if err != nil {
-		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to award user with points"))
-		return
-	}
-
-	result.TotalPoints = profile.Points
-
-	json.NewEncoder(w).Encode(result)
+	// We've handled all the code-specific logic, now we need to handle the shared logic
+	ProcessCheckin(id, event_id, r, w)
 }
 
 /*

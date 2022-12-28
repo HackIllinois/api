@@ -8,6 +8,7 @@ import (
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/common/utils"
+	gateway_utils "github.com/HackIllinois/api/gateway/utils"
 	"github.com/HackIllinois/api/services/event/models"
 	"github.com/HackIllinois/api/services/event/service"
 	"github.com/gorilla/mux"
@@ -32,6 +33,7 @@ func SetupController(route *mux.Route) {
 	metrics.RegisterHandler("/code/{id}/", GetEventCode, "GET", router)
 	metrics.RegisterHandler("/code/{id}/", UpdateEventCode, "PUT", router)
 
+	metrics.RegisterHandler("/staff/checkin/", StaffCheckin, "POST", router)
 	metrics.RegisterHandler("/checkin/", Checkin, "POST", router)
 
 	metrics.RegisterHandler("/track/", MarkUserAsAttendingEvent, "POST", router)
@@ -250,6 +252,29 @@ func ProcessCheckin(id string, event_id string, r *http.Request, w http.Response
 	}
 
 	json.NewEncoder(w).Encode(result)
+}
+
+/*
+	Endpoint to checkin to a non-staff event using a code. Validates id, then code,
+*/
+func StaffCheckin(w http.ResponseWriter, r *http.Request) {
+	var checkin_request models.StaffCheckinRequest
+	json.NewDecoder(r.Body).Decode(&checkin_request)
+
+	id, err := gateway_utils.ExtractFieldFromJWT(checkin_request.UserToken, "UserId")
+
+	if err != nil {
+		json.NewEncoder(w).Encode(models.CheckinResult{
+			Status: "ExpiredOrProspective",
+		})
+		return
+	}
+
+	// This event id will be checked in ProcessCheckin
+	event_id := checkin_request.EventID
+
+	// We've handled all the code-specific logic, now we need to handle the shared logic
+	ProcessCheckin(id[0], event_id, r, w)
 }
 
 /*

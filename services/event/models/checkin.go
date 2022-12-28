@@ -1,5 +1,9 @@
 package models
 
+type StaffCheckinRequest struct {
+	UserToken string `json:"userToken"`
+	EventID   string `json:"eventId"`
+}
 type CheckinRequest struct {
 	Code string `json:"code"`
 }

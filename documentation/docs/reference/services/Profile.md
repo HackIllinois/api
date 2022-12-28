@@ -241,49 +241,6 @@ Request requires no body.
 }
 ```
 
-GET /profile/filtered/?teamStatus=value&interests=value,value,value&limit=value
--------------------------
-
-!!! danger
-    Internal use only!
-
-Returns a list of profiles matching the filter conditions. 
-
-`teamStatus` is a string matching the user's team status.
-
-`interests` is a comma-separated string representing the user's interests.
-
-- i.e if the user's interests are ["C++", "Machine Learning"], you can filter on this by sending `interests="C++,Machine Learning"`
-
-If a `limit` parameter is provided, it will return the first matching `limit` profiles. Otherwise, it will return all of the matched profiles.
-
-Request requires no body.
-
-```json title="Example response"
-{
-    "profiles": [
-        {
-            "id": "profileid123456",
-            "firstName": "John",
-            "lastName": "Doe",
-            "points": 2021,
-            "timezone": "Americas UTC+8",
-            "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234"
-        },
-        {
-            "id": "profileid123456",
-            "firstName": "John",
-            "lastName": "Doe",
-            "points": 2021,
-            "timezone": "Americas UTC+8",
-            "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234"
-        },
-    ]
-}
-```
-
 POST /profile/event/checkin/
 ----------------------------
 

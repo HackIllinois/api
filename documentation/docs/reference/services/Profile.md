@@ -216,7 +216,9 @@ Returns a list of profiles matching the filter conditions.
 
 If a `limit` parameter is provided, it will return the first matching `limit` profiles. Otherwise, it will return all of the matched profiles.
 
-Any users with the TeamStatus "NOT_LOOKING" will be removed.
+!!! warning
+    Users with `teamStatus` `NOT_LOOKING` will be shown unless you filter against it.
+    **Make sure you consider this** in respect to your use case and act accordingly!
 
 Request requires no body.
 

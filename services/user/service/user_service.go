@@ -193,6 +193,10 @@ func GetQrInfo(id string) (string, error) {
 
 	signed_token, err := token.SignedString(auth_config.TOKEN_SECRET)
 
+	if err != nil {
+		return "", err
+	}
+
 	// All the fields that will be embedded in the QR code URI
 	parameters := url.Values{
 		"userToken": []string{signed_token},

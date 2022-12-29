@@ -1,12 +1,13 @@
 package services
 
 import (
+	"net/http"
+
+	"github.com/HackIllinois/api/common/authtoken"
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
-	"github.com/HackIllinois/api/gateway/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 const UploadFormat string = "RAW"
@@ -17,49 +18,49 @@ var UploadRoutes = arbor.RouteCollection{
 		"GetCurrentUploadInfo",
 		"GET",
 		"/upload/resume/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentUploadInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentUploadInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentUploadInfo",
 		"GET",
 		"/upload/resume/upload/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateCurrentUploadInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateCurrentUploadInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUploadInfo",
 		"GET",
 		"/upload/resume/{id}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUploadInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUploadInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetCurrentUploadInfo",
 		"GET",
 		"/upload/photo/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentUploadInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetCurrentUploadInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentUploadInfo",
 		"GET",
 		"/upload/photo/upload/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateCurrentUploadInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateCurrentUploadInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUploadInfo",
 		"GET",
 		"/upload/photo/{id}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUploadInfo).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetUploadInfo).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateBlob",
 		"POST",
 		"/upload/blobstore/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole, models.BlobstoreRole}), middleware.IdentificationMiddleware).ThenFunc(CreateBlob).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.StaffRole, authtoken.BlobstoreRole}), middleware.IdentificationMiddleware).ThenFunc(CreateBlob).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateBlob",
 		"PUT",
 		"/upload/blobstore/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole, models.BlobstoreRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateBlob).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.StaffRole, authtoken.BlobstoreRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateBlob).ServeHTTP,
 	},
 	arbor.Route{
 		"GetBlob",
@@ -71,7 +72,7 @@ var UploadRoutes = arbor.RouteCollection{
 		"DeleteBlob",
 		"DELETE",
 		"/upload/blobstore/{id}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(DeleteBlob).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(DeleteBlob).ServeHTTP,
 	},
 }
 

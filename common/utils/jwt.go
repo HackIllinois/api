@@ -2,18 +2,22 @@ package utils
 
 import (
 	"fmt"
-	"github.com/HackIllinois/api/gateway/config"
-	"github.com/HackIllinois/api/gateway/models"
-	jwt "github.com/dgrijalva/jwt-go"
 	"time"
+
+	"github.com/golang-jwt/jwt/v4"
 )
 
-func ExtractFieldFromJWT(token string, field string) ([]string, error) {
+func GenerateSignedToken(secret []byte, data jwt.Claims) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, data)
+	return token.SignedString(secret)
+}
+
+func ExtractFieldFromJWT(secret string, token string, field string) ([]string, error) {
 	jwt_token, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(config.TOKEN_SECRET), nil
+		return []byte(secret), nil
 	})
 
 	if err != nil {
@@ -38,20 +42,4 @@ func ExtractFieldFromJWT(token string, field string) ([]string, error) {
 	}
 
 	return nil, fmt.Errorf("Invalid token")
-}
-
-func HasRole(token string, required_role models.Role) (bool, error) {
-	roles, err := ExtractFieldFromJWT(token, "roles")
-
-	if err != nil {
-		return false, err
-	}
-
-	for _, role := range roles {
-		if role == required_role {
-			return true, nil
-		}
-	}
-
-	return false, nil
 }

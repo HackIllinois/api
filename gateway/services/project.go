@@ -3,9 +3,9 @@ package services
 import (
 	"net/http"
 
+	"github.com/HackIllinois/api/common/authtoken"
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
-	"github.com/HackIllinois/api/gateway/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
 )
@@ -17,19 +17,19 @@ var ProjectRoutes = arbor.RouteCollection{
 		"GetProjectFavorites",
 		"GET",
 		"/project/favorite/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetProjectFavorites).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetProjectFavorites).ServeHTTP,
 	},
 	arbor.Route{
 		"AddProjectFavorite",
 		"POST",
 		"/project/favorite/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(AddProjectFavorite).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole}), middleware.IdentificationMiddleware).ThenFunc(AddProjectFavorite).ServeHTTP,
 	},
 	arbor.Route{
 		"RemoveProjectFavorite",
 		"DELETE",
 		"/project/favorite/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveProjectFavorite).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveProjectFavorite).ServeHTTP,
 	},
 	arbor.Route{
 		"GetFilteredProjects",
@@ -47,7 +47,7 @@ var ProjectRoutes = arbor.RouteCollection{
 		"DeleteProject",
 		"DELETE",
 		"/project/{name}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(DeleteProject).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(DeleteProject).ServeHTTP,
 	},
 	arbor.Route{
 		"GetAllProjects",
@@ -59,13 +59,13 @@ var ProjectRoutes = arbor.RouteCollection{
 		"CreateProject",
 		"POST",
 		"/project/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(CreateProject).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(CreateProject).ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateProject",
 		"PUT",
 		"/project/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateProject).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateProject).ServeHTTP,
 	},
 }
 

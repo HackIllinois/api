@@ -32,11 +32,6 @@ jobs:
         with:
           go-version-file: 'go.mod'
           cache: true
-      - name: install python dependencies
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.6.15'
-          cache: 'pip'
       - name: start MongoDB
         uses: supercharge/mongodb-github-action@1.8.0
         with:

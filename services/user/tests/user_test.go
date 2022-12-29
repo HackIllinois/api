@@ -8,8 +8,7 @@ import (
 	"testing"
 
 	"github.com/HackIllinois/api/common/database"
-	auth_config "github.com/HackIllinois/api/services/auth/config"
-	user_config "github.com/HackIllinois/api/services/user/config"
+	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
 	"github.com/HackIllinois/api/services/user/service"
 	"github.com/dgrijalva/jwt-go"
@@ -18,7 +17,7 @@ import (
 var db database.Database
 
 func TestMain(m *testing.M) {
-	err := user_config.Initialize()
+	err := config.Initialize()
 
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
@@ -33,7 +32,7 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	db, err = database.InitDatabase(user_config.USER_DB_HOST, user_config.USER_DB_NAME)
+	db, err = database.InitDatabase(config.USER_DB_HOST, config.USER_DB_NAME)
 
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
@@ -503,7 +502,7 @@ func TestGetQrInfo(t *testing.T) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(auth_config.TOKEN_SECRET), nil
+		return []byte(config.TOKEN_SECRET), nil
 	})
 
 	actual_user_id := token.Claims.(jwt.MapClaims)["userId"]

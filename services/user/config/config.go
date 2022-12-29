@@ -1,14 +1,17 @@
 package config
 
 import (
-	"github.com/HackIllinois/api/common/configloader"
 	"os"
+
+	"github.com/HackIllinois/api/common/configloader"
 )
 
 var USER_DB_HOST string
 var USER_DB_NAME string
 
 var USER_PORT string
+
+var TOKEN_SECRET []byte
 
 func Initialize() error {
 
@@ -35,6 +38,14 @@ func Initialize() error {
 	if err != nil {
 		return err
 	}
+
+	secret, err := cfg_loader.Get("TOKEN_SECRET")
+
+	if err != nil {
+		return err
+	}
+
+	TOKEN_SECRET = []byte(secret)
 
 	return nil
 }

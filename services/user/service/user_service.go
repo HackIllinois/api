@@ -11,8 +11,7 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	hack_errors "github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/utils"
-	auth_config "github.com/HackIllinois/api/services/auth/config"
-	user_config "github.com/HackIllinois/api/services/user/config"
+	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
 	"github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/bson"
@@ -28,7 +27,7 @@ func Initialize() error {
 	}
 
 	var err error
-	db, err = database.InitDatabase(user_config.USER_DB_HOST, user_config.USER_DB_NAME)
+	db, err = database.InitDatabase(config.USER_DB_HOST, config.USER_DB_NAME)
 
 	if err != nil {
 		return err
@@ -191,7 +190,7 @@ func GetQrInfo(id string) (string, error) {
 		"userId": id,
 	})
 
-	signed_token, err := token.SignedString(auth_config.TOKEN_SECRET)
+	signed_token, err := token.SignedString(config.TOKEN_SECRET)
 
 	if err != nil {
 		return "", err

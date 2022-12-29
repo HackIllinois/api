@@ -505,6 +505,10 @@ func TestGetQrInfo(t *testing.T) {
 		return []byte(config.TOKEN_SECRET), nil
 	})
 
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	actual_user_id := token.Claims.(jwt.MapClaims)["userId"]
 
 	expected_user_id := "testid"

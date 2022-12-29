@@ -4,13 +4,14 @@ import (
 	"net/http"
 
 	"github.com/HackIllinois/api/common/authtoken"
+	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/gateway/config"
 )
 
 func IdentificationMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("Authorization")
-		id, err := authtoken.ExtractFieldFromJWT(config.TOKEN_SECRET, token, "id")
+		id, err := utils.ExtractFieldFromJWT(config.TOKEN_SECRET, token, "id")
 		if err == nil {
 			//Check if the user has the Admin role
 			is_admin, err := authtoken.HasRole(config.TOKEN_SECRET, token, authtoken.AdminRole)

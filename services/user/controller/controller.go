@@ -3,7 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
-
+	
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/services/user/models"

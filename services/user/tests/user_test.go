@@ -8,15 +8,17 @@ import (
 	"testing"
 
 	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/user/config"
+	auth_config "github.com/HackIllinois/api/services/auth/config"
+	user_config "github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
 	"github.com/HackIllinois/api/services/user/service"
+	"github.com/dgrijalva/jwt-go"
 )
 
 var db database.Database
 
 func TestMain(m *testing.M) {
-	err := config.Initialize()
+	err := user_config.Initialize()
 
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
@@ -31,7 +33,7 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	db, err = database.InitDatabase(config.USER_DB_HOST, config.USER_DB_NAME)
+	db, err = database.InitDatabase(user_config.USER_DB_HOST, user_config.USER_DB_NAME)
 
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
@@ -44,7 +46,7 @@ func TestMain(m *testing.M) {
 }
 
 /*
-	Initialize database with test user info
+Initialize database with test user info
 */
 func SetupTestDB(t *testing.T) {
 	err := db.Insert("info", &models.UserInfo{
@@ -69,7 +71,7 @@ func SetupTestDB(t *testing.T) {
 }
 
 /*
-  Initialize db for sortby filter tests
+Initialize db for sortby filter tests
 */
 func SetupFilterTestDB(t *testing.T) {
 	err := db.Insert("info", &models.UserInfo{
@@ -113,7 +115,7 @@ func SetupFilterTestDB(t *testing.T) {
 }
 
 /*
-  Initialize db for pagination, filter tests
+Initialize db for pagination, filter tests
 */
 func SetupPaginationDB(t *testing.T) {
 	err := db.Insert("info", &models.UserInfo{
@@ -152,7 +154,7 @@ func SetupPaginationDB(t *testing.T) {
 }
 
 /*
-	Drop test db
+Drop test db
 */
 func CleanupTestDB(t *testing.T) {
 	err := db.DropDatabase(nil)
@@ -163,7 +165,7 @@ func CleanupTestDB(t *testing.T) {
 }
 
 /*
-	Service level test for getting user info from db
+Service level test for getting user info from db
 */
 func TestGetUserInfoService(t *testing.T) {
 	SetupTestDB(t)
@@ -188,7 +190,7 @@ func TestGetUserInfoService(t *testing.T) {
 }
 
 /*
-	Service level test for setting user info in the db
+Service level test for setting user info in the db
 */
 func TestSetUserInfoService(t *testing.T) {
 	SetupTestDB(t)
@@ -223,7 +225,7 @@ func TestSetUserInfoService(t *testing.T) {
 }
 
 /*
-	Service level test for getting filtered user info from db
+Service level test for getting filtered user info from db
 */
 func TestGetFilteredUserInfoService(t *testing.T) {
 	SetupTestDB(t)
@@ -261,7 +263,7 @@ func TestGetFilteredUserInfoService(t *testing.T) {
 }
 
 /*
-  Test Sortby parameter
+Test Sortby parameter
 */
 func TestGetFilteredUserInfoWithSortingService(t *testing.T) {
 	SetupFilterTestDB(t)
@@ -350,7 +352,7 @@ func TestGetFilteredUserInfoWithSortingService(t *testing.T) {
 }
 
 /*
-  Test Pagination parameter
+Test Pagination parameter
 */
 func TestGetFilteredUserInfoServicePagination(t *testing.T) {
 	SetupPaginationDB(t)
@@ -472,7 +474,7 @@ func TestGetFilteredUserInfoServicePagination(t *testing.T) {
 }
 
 /*
-	Service level test for generating QR code URI
+Service level test for generating QR code URI
 */
 func TestGetQrInfo(t *testing.T) {
 	SetupTestDB(t)
@@ -495,12 +497,21 @@ func TestGetQrInfo(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected_query_params := url.Values{
-		"userId": []string{"testid"},
-	}
+	signed_token := actual_query_params.Get("userToken")
 
-	if !reflect.DeepEqual(expected_query_params, actual_query_params) {
-		t.Errorf("Wrong QR code URI. Expected %v, got %v", expected_query_params, actual_query_params)
+	token, err := jwt.Parse(signed_token, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(auth_config.TOKEN_SECRET), nil
+	})
+
+	actual_user_id := token.Claims.(jwt.MapClaims)["userId"]
+
+	expected_user_id := "testid"
+
+	if !reflect.DeepEqual(actual_user_id, expected_user_id) {
+		t.Errorf("Wrong QR code URI. Expected %v, got %v", expected_user_id, actual_user_id)
 	}
 
 	CleanupTestDB(t)

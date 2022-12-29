@@ -6,12 +6,15 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/HackIllinois/api/common/database"
 	hack_errors "github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/utils"
-	"github.com/HackIllinois/api/services/user/config"
+	auth_config "github.com/HackIllinois/api/services/auth/config"
+	user_config "github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
+	"github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -25,7 +28,7 @@ func Initialize() error {
 	}
 
 	var err error
-	db, err = database.InitDatabase(config.USER_DB_HOST, config.USER_DB_NAME)
+	db, err = database.InitDatabase(user_config.USER_DB_HOST, user_config.USER_DB_NAME)
 
 	if err != nil {
 		return err
@@ -35,7 +38,7 @@ func Initialize() error {
 }
 
 /*
-	Returns the info associated with the given user id
+Returns the info associated with the given user id
 */
 func GetUserInfo(id string, sessCtx *mongo.SessionContext) (*models.UserInfo, error) {
 	query := database.QuerySelector{
@@ -53,8 +56,8 @@ func GetUserInfo(id string, sessCtx *mongo.SessionContext) (*models.UserInfo, er
 }
 
 /*
-	Set the info associated with the given user id
-	The record will be created if it does not already exist
+Set the info associated with the given user id
+The record will be created if it does not already exist
 */
 func SetUserInfo(id string, user_info models.UserInfo, sessCtx *mongo.SessionContext) error {
 	selector := database.QuerySelector{
@@ -100,7 +103,7 @@ func UpsertUserInfo(id string, user_info models.UserInfo) (*models.UserInfo, *ha
 }
 
 /*
-	Returns the users associated with the given parameters
+Returns the users associated with the given parameters
 */
 func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers, error) {
 	// Grab pagination and sorting parameters and delete to prevent the CreateFilterQuery from using them
@@ -164,7 +167,7 @@ func GetFilteredUserInfo(parameters map[string][]string) (*models.FilteredUsers,
 }
 
 /*
-	Generates a QR string for a user with the provided ID, as a URI
+Generates a QR string for a user with the provided ID, as a URI
 */
 func GetQrInfo(id string) (string, error) {
 	_, err := GetUserInfo(id, nil)
@@ -181,9 +184,18 @@ func GetQrInfo(id string) (string, error) {
 		return "", err
 	}
 
+	// Generate JWT
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"exp":    time.Now().Add(time.Second * 20).Unix(),
+		"userId": id,
+	})
+
+	signed_token, err := token.SignedString(auth_config.TOKEN_SECRET)
+
 	// All the fields that will be embedded in the QR code URI
 	parameters := url.Values{
-		"userId": []string{id},
+		"userToken": []string{signed_token},
 	}
 
 	uri.RawQuery = parameters.Encode()
@@ -192,7 +204,7 @@ func GetQrInfo(id string) (string, error) {
 }
 
 /*
-	Returns all user stats
+Returns all user stats
 */
 func GetStats() (map[string]interface{}, error) {
 	return db.GetStats("info", []string{}, nil)

@@ -8,7 +8,7 @@ import (
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/common/utils"
-	gateway_utils "github.com/HackIllinois/api/gateway/utils"
+	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/services/event/models"
 	"github.com/HackIllinois/api/services/event/service"
 	"github.com/gorilla/mux"
@@ -261,7 +261,7 @@ func StaffCheckin(w http.ResponseWriter, r *http.Request) {
 	var checkin_request models.StaffCheckinRequest
 	json.NewDecoder(r.Body).Decode(&checkin_request)
 
-	id, err := gateway_utils.ExtractFieldFromJWT(checkin_request.UserToken, "UserId")
+	id, err := utils.ExtractFieldFromJWT(config.TOKEN_SECRET, checkin_request.UserToken, "UserId")
 
 	if err != nil {
 		json.NewEncoder(w).Encode(models.CheckinResult{

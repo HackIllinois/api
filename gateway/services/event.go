@@ -6,6 +6,7 @@ import (
 	"github.com/HackIllinois/api/common/authtoken"
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
+	"github.com/HackIllinois/api/services/auth/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
 )

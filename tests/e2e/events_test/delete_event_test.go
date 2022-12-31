@@ -51,15 +51,38 @@ func TestDeleteNormal(t *testing.T) {
 		t.Fatalf("Wrong event info. Expected %v, got %v", expected_event, received_event)
 	}
 
-	response, err = staff_client.New().Get(fmt.Sprintf("/event/%s/", event_id)).ReceiveSuccess(nil)
+	cursor, _ := client.Database(events_db_name).Collection("events").Find(context.Background(), bson.D{})
+	res := []models.Event{}
+	err = cursor.All(context.TODO(), &res)
 
 	if err != nil {
-		t.Fatal("Unable to make request")
+		t.Fatalf("Test failed due to unexpected error: %v", err)
 		return
 	}
-	if response.StatusCode != http.StatusNotFound {
-		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
-		return
+
+	expected_events := []models.Event{
+		{
+			ID:          "testeventid67890",
+			Name:        "testevent2",
+			Description: "testdescription2",
+			StartTime:   current_unix_time,
+			EndTime:     current_unix_time + 60000,
+			Sponsor:     "testsponsor2",
+			EventType:   "WORKSHOP",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription2",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
+			},
+			Points: 100,
+		},
+	}
+
+	if !reflect.DeepEqual(res, expected_events) {
+		t.Fatalf("Database contained wrong event info. Expected %v, got %v", expected_events, res)
 	}
 }
 

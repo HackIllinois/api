@@ -210,7 +210,7 @@ func UpdateEventCode(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Endpoint to checkin to a non-staff event using a code. Validates id, then code,
+	Endpoint to checkin to a staff event using a userToken and eventId
 */
 func StaffCheckin(w http.ResponseWriter, r *http.Request) {
 	var staff_checkin_request models.StaffCheckinRequest
@@ -229,7 +229,7 @@ func StaffCheckin(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Endpoint to checkin to a non-staff event using a code. Validates id, then code,
+	Endpoint to checkin to a non-staff event using a code
 */
 func Checkin(w http.ResponseWriter, r *http.Request) {
 	user_id := r.Header.Get("HackIllinois-Identity")

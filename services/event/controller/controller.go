@@ -4,11 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/common/utils"
-	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/services/event/models"
 	"github.com/HackIllinois/api/services/event/service"
 	"github.com/gorilla/mux"
@@ -212,78 +210,31 @@ func UpdateEventCode(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Processes a checkin by attempting to redeem an event, award points, and write the result
-*/
-func ProcessCheckin(id string, event_id string, r *http.Request, w http.ResponseWriter) {
-	redemption_status, err := service.RedeemEvent(id, event_id)
-
-	if err != nil || redemption_status == nil {
-		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to verify if user already had redeemed event points"))
-		return
-	}
-
-	if redemption_status.Status != "Success" {
-		json.NewEncoder(w).Encode(models.CheckinResult{
-			Status: "AlreadyCheckedIn",
-		})
-		return
-	}
-
-	// Determine the current event and its point value
-	event, err := service.GetEvent(event_id)
-
-	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not fetch the event details and point value."))
-		return
-	}
-
-	// Add this point value to given profile
-	profile, err := service.AwardPoints(id, event.Points)
-
-	if err != nil {
-		errors.WriteError(w, r, errors.UnknownError(err.Error(), "Failed to award user with points"))
-		return
-	}
-
-	result := models.CheckinResult{
-		Status:      "Success",
-		NewPoints:   event.Points,
-		TotalPoints: profile.Points,
-	}
-
-	json.NewEncoder(w).Encode(result)
-}
-
-/*
 	Endpoint to checkin to a non-staff event using a code. Validates id, then code,
 */
 func StaffCheckin(w http.ResponseWriter, r *http.Request) {
-	var checkin_request models.StaffCheckinRequest
-	json.NewDecoder(r.Body).Decode(&checkin_request)
+	var staff_checkin_request models.StaffCheckinRequest
+	json.NewDecoder(r.Body).Decode(&staff_checkin_request)
 
-	id, err := utils.ExtractFieldFromJWT(config.TOKEN_SECRET, checkin_request.UserToken, "UserId")
+	// We've gotten the user id and event id, now we need to checkin
+	response, err := service.CheckinUserTokenToEvent(staff_checkin_request.UserToken, staff_checkin_request.EventID)
 
+	// If there was an error, write it out
 	if err != nil {
-		json.NewEncoder(w).Encode(models.CheckinResult{
-			Status: "ExpiredOrProspective",
-		})
-		return
+		errors.WriteError(w, r, errors.UnknownError(err.Error(), err.Error()))
 	}
 
-	// This event id will be checked in ProcessCheckin
-	event_id := checkin_request.EventID
-
-	// We've handled all the code-specific logic, now we need to handle the shared logic
-	ProcessCheckin(id[0], event_id, r, w)
+	// Otherwise, we can just write the response
+	json.NewEncoder(w).Encode(response)
 }
 
 /*
 	Endpoint to checkin to a non-staff event using a code. Validates id, then code,
 */
 func Checkin(w http.ResponseWriter, r *http.Request) {
-	id := r.Header.Get("HackIllinois-Identity")
+	user_id := r.Header.Get("HackIllinois-Identity")
 
-	if id == "" {
+	if user_id == "" {
 		errors.WriteError(w, r, errors.MalformedRequestError("Must provide id in request.", "Must provide id in request."))
 		return
 	}
@@ -291,28 +242,16 @@ func Checkin(w http.ResponseWriter, r *http.Request) {
 	var checkin_request models.CheckinRequest
 	json.NewDecoder(r.Body).Decode(&checkin_request)
 
-	valid, event_id, err := service.CanRedeemPoints(checkin_request.Code)
+	// We've got the user_id and code for the vent
+	response, err := service.CheckinUserByCode(user_id, checkin_request.Code)
 
-	// For this specific error, don't return a http error code and populate the `status` field instead.
-	if err == database.ErrNotFound {
-		json.NewEncoder(w).Encode(models.CheckinResult{
-			Status: "InvalidCode",
-		})
-		return
-	} else if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Failed to receive event code information from database"))
-		return
+	// If there was an error, write it out
+	if err != nil {
+		errors.WriteError(w, r, errors.UnknownError(err.Error(), err.Error()))
 	}
 
-	if !valid {
-		json.NewEncoder(w).Encode(models.CheckinResult{
-			Status: "ExpiredOrProspective",
-		})
-		return
-	}
-
-	// We've handled all the code-specific logic, now we need to handle the shared logic
-	ProcessCheckin(id, event_id, r, w)
+	// Otherwise, we can just write the response
+	json.NewEncoder(w).Encode(response)
 }
 
 /*

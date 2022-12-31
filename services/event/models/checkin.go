@@ -8,7 +8,7 @@ type CheckinRequest struct {
 	Code string `json:"code"`
 }
 
-type CheckinResult struct {
+type CheckinResponse struct {
 	NewPoints   int    `default:"-1" json:"newPoints"`
 	TotalPoints int    `default:"-1" json:"totalPoints"`
 	Status      string `json:"status"`

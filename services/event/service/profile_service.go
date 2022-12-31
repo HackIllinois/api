@@ -12,10 +12,10 @@ import (
 /*
 	Checks if a user can redeem a certain event by seeing if they've already checked in, marking it redeemed if they haven't already
 */
-func RedeemEvent(id string, event_id string) (*models.RedeemEventResponse, error) {
+func RedeemEvent(user_id string, event_id string) (*models.RedeemEventResponse, error) {
 	var redemption_status models.RedeemEventResponse
 	event_info := models.RedeemEventRequest{
-		ID:      id,
+		ID:      user_id,
 		EventID: event_id,
 	}
 

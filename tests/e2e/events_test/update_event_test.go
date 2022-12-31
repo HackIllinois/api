@@ -84,7 +84,7 @@ func TestUpdateEventNotFound(t *testing.T) {
 		t.Fatal("Unable to make request")
 		return
 	}
-	if response.StatusCode != http.StatusNotFound {
+	if response.StatusCode != http.StatusInternalServerError {
 		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
 		return
 	}

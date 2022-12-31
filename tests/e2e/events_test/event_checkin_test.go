@@ -93,13 +93,13 @@ func TestCheckinInvalidCode(t *testing.T) {
 		Code: "wrongcode",
 	}
 	received_res := models.CheckinResult{}
-	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).Receive(nil, &received_res)
+	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
 
 	if err != nil {
 		t.Fatal("Unable to make request")
 		return
 	}
-	if response.StatusCode != http.StatusNotFound {
+	if response.StatusCode != http.StatusOK {
 		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
 		return
 	}
@@ -125,13 +125,13 @@ func TestCheckinInvalidTime(t *testing.T) {
 		Code: "abcdef",
 	}
 	received_res := models.CheckinResult{}
-	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).Receive(nil, &received_res)
+	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
 
 	if err != nil {
 		t.Fatal("Unable to make request")
 		return
 	}
-	if response.StatusCode != http.StatusGone {
+	if response.StatusCode != http.StatusOK {
 		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
 		return
 	}
@@ -166,13 +166,13 @@ func TestCheckinAlreadyCheckedIn(t *testing.T) {
 		Code: "123456",
 	}
 	received_res := models.CheckinResult{}
-	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).Receive(&received_res, &received_res)
+	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
 
 	if err != nil {
 		t.Fatal("Unable to make request: ", err)
 		return
 	}
-	if response.StatusCode != http.StatusConflict {
+	if response.StatusCode != http.StatusOK {
 		t.Errorf("Request returned HTTP error %d", response.StatusCode)
 		// return
 	}

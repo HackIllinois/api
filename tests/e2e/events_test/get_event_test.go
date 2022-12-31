@@ -61,7 +61,7 @@ func TestGetEventNotExist(t *testing.T) {
 	if err != nil {
 		t.Error("Unable to make request")
 	}
-	if response.StatusCode != http.StatusNotFound {
+	if response.StatusCode != http.StatusInternalServerError {
 		t.Errorf("Request returned HTTP error %d", response.StatusCode)
 	}
 }

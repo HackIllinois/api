@@ -128,10 +128,10 @@ func CreateEvents() {
 		ID:          "testeventid67890",
 		Name:        "testevent2",
 		Description: "testdescription2",
-		StartTime:   current_unix_time,
-		EndTime:     current_unix_time + 60000,
-		Sponsor:     "testsponsor2",
-		EventType:   "WORKSHOP",
+		StartTime:   current_unix_time + 60000,
+		EndTime:     current_unix_time + 120000,
+		Sponsor:     "",
+		EventType:   "FOOD",
 		Locations: []event_models.EventLocation{
 			{
 				Description: "testlocationdescription2",
@@ -140,7 +140,7 @@ func CreateEvents() {
 				Longitude:   123.456,
 			},
 		},
-		Points: 100,
+		Points: 0,
 	}
 
 	client.Database(events_db_name).Collection("events").InsertOne(context.Background(), event1)

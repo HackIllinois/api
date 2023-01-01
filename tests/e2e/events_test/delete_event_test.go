@@ -66,10 +66,10 @@ func TestDeleteEventNormal(t *testing.T) {
 			ID:          "testeventid67890",
 			Name:        "testevent2",
 			Description: "testdescription2",
-			StartTime:   current_unix_time,
-			EndTime:     current_unix_time + 60000,
-			Sponsor:     "testsponsor2",
-			EventType:   "WORKSHOP",
+			StartTime:   current_unix_time + 60000,
+			EndTime:     current_unix_time + 120000,
+			Sponsor:     "",
+			EventType:   "FOOD",
 			Locations: []models.EventLocation{
 				{
 					Description: "testlocationdescription2",
@@ -78,7 +78,7 @@ func TestDeleteEventNormal(t *testing.T) {
 					Longitude:   123.456,
 				},
 			},
-			Points: 100,
+			Points: 0,
 		},
 	}
 
@@ -147,10 +147,10 @@ func TestDeleteEventNotExist(t *testing.T) {
 			ID:          "testeventid67890",
 			Name:        "testevent2",
 			Description: "testdescription2",
-			StartTime:   current_unix_time,
-			EndTime:     current_unix_time + 60000,
-			Sponsor:     "testsponsor2",
-			EventType:   "WORKSHOP",
+			StartTime:   current_unix_time + 60000,
+			EndTime:     current_unix_time + 120000,
+			Sponsor:     "",
+			EventType:   "FOOD",
 			Locations: []models.EventLocation{
 				{
 					Description: "testlocationdescription2",
@@ -159,7 +159,7 @@ func TestDeleteEventNotExist(t *testing.T) {
 					Longitude:   123.456,
 				},
 			},
-			Points: 100,
+			Points: 0,
 		},
 	}
 
@@ -216,10 +216,10 @@ func TestDeleteEventForbidden(t *testing.T) {
 			ID:          "testeventid67890",
 			Name:        "testevent2",
 			Description: "testdescription2",
-			StartTime:   current_unix_time,
-			EndTime:     current_unix_time + 60000,
-			Sponsor:     "testsponsor2",
-			EventType:   "WORKSHOP",
+			StartTime:   current_unix_time + 60000,
+			EndTime:     current_unix_time + 120000,
+			Sponsor:     "",
+			EventType:   "FOOD",
 			Locations: []models.EventLocation{
 				{
 					Description: "testlocationdescription2",
@@ -228,7 +228,7 @@ func TestDeleteEventForbidden(t *testing.T) {
 					Longitude:   123.456,
 				},
 			},
-			Points: 100,
+			Points: 0,
 		},
 	}
 

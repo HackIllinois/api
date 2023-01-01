@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/event/models"
 )
 
@@ -40,9 +41,9 @@ func TestGetEventTrackingInfoNonexist(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 
-	recieved_tracking_users := models.EventTracker{}
 	eventid := "invalideventid"
-	response, err := staff_client.New().Get(fmt.Sprintf("/event/track/event/%s/", eventid)).ReceiveSuccess(&recieved_tracking_users)
+	api_err := errors.ApiError{}
+	response, err := staff_client.New().Get(fmt.Sprintf("/event/track/event/%s/", eventid)).Receive(nil, &api_err)
 
 	if err != nil {
 		t.Fatal("Unable to make request")
@@ -51,6 +52,17 @@ func TestGetEventTrackingInfoNonexist(t *testing.T) {
 	if response.StatusCode != http.StatusInternalServerError {
 		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
 		return
+	}
+
+	expected_error := errors.ApiError{
+		Status:   500,
+		Type:     "DATABASE_ERROR",
+		Message:  "Could not get event tracker.",
+		RawError: "Error: NOT_FOUND",
+	}
+
+	if !reflect.DeepEqual(expected_error, api_err) {
+		t.Fatalf("Wrong error resonse recieved. Expected %v, got %v", expected_error, api_err)
 	}
 }
 

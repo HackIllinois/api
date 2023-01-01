@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/HackIllinois/api/common/errors"
 	checkin_models "github.com/HackIllinois/api/services/checkin/models"
 	event_models "github.com/HackIllinois/api/services/event/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -108,8 +109,8 @@ func TestTrackUserNotCheckedin(t *testing.T) {
 		UserID:  "localadmin",
 	}
 
-	res_tracking := event_models.TrackingStatus{}
-	response, err := staff_client.New().Post("/event/track/").BodyJSON(tracking_info).ReceiveSuccess(&res_tracking)
+	api_err := errors.ApiError{}
+	response, err := staff_client.New().Post("/event/track/").BodyJSON(tracking_info).Receive(nil, &api_err)
 
 	if err != nil {
 		t.Fatal("Unable to make request")
@@ -118,5 +119,16 @@ func TestTrackUserNotCheckedin(t *testing.T) {
 	if response.StatusCode != http.StatusUnprocessableEntity {
 		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
 		return
+	}
+
+	expected_error := errors.ApiError{
+		Status:   http.StatusUnprocessableEntity,
+		Type:     "ATTRIBUTE_MISMATCH_ERROR",
+		Message:  "User must be checked-in to attend event.",
+		RawError: "User must be checked-in to attend event.",
+	}
+
+	if !reflect.DeepEqual(expected_error, api_err) {
+		t.Fatalf("Wrong error response received. Expected %v, got %v", expected_error, api_err)
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/event/models"
 )
 
@@ -55,13 +56,24 @@ func TestGetEventNotExist(t *testing.T) {
 	defer ClearEvents()
 
 	event_id := "nonsense_eventid"
-	received_event := models.Event{}
-	response, err := public_client.New().Get(fmt.Sprintf("/event/%s/", event_id)).ReceiveSuccess(&received_event)
+	api_err := errors.ApiError{}
+	response, err := public_client.New().Get(fmt.Sprintf("/event/%s/", event_id)).Receive(nil, &api_err)
 
 	if err != nil {
 		t.Error("Unable to make request")
 	}
 	if response.StatusCode != http.StatusInternalServerError {
 		t.Errorf("Request returned HTTP error %d", response.StatusCode)
+	}
+
+	expected_error := errors.ApiError{
+		Status:   http.StatusInternalServerError,
+		Type:     "DATABASE_ERROR",
+		Message:  "Could not fetch the event details.",
+		RawError: "Error: NOT_FOUND",
+	}
+
+	if !reflect.DeepEqual(expected_error, api_err) {
+		t.Fatalf("Wrong error response received. Expected %v, got %v", expected_error, api_err)
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/event/models"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -81,8 +82,8 @@ func TestDeleteFavoriteEventsNone(t *testing.T) {
 	req := models.EventFavoriteModification{
 		EventID: "nonexistantevent",
 	}
-	recieved_favorites := models.EventFavorites{}
-	response, err := user_client.New().Delete("/event/favorite/").BodyJSON(req).ReceiveSuccess(&recieved_favorites)
+	api_err := errors.ApiError{}
+	response, err := user_client.New().Delete("/event/favorite/").BodyJSON(req).Receive(nil, &api_err)
 
 	if err != nil {
 		t.Fatal("Unable to make request")
@@ -93,16 +94,28 @@ func TestDeleteFavoriteEventsNone(t *testing.T) {
 		return
 	}
 
+	expected_error := errors.ApiError{
+		Status:   http.StatusInternalServerError,
+		Type:     "DATABASE_ERROR",
+		Message:  "Could not remove an event favorite for the current user.",
+		RawError: "User's event favorites does not have specified event",
+	}
+
+	if !reflect.DeepEqual(api_err, expected_error) {
+		t.Fatalf("Wrong error response received. Expected %v, got %v", expected_error, api_err)
+	}
+
 	res := client.Database(events_db_name).Collection("favorites").FindOne(context.Background(), bson.M{"id": "localadmin"})
 
-	err = res.Decode(&recieved_favorites)
+	actual_favorites := models.EventFavorites{}
+	err = res.Decode(&actual_favorites)
 
 	if err != nil {
 		t.Fatalf("Had trouble finding favorites in database: %v", err)
 		return
 	}
 
-	if !reflect.DeepEqual(recieved_favorites, favorite_events) {
-		t.Fatalf("Wrong result received from database. Expected %v, got %v", favorite_events, recieved_favorites)
+	if !reflect.DeepEqual(actual_favorites, favorite_events) {
+		t.Fatalf("Wrong result received from database. Expected %v, got %v", favorite_events, actual_favorites)
 	}
 }

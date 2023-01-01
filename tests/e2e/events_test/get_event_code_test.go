@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/event/models"
 )
 

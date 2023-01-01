@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/event/models"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -63,7 +64,8 @@ func TestAddFavoriteEventNotExist(t *testing.T) {
 		EventID: "nonexistantid",
 	}
 
-	response, err := user_client.New().Post("/event/favorite/").BodyJSON(req).ReceiveSuccess(nil)
+	api_err := errors.ApiError{}
+	response, err := user_client.New().Post("/event/favorite/").BodyJSON(req).Receive(nil, &api_err)
 
 	if err != nil {
 		t.Fatal("Unable to make request")
@@ -72,6 +74,17 @@ func TestAddFavoriteEventNotExist(t *testing.T) {
 	if response.StatusCode != http.StatusInternalServerError {
 		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
 		return
+	}
+
+	expected_error := errors.ApiError{
+		Status:   http.StatusInternalServerError,
+		Type:     "DATABASE_ERROR",
+		Message:  "Could not add an event favorite for the current user.",
+		RawError: "Could not find event with the given id.",
+	}
+
+	if !reflect.DeepEqual(api_err, expected_error) {
+		t.Fatalf("Wrong reponse received. Expected %v, got %v", expected_error, api_err)
 	}
 
 	cursor, err := client.Database(events_db_name).Collection("favorites").Find(context.Background(), bson.M{"id": "localadmin"})

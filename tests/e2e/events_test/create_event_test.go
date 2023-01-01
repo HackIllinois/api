@@ -84,8 +84,8 @@ func TestCreateEventForbidden(t *testing.T) {
 		},
 		Points: 50,
 	}
-	received_event := models.Event{}
-	response, err := user_client.New().Post("/event/").BodyJSON(event_info).ReceiveSuccess(&received_event)
+
+	response, err := user_client.New().Post("/event/").BodyJSON(event_info).Receive(nil, nil)
 
 	if err != nil {
 		t.Fatal("Unable to make request")

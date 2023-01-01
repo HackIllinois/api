@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/HackIllinois/api/services/event/models"
+	profile_models "github.com/HackIllinois/api/services/profile/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -40,6 +41,21 @@ func TestCheckinNormal(t *testing.T) {
 
 	if !reflect.DeepEqual(received_res, expected_res) {
 		t.Fatalf("Wrong result received. Expected %v, got %v", expected_res, received_res)
+	}
+
+	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": "theadminprofile"})
+
+	profile := profile_models.Profile{}
+	err = res.Decode(&profile)
+
+	if err != nil {
+		t.Fatalf("Had trouble finding profile in database: %v", err)
+		return
+	}
+
+	// it's not crucial we check every field in profile. The profile E2E tests should be doing that
+	if expected_res.TotalPoints != profile.Points {
+		t.Fatalf("Wrong amount of points in profile database. Expected %v, got %v", expected_res.TotalPoints, profile.Points)
 	}
 }
 
@@ -81,6 +97,21 @@ func TestCheckinAddToExistingPoints(t *testing.T) {
 	if !reflect.DeepEqual(received_res, expected_res) {
 		t.Fatalf("Wrong result received. Expected %v, got %v", expected_res, received_res)
 	}
+
+	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": "theadminprofile"})
+
+	profile := profile_models.Profile{}
+	err = res.Decode(&profile)
+
+	if err != nil {
+		t.Fatalf("Had trouble finding profile in database: %v", err)
+		return
+	}
+
+	// it's not crucial we check every field in profile. The profile E2E tests should be doing that
+	if expected_res.TotalPoints != profile.Points {
+		t.Fatalf("Wrong amount of points in profile database. Expected %v, got %v", expected_res.TotalPoints, profile.Points)
+	}
 }
 
 func TestCheckinInvalidCode(t *testing.T) {
@@ -113,6 +144,22 @@ func TestCheckinInvalidCode(t *testing.T) {
 	if !reflect.DeepEqual(received_res, expected_res) {
 		t.Fatalf("Wrong result received. Expected %v, got %v", expected_res, received_res)
 	}
+
+	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": "theadminprofile"})
+
+	profile := profile_models.Profile{}
+	err = res.Decode(&profile)
+
+	if err != nil {
+		t.Fatalf("Had trouble finding profile in database: %v", err)
+		return
+	}
+
+	// it's not crucial we check every field. The profile E2E tests should be doing that
+	expected_points := 0
+	if expected_points != profile.Points {
+		t.Fatalf("Wrong amount of points in profile database. Expected %v, got %v", expected_points, profile.Points)
+	}
 }
 
 func TestCheckinInvalidTime(t *testing.T) {
@@ -144,6 +191,22 @@ func TestCheckinInvalidTime(t *testing.T) {
 
 	if !reflect.DeepEqual(received_res, expected_res) {
 		t.Fatalf("Wrong result received. Expected %v, got %v", expected_res, received_res)
+	}
+
+	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": "theadminprofile"})
+
+	profile := profile_models.Profile{}
+	err = res.Decode(&profile)
+
+	if err != nil {
+		t.Fatalf("Had trouble finding profile in database: %v", err)
+		return
+	}
+
+	// it's not crucial we check every field. The profile E2E tests should be doing that
+	expected_points := 0
+	if expected_points != profile.Points {
+		t.Fatalf("Wrong amount of points in profile database. Expected %v, got %v", expected_points, profile.Points)
 	}
 }
 
@@ -185,5 +248,21 @@ func TestCheckinAlreadyCheckedIn(t *testing.T) {
 
 	if !reflect.DeepEqual(received_res, expected_res) {
 		t.Fatalf("Wrong result received. Expected %v, got %v", expected_res, received_res)
+	}
+
+	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": "theadminprofile"})
+
+	profile := profile_models.Profile{}
+	err = res.Decode(&profile)
+
+	if err != nil {
+		t.Fatalf("Had trouble finding profile in database: %v", err)
+		return
+	}
+
+	// it's not crucial we check every field. The profile E2E tests should be doing that
+	expected_points := 0
+	if expected_points != profile.Points {
+		t.Fatalf("Wrong amount of points in profile database. Expected %v, got %v", expected_points, profile.Points)
 	}
 }

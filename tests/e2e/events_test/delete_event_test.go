@@ -7,11 +7,12 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/event/models"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func TestDeleteNormal(t *testing.T) {
+func TestDeleteEventNormal(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 
@@ -86,13 +87,13 @@ func TestDeleteNormal(t *testing.T) {
 	}
 }
 
-func TestDeleteNotExist(t *testing.T) {
+func TestDeleteEventNotExist(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 
 	event_id := "nonsense_eventid"
-	received_event := models.Event{}
-	response, err := staff_client.New().Delete(fmt.Sprintf("/event/%s/", event_id)).ReceiveSuccess(&received_event)
+	api_err := errors.ApiError{}
+	response, err := staff_client.New().Delete(fmt.Sprintf("/event/%s/", event_id)).Receive(nil, &api_err)
 
 	if err != nil {
 		t.Fatal("Unable to make request")
@@ -101,6 +102,17 @@ func TestDeleteNotExist(t *testing.T) {
 	if response.StatusCode != http.StatusInternalServerError {
 		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
 		return
+	}
+
+	expected_error := errors.ApiError{
+		Status:   http.StatusInternalServerError,
+		Type:     "INTERNAL_ERROR",
+		Message:  "Could not delete either the event, event trackers, or user trackers, or an intermediary subroutine failed.",
+		RawError: "Error: NOT_FOUND",
+	}
+
+	if !reflect.DeepEqual(api_err, expected_error) {
+		t.Fatalf("Wrong error response received. Expected %v, got %v", expected_error, api_err)
 	}
 
 	cursor, _ := client.Database(events_db_name).Collection("events").Find(context.Background(), bson.D{})
@@ -156,13 +168,12 @@ func TestDeleteNotExist(t *testing.T) {
 	}
 }
 
-func TestDeleteForbidden(t *testing.T) {
+func TestDeleteEventForbidden(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 
 	event_id := "testeventid12345"
-	received_event := models.Event{}
-	response, err := user_client.New().Delete(fmt.Sprintf("/event/%s/", event_id)).ReceiveSuccess(&received_event)
+	response, err := user_client.New().Delete(fmt.Sprintf("/event/%s/", event_id)).Receive(nil, nil)
 
 	if err != nil {
 		t.Fatal("Unable to make request")

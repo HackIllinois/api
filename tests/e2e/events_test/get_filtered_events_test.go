@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/event/models"
 )
 
@@ -56,7 +57,8 @@ func TestGetFilteredEventsBadArgs(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 
-	response, err := public_client.New().Get("/event/filter/?nonsensefield=trydecipheringthis!").ReceiveSuccess(nil)
+	api_err := errors.ApiError{}
+	response, err := public_client.New().Get("/event/filter/?nonsensefield=trydecipheringthis!").Receive(nil, &api_err)
 
 	if err != nil {
 		t.Fatal("Unable to make request")
@@ -65,5 +67,16 @@ func TestGetFilteredEventsBadArgs(t *testing.T) {
 	if response.StatusCode != http.StatusInternalServerError {
 		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
 		return
+	}
+
+	expected_error := errors.ApiError{
+		Status:   http.StatusInternalServerError,
+		Type:     "DATABASE_ERROR",
+		Message:  "Could not fetch filtered list of events.",
+		RawError: "Invalid key nonsensefield",
+	}
+
+	if !reflect.DeepEqual(expected_error, api_err) {
+		t.Fatalf("Wrong error resonse received. Expected %v, got %v", expected_error, api_err)
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/services/event/models"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -76,9 +77,9 @@ func TestUpdateEventNotFound(t *testing.T) {
 
 	event.ID = "adifferentidthatsnotbeenadded"
 	event.Description = "It's a new description!"
-	var received_event models.Event
 
-	response, err := staff_client.New().Put("/event/").BodyJSON(event).ReceiveSuccess(&received_event)
+	api_err := errors.ApiError{}
+	response, err := staff_client.New().Put("/event/").BodyJSON(event).Receive(nil, &api_err)
 
 	if err != nil {
 		t.Fatal("Unable to make request")
@@ -87,5 +88,16 @@ func TestUpdateEventNotFound(t *testing.T) {
 	if response.StatusCode != http.StatusInternalServerError {
 		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
 		return
+	}
+
+	expected_error := errors.ApiError{
+		Status:   http.StatusInternalServerError,
+		Type:     "DATABASE_ERROR",
+		Message:  "Could not update the event.",
+		RawError: "Error: NOT_FOUND",
+	}
+
+	if !reflect.DeepEqual(expected_error, api_err) {
+		t.Fatalf("Wrong error response received. Expected %v, got %v", expected_error, api_err)
 	}
 }

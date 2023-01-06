@@ -59,7 +59,7 @@ class AutoAccept():
 
     def accept_user(self, id: str) -> bool:
         '''
-            Accepts a user to the event with ``id``. Returns a bool representing if the accept was successful. 
+            Accepts a user to the event with `id`. Returns a bool representing if the accept was successful. 
         '''
         json = {
             "id": id,

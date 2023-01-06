@@ -13,6 +13,17 @@ import (
 )
 
 /*
+	Returns a CheckinResponse with NewPoints and TotalPoints defaulted to -1, and a status of status
+*/
+func NewCheckinResponseFailed(status string) *models.CheckinResponse {
+	return &models.CheckinResponse{
+		NewPoints:   -1,
+		TotalPoints: -1,
+		Status:      status,
+	}
+}
+
+/*
 	Checks if the user has been checked in with the checkin service
 */
 func IsUserCheckedIn(id string) (bool, error) {
@@ -37,9 +48,7 @@ func PerformCheckin(user_id string, event_id string) (*models.CheckinResponse, e
 	}
 
 	if redemption_status.Status != "Success" {
-		return &models.CheckinResponse{
-			Status: "AlreadyCheckedIn",
-		}, nil
+		return NewCheckinResponseFailed("AlreadyCheckedIn"), nil
 	}
 
 	// Determine the current event and its point value
@@ -72,17 +81,13 @@ func CheckinUserByCode(user_id string, code string) (*models.CheckinResponse, er
 
 	// For this specific error, we know the issue was the code doesn't exist / is not valid
 	if err == database.ErrNotFound {
-		return &models.CheckinResponse{
-			Status: "InvalidCode",
-		}, nil
+		return NewCheckinResponseFailed("InvalidCode"), nil
 	} else if err != nil {
 		return nil, errors.New("Failed to receive event code information from database")
 	}
 
 	if !valid {
-		return &models.CheckinResponse{
-			Status: "ExpiredOrProspective",
-		}, nil
+		return NewCheckinResponseFailed("ExpiredOrProspective"), nil
 	}
 
 	// We've gotten the user id and event id, now we need to Checkin
@@ -96,9 +101,7 @@ func CheckinUserTokenToEvent(user_token string, event_id string) (*models.Checki
 	user_id, err := utils.ExtractFieldFromJWT(gateway_config.TOKEN_SECRET, user_token, "UserId")
 
 	if err != nil {
-		return &models.CheckinResponse{
-			Status: "ExpiredOrProspective",
-		}, nil
+		return NewCheckinResponseFailed("ExpiredOrProspective"), nil
 	}
 
 	// Note: the event id will be validated in PerformCheckin

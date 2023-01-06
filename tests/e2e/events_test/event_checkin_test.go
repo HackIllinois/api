@@ -43,7 +43,7 @@ func TestCheckinNormal(t *testing.T) {
 		t.Fatalf("Wrong result received. Expected %v, got %v", expected_res, received_res)
 	}
 
-	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": "theadminprofile"})
+	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": TEST_PROFILE_ID})
 
 	profile := profile_models.Profile{}
 	err = res.Decode(&profile)
@@ -67,7 +67,7 @@ func TestCheckinAddToExistingPoints(t *testing.T) {
 
 	client.Database(profile_db_name).Collection("profiles").UpdateOne(
 		context.Background(),
-		bson.M{"id": "theadminprofile"},
+		bson.M{"id": TEST_PROFILE_ID},
 		bson.M{"$set": bson.M{
 			"points": 19,
 		}},
@@ -98,7 +98,7 @@ func TestCheckinAddToExistingPoints(t *testing.T) {
 		t.Fatalf("Wrong result received. Expected %v, got %v", expected_res, received_res)
 	}
 
-	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": "theadminprofile"})
+	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": TEST_PROFILE_ID})
 
 	profile := profile_models.Profile{}
 	err = res.Decode(&profile)
@@ -145,7 +145,7 @@ func TestCheckinInvalidCode(t *testing.T) {
 		t.Fatalf("Wrong result received. Expected %v, got %v", expected_res, received_res)
 	}
 
-	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": "theadminprofile"})
+	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": TEST_PROFILE_ID})
 
 	profile := profile_models.Profile{}
 	err = res.Decode(&profile)
@@ -193,7 +193,7 @@ func TestCheckinExpiredOrProspective(t *testing.T) {
 		t.Fatalf("Wrong result received. Expected %v, got %v", expected_res, received_res)
 	}
 
-	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": "theadminprofile"})
+	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": TEST_PROFILE_ID})
 
 	profile := profile_models.Profile{}
 	err = res.Decode(&profile)
@@ -218,7 +218,7 @@ func TestCheckinAlreadyCheckedIn(t *testing.T) {
 
 	client.Database(profile_db_name).Collection("profileattendance").UpdateOne(
 		context.Background(),
-		bson.M{"id": "theadminprofile"},
+		bson.M{"id": TEST_PROFILE_ID},
 		bson.M{"$addToSet": bson.M{
 			"events": TEST_EVENT_1_ID,
 		}},
@@ -250,7 +250,7 @@ func TestCheckinAlreadyCheckedIn(t *testing.T) {
 		t.Fatalf("Wrong result received. Expected %v, got %v", expected_res, received_res)
 	}
 
-	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": "theadminprofile"})
+	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": TEST_PROFILE_ID})
 
 	profile := profile_models.Profile{}
 	err = res.Decode(&profile)

@@ -35,6 +35,7 @@ const TEST_EVENT_1_CODE = "testeventcode1"
 const TEST_EVENT_2_CODE = "testeventcode2"
 
 const TEST_USER_ID = "localadmin"
+const TEST_PROFILE_ID = "localadminprofileid"
 
 var current_unix_time = time.Now().Unix()
 
@@ -193,7 +194,7 @@ func CreateEvents() {
 
 func CreateProfile() {
 	profile := profile_models.Profile{
-		ID:        "theadminprofile",
+		ID:        TEST_PROFILE_ID,
 		FirstName: "HackIllinois",
 		LastName:  "Admin",
 		Points:    0,
@@ -203,7 +204,7 @@ func CreateProfile() {
 
 	userid_profileid := profile_models.IdMap{
 		UserID:    TEST_USER_ID,
-		ProfileID: "theadminprofile",
+		ProfileID: TEST_PROFILE_ID,
 	}
 	client.Database(profile_db_name).Collection("profileids").InsertOne(context.Background(), userid_profileid)
 }

@@ -29,6 +29,8 @@ var events_db_name string
 var profile_db_name string
 var checkin_db_name string
 
+var TOKEN_SECRET []byte
+
 const TEST_EVENT_1_ID = "testeventid1"
 const TEST_EVENT_2_ID = "testeventid2"
 const TEST_EVENT_1_CODE = "testeventcode1"
@@ -70,6 +72,14 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 	ResetDatabase()
+
+	token_secret_string, err := cfg.Get("TOKEN_SECRET")
+	if err != nil {
+		fmt.Printf("ERROR: %v\n", err)
+		os.Exit(1)
+	}
+
+	TOKEN_SECRET = []byte(token_secret_string)
 
 	return_code := m.Run()
 	ResetDatabase()

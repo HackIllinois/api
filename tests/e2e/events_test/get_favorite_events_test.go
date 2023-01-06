@@ -16,8 +16,8 @@ func TestGetFavoriteEventsNormal(t *testing.T) {
 	favorite_events := models.EventFavorites{
 		ID: "localadmin",
 		Events: []string{
-			"testeventid12345",
-			"testeventid67890",
+			TEST_EVENT_1_ID,
+			TEST_EVENT_2_ID,
 		},
 	}
 

@@ -220,7 +220,7 @@ func TestCheckinAlreadyCheckedIn(t *testing.T) {
 		context.Background(),
 		bson.M{"id": "theadminprofile"},
 		bson.M{"$addToSet": bson.M{
-			"events": "testeventid12345",
+			"events": TEST_EVENT_1_ID,
 		}},
 		options.Update().SetUpsert(true),
 	)

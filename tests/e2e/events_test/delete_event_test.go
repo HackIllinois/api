@@ -16,7 +16,7 @@ func TestDeleteEventNormal(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 
-	event_id := "testeventid12345"
+	event_id := TEST_EVENT_1_ID
 	received_event := models.Event{}
 	response, err := staff_client.New().Delete(fmt.Sprintf("/event/%s/", event_id)).ReceiveSuccess(&received_event)
 
@@ -30,7 +30,7 @@ func TestDeleteEventNormal(t *testing.T) {
 	}
 
 	expected_event := models.Event{
-		ID:          "testeventid12345",
+		ID:          TEST_EVENT_1_ID,
 		Name:        "testevent1",
 		Description: "testdescription1",
 		StartTime:   current_unix_time,
@@ -63,7 +63,7 @@ func TestDeleteEventNormal(t *testing.T) {
 
 	expected_events := []models.Event{
 		{
-			ID:          "testeventid67890",
+			ID:          TEST_EVENT_2_ID,
 			Name:        "testevent2",
 			Description: "testdescription2",
 			StartTime:   current_unix_time + 60000,
@@ -126,7 +126,7 @@ func TestDeleteEventNotExist(t *testing.T) {
 
 	expected_events := []models.Event{
 		{
-			ID:          "testeventid12345",
+			ID:          TEST_EVENT_1_ID,
 			Name:        "testevent1",
 			Description: "testdescription1",
 			StartTime:   current_unix_time,
@@ -144,7 +144,7 @@ func TestDeleteEventNotExist(t *testing.T) {
 			Points: 50,
 		},
 		{
-			ID:          "testeventid67890",
+			ID:          TEST_EVENT_2_ID,
 			Name:        "testevent2",
 			Description: "testdescription2",
 			StartTime:   current_unix_time + 60000,
@@ -172,7 +172,7 @@ func TestDeleteEventForbidden(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 
-	event_id := "testeventid12345"
+	event_id := TEST_EVENT_1_ID
 	response, err := user_client.New().Delete(fmt.Sprintf("/event/%s/", event_id)).Receive(nil, nil)
 
 	if err != nil {
@@ -195,7 +195,7 @@ func TestDeleteEventForbidden(t *testing.T) {
 
 	expected_events := []models.Event{
 		{
-			ID:          "testeventid12345",
+			ID:          TEST_EVENT_1_ID,
 			Name:        "testevent1",
 			Description: "testdescription1",
 			StartTime:   current_unix_time,
@@ -213,7 +213,7 @@ func TestDeleteEventForbidden(t *testing.T) {
 			Points: 50,
 		},
 		{
-			ID:          "testeventid67890",
+			ID:          TEST_EVENT_2_ID,
 			Name:        "testevent2",
 			Description: "testdescription2",
 			StartTime:   current_unix_time + 60000,

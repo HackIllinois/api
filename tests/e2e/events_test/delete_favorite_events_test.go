@@ -18,15 +18,15 @@ func TestDeleteFavoriteEventsNormal(t *testing.T) {
 	favorite_events := models.EventFavorites{
 		ID: "localadmin",
 		Events: []string{
-			"testeventid12345",
-			"testeventid67890",
+			TEST_EVENT_1_ID,
+			TEST_EVENT_2_ID,
 		},
 	}
 
 	client.Database(events_db_name).Collection("favorites").InsertOne(context.Background(), favorite_events)
 
 	req := models.EventFavoriteModification{
-		EventID: "testeventid67890",
+		EventID: TEST_EVENT_2_ID,
 	}
 	recieved_favorites := models.EventFavorites{}
 	response, err := user_client.New().Delete("/event/favorite/").BodyJSON(req).ReceiveSuccess(&recieved_favorites)
@@ -43,7 +43,7 @@ func TestDeleteFavoriteEventsNormal(t *testing.T) {
 	expected_favorites := models.EventFavorites{
 		ID: "localadmin",
 		Events: []string{
-			"testeventid12345",
+			TEST_EVENT_1_ID,
 		},
 	}
 
@@ -72,8 +72,8 @@ func TestDeleteFavoriteEventsNone(t *testing.T) {
 	favorite_events := models.EventFavorites{
 		ID: "localadmin",
 		Events: []string{
-			"testeventid12345",
-			"testeventid67890",
+			TEST_EVENT_1_ID,
+			TEST_EVENT_2_ID,
 		},
 	}
 

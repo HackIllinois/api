@@ -15,7 +15,7 @@ func TestGetEventTrackingInfoNone(t *testing.T) {
 	defer ClearEvents()
 
 	recieved_tracking_users := models.EventTracker{}
-	eventid := "testeventid12345"
+	eventid := TEST_EVENT_1_ID
 	response, err := staff_client.New().Get(fmt.Sprintf("/event/track/event/%s/", eventid)).ReceiveSuccess(&recieved_tracking_users)
 
 	if err != nil {
@@ -71,7 +71,7 @@ func TestGetEventTrackingInfoNormal(t *testing.T) {
 	defer ClearEvents()
 
 	recieved_tracking_users := models.EventTracker{}
-	eventid := "testeventid67890"
+	eventid := TEST_EVENT_2_ID
 	response, err := staff_client.New().Get(fmt.Sprintf("/event/track/event/%s/", eventid)).ReceiveSuccess(&recieved_tracking_users)
 
 	if err != nil {

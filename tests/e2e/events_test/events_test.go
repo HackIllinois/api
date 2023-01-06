@@ -29,6 +29,9 @@ var events_db_name string
 var profile_db_name string
 var checkin_db_name string
 
+const TEST_EVENT_1_ID = "testeventid1"
+const TEST_EVENT_2_ID = "testeventid2"
+
 var current_unix_time = time.Now().Unix()
 
 func TestMain(m *testing.M) {
@@ -106,7 +109,7 @@ func ResetDatabase() {
 
 func CreateEvents() {
 	event1 := event_models.Event{
-		ID:          "testeventid12345",
+		ID:          TEST_EVENT_1_ID,
 		Name:        "testevent1",
 		Description: "testdescription1",
 		StartTime:   current_unix_time,
@@ -125,7 +128,7 @@ func CreateEvents() {
 	}
 
 	event2 := event_models.Event{
-		ID:          "testeventid67890",
+		ID:          TEST_EVENT_2_ID,
 		Name:        "testevent2",
 		Description: "testdescription2",
 		StartTime:   current_unix_time + 60000,
@@ -147,11 +150,11 @@ func CreateEvents() {
 	client.Database(events_db_name).Collection("events").InsertOne(context.Background(), event2)
 
 	event_tracker1 := event_models.EventTracker{
-		EventID: "testeventid12345",
+		EventID: TEST_EVENT_1_ID,
 		Users:   []string{},
 	}
 	event_tracker2 := event_models.EventTracker{
-		EventID: "testeventid67890",
+		EventID: TEST_EVENT_2_ID,
 		Users: []string{
 			"localadmin",
 		},
@@ -163,19 +166,19 @@ func CreateEvents() {
 	user_tracker := event_models.UserTracker{
 		UserID: "localadmin",
 		Events: []string{
-			"testeventid67890",
+			TEST_EVENT_2_ID,
 		},
 	}
 
 	client.Database(events_db_name).Collection("usertrackers").InsertOne(context.Background(), user_tracker)
 
 	event_code1 := event_models.EventCode{
-		ID:         "testeventid12345",
+		ID:         TEST_EVENT_1_ID,
 		Code:       "123456",
 		Expiration: current_unix_time + 60000,
 	}
 	event_code2 := event_models.EventCode{
-		ID:         "testeventid67890",
+		ID:         TEST_EVENT_2_ID,
 		Code:       "abcdef",
 		Expiration: current_unix_time - 60000,
 	}

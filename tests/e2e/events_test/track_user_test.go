@@ -28,7 +28,7 @@ func TestTrackUserNormal(t *testing.T) {
 	defer client.Database(checkin_db_name).Collection("checkins").DeleteMany(context.Background(), bson.D{})
 
 	tracking_info := event_models.TrackingInfo{
-		EventID: "testeventid12345",
+		EventID: TEST_EVENT_1_ID,
 		UserID:  "localadmin",
 	}
 
@@ -46,12 +46,12 @@ func TestTrackUserNormal(t *testing.T) {
 
 	expected_trackers := event_models.TrackingStatus{
 		EventTracker: event_models.EventTracker{
-			EventID: "testeventid12345",
+			EventID: TEST_EVENT_1_ID,
 			Users:   []string{"localadmin"},
 		},
 		UserTracker: event_models.UserTracker{
 			UserID: "localadmin",
-			Events: []string{"testeventid67890", "testeventid12345"},
+			Events: []string{TEST_EVENT_2_ID, TEST_EVENT_1_ID},
 		},
 	}
 
@@ -60,13 +60,13 @@ func TestTrackUserNormal(t *testing.T) {
 	}
 
 	expected_event_tracker := event_models.EventTracker{
-		EventID: "testeventid12345",
+		EventID: TEST_EVENT_1_ID,
 		Users:   []string{"localadmin"},
 	}
 
 	var actual_event_tracker event_models.EventTracker
 
-	res := client.Database(events_db_name).Collection("eventtrackers").FindOne(context.Background(), bson.M{"eventid": "testeventid12345"})
+	res := client.Database(events_db_name).Collection("eventtrackers").FindOne(context.Background(), bson.M{"eventid": TEST_EVENT_1_ID})
 
 	err = res.Decode(&actual_event_tracker)
 
@@ -81,7 +81,7 @@ func TestTrackUserNormal(t *testing.T) {
 
 	expected_user_tracker := event_models.UserTracker{
 		UserID: "localadmin",
-		Events: []string{"testeventid67890", "testeventid12345"},
+		Events: []string{TEST_EVENT_2_ID, TEST_EVENT_1_ID},
 	}
 
 	var actual_user_tracker event_models.UserTracker
@@ -105,7 +105,7 @@ func TestTrackUserNotCheckedin(t *testing.T) {
 	defer ClearEvents()
 
 	tracking_info := event_models.TrackingInfo{
-		EventID: "testeventid12345",
+		EventID: TEST_EVENT_1_ID,
 		UserID:  "localadmin",
 	}
 

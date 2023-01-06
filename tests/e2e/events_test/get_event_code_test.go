@@ -15,7 +15,7 @@ func TestGetEventCodeNormal(t *testing.T) {
 	defer ClearEvents()
 
 	recieved_code := models.EventCode{}
-	id := "testeventid12345"
+	id := TEST_EVENT_1_ID
 	response, err := staff_client.New().Get(fmt.Sprintf("/event/code/%s/", id)).ReceiveSuccess(&recieved_code)
 
 	if err != nil {
@@ -28,7 +28,7 @@ func TestGetEventCodeNormal(t *testing.T) {
 	}
 
 	expected_code := models.EventCode{
-		ID:         "testeventid12345",
+		ID:         TEST_EVENT_1_ID,
 		Code:       "123456",
 		Expiration: current_unix_time + 60000,
 	}
@@ -71,7 +71,7 @@ func TestGetEventCodeForbidden(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 
-	id := "testeventid12345"
+	id := TEST_EVENT_1_ID
 	response, err := user_client.New().Get(fmt.Sprintf("/event/code/%s/", id)).ReceiveSuccess(nil)
 
 	if err != nil {

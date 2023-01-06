@@ -29,7 +29,7 @@ func TestGetUserTrackingInfoNormal(t *testing.T) {
 	expected_user_tracking := models.UserTracker{
 		UserID: userid,
 		Events: []string{
-			"testeventid67890",
+			TEST_EVENT_2_ID,
 		},
 	}
 

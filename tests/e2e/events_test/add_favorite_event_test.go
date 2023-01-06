@@ -16,7 +16,7 @@ func TestAddFavoriteEventNormal(t *testing.T) {
 	defer ClearEvents()
 
 	req := models.EventFavoriteModification{
-		EventID: "testeventid12345",
+		EventID: TEST_EVENT_1_ID,
 	}
 	received_res := models.EventFavorites{}
 	response, err := user_client.New().Post("/event/favorite/").BodyJSON(req).ReceiveSuccess(&received_res)
@@ -33,7 +33,7 @@ func TestAddFavoriteEventNormal(t *testing.T) {
 	expected_res := models.EventFavorites{
 		ID: "localadmin",
 		Events: []string{
-			"testeventid12345",
+			TEST_EVENT_1_ID,
 		},
 	}
 

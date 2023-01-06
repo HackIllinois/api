@@ -162,7 +162,7 @@ func TestCheckinInvalidCode(t *testing.T) {
 	}
 }
 
-func TestCheckinInvalidTime(t *testing.T) {
+func TestCheckinExpiredOrProspective(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 	CreateProfile()
@@ -186,7 +186,7 @@ func TestCheckinInvalidTime(t *testing.T) {
 	expected_res := models.CheckinResponse{
 		NewPoints:   -1,
 		TotalPoints: -1,
-		Status:      "InvalidTime",
+		Status:      "ExpiredOrProspective",
 	}
 
 	if !reflect.DeepEqual(received_res, expected_res) {

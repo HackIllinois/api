@@ -2,6 +2,7 @@
 package tests
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -12,12 +13,12 @@ import (
 	notification_models "github.com/HackIllinois/api/services/notifications/models"
 	"github.com/HackIllinois/api/tests/common"
 	"github.com/dghubble/sling"
-	"gopkg.in/mgo.v2"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var attendee_client *sling.Sling
 var unauthenticated_client *sling.Sling
-var session *mgo.Session
+var client *mongo.Client
 
 func TestMain(m *testing.M) {
 
@@ -31,28 +32,28 @@ func TestMain(m *testing.M) {
 	attendee_client = common.GetSlingClient("Attendee")
 	unauthenticated_client = sling.New().Base("http://localhost:8000").Client(nil).Add("Authorization", "FAKE_TOKEN")
 
-	session = common.GetLocalMongoSession()
+	client = common.GetLocalMongoSession()
 
 	mail_db_name, err := cfg.Get("MAIL_DB_NAME")
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
 	}
-	session.DB(mail_db_name).DropDatabase()
+	client.Database(mail_db_name).Drop(context.Background())
 
 	notification_db_name, err := cfg.Get("NOTIFICATIONS_DB_NAME")
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
 	}
-	session.DB(notification_db_name).DropDatabase()
+	client.Database(notification_db_name).Drop(context.Background())
 
 	event_db_name, err := cfg.Get("EVENT_DB_NAME")
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
 	}
-	session.DB(event_db_name).DropDatabase()
+	client.Database(event_db_name).Drop(context.Background())
 
 	return_code := m.Run()
 	os.Exit(return_code)

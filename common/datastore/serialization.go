@@ -2,7 +2,8 @@ package datastore
 
 import (
 	"encoding/json"
-	"gopkg.in/mgo.v2/bson"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func (datastore *DataStore) MarshalJSON() ([]byte, error) {
@@ -33,12 +34,12 @@ func (datastore *DataStore) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (datastore *DataStore) GetBSON() (interface{}, error) {
-	return datastore.Data, nil
+func (datastore *DataStore) MarshalBSON() ([]byte, error) {
+	return bson.Marshal(datastore.Data)
 }
 
-func (datastore *DataStore) SetBSON(raw bson.Raw) error {
-	err := raw.Unmarshal(&datastore.Data)
+func (datastore *DataStore) UnmarshalBSON(bytes []byte) error {
+	err := bson.Unmarshal(bytes, &datastore.Data)
 
 	if err != nil {
 		return err

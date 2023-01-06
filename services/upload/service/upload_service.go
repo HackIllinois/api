@@ -2,13 +2,14 @@ package service
 
 import (
 	"errors"
+	"time"
+
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/upload/config"
 	"github.com/HackIllinois/api/services/upload/models"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"time"
 )
 
 var db database.Database
@@ -166,7 +167,7 @@ func GetBlob(id string) (*models.Blob, error) {
 	}
 
 	var blob models.Blob
-	err := db.FindOne("blobstore", query, &blob)
+	err := db.FindOne("blobstore", query, &blob, nil)
 
 	if err != nil {
 		return nil, err
@@ -188,7 +189,7 @@ func CreateBlob(blob models.Blob) error {
 		return errors.New("Blob already exists.")
 	}
 
-	err = db.Insert("blobstore", &blob)
+	err = db.Insert("blobstore", &blob, nil)
 
 	return err
 }
@@ -201,7 +202,7 @@ func UpdateBlob(blob models.Blob) error {
 		"id": blob.ID,
 	}
 
-	err := db.Update("blobstore", selector, &blob)
+	err := db.Replace("blobstore", selector, &blob, false, nil)
 
 	return err
 }
@@ -221,7 +222,7 @@ func DeleteBlob(id string) (*models.Blob, error) {
 		"id": id,
 	}
 
-	err = db.RemoveOne("blobstore", selector)
+	err = db.RemoveOne("blobstore", selector, nil)
 
 	return blob, err
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/HackIllinois/api/services/decision/config"
 	"github.com/HackIllinois/api/services/decision/models"
 	"github.com/go-playground/validator/v10"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var validate *validator.Validate
@@ -38,7 +39,7 @@ func GetDecision(id string) (*models.DecisionHistory, error) {
 	query := database.QuerySelector{"id": id}
 
 	var decision models.DecisionHistory
-	err := db.FindOne("decision", query, &decision)
+	err := db.FindOne("decision", query, &decision, nil)
 
 	if err != nil {
 		return nil, err
@@ -64,33 +65,24 @@ func UpdateDecision(id string, decision models.Decision) error {
 		return errors.New("Cannot set a wave for non-accepted attendee")
 	}
 
-	decision_history, err := GetDecision(id)
-
-	if err != nil {
-		if err == database.ErrNotFound {
-			decision_history = &models.DecisionHistory{
-				ID: id,
-			}
-		} else {
-			return err
-		}
-	}
-
-	decision_history.Finalized = decision.Finalized
-	decision_history.Status = decision.Status
-	decision_history.Wave = decision.Wave
-	decision_history.History = append(decision_history.History, decision)
-	decision_history.Reviewer = decision.Reviewer
-	decision_history.Timestamp = decision.Timestamp
-	decision_history.ExpiresAt = decision.ExpiresAt
-
 	selector := database.QuerySelector{"id": id}
 
-	err = db.Update("decision", selector, &decision_history)
-
-	if err == database.ErrNotFound {
-		err = db.Insert("decision", &decision_history)
+	// TODO: Change to some dedi struct for mongo operations
+	decision_history := bson.M{
+		"$set": bson.M{
+			"finalized": decision.Finalized,
+			"status":    decision.Status,
+			"wave":      decision.Wave,
+			"reviewer":  decision.Reviewer,
+			"timestamp": decision.Timestamp,
+			"expiresAt": decision.ExpiresAt,
+		},
+		"$addToSet": bson.M{
+			"history": decision,
+		},
 	}
+
+	_, err = db.Upsert("decision", selector, &decision_history, nil)
 
 	return err
 }
@@ -121,7 +113,7 @@ func GetFilteredDecisions(parameters map[string][]string) (*models.FilteredDecis
 	}
 
 	var filtered_decisions models.FilteredDecisions
-	err = db.FindAll("decision", query, &filtered_decisions.Decisions)
+	err = db.FindAll("decision", query, &filtered_decisions.Decisions, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -133,5 +125,5 @@ func GetFilteredDecisions(parameters map[string][]string) (*models.FilteredDecis
 	Returns all decision stats
 */
 func GetStats() (map[string]interface{}, error) {
-	return db.GetStats("decision", []string{"status", "finalized", "wave"})
+	return db.GetStats("decision", []string{"status", "finalized", "wave"}, nil)
 }

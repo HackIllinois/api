@@ -3,13 +3,14 @@ package services
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/HackIllinois/api/common/apirequest"
+	"github.com/HackIllinois/api/common/authtoken"
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
-	"github.com/HackIllinois/api/gateway/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 var ReloadRoutes = arbor.RouteCollection{
@@ -17,7 +18,7 @@ var ReloadRoutes = arbor.RouteCollection{
 		"Reload",
 		"GET",
 		"/reload/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(Reload).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(Reload).ServeHTTP,
 	},
 }
 

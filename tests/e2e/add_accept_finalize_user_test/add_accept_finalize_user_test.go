@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"reflect"
@@ -12,14 +13,15 @@ import (
 	user_models "github.com/HackIllinois/api/services/user/models"
 	"github.com/HackIllinois/api/tests/common"
 	"github.com/dghubble/sling"
-	"gopkg.in/mgo.v2"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var admin_client *sling.Sling
-var session *mgo.Session
+var client *mongo.Client
+var user_db_name string
+var decision_db_name string
 
 func TestMain(m *testing.M) {
-
 	cfg, err := configloader.Load(os.Getenv("HI_CONFIG"))
 
 	if err != nil {
@@ -29,27 +31,33 @@ func TestMain(m *testing.M) {
 
 	admin_client = common.GetSlingClient("Admin")
 
-	session = common.GetLocalMongoSession()
+	client = common.GetLocalMongoSession()
 
-	user_db_name, err := cfg.Get("USER_DB_NAME")
+	user_db_name, err = cfg.Get("USER_DB_NAME")
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
 	}
-	session.DB(user_db_name).DropDatabase()
 
-	decision_db_name, err := cfg.Get("DECISION_DB_NAME")
+	decision_db_name, err = cfg.Get("DECISION_DB_NAME")
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
 	}
-	session.DB(decision_db_name).DropDatabase()
+
+	DropDatabases()
 
 	return_code := m.Run()
 	os.Exit(return_code)
 }
 
+func DropDatabases() {
+	client.Database(user_db_name).Drop(context.Background())
+	client.Database(decision_db_name).Drop(context.Background())
+}
+
 func TestAddApproveFinalizeUsers(t *testing.T) {
+	defer DropDatabases()
 	// Make 10 random users
 	for i := 0; i < 10; i++ {
 		userinfo := user_models.UserInfo{

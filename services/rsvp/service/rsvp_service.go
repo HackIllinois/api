@@ -35,7 +35,7 @@ func GetUserRsvp(id string) (*models.UserRsvp, error) {
 	}
 
 	var rsvp models.UserRsvp
-	err := db.FindOne("rsvps", query, &rsvp)
+	err := db.FindOne("rsvps", query, &rsvp, nil)
 
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func CreateUserRsvp(id string, rsvp models.UserRsvp) error {
 		return errors.New("RSVP already exists.")
 	}
 
-	err = db.Insert("rsvps", &rsvp)
+	err = db.Insert("rsvps", &rsvp, nil)
 
 	return err
 }
@@ -98,7 +98,7 @@ func UpdateUserRsvp(id string, rsvp models.UserRsvp) error {
 		"id": id,
 	}
 
-	err := db.Update("rsvps", selector, &rsvp)
+	err := db.Replace("rsvps", selector, &rsvp, false, nil)
 
 	return err
 }
@@ -114,7 +114,7 @@ func GetFilteredRsvps(parameters map[string][]string) (*models.FilteredRsvps, er
 	}
 
 	var filtered_rsvps models.FilteredRsvps
-	err = db.FindAll("rsvps", query, &filtered_rsvps.Rsvps)
+	err = db.FindAll("rsvps", query, &filtered_rsvps.Rsvps, nil)
 
 	if err != nil {
 		return nil, err
@@ -127,5 +127,5 @@ func GetFilteredRsvps(parameters map[string][]string) (*models.FilteredRsvps, er
 	Returns all rsvp stats
 */
 func GetStats() (map[string]interface{}, error) {
-	return db.GetStats("rsvps", config.RSVP_STAT_FIELDS)
+	return db.GetStats("rsvps", config.RSVP_STAT_FIELDS, nil)
 }

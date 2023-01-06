@@ -1,9 +1,9 @@
 package services
 
 import (
+	"github.com/HackIllinois/api/common/authtoken"
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
-	"github.com/HackIllinois/api/gateway/models"
 
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
@@ -17,19 +17,19 @@ var NotificationsRoutes = arbor.RouteCollection{
 		"GetAllTopics",
 		"GET",
 		"/notifications/topic/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole})).ThenFunc(GetAllTopics).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.StaffRole})).ThenFunc(GetAllTopics).ServeHTTP,
 	},
 	arbor.Route{
 		"CreateTopic",
 		"POST",
 		"/notifications/topic/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(CreateTopic).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole})).ThenFunc(CreateTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"GetAllNotifications",
 		"GET",
 		"/notifications/topic/all/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(GetAllNotifications).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole})).ThenFunc(GetAllNotifications).ServeHTTP,
 	},
 	arbor.Route{
 		"GetAllPublicNotifications",
@@ -41,43 +41,43 @@ var NotificationsRoutes = arbor.RouteCollection{
 		"GetNotificationsForTopic",
 		"GET",
 		"/notifications/topic/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(GetNotificationsForTopic).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole})).ThenFunc(GetNotificationsForTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"PublishNotificationToTopic",
 		"POST",
 		"/notifications/topic/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(PublishNotificationToTopic).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole})).ThenFunc(PublishNotificationToTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"DeleteTopic",
 		"DELETE",
 		"/notifications/topic/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(DeleteTopic).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole})).ThenFunc(DeleteTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"SubscribeToTopic",
 		"POST",
 		"/notifications/topic/{id}/subscribe/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(SubscribeToTopic).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole})).ThenFunc(SubscribeToTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"UnsubscribeToTopic",
 		"POST",
 		"/notifications/topic/{id}/unsubscribe/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(UnsubscribeToTopic).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole})).ThenFunc(UnsubscribeToTopic).ServeHTTP,
 	},
 	arbor.Route{
 		"RegisterDeviceToUser",
 		"POST",
 		"/notifications/device/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.UserRole})).ThenFunc(RegisterDeviceToUser).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole})).ThenFunc(RegisterDeviceToUser).ServeHTTP,
 	},
 	arbor.Route{
 		"GetNotificationOrder",
 		"GET",
 		"/notifications/order/{id}/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]models.Role{models.AdminRole})).ThenFunc(GetNotificationOrder).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole})).ThenFunc(GetNotificationOrder).ServeHTTP,
 	},
 }
 

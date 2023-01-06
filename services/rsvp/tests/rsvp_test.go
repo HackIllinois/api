@@ -3,13 +3,14 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"reflect"
+	"testing"
+
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/datastore"
 	"github.com/HackIllinois/api/services/rsvp/config"
 	"github.com/HackIllinois/api/services/rsvp/service"
-	"os"
-	"reflect"
-	"testing"
 )
 
 var db database.Database
@@ -48,7 +49,7 @@ func TestMain(m *testing.M) {
 func SetupTestDB(t *testing.T) {
 	rsvp := getBaseUserRsvp()
 
-	err := db.Insert("rsvps", &rsvp)
+	err := db.Insert("rsvps", &rsvp, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -59,7 +60,7 @@ func SetupTestDB(t *testing.T) {
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	err := db.DropDatabase()
+	err := db.DropDatabase(nil)
 
 	if err != nil {
 		t.Fatal(err)

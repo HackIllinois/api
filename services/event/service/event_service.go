@@ -9,6 +9,7 @@ import (
 	"github.com/HackIllinois/api/services/event/config"
 	"github.com/HackIllinois/api/services/event/models"
 	"github.com/go-playground/validator/v10"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var validate *validator.Validate
@@ -42,7 +43,7 @@ func GetEvent(id string) (*models.Event, error) {
 	}
 
 	var event models.Event
-	err := db.FindOne("events", query, &event)
+	err := db.FindOne("events", query, &event, nil)
 
 	if err != nil {
 		return nil, err
@@ -72,7 +73,7 @@ func DeleteEvent(id string) (*models.Event, error) {
 
 	// Remove event from events database
 
-	err = db.RemoveOne("events", query)
+	err = db.RemoveOne("events", query, nil)
 
 	if err != nil {
 		return nil, err
@@ -84,7 +85,7 @@ func DeleteEvent(id string) (*models.Event, error) {
 		"eventid": id,
 	}
 
-	err = db.RemoveOne("eventtrackers", event_selector)
+	err = db.RemoveOne("eventtrackers", event_selector, nil)
 
 	if err != nil {
 		return nil, err
@@ -93,13 +94,13 @@ func DeleteEvent(id string) (*models.Event, error) {
 	// Find all elements, and remove `id` from the Events slice
 	// All the updates are individually atomic
 
-	update_expression := database.QuerySelector{
-		"$pull": database.QuerySelector{
+	update_expression := bson.M{
+		"$pull": bson.M{
 			"events": id,
 		},
 	}
 
-	_, err = db.UpdateAll("usertrackers", nil, &update_expression)
+	_, err = db.UpdateAll("usertrackers", nil, &update_expression, nil)
 
 	return event, err
 }
@@ -110,7 +111,7 @@ func DeleteEvent(id string) (*models.Event, error) {
 func GetAllEvents() (*models.EventList, error) {
 	events := []models.Event{}
 	// nil implies there are no filters on the query, therefore everything in the "events" collection is returned.
-	err := db.FindAll("events", nil, &events)
+	err := db.FindAll("events", nil, &events, nil)
 
 	if err != nil {
 		return nil, err
@@ -135,7 +136,7 @@ func GetFilteredEvents(parameters map[string][]string) (*models.EventList, error
 
 	events := []models.Event{}
 	filtered_events := models.EventList{Events: events}
-	err = db.FindAll("events", query, &filtered_events.Events)
+	err = db.FindAll("events", query, &filtered_events.Events, nil)
 
 	if err != nil {
 		return nil, err
@@ -163,7 +164,7 @@ func CreateEvent(id string, code string, event models.Event) error {
 		return errors.New("Event already exists")
 	}
 
-	err = db.Insert("events", &event)
+	err = db.Insert("events", &event, nil)
 
 	if err != nil {
 		return err
@@ -174,7 +175,7 @@ func CreateEvent(id string, code string, event models.Event) error {
 		Users:   []string{},
 	}
 
-	err = db.Insert("eventtrackers", &event_tracker)
+	err = db.Insert("eventtrackers", &event_tracker, nil)
 
 	if err != nil {
 		return err
@@ -186,7 +187,7 @@ func CreateEvent(id string, code string, event models.Event) error {
 		Expiration: event.EndTime,
 	}
 
-	err = db.Insert("eventcodes", &event_code)
+	err = db.Insert("eventcodes", &event_code, nil)
 
 	return err
 }
@@ -205,7 +206,7 @@ func UpdateEvent(id string, event models.Event) error {
 		"id": id,
 	}
 
-	err = db.Update("events", selector, &event)
+	err = db.Replace("events", selector, &event, false, nil)
 
 	return err
 }
@@ -219,7 +220,7 @@ func GetEventTracker(event_id string) (*models.EventTracker, error) {
 	}
 
 	var tracker models.EventTracker
-	err := db.FindOne("eventtrackers", query, &tracker)
+	err := db.FindOne("eventtrackers", query, &tracker, nil)
 
 	if err != nil {
 		return nil, err
@@ -237,7 +238,7 @@ func GetUserTracker(user_id string) (*models.UserTracker, error) {
 	}
 
 	var tracker models.UserTracker
-	err := db.FindOne("usertrackers", query, &tracker)
+	err := db.FindOne("usertrackers", query, &tracker, nil)
 
 	if err != nil {
 		if err == database.ErrNotFound {
@@ -303,13 +304,13 @@ func MarkUserAsAttendingEvent(event_id string, user_id string) error {
 		"eventid": event_id,
 	}
 
-	event_modifier := database.QuerySelector{
-		"$addToSet": database.QuerySelector{
+	event_modifier := bson.M{
+		"$addToSet": bson.M{
 			"users": user_id,
 		},
 	}
 
-	err = db.Update("eventtrackers", event_selector, &event_modifier)
+	_, err = db.Upsert("eventtrackers", event_selector, &event_modifier, nil)
 
 	if err != nil {
 		return err
@@ -319,20 +320,20 @@ func MarkUserAsAttendingEvent(event_id string, user_id string) error {
 		"userid": user_id,
 	}
 
-	user_modifier := database.QuerySelector{
-		"$addToSet": database.QuerySelector{
+	user_modifier := bson.M{
+		"$addToSet": bson.M{
 			"events": event_id,
 		},
 	}
 
-	err = db.Update("usertrackers", user_selector, &user_modifier)
+	_, err = db.Upsert("usertrackers", user_selector, &user_modifier, nil)
 
 	if err == database.ErrNotFound {
 		user_tracker := models.UserTracker{
 			UserID: user_id,
 			Events: []string{event_id},
 		}
-		err = db.Insert("usertrackers", &user_tracker)
+		err = db.Insert("usertrackers", &user_tracker, nil)
 	}
 
 	return err
@@ -372,20 +373,20 @@ func GetEventFavorites(id string) (*models.EventFavorites, error) {
 	}
 
 	var event_favorites models.EventFavorites
-	err := db.FindOne("favorites", query, &event_favorites)
+	err := db.FindOne("favorites", query, &event_favorites, nil)
 
 	if err != nil {
 		if err == database.ErrNotFound {
 			err = db.Insert("favorites", &models.EventFavorites{
 				ID:     id,
 				Events: []string{},
-			})
+			}, nil)
 
 			if err != nil {
 				return nil, err
 			}
 
-			err = db.FindOne("favorites", query, &event_favorites)
+			err = db.FindOne("favorites", query, &event_favorites, nil)
 
 			if err != nil {
 				return nil, err
@@ -422,7 +423,7 @@ func AddEventFavorite(id string, event string) error {
 		event_favorites.Events = append(event_favorites.Events, event)
 	}
 
-	err = db.Update("favorites", selector, event_favorites)
+	err = db.Replace("favorites", selector, event_favorites, false, nil)
 
 	return err
 }
@@ -447,7 +448,7 @@ func RemoveEventFavorite(id string, event string) error {
 		return errors.New("User's event favorites does not have specified event")
 	}
 
-	err = db.Update("favorites", selector, event_favorites)
+	err = db.Replace("favorites", selector, event_favorites, false, nil)
 
 	return err
 }
@@ -459,7 +460,7 @@ func GetStats() (map[string]interface{}, error) {
 	query := database.QuerySelector{}
 
 	var trackers []models.EventTracker
-	err := db.FindAll("eventtrackers", query, &trackers)
+	err := db.FindAll("eventtrackers", query, &trackers, nil)
 
 	if err != nil {
 		return nil, err
@@ -484,7 +485,7 @@ func CanRedeemPoints(event_code string) (bool, string, error) {
 	}
 
 	var eventCode models.EventCode
-	err := db.FindOne("eventcodes", query, &eventCode)
+	err := db.FindOne("eventcodes", query, &eventCode, nil)
 
 	if err != nil {
 		return false, "invalid", err
@@ -505,7 +506,7 @@ func GetEventCode(id string) (*models.EventCode, error) {
 	}
 
 	var eventCode models.EventCode
-	err := db.FindOne("eventcodes", query, &eventCode)
+	err := db.FindOne("eventcodes", query, &eventCode, nil)
 
 	if err != nil {
 		return nil, err
@@ -522,7 +523,7 @@ func UpdateEventCode(id string, eventCode models.EventCode) error {
 		"id": id,
 	}
 
-	err := db.Update("eventcodes", selector, &eventCode)
+	err := db.Replace("eventcodes", selector, &eventCode, false, nil)
 
 	return err
 }

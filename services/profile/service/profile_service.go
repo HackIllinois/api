@@ -9,6 +9,7 @@ import (
 	"github.com/HackIllinois/api/services/profile/config"
 	"github.com/HackIllinois/api/services/profile/models"
 	"github.com/go-playground/validator/v10"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var validate *validator.Validate
@@ -42,7 +43,7 @@ func GetProfileIdFromUserId(id string) (string, error) {
 	}
 
 	var id_map models.IdMap
-	err := db.FindOne("profileids", query, &id_map)
+	err := db.FindOne("profileids", query, &id_map, nil)
 
 	// Returns error if no mapping was found
 	if err != nil {
@@ -61,7 +62,7 @@ func GetProfile(profile_id string) (*models.Profile, error) {
 	}
 
 	var profile models.Profile
-	err := db.FindOne("profiles", query, &profile)
+	err := db.FindOne("profiles", query, &profile, nil)
 
 	if err != nil {
 		return nil, err
@@ -88,7 +89,7 @@ func DeleteProfile(profile_id string) (*models.Profile, error) {
 		"profileid": profile_id,
 	}
 
-	err = db.RemoveOne("profileids", query)
+	err = db.RemoveOne("profileids", query, nil)
 
 	if err != nil {
 		return nil, err
@@ -99,19 +100,19 @@ func DeleteProfile(profile_id string) (*models.Profile, error) {
 		"id": profile_id,
 	}
 
-	err = db.RemoveOne("profiles", query)
+	err = db.RemoveOne("profiles", query, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	err = db.RemoveOne("profileattendance", query)
+	err = db.RemoveOne("profileattendance", query, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	err = db.RemoveOne("profilefavorites", query)
+	err = db.RemoveOne("profilefavorites", query, nil)
 
 	if err != nil {
 		return nil, err
@@ -147,13 +148,13 @@ func CreateProfile(id string, profile_id string, profile models.Profile) error {
 	id_map.UserID = id
 	id_map.ProfileID = profile_id
 
-	err = db.Insert("profileids", &id_map)
+	err = db.Insert("profileids", &id_map, nil)
 
 	if err != nil {
 		return err
 	}
 
-	err = db.Insert("profiles", &profile)
+	err = db.Insert("profiles", &profile, nil)
 
 	if err != nil {
 		return err
@@ -164,7 +165,7 @@ func CreateProfile(id string, profile_id string, profile models.Profile) error {
 		Events: []string{},
 	}
 
-	err = db.Insert("profileattendance", &attendance_tracker)
+	err = db.Insert("profileattendance", &attendance_tracker, nil)
 
 	if err != nil {
 		return err
@@ -175,7 +176,7 @@ func CreateProfile(id string, profile_id string, profile models.Profile) error {
 		Profiles: []string{},
 	}
 
-	err = db.Insert("profilefavorites", &profile_favorites)
+	err = db.Insert("profilefavorites", &profile_favorites, nil)
 
 	if err != nil {
 		return err
@@ -199,7 +200,7 @@ func UpdateProfile(profile_id string, profile models.Profile) error {
 		"id": profile_id,
 	}
 
-	err = db.Update("profiles", selector, &profile)
+	err = db.Replace("profiles", selector, &profile, false, nil)
 
 	return err
 }
@@ -223,12 +224,14 @@ func GetProfileLeaderboard(parameters map[string][]string) (*models.LeaderboardE
 
 	leaderboard_entries := []models.LeaderboardEntry{}
 
-	sort_field := database.SortField{
-		Name:     "points",
-		Reversed: true,
+	sort_field := bson.D{
+		{
+			"points",
+			-1,
+		},
 	}
 
-	err = db.FindAllSorted("profiles", nil, []database.SortField{sort_field}, &leaderboard_entries)
+	err = db.FindAllSorted("profiles", nil, sort_field, &leaderboard_entries, nil)
 
 	if err != nil {
 		return nil, err
@@ -272,7 +275,7 @@ func GetFilteredProfiles(parameters map[string][]string) (*models.ProfileList, e
 	}
 
 	profiles := []models.Profile{}
-	err = db.FindAll("profiles", query, &profiles)
+	err = db.FindAll("profiles", query, &profiles, nil)
 
 	if err != nil {
 		return nil, err
@@ -318,7 +321,7 @@ func RedeemEvent(profile_id string, event_id string) (*models.RedeemEventRespons
 	}
 
 	var attended_events models.AttendanceTracker
-	err := db.FindOne("profileattendance", selector, &attended_events)
+	err := db.FindOne("profileattendance", selector, &attended_events, nil)
 
 	if err != nil {
 		if err == database.ErrNotFound {
@@ -326,7 +329,7 @@ func RedeemEvent(profile_id string, event_id string) (*models.RedeemEventRespons
 				ID:     profile_id,
 				Events: []string{},
 			}
-			err = db.Insert("profileattendance", &attended_events)
+			err = db.Insert("profileattendance", &attended_events, nil)
 
 			if err != nil {
 				redemption_status.Status = "Could not add tracker to db"
@@ -345,7 +348,7 @@ func RedeemEvent(profile_id string, event_id string) (*models.RedeemEventRespons
 		attended_events.Events = append(attended_events.Events, event_id)
 	}
 
-	err = db.Update("profileattendance", selector, attended_events)
+	err = db.Replace("profileattendance", selector, attended_events, false, nil)
 
 	return &redemption_status, err
 }
@@ -359,7 +362,7 @@ func GetProfileFavorites(profile_id string) (*models.ProfileFavorites, error) {
 	}
 
 	var profile_favorites models.ProfileFavorites
-	err := db.FindOne("profilefavorites", query, &profile_favorites)
+	err := db.FindOne("profilefavorites", query, &profile_favorites, nil)
 
 	if err != nil {
 		return nil, err
@@ -396,7 +399,7 @@ func AddProfileFavorite(profile_id string, profile string) error {
 		profile_favorites.Profiles = append(profile_favorites.Profiles, profile)
 	}
 
-	err = db.Update("profilefavorites", selector, profile_favorites)
+	err = db.Replace("profilefavorites", selector, profile_favorites, false, nil)
 
 	return err
 }
@@ -421,7 +424,7 @@ func RemoveProfileFavorite(profile_id string, profile string) error {
 		return errors.New("User's profile favorites does not have specified profile")
 	}
 
-	err = db.Update("profilefavorites", selector, profile_favorites)
+	err = db.Replace("profilefavorites", selector, profile_favorites, false, nil)
 
 	return err
 }

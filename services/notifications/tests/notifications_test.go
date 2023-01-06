@@ -51,7 +51,7 @@ func SetupTestDB(t *testing.T) {
 		UserIDs: []string{"test_user"},
 	}
 
-	err := db.Insert("topics", &topic)
+	err := db.Insert("topics", &topic, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -65,7 +65,7 @@ func SetupTestDB(t *testing.T) {
 		Time:  2000,
 	}
 
-	err = db.Insert("notifications", &notification)
+	err = db.Insert("notifications", &notification, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -76,7 +76,7 @@ func SetupTestDB(t *testing.T) {
 		Devices: []string{"test_arn"},
 	}
 
-	err = db.Insert("users", &user)
+	err = db.Insert("users", &user, nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -87,7 +87,7 @@ func SetupTestDB(t *testing.T) {
 	Drop test db
 */
 func CleanupTestDB(t *testing.T) {
-	err := db.DropDatabase()
+	err := db.DropDatabase(nil)
 
 	if err != nil {
 		t.Fatal(err)
@@ -479,7 +479,7 @@ func TestPublishNotificationToTopic(t *testing.T) {
 		ID:      "test_user_2",
 		Devices: []string{"test_arn2", "test_arn3"},
 	}
-	err = db.Insert("users", &user)
+	err = db.Insert("users", &user, nil)
 
 	selector := database.QuerySelector{
 		"id": "User",
@@ -488,7 +488,7 @@ func TestPublishNotificationToTopic(t *testing.T) {
 		ID:      "User",
 		UserIDs: []string{"test_user", "test_user_2"},
 	}
-	err = db.Update("topics", selector, &topic)
+	err = db.Replace("topics", selector, &topic, false, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

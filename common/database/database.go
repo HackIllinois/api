@@ -1,22 +1,36 @@
 package database
 
+import (
+	"context"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+)
+
 /*
 	Database interface exposing the methods necessary to querying, inserting, updating, upserting, and removing records
 */
 type Database interface {
 	Connect(host string) error
 	Close()
-	FindOne(collection_name string, query interface{}, result interface{}) error
-	FindAll(collection_name string, query interface{}, result interface{}) error
-	FindAllSorted(collection_name string, query interface{}, sort_fields []SortField, result interface{}) error
-	RemoveOne(collection_name string, query interface{}) error
-	RemoveAll(collection_name string, query interface{}) (*ChangeResults, error)
-	Insert(collection_name string, item interface{}) error
-	Upsert(collection_name string, selector interface{}, update interface{}) (*ChangeResults, error)
-	Update(collection_name string, selector interface{}, update interface{}) error
-	UpdateAll(collection_name string, selector interface{}, update interface{}) (*ChangeResults, error)
-	DropDatabase() error
-	GetStats(collection_name string, fields []string) (map[string]interface{}, error)
+	GetRaw() *mongo.Client
+	StartSession() (*mongo.Session, error)
+	GetNewContext() (context.Context, context.CancelFunc)
+	FindOne(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error
+	FindOneAndDelete(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error
+	FindOneAndUpdate(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, upsert bool, session *mongo.SessionContext) error
+	FindOneAndReplace(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, upsert bool, session *mongo.SessionContext) error
+	FindAll(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error
+	FindAllSorted(collection_name string, query interface{}, sort_fields bson.D, result interface{}, session *mongo.SessionContext) error
+	RemoveOne(collection_name string, query interface{}, session *mongo.SessionContext) error
+	RemoveAll(collection_name string, query interface{}, session *mongo.SessionContext) (*ChangeResults, error)
+	Insert(collection_name string, item interface{}, session *mongo.SessionContext) error
+	Upsert(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) (*ChangeResults, error)
+	Update(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) error
+	UpdateAll(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) (*ChangeResults, error)
+	Replace(collection_name string, selector interface{}, update interface{}, upsert bool, session *mongo.SessionContext) error
+	DropDatabase(session *mongo.SessionContext) error
+	GetStats(collection_name string, fields []string, session *mongo.SessionContext) (map[string]interface{}, error)
 }
 
 /*

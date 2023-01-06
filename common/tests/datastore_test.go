@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/HackIllinois/api/common/datastore"
-	"gopkg.in/mgo.v2/bson"
 	"testing"
+
+	"github.com/HackIllinois/api/common/datastore"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var small_json_data string = `

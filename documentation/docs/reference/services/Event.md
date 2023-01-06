@@ -411,7 +411,12 @@ Request should include an attendee's user token (`userToken`) and an event id (`
 
 Returns a status, the user's new points, and the user's total points.
 
-Valid values for `status` are `Success`, `InvalidCode`, `ExpiredOrProspective`, `AlreadyCheckedIn`. 
+Valid values for `status` are `Success`, `ExpiredOrProspective`, `AlreadyCheckedIn`. 
+
+!!! warning
+	Please be aware that `ExpiredOrProspective` will be returned if the user token is invalid, expired, or malformed. 
+	Handle accordingly. 
+	Also, note that `InvalidCode` is not a possible status for staff checkin, but is for normal checkin.
 
 !!! note
 	When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.

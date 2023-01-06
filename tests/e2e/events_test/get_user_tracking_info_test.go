@@ -14,7 +14,7 @@ func TestGetUserTrackingInfoNormal(t *testing.T) {
 	defer ClearEvents()
 
 	recieved_tracked_events := models.UserTracker{}
-	userid := "localadmin"
+	userid := TEST_USER_ID
 	response, err := staff_client.New().Get(fmt.Sprintf("/event/track/user/%s/", userid)).ReceiveSuccess(&recieved_tracked_events)
 
 	if err != nil {

@@ -17,7 +17,7 @@ func TestTrackUserNormal(t *testing.T) {
 	defer ClearEvents()
 
 	checkin_info := checkin_models.UserCheckin{
-		ID:              "localadmin",
+		ID:              TEST_USER_ID,
 		Override:        false,
 		HasCheckedIn:    true,
 		HasPickedUpSwag: false,
@@ -29,7 +29,7 @@ func TestTrackUserNormal(t *testing.T) {
 
 	tracking_info := event_models.TrackingInfo{
 		EventID: TEST_EVENT_1_ID,
-		UserID:  "localadmin",
+		UserID:  TEST_USER_ID,
 	}
 
 	res_tracking := event_models.TrackingStatus{}
@@ -47,10 +47,10 @@ func TestTrackUserNormal(t *testing.T) {
 	expected_trackers := event_models.TrackingStatus{
 		EventTracker: event_models.EventTracker{
 			EventID: TEST_EVENT_1_ID,
-			Users:   []string{"localadmin"},
+			Users:   []string{TEST_USER_ID},
 		},
 		UserTracker: event_models.UserTracker{
-			UserID: "localadmin",
+			UserID: TEST_USER_ID,
 			Events: []string{TEST_EVENT_2_ID, TEST_EVENT_1_ID},
 		},
 	}
@@ -61,7 +61,7 @@ func TestTrackUserNormal(t *testing.T) {
 
 	expected_event_tracker := event_models.EventTracker{
 		EventID: TEST_EVENT_1_ID,
-		Users:   []string{"localadmin"},
+		Users:   []string{TEST_USER_ID},
 	}
 
 	var actual_event_tracker event_models.EventTracker
@@ -80,13 +80,13 @@ func TestTrackUserNormal(t *testing.T) {
 	}
 
 	expected_user_tracker := event_models.UserTracker{
-		UserID: "localadmin",
+		UserID: TEST_USER_ID,
 		Events: []string{TEST_EVENT_2_ID, TEST_EVENT_1_ID},
 	}
 
 	var actual_user_tracker event_models.UserTracker
 
-	res = client.Database(events_db_name).Collection("usertrackers").FindOne(context.Background(), bson.M{"userid": "localadmin"})
+	res = client.Database(events_db_name).Collection("usertrackers").FindOne(context.Background(), bson.M{"userid": TEST_USER_ID})
 
 	err = res.Decode(&actual_user_tracker)
 
@@ -106,7 +106,7 @@ func TestTrackUserNotCheckedin(t *testing.T) {
 
 	tracking_info := event_models.TrackingInfo{
 		EventID: TEST_EVENT_1_ID,
-		UserID:  "localadmin",
+		UserID:  TEST_USER_ID,
 	}
 
 	api_err := errors.ApiError{}

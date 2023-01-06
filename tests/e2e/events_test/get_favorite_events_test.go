@@ -14,7 +14,7 @@ func TestGetFavoriteEventsNormal(t *testing.T) {
 	defer ClearEvents()
 
 	favorite_events := models.EventFavorites{
-		ID: "localadmin",
+		ID: TEST_USER_ID,
 		Events: []string{
 			TEST_EVENT_1_ID,
 			TEST_EVENT_2_ID,
@@ -45,7 +45,7 @@ func TestGetFavoriteEventsNone(t *testing.T) {
 	defer ClearEvents()
 
 	favorite_events := models.EventFavorites{
-		ID:     "localadmin",
+		ID:     TEST_USER_ID,
 		Events: []string{},
 	}
 

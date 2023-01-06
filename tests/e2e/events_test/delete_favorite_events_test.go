@@ -16,7 +16,7 @@ func TestDeleteFavoriteEventsNormal(t *testing.T) {
 	defer ClearEvents()
 
 	favorite_events := models.EventFavorites{
-		ID: "localadmin",
+		ID: TEST_USER_ID,
 		Events: []string{
 			TEST_EVENT_1_ID,
 			TEST_EVENT_2_ID,
@@ -41,7 +41,7 @@ func TestDeleteFavoriteEventsNormal(t *testing.T) {
 	}
 
 	expected_favorites := models.EventFavorites{
-		ID: "localadmin",
+		ID: TEST_USER_ID,
 		Events: []string{
 			TEST_EVENT_1_ID,
 		},
@@ -51,7 +51,7 @@ func TestDeleteFavoriteEventsNormal(t *testing.T) {
 		t.Fatalf("Wrong result received. Expected %v, got %v", expected_favorites, recieved_favorites)
 	}
 
-	res := client.Database(events_db_name).Collection("favorites").FindOne(context.Background(), bson.M{"id": "localadmin"})
+	res := client.Database(events_db_name).Collection("favorites").FindOne(context.Background(), bson.M{"id": TEST_USER_ID})
 
 	err = res.Decode(&recieved_favorites)
 
@@ -70,7 +70,7 @@ func TestDeleteFavoriteEventsNone(t *testing.T) {
 	defer ClearEvents()
 
 	favorite_events := models.EventFavorites{
-		ID: "localadmin",
+		ID: TEST_USER_ID,
 		Events: []string{
 			TEST_EVENT_1_ID,
 			TEST_EVENT_2_ID,
@@ -105,7 +105,7 @@ func TestDeleteFavoriteEventsNone(t *testing.T) {
 		t.Fatalf("Wrong error response received. Expected %v, got %v", expected_error, api_err)
 	}
 
-	res := client.Database(events_db_name).Collection("favorites").FindOne(context.Background(), bson.M{"id": "localadmin"})
+	res := client.Database(events_db_name).Collection("favorites").FindOne(context.Background(), bson.M{"id": TEST_USER_ID})
 
 	actual_favorites := models.EventFavorites{}
 	err = res.Decode(&actual_favorites)

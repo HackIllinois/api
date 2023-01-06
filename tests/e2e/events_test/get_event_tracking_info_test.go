@@ -86,7 +86,7 @@ func TestGetEventTrackingInfoNormal(t *testing.T) {
 	expected_event_tracking := models.EventTracker{
 		EventID: eventid,
 		Users: []string{
-			"localadmin",
+			TEST_USER_ID,
 		},
 	}
 

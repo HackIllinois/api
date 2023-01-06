@@ -21,7 +21,7 @@ func TestCheckinNormal(t *testing.T) {
 	req := models.CheckinRequest{
 		Code: "123456",
 	}
-	received_res := models.CheckinResult{}
+	received_res := models.CheckinResponse{}
 	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
 
 	if err != nil {
@@ -33,7 +33,7 @@ func TestCheckinNormal(t *testing.T) {
 		return
 	}
 
-	expected_res := models.CheckinResult{
+	expected_res := models.CheckinResponse{
 		NewPoints:   50,
 		TotalPoints: 50,
 		Status:      "Success",
@@ -76,7 +76,7 @@ func TestCheckinAddToExistingPoints(t *testing.T) {
 	req := models.CheckinRequest{
 		Code: "123456",
 	}
-	received_res := models.CheckinResult{}
+	received_res := models.CheckinResponse{}
 	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
 
 	if err != nil {
@@ -88,7 +88,7 @@ func TestCheckinAddToExistingPoints(t *testing.T) {
 		return
 	}
 
-	expected_res := models.CheckinResult{
+	expected_res := models.CheckinResponse{
 		NewPoints:   50,
 		TotalPoints: 69,
 		Status:      "Success",
@@ -123,7 +123,7 @@ func TestCheckinInvalidCode(t *testing.T) {
 	req := models.CheckinRequest{
 		Code: "wrongcode",
 	}
-	received_res := models.CheckinResult{}
+	received_res := models.CheckinResponse{}
 	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
 
 	if err != nil {
@@ -135,7 +135,7 @@ func TestCheckinInvalidCode(t *testing.T) {
 		return
 	}
 
-	expected_res := models.CheckinResult{
+	expected_res := models.CheckinResponse{
 		NewPoints:   -1,
 		TotalPoints: -1,
 		Status:      "InvalidCode",
@@ -171,7 +171,7 @@ func TestCheckinInvalidTime(t *testing.T) {
 	req := models.CheckinRequest{
 		Code: "abcdef",
 	}
-	received_res := models.CheckinResult{}
+	received_res := models.CheckinResponse{}
 	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
 
 	if err != nil {
@@ -183,7 +183,7 @@ func TestCheckinInvalidTime(t *testing.T) {
 		return
 	}
 
-	expected_res := models.CheckinResult{
+	expected_res := models.CheckinResponse{
 		NewPoints:   -1,
 		TotalPoints: -1,
 		Status:      "InvalidTime",
@@ -228,7 +228,7 @@ func TestCheckinAlreadyCheckedIn(t *testing.T) {
 	req := models.CheckinRequest{
 		Code: "123456",
 	}
-	received_res := models.CheckinResult{}
+	received_res := models.CheckinResponse{}
 	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
 
 	if err != nil {
@@ -240,7 +240,7 @@ func TestCheckinAlreadyCheckedIn(t *testing.T) {
 		// return
 	}
 
-	expected_res := models.CheckinResult{
+	expected_res := models.CheckinResponse{
 		NewPoints:   -1,
 		TotalPoints: -1,
 		Status:      "AlreadyCheckedIn",

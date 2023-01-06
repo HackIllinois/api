@@ -101,7 +101,7 @@ var EventRoutes = arbor.RouteCollection{
 	arbor.Route{
 		"Checkin",
 		"POST",
-		"/staff/event/checkin/",
+		"/event/staff/checkin/",
 		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole, models.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(StaffCheckin).ServeHTTP,
 	},
 	arbor.Route{

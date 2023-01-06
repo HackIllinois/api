@@ -31,6 +31,8 @@ var checkin_db_name string
 
 const TEST_EVENT_1_ID = "testeventid1"
 const TEST_EVENT_2_ID = "testeventid2"
+const TEST_EVENT_1_CODE = "testeventcode1"
+const TEST_EVENT_2_CODE = "testeventcode2"
 
 const TEST_USER_ID = "localadmin"
 

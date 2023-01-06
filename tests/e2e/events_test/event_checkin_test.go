@@ -19,7 +19,7 @@ func TestCheckinNormal(t *testing.T) {
 	defer ClearProfiles()
 
 	req := models.CheckinRequest{
-		Code: "123456",
+		Code: TEST_EVENT_1_CODE,
 	}
 	received_res := models.CheckinResponse{}
 	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
@@ -74,7 +74,7 @@ func TestCheckinAddToExistingPoints(t *testing.T) {
 	)
 
 	req := models.CheckinRequest{
-		Code: "123456",
+		Code: TEST_EVENT_1_CODE,
 	}
 	received_res := models.CheckinResponse{}
 	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
@@ -169,7 +169,7 @@ func TestCheckinExpiredOrProspective(t *testing.T) {
 	defer ClearProfiles()
 
 	req := models.CheckinRequest{
-		Code: "abcdef",
+		Code: TEST_EVENT_2_CODE,
 	}
 	received_res := models.CheckinResponse{}
 	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
@@ -226,7 +226,7 @@ func TestCheckinAlreadyCheckedIn(t *testing.T) {
 	)
 
 	req := models.CheckinRequest{
-		Code: "123456",
+		Code: TEST_EVENT_1_CODE,
 	}
 	received_res := models.CheckinResponse{}
 	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)

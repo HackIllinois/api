@@ -29,7 +29,7 @@ func TestGetEventCodeNormal(t *testing.T) {
 
 	expected_code := models.EventCode{
 		ID:         TEST_EVENT_1_ID,
-		Code:       "123456",
+		Code:       TEST_EVENT_1_CODE,
 		Expiration: current_unix_time + 60000,
 	}
 

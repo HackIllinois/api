@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/HackIllinois/api/common/apirequest"
+	common_config "github.com/HackIllinois/api/common/config"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/utils"
-	gateway_config "github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/services/event/config"
 	"github.com/HackIllinois/api/services/event/models"
 )
@@ -98,7 +98,7 @@ func CheckinUserByCode(user_id string, code string) (*models.CheckinResponse, er
 	Attempts to checkin a user determined by a JWT token to an event
 */
 func CheckinUserTokenToEvent(user_token string, event_id string) (*models.CheckinResponse, error) {
-	user_id, err := utils.ExtractFieldFromJWT(gateway_config.TOKEN_SECRET, user_token, "userId")
+	user_id, err := utils.ExtractFieldFromJWT(common_config.TOKEN_SECRET, user_token, "userId")
 
 	if err != nil {
 		return NewCheckinResponseFailed("ExpiredOrProspective"), nil

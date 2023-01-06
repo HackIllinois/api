@@ -5,16 +5,17 @@ import (
 
 	"github.com/HackIllinois/api/common/authtoken"
 	"github.com/HackIllinois/api/common/utils"
-	"github.com/HackIllinois/api/gateway/config"
+
+	common_config "github.com/HackIllinois/api/common/config"
 )
 
 func IdentificationMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("Authorization")
-		id, err := utils.ExtractFieldFromJWT(config.TOKEN_SECRET, token, "id")
+		id, err := utils.ExtractFieldFromJWT(common_config.TOKEN_SECRET, token, "id")
 		if err == nil {
 			//Check if the user has the Admin role
-			is_admin, err := authtoken.HasRole(config.TOKEN_SECRET, token, authtoken.AdminRole)
+			is_admin, err := authtoken.HasRole(common_config.TOKEN_SECRET, token, authtoken.AdminRole)
 			if err == nil && is_admin {
 				impersonation_id := r.Header.Get("HackIllinois-Impersonation")
 				// Check if an impersonation ID is specified

@@ -4,7 +4,7 @@ replace github.com/arbor-dev/arbor => github.com/HackIllinois/arbor v0.3.1-0.202
 
 require (
 	github.com/arbor-dev/arbor v0.3.0
-	github.com/aws/aws-sdk-go v1.16.18
+	github.com/aws/aws-sdk-go v1.33.0
 	github.com/dghubble/sling v1.4.0
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/golang-jwt/jwt/v4 v4.4.3
@@ -27,7 +27,7 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gorilla/context v0.0.0-20160226214623-1ea25387ff6f // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
+	github.com/jmespath/go-jmespath v0.3.0 // indirect
 	github.com/kennygrant/sanitize v1.2.3 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/koding/websocketproxy v0.0.0-20181220232114-7ed82d81a28c // indirect

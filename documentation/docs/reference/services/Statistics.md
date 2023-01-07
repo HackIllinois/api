@@ -6,8 +6,9 @@ GET /stat/
 
 Returns statistics for all services.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"registration": {
 		"school": {
@@ -31,8 +32,9 @@ GET /stat/SERVICENAME/
 
 Returns statistics for the service with the name `SERVICENAME`.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 
 	"OpeningCeremony": 8,

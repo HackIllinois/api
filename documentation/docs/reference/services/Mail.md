@@ -6,8 +6,7 @@ POST /mail/send/
 
 Sends an email to the users in the list `ids` with based on the given template with generated substitutions.
 
-Request format:
-```
+```json title="Example request"
 {
 	"ids": [
 		"testuser1"
@@ -16,8 +15,7 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"results": {
 		"total_rejected_recipients": 0,
@@ -31,16 +29,14 @@ POST /mail/send/list/
 
 Sends an email to the users in the mailing list `listId` with based on the given template with generated substitutions.
 
-Request format:
-```
+```json title="Example request"
 {
 	"listId": "test",
 	"template": "api-test"
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"results": {
 		"total_rejected_recipients": 0,
@@ -54,8 +50,9 @@ GET /mail/list/
 
 Returns a list of all created mailing lists.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"mailLists": [
 		{
@@ -80,8 +77,7 @@ POST /mail/list/create/
 
 Creates a mailing list with the ID `id` and with the initial list of users in `userIds`, if provided.  
 
-Request format:
-```
+```json title="Example request"
 {
 	"id": "test",
 	"userIds": [
@@ -90,8 +86,7 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "test",
 	"userIds": [
@@ -105,8 +100,7 @@ POST /mail/list/add/
 
 Modifies the mailing list with the ID `id` adding the users in the list `userIds`.
 
-Request format:
-```
+```json title="Example request"
 {
 	"id": "test",
 	"userIds": [
@@ -115,8 +109,7 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "test",
 	"userIds": [
@@ -131,8 +124,7 @@ POST /mail/list/remove/
 
 Modifies the mailing list with the ID `id`, removing users that are specified in the list `userIds`.
 
-Request format:
-```
+```json title="Example request"
 {
 	"id": "test",
 	"userIds": [
@@ -141,8 +133,7 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "test",
 	"userIds": [
@@ -156,8 +147,9 @@ GET /mail/list/LISTID/
 
 Returns the mailing list with the ID `LISTID`.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "test",
 	"userIds": [

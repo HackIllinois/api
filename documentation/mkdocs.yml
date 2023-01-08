@@ -35,4 +35,30 @@ nav:
       - 'Documentation System': 'reference/api-writers/documentation-system.md'
 
 theme:
-  name: 'material'
+  name: material
+  logo: https://avatars3.githubusercontent.com/u/5751098?s=200&v=4
+  favicon: https://www.hackillinois.org/favicon.ico
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep orange
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences

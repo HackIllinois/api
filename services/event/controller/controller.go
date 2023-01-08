@@ -210,7 +210,7 @@ func UpdateEventCode(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	Endpoint to checkin to a staff event using a userToken and eventId
+	Endpoint to allow a staff member to check in an attendee on their behalf using a userToken and eventId
 */
 func StaffCheckin(w http.ResponseWriter, r *http.Request) {
 	var staff_checkin_request models.StaffCheckinRequest

@@ -208,6 +208,17 @@ func TestCheckinExpiredOrProspective(t *testing.T) {
 	if expected_points != profile.Points {
 		t.Fatalf("Wrong amount of points in profile database. Expected %v, got %v", expected_points, profile.Points)
 	}
+
+	// Need to make sure profile attendance was not stored
+	res = client.Database(profile_db_name).Collection("profileattendance").FindOne(context.Background(), bson.M{"id": TEST_PROFILE_ID})
+
+	profile_attendance := profile_models.AttendanceTracker{}
+	err = res.Decode(&profile_attendance)
+
+	if err == nil {
+		t.Fatalf("Found stored profile attendance when there should be none: %v", profile_attendance)
+		return
+	}
 }
 
 func TestCheckinAlreadyCheckedIn(t *testing.T) {

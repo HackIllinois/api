@@ -98,12 +98,19 @@ func CheckinUserByCode(user_id string, code string) (*models.CheckinResponse, er
 	Attempts to checkin a user determined by a JWT token to an event
 */
 func CheckinUserTokenToEvent(user_token string, event_id string) (*models.CheckinResponse, error) {
+	// Validate user_token, extract userId
 	user_id, err := utils.ExtractFieldFromJWT(common_config.TOKEN_SECRET, user_token, "userId")
 
 	if err != nil {
 		return NewCheckinResponseFailed("ExpiredOrProspective"), nil
 	}
 
-	// Note: the event id will be validated in PerformCheckin
+	// Validate event exists
+	_, err = GetEvent(event_id)
+
+	if err != nil {
+		return NewCheckinResponseFailed("InvalidEventId"), nil
+	}
+
 	return PerformCheckin(user_id[0], event_id)
 }

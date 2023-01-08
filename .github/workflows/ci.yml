@@ -38,9 +38,6 @@ jobs:
           mongodb-version: ${{ matrix.mongodb-version }}
           mongodb-replica-set: test-rs
 
-      - name: check fmt
-        run: bash -c "[ $(make fmt | wc -l) == 0 ]"
-
       - name: check cache for go mods
         uses: actions/cache@v3
         with:
@@ -50,6 +47,9 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+
+      - name: check fmt
+        run: bash -c "[ $(make fmt | wc -l) == 0 ]"
 
       - name: build api
         run: make all

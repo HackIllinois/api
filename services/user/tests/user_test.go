@@ -12,7 +12,7 @@ import (
 	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
 	"github.com/HackIllinois/api/services/user/service"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 var db database.Database

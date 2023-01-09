@@ -3,9 +3,9 @@ package services
 import (
 	"net/http"
 
+	"github.com/HackIllinois/api/common/authtoken"
 	"github.com/HackIllinois/api/gateway/config"
 	"github.com/HackIllinois/api/gateway/middleware"
-	"github.com/HackIllinois/api/gateway/models"
 	"github.com/arbor-dev/arbor"
 	"github.com/justinas/alice"
 )
@@ -17,19 +17,19 @@ var AuthRoutes = arbor.RouteCollection{
 		"GetCurrentUserRoles",
 		"GET",
 		"/auth/roles/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserRoles).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserRoles).ServeHTTP,
 	},
 	arbor.Route{
 		"GetRolesLists",
 		"GET",
 		"/auth/roles/list/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetRolesLists).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetRolesLists).ServeHTTP,
 	},
 	arbor.Route{
 		"GetUserListByRole",
 		"GET",
 		"/auth/roles/list/{role}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserListByRole).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserListByRole).ServeHTTP,
 	},
 	arbor.Route{
 		"OauthRedirect",
@@ -47,25 +47,25 @@ var AuthRoutes = arbor.RouteCollection{
 		"GetUserRoles",
 		"GET",
 		"/auth/roles/{id}/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserRoles).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(GetUserRoles).ServeHTTP,
 	},
 	arbor.Route{
 		"AddUserRole",
 		"PUT",
 		"/auth/roles/add/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(AddUserRole).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(AddUserRole).ServeHTTP,
 	},
 	arbor.Route{
 		"RemoveUserRole",
 		"PUT",
 		"/auth/roles/remove/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveUserRole).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveUserRole).ServeHTTP,
 	},
 	arbor.Route{
 		"RefreshToken",
 		"GET",
 		"/auth/token/refresh/",
-		alice.New(middleware.AuthMiddleware([]models.Role{models.UserRole}), middleware.IdentificationMiddleware).ThenFunc(RefreshToken).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole}), middleware.IdentificationMiddleware).ThenFunc(RefreshToken).ServeHTTP,
 	},
 }
 

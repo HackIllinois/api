@@ -1,8 +1,6 @@
 package main
 
-import (
-	jwt "github.com/dgrijalva/jwt-go"
-)
+import "github.com/golang-jwt/jwt/v4"
 
 /*
 	Generates a jwt signed with the given secret containing the provided experation, id, email, and roles in the claims

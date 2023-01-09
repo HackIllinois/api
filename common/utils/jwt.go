@@ -25,6 +25,10 @@ func ExtractFieldFromJWT(secret string, token string, field string) ([]string, e
 	}
 
 	if claims, ok := jwt_token.Claims.(jwt.MapClaims); ok && jwt_token.Valid {
+		if claims["exp"] == nil {
+			return nil, fmt.Errorf("Invalid token: 'exp' field missing")
+		}
+
 		exp, ok := claims["exp"].(float64)
 		if !ok {
 			return nil, fmt.Errorf("Invalid token: 'exp' field malformed")

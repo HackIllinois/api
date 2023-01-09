@@ -11,8 +11,6 @@ var USER_DB_NAME string
 
 var USER_PORT string
 
-var TOKEN_SECRET []byte
-
 func Initialize() error {
 
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
@@ -38,14 +36,6 @@ func Initialize() error {
 	if err != nil {
 		return err
 	}
-
-	secret, err := cfg_loader.Get("TOKEN_SECRET")
-
-	if err != nil {
-		return err
-	}
-
-	TOKEN_SECRET = []byte(secret)
 
 	return nil
 }

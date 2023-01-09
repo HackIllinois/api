@@ -9,7 +9,7 @@ import (
 
 	common_config "github.com/HackIllinois/api/common/config"
 	"github.com/HackIllinois/api/common/database"
-	"github.com/HackIllinois/api/services/user/config"
+	user_config "github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
 	"github.com/HackIllinois/api/services/user/service"
 	"github.com/golang-jwt/jwt/v4"
@@ -18,8 +18,7 @@ import (
 var db database.Database
 
 func TestMain(m *testing.M) {
-	err := config.Initialize()
-
+	err := user_config.Initialize()
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
@@ -33,7 +32,7 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	db, err = database.InitDatabase(config.USER_DB_HOST, config.USER_DB_NAME)
+	db, err = database.InitDatabase(user_config.USER_DB_HOST, user_config.USER_DB_NAME)
 
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)

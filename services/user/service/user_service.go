@@ -12,7 +12,7 @@ import (
 	"github.com/HackIllinois/api/common/database"
 	hack_errors "github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/utils"
-	"github.com/HackIllinois/api/services/user/config"
+	user_config "github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
 	"github.com/golang-jwt/jwt/v4"
 	"go.mongodb.org/mongo-driver/bson"
@@ -28,7 +28,7 @@ func Initialize() error {
 	}
 
 	var err error
-	db, err = database.InitDatabase(config.USER_DB_HOST, config.USER_DB_NAME)
+	db, err = database.InitDatabase(user_config.USER_DB_HOST, user_config.USER_DB_NAME)
 
 	if err != nil {
 		return err

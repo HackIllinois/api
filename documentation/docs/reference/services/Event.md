@@ -411,12 +411,13 @@ Request should include an attendee's user token (`userToken`) and an event id (`
 
 Returns a status, the user's new points, and the user's total points.
 
-Valid values for `status` are `Success`, `InvalidEventId`, `ExpiredOrProspective`, `AlreadyCheckedIn`. 
+Valid values for `status` are `Success`, `InvalidEventId`, `BadUserToken`, `AlreadyCheckedIn`. 
 
 !!! warning
-	Please be aware that `ExpiredOrProspective` will be returned if the user token is invalid, expired, or malformed. 
-	Handle accordingly. 
-	Also, note that `InvalidCode` is used for normal checkin, but staff checkin has `InvalidEventId`.
+	Please be aware that `BadUserToken` will be returned if the user token is **invalid, expired, or malformed**. 
+
+	If you get this status, the staff should see a message like `Bad user token. Try asking the attendee to refresh their qr code.`
+	To do this, the attendee will need to request `GET /user/qr/` again.
 
 !!! note
 	When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.
@@ -449,6 +450,9 @@ Request should include an event code (`code`).
 Returns a status, the user's new points, and the user's total points.
 
 Valid values for `status` are `Success`, `InvalidCode`, `ExpiredOrProspective`, `AlreadyCheckedIn`. 
+
+!!! note
+	`ExpiredOrProspective` in this case means the event has already happened, or has not started yet.
 
 !!! note
 	When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.

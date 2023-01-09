@@ -606,7 +606,7 @@ func CheckinUserTokenToEvent(user_token string, event_id string) (*models.Checki
 	user_id, err := utils.ExtractFieldFromJWT(common_config.TOKEN_SECRET, user_token, "userId")
 
 	if err != nil {
-		return NewCheckinResponseFailed("ExpiredOrProspective"), nil
+		return NewCheckinResponseFailed("BadUserToken"), nil
 	}
 
 	// Validate event exists

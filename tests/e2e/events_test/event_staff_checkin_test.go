@@ -224,7 +224,7 @@ func TestStaffCheckinInvalidEvent(t *testing.T) {
 	}
 }
 
-func TestStaffCheckinInvalidToken(t *testing.T) {
+func TestStaffCheckinBadUserTokenInvalidToken(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 	CreateProfile()
@@ -249,7 +249,7 @@ func TestStaffCheckinInvalidToken(t *testing.T) {
 	expected_res := models.CheckinResponse{
 		NewPoints:   -1,
 		TotalPoints: -1,
-		Status:      "ExpiredOrProspective",
+		Status:      "BadUserToken",
 	}
 
 	if !reflect.DeepEqual(received_res, expected_res) {
@@ -273,7 +273,7 @@ func TestStaffCheckinInvalidToken(t *testing.T) {
 	}
 }
 
-func TestStaffCheckinExpiredOrProspective(t *testing.T) {
+func TestStaffCheckinBadUserTokenExpiredToken(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 	CreateProfile()
@@ -298,7 +298,7 @@ func TestStaffCheckinExpiredOrProspective(t *testing.T) {
 	expected_res := models.CheckinResponse{
 		NewPoints:   -1,
 		TotalPoints: -1,
-		Status:      "ExpiredOrProspective",
+		Status:      "BadUserToken",
 	}
 
 	if !reflect.DeepEqual(received_res, expected_res) {

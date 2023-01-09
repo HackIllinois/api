@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	common_config "github.com/HackIllinois/api/common/config"
 	"github.com/HackIllinois/api/common/database"
 	hack_errors "github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/utils"
@@ -190,7 +191,7 @@ func GetQrInfo(id string) (string, error) {
 		"userId": id,
 	})
 
-	signed_token, err := token.SignedString(config.TOKEN_SECRET)
+	signed_token, err := token.SignedString([]byte(common_config.TOKEN_SECRET))
 
 	if err != nil {
 		return "", err

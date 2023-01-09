@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	common_config "github.com/HackIllinois/api/common/config"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/services/user/config"
 	"github.com/HackIllinois/api/services/user/models"
@@ -502,7 +503,7 @@ func TestGetQrInfo(t *testing.T) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(config.TOKEN_SECRET), nil
+		return []byte(common_config.TOKEN_SECRET), nil
 	})
 
 	if err != nil {

@@ -8,8 +8,9 @@ GET /event/EVENTID/
 
 Returns the event with the id of `EVENTID`.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Event 10",
@@ -34,10 +35,11 @@ GET /event/
 
 Returns a list of all events.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
-	events: [
+	"events": [
 		{
 			"id": "52fdfc072182654f163f5f0f9a621d72",
 			"name": "Example Event 10",
@@ -81,8 +83,9 @@ GET /event/filter/?key=value
 
 Returns all events, filtered with the given key-value pairs.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
     "events": [
         {
@@ -128,10 +131,9 @@ POST /event/
 
 Creates an event with the requested fields. Returns the created event.
 
-Valid values for `eventType` are one of `MEAL SPEAKER WORKSHOP MINIEVENT QNA OTHER`.
+Valid values for `eventType` are `MEAL`, `SPEAKER`, `WORKSHOP`, `MINIEVENT`, `QNA`, or `OTHER`.
 
-Request format:
-```
+```json title="Example request"
 {
 	"name": "Example Event 10",
 	"description": "This is a description",
@@ -151,8 +153,7 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Event 10",
@@ -177,8 +178,9 @@ DELETE /event/EVENTID/
 
 Endpoint to delete an event with name `EVENTID`. It removes the `EVENTID` from the event trackers, and every user's tracker.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Event 10",
@@ -203,8 +205,7 @@ PUT /event/
 
 Updates the event with the id specified in the `id` field of the request. Returns the updated event.
 
-Request format:
-```
+```json title="Example request"
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Event 10",
@@ -224,8 +225,7 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "52fdfc072182654f163f5f0f9a621d72",
 	"name": "Example Event 10",
@@ -250,16 +250,14 @@ POST /event/track/
 
 Marks the specified user as attending the specified event. Returns the tracker for the user and the tracker for the event.
 
-Request format:
-```
+```json title="Example request"
 {
 	"eventId": "52fdfc072182654f163f5f0f9a621d72",
 	"userId": "github0000001"
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"eventTracker": {
 		"eventId": "52fdfc072182654f163f5f0f9a621d72",
@@ -281,8 +279,9 @@ GET /event/track/event/EVENTID/
 
 Returns the tracker for the event with the id `EVENTID`.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"eventId": "52fdfc072182654f163f5f0f9a621d72",
 	"users": [
@@ -296,8 +295,9 @@ GET /event/track/user/USERID/
 
 Returns the tracker for the user with the id `USERID`.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"userId": "github0000001",
 	"events": [
@@ -311,8 +311,9 @@ GET /event/favorite/
 
 Returns the event favorites for the current user.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "github001",
 	"events": [
@@ -327,15 +328,13 @@ POST /event/favorite/
 
 Adds the given event to the favorites for the current user.
 
-Request format:
-```
+```json title="Example request"
 {
 	"eventId": "52fdfc072182654f163f5f0f9a621d72"
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "github001",
 	"events": [
@@ -350,15 +349,13 @@ DELETE /event/favorite/
 
 Removes the given event from the favorites for the current user.
 
-Request format:
-```
+```json title="Example request"
 {
 	"eventId": "52fdfc072182654f163f5f0f9a621d72",
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "github001",
 	"events": [
@@ -373,8 +370,9 @@ GET /event/code/{id}/
 Gets a struct that contains information about the event code (generated upon event creation) and expiration time.
 By convention, event checkin codes will be 6 bytes long.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
     "id": "52fdfc072182654f163f5f0f9a621d72",
     "code": "sample_code",
@@ -388,8 +386,7 @@ PUT /event/code/{id}/
 
 Updates a struct that contains information about the event code (generated upon event creation) and expiration time.
 
-Request format:
-```
+```json title="Example request"
 {
     "code": "new_code",
     "expiration": 1521388800
@@ -397,8 +394,7 @@ Request format:
 
 ```
 
-Response format:
-```
+```json title="Example response"
 {
     "id": "52fdfc072182654f163f5f0f9a621d72",
     "code": "new_code",
@@ -406,24 +402,62 @@ Response format:
 }
 ```
 
+POST /event/staff/checkin/
+----------------------------
+
+Used for staff to check in attendees to various events.
+
+Request should include an attendee's user token (`userToken`) and an event id (`eventId`).
+
+Returns a status, the user's new points, and the user's total points.
+
+Valid values for `status` are `Success`, `InvalidCode`, `ExpiredOrProspective`, `AlreadyCheckedIn`. 
+
+!!! note
+	When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.
+
+!!! note
+	The `userToken` should be retrieved from the `userToken` field of a user QR code URI (`hackillinois://user?userToken=some_token`)
+
+```json title="Example request"
+{
+	"userToken": "some_token",
+	"eventId": "some_event_id"
+}
+```
+
+```json title="Example response"
+{
+    "newPoints": 10,
+    "totalPoints": 10,
+    "status": "Success"
+}
+```
+
 POST /event/checkin/
 ----------------------------
 
-Retrieves a struct that contains information about the event checkin status, point increment value, and total point number.
-Takes in a struct that contains an event checkin code.
+Used for attendees to check into various events. Like `/event/staff/checkin/`, but doesn't require staff verification.
 
-Valid values for `status` are `Success`, `InvalidCode`, `InvalidTime`, `AlreadyCheckedIn`. When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.
+Request should include an event code (`code`).
 
-Request format:
-```
+Returns a status, the user's new points, and the user's total points.
+
+Valid values for `status` are `Success`, `InvalidCode`, `ExpiredOrProspective`, `AlreadyCheckedIn`. 
+
+!!! note
+	When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.
+
+!!! note
+	The `code` should be retrieved from the `code` field of a event QR code URI (`hackillinois://event?code=some_event_code`)
+
+```json title="Example request"
 {
-    "code": "new_code",
+    "code": "some_event_code"
 }
-
 ```
 
-Response format:
-```
+```json title="Example response"
 {
     "newPoints": 10,
     "totalPoints": 10,

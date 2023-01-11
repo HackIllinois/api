@@ -11,10 +11,10 @@ This repository contains the code which runs the backend services supporting Hac
 5. [Documentation](#documentation)
 
 ## Developer Environment Setup
-In order to work on the API there are a few setups neccessary in order to setup your developer environemnt.
+In order to work on the API there are a few setups necessary in order to setup your developer environment.
 
 ### Installing Dependencies
-We highly reccommend that you use Ubuntu 18.04 when working on API development. The API is written and Go and makes use of MongoDB for storing data. You will have to install both of these before working on the API. You will also need a few common development tools including `make` and `git`.
+We highly recommend that you use Ubuntu 18.04 when working on API development. The API is written and Go and makes use of MongoDB for storing data. You will have to install both of these before working on the API. You will also need a few common development tools including `make` and `git`.
 
 #### Installing Development Tools
 Both `make` and `git` can be installed from the default ubuntu package repositories. Run the following commands to install both tools. You may need to run the commands under `sudo`.

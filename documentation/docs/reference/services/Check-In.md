@@ -6,8 +6,9 @@ GET /checkin/USERID/
 
 Returns the checkin stored for the user with the `id` `USERID`.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "github0000001",
 	"hasCheckedIn": true,
@@ -18,10 +19,11 @@ Response format:
 GET /checkin/
 ----------
 
-Returns the checkin stored for the user with the `id` stored in the given JWT in the Authorization header.
+Returns the checkin stored for the currently authenticated user (determined by the JWT in the `Authorization` header).
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "github0000001",
 	"hasCheckedIn": true,
@@ -34,8 +36,7 @@ POST /checkin/
 
 Creates an checkin for the user with the `id` in the request body.
 
-Request format:
-```
+```json title="Example request"
 {
 	"id": "github0000001",
 	"override": true,
@@ -44,8 +45,7 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "github0000001",
 	"override": true,
@@ -59,8 +59,7 @@ PUT /checkin/
 
 Updated the checkin for the user with the `id` in the request body.
 
-Request format:
-```
+```json title="Example request"
 {
 	"id": "github0000001",
 	"hasCheckedIn": true,
@@ -68,8 +67,7 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "github0000001",
 	"hasCheckedIn": true,
@@ -82,8 +80,9 @@ GET /checkin/list/
 
 Returns a list of all user IDs for users who have checked in
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"checkedInUsers": [
 		"github0000001",

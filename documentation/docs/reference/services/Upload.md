@@ -6,8 +6,9 @@ GET /upload/resume/USERID/
 
 Returns the resume stored for the user with the `id` `USERID`.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "github0000001",
 	"resume": "https://bucket.s3.amazonaws.com/resume.pdf"
@@ -17,10 +18,11 @@ Response format:
 GET /upload/resume/
 -------------------
 
-Returns the resume stored for the user with the `id` stored in the given JWT in the Authorization header.
+Returns the resume stored for the currently authenticated user (determined by the JWT in the `Authorization` header).
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "github0000001",
 	"resume": "https://bucket.s3.amazonaws.com/resume.pdf"
@@ -30,10 +32,11 @@ Response format:
 GET /upload/resume/upload/
 --------------------------
 
-Returns the S3 link for resume uploading for the user with the `id` stored in the given JWT in the Authorization header. The user's resume can be `PUT` to this link.
+Returns the S3 link for resume uploading for the currently authenticated user (determined by the JWT in the `Authorization` header). The user's resume can be `PUT` to this link.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "github0000001",
 	"resume": "https://bucket.s3.amazonaws.com/resume.pdf"
@@ -45,8 +48,9 @@ GET /upload/photo/USERID/
 
 Returns the photo stored for the user with the `id` `USERID`.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "github0000001",
 	"photo": "https://bucket.s3.amazonaws.com/photo"
@@ -56,10 +60,11 @@ Response format:
 GET /upload/photo/
 -------------------
 
-Returns the photo stored for the user with the `id` stored in the given JWT in the Authorization header.
+Returns the photo stored for the currently authenticated user (determined by the JWT in the `Authorization` header).
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "github0000001",
 	"photo": "https://bucket.s3.amazonaws.com/photo"
@@ -69,10 +74,11 @@ Response format:
 GET /upload/photo/upload/
 --------------------------
 
-Returns the S3 link for photo uploading for the user with the `id` stored in the given JWT in the Authorization header. The user's photo can be `PUT` to this link.
+Returns the S3 link for photo uploading for the currently authenticated user (determined by the JWT in the `Authorization` header). The user's photo can be `PUT` to this link.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "github0000001",
 	"photo": "https://bucket.s3.amazonaws.com/photo"
@@ -84,8 +90,9 @@ GET /upload/blobstore/ID/
 
 Returns the blob stored with the `id` `ID`.
 
-Response format:
-```
+Request requires no body.
+
+```json title="Example response"
 {
 	"id": "exampleblob",
 	"data": {
@@ -100,8 +107,7 @@ POST /upload/blobstore/
 
 Creates and stores a blob with the specified `id` and `data`. `data` can be a single json field or an json object.
 
-Request format:
-```
+```json title="Example request"
 {
 	"id": "exampleblob",
 	"data": {
@@ -111,8 +117,7 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "exampleblob",
 	"data": {
@@ -127,8 +132,7 @@ PUT /upload/blobstore/
 
 Updates the blob with the specified `id`. `data` can be a single json field or an json object.
 
-Request format:
-```
+```json title="Example request"
 {
 	"id": "exampleblob",
 	"data": {
@@ -138,8 +142,7 @@ Request format:
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "exampleblob",
 	"data": {
@@ -154,15 +157,13 @@ DELETE /upload/blobstore/ID/
 
 Deletes the blob with the specified `id`.
 
-Request format:
-```
+```json title="Example request"
 {
 	"id": "exampleblob",
 }
 ```
 
-Response format:
-```
+```json title="Example response"
 {
 	"id": "exampleblob",
 	"data": {

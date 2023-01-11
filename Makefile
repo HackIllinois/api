@@ -111,4 +111,4 @@ docs:
 # Starts up the API on the test config and runs the E2E integration tests
 .PHONY: integration-test
 integration-test:
-	@$(REPO_ROOT)/scripts/run-integration.sh "$(API_OUTPUT)" "$(TEST_DIR)" || exit 1;
+	@$(REPO_ROOT)/scripts/run-integration.sh "$(API_OUTPUT)" "$(TEST_DIR)" "$(RUN)" || exit 1;

@@ -15,21 +15,28 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 export HI_CONFIG=file://$REPO_ROOT/config/test_config.json
 export BASE_PACKAGE=github.com/HackIllinois/api
 
-if [  -z "$1" ]
+if [  -n "$1" ]
 then
-	API_FILE_OUTPUT=/dev/null
+    API_FILE_OUTPUT=$1
 else
-	API_FILE_OUTPUT=$1
-fi
-
-if [  -z "$2" ]
-then
-	TEST_DIR=$BASE_PACKAGE/tests/e2e/...
-else
-	TEST_DIR=$BASE_PACKAGE/$2
+    API_FILE_OUTPUT=/dev/null
 fi
 echo "API output will be redirected to $API_FILE_OUTPUT"
+
+if [  -n "$2" ]
+then
+    TEST_DIR=$BASE_PACKAGE/$2
+else
+    TEST_DIR=$BASE_PACKAGE/tests/e2e/...
+fi
 echo "Will be running tests in $TEST_DIR"
+
+if [  -n "$3" ]
+then
+    OPT_RUN_TEST="-run $3"
+    echo "Will be running tests that match to \"$3\""
+fi
+
 echo > $API_FILE_OUTPUT # better than rm just in case you want to nuke your system :)
 
 mkdir log/
@@ -63,9 +70,9 @@ sleep 2
 
 echo "Beginning integration tests";
 echo "Checking if the API is running...";
-curl --silent --output /dev/null localhost:8000 || (echo "Failed to connect to the API. Is it running? If it's not, start it with 'make run-test'"; exit 1;)
+curl --silent --output /dev/null localhost:8000 || (echo "Failed to connect to the API. Has it been built? Run `make all` tto ensure that the API has been built."; exit 1;)
 echo "Running end-to-end tests";
-HI_CONFIG=file://$REPO_ROOT/config/test_config.json go test $TEST_DIR -v -count 1;
+HI_CONFIG=file://$REPO_ROOT/config/test_config.json go test $TEST_DIR -v $OPT_RUN_TEST -count 1 -p 1;
 STATUS=$?
 
 cleanup

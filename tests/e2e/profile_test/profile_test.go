@@ -7,8 +7,10 @@ import (
 	"testing"
 
 	"github.com/HackIllinois/api/common/configloader"
+	profile_models "github.com/HackIllinois/api/services/profile/models"
 	"github.com/HackIllinois/api/tests/common"
 	"github.com/dghubble/sling"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -27,7 +29,7 @@ func TestMain(m *testing.M) {
 	}
 
 	admin_client = common.GetSlingClient("Admin")
-	unauthenticated_client = sling.New().Base("http://localhost:8000").Client(nil).Add("Authorization", "FAKE_TOKEN")
+	unauthenticated_client = common.GetSlingClient("Unauthenticated")
 
 	client = common.GetLocalMongoSession()
 
@@ -40,4 +42,17 @@ func TestMain(m *testing.M) {
 
 	return_code := m.Run()
 	os.Exit(return_code)
+}
+
+func CheckDatabaseProfileNotFound(t *testing.T, filter bson.M) {
+	actual_profile_db := profile_models.Profile{}
+	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), filter)
+
+	err := res.Decode(&actual_profile_db)
+
+	if err == nil {
+		t.Errorf("Profile was found: %v", actual_profile_db)
+	} else if err != mongo.ErrNoDocuments {
+		t.Fatalf("Failed when decoding profile: %v", err)
+	}
 }

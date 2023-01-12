@@ -332,6 +332,8 @@ func RegisterDeviceToUser(token string, platform string, id string) error {
 			return err
 		}
 
+		log.Printf("No u dumb idiot it didnt fail. Here is the ARN: %v", *&response.EndpointArn)
+
 		device_arn = *response.EndpointArn
 	}
 

@@ -40,7 +40,7 @@ func InitMongoDatabase(host string, db_name string) (*MongoDatabase, error) {
 	Open a session to the given mongo database
 */
 func (db *MongoDatabase) Connect(host string) error {
-	client_options := options.Client().ApplyURI("mongodb://" + host + ":27017")
+	client_options := options.Client().ApplyURI(host)
 
 	{
 		err := client_options.Validate()

@@ -465,6 +465,9 @@ func PublishNotification(id string, payload string, arns []string) error {
 	queued_devices := make(chan string, len(arns))
 	responses := make(chan bool, len(arns))
 
+	log.Println("Sending the following message:")
+	log.Println(payload)
+
 	for i := 0; i < WORKER_POOL_SIZE; i++ {
 		go PublishNotificationWorker(payload, queued_devices, responses)
 	}
@@ -519,6 +522,7 @@ func PublishNotificationWorker(notification string, device_arns <-chan string, r
 			MessageStructure: &SNS_MESSAGE_STRUCTURE,
 		})
 
+		log.Printf("Device ARN: \"%v\", Error? %v\n", device_arn, err)
 		responses <- (err == nil)
 	}
 }

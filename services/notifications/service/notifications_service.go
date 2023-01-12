@@ -15,12 +15,16 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-var SNS_MESSAGE_STRUCTURE string = "json"
-var WORKER_POOL_SIZE int = 128
+var (
+	SNS_MESSAGE_STRUCTURE string = "json"
+	WORKER_POOL_SIZE      int    = 128
+)
 
-var sess *session.Session
-var client *sns.SNS
-var db database.Database
+var (
+	sess   *session.Session
+	client *sns.SNS
+	db     database.Database
+)
 
 func Initialize() error {
 	sess = session.Must(session.NewSession(&aws.Config{
@@ -49,7 +53,6 @@ func Initialize() error {
 func GetAllTopicIDs() ([]string, error) {
 	var topics []models.Topic
 	err := db.FindAll("topics", nil, &topics, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +76,6 @@ func GetTopic(id string) (*models.Topic, error) {
 
 	var topic models.Topic
 	err := db.FindOne("topics", selector, &topic, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +120,6 @@ func DeleteTopic(id string) error {
 	}
 
 	err := db.RemoveOne("topics", selector, nil)
-
 	if err != nil {
 		return err
 	}
@@ -136,7 +137,6 @@ func GetAllNotificationsForTopic(topic string) ([]models.Notification, error) {
 
 	var notifications []models.Notification
 	err := db.FindAll("notifications", selector, &notifications, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +152,6 @@ func GetAllNotifications(topics []string) ([]models.Notification, error) {
 
 	for _, topic := range topics {
 		topic_notifications, err := GetAllNotificationsForTopic(topic)
-
 		if err != nil {
 			return nil, err
 		}
@@ -184,7 +183,6 @@ func GetSubscriptions(id string) ([]string, error) {
 
 	var topics []models.Topic
 	err := db.FindAll("topics", selector, &topics, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +194,6 @@ func GetSubscriptions(id string) ([]string, error) {
 	}
 
 	roles, err := GetUserRoles(id)
-
 	if err != nil {
 		return nil, err
 	}
@@ -221,7 +218,6 @@ func SubscribeToTopic(userId string, topicId string) error {
 	}
 
 	err := db.Update("topics", selector, &modifier, nil)
-
 	if err != nil {
 		return err
 	}
@@ -244,7 +240,6 @@ func UnsubscribeToTopic(userId string, topicId string) error {
 	}
 
 	err := db.Update("topics", selector, &modifier, nil)
-
 	if err != nil {
 		return err
 	}
@@ -262,7 +257,6 @@ func GetUserDevices(id string) ([]string, error) {
 
 	var user models.User
 	err := db.FindOne("users", selector, &user, nil)
-
 	if err != nil {
 		if err == database.ErrNotFound {
 			err = db.Insert("users", &models.User{
@@ -300,7 +294,6 @@ func SetUserDevices(id string, devices []string) error {
 	}
 
 	err := db.Replace("users", selector, &user, false, nil)
-
 	if err != nil {
 		return err
 	}
@@ -333,7 +326,6 @@ func RegisterDeviceToUser(token string, platform string, id string) error {
 				PlatformApplicationArn: &platform_arn,
 			},
 		)
-
 		if err != nil {
 			return err
 		}
@@ -342,7 +334,6 @@ func RegisterDeviceToUser(token string, platform string, id string) error {
 	}
 
 	devices, err := GetUserDevices(id)
-
 	if err != nil {
 		return err
 	}
@@ -365,11 +356,9 @@ func RegisterDeviceToUser(token string, platform string, id string) error {
 */
 func GetNotificationRecipients(topicId string) ([]string, error) {
 	topic, err := GetTopic(topicId)
-
 	if err != nil {
 		if err == database.ErrNotFound {
 			usersIds, err := GetUsersByRole(topicId)
-
 			if err != nil {
 				return nil, err
 			}
@@ -390,7 +379,6 @@ func GetNotificationRecipientArns(userIds []string) ([]string, error) {
 
 	for _, userId := range userIds {
 		devices, err := GetUserDevices(userId)
-
 		if err != nil {
 			return nil, err
 		}
@@ -411,7 +399,6 @@ func GetNotificationOrder(id string) (*models.NotificationOrder, error) {
 
 	var order models.NotificationOrder
 	err := db.FindOne("orders", selector, &order, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -424,25 +411,21 @@ func GetNotificationOrder(id string) (*models.NotificationOrder, error) {
 */
 func PublishNotificationToTopic(notification models.Notification) (*models.NotificationOrder, error) {
 	err := db.Insert("notifications", &notification, nil)
-
 	if err != nil {
 		return nil, err
 	}
 
 	recipients, err := GetNotificationRecipients(notification.Topic)
-
 	if err != nil {
 		return nil, err
 	}
 
 	device_arns, err := GetNotificationRecipientArns(recipients)
-
 	if err != nil {
 		return nil, err
 	}
 
 	notification_payload, err := GenerateNotificationJson(notification)
-
 	if err != nil {
 		return nil, err
 	}
@@ -501,7 +484,6 @@ func PublishNotification(id string, payload string, arns []string) error {
 	close(responses)
 
 	order, err := GetNotificationOrder(id)
-
 	if err != nil {
 		return err
 	}
@@ -560,13 +542,11 @@ func GenerateNotificationJson(notification models.Notification) (string, error) 
 	}
 
 	apns_payload_json, err := json.Marshal(apns_payload)
-
 	if err != nil {
 		return "", err
 	}
 
 	gcm_payload_json, err := json.Marshal(gcm_payload)
-
 	if err != nil {
 		return "", err
 	}
@@ -579,7 +559,6 @@ func GenerateNotificationJson(notification models.Notification) (string, error) 
 	}
 
 	notification_json, err := json.Marshal(notification_payload)
-
 	if err != nil {
 		return "", err
 	}

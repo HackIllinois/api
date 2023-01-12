@@ -447,10 +447,6 @@ func PublishNotificationToTopic(notification models.Notification) (*models.Notif
 		return nil, err
 	}
 
-	if config.IS_PRODUCTION {
-		go PublishNotification(notification.ID, notification_payload, device_arns)
-	}
-
 	order := models.NotificationOrder{
 		ID:         notification.ID,
 		Recipients: len(device_arns),
@@ -463,6 +459,10 @@ func PublishNotificationToTopic(notification models.Notification) (*models.Notif
 
 	if err != nil {
 		return nil, err
+	}
+
+	if config.IS_PRODUCTION {
+		go PublishNotification(notification.ID, notification_payload, device_arns)
 	}
 
 	return &order, nil

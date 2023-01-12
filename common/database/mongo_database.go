@@ -26,7 +26,6 @@ type MongoDatabase struct {
 func InitMongoDatabase(host string, db_name string) (*MongoDatabase, error) {
 	db := MongoDatabase{}
 	err := db.Connect(host)
-
 	if err != nil {
 		return &db, err
 	}
@@ -40,11 +39,10 @@ func InitMongoDatabase(host string, db_name string) (*MongoDatabase, error) {
 	Open a session to the given mongo database
 */
 func (db *MongoDatabase) Connect(host string) error {
-	client_options := options.Client().ApplyURI("mongodb://" + host + ":27017")
+	client_options := options.Client().ApplyURI(host)
 
 	{
 		err := client_options.Validate()
-
 		if err != nil {
 			// problems parsing host
 			return ErrConnection
@@ -62,7 +60,6 @@ func (db *MongoDatabase) Connect(host string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, client_options)
-
 	if err != nil {
 		// failed to connect to database
 		return ErrConnection
@@ -89,7 +86,6 @@ func (db *MongoDatabase) GetRaw() *mongo.Client {
 */
 func (db *MongoDatabase) GetSession() (*mongo.Session, error) {
 	session, err := db.client.StartSession(nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -107,10 +103,14 @@ func (db *MongoDatabase) GetNewContext() (context.Context, context.CancelFunc) {
 /*
 	Find one element matching the given query parameters
 */
-func (db *MongoDatabase) FindOne(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error {
+func (db *MongoDatabase) FindOne(
+	collection_name string,
+	query interface{},
+	result interface{},
+	session *mongo.SessionContext,
+) error {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return convertMgoError(err)
 		}
@@ -134,10 +134,14 @@ func (db *MongoDatabase) FindOne(collection_name string, query interface{}, resu
 /*
 	Finds and deletes one element matching the given query parameters atomically
 */
-func (db *MongoDatabase) FindOneAndDelete(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error {
+func (db *MongoDatabase) FindOneAndDelete(
+	collection_name string,
+	query interface{},
+	result interface{},
+	session *mongo.SessionContext,
+) error {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return convertMgoError(err)
 		}
@@ -158,10 +162,17 @@ func (db *MongoDatabase) FindOneAndDelete(collection_name string, query interfac
 	return convertMgoError(err)
 }
 
-func (db *MongoDatabase) FindOneAndUpdate(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, upsert bool, session *mongo.SessionContext) error {
+func (db *MongoDatabase) FindOneAndUpdate(
+	collection_name string,
+	query interface{},
+	update interface{},
+	result interface{},
+	return_new_doc bool,
+	upsert bool,
+	session *mongo.SessionContext,
+) error {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return convertMgoError(err)
 		}
@@ -189,10 +200,17 @@ func (db *MongoDatabase) FindOneAndUpdate(collection_name string, query interfac
 	return convertMgoError(err)
 }
 
-func (db *MongoDatabase) FindOneAndReplace(collection_name string, query interface{}, update interface{}, result interface{}, return_new_doc bool, upsert bool, session *mongo.SessionContext) error {
+func (db *MongoDatabase) FindOneAndReplace(
+	collection_name string,
+	query interface{},
+	update interface{},
+	result interface{},
+	return_new_doc bool,
+	upsert bool,
+	session *mongo.SessionContext,
+) error {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return convertMgoError(err)
 		}
@@ -223,10 +241,14 @@ func (db *MongoDatabase) FindOneAndReplace(collection_name string, query interfa
 /*
 	Find all elements matching the given query parameters
 */
-func (db *MongoDatabase) FindAll(collection_name string, query interface{}, result interface{}, session *mongo.SessionContext) error {
+func (db *MongoDatabase) FindAll(
+	collection_name string,
+	query interface{},
+	result interface{},
+	session *mongo.SessionContext,
+) error {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return convertMgoError(err)
 		}
@@ -241,7 +263,6 @@ func (db *MongoDatabase) FindAll(collection_name string, query interface{}, resu
 	query = nilToEmptyBson(query)
 
 	cursor, err := db.client.Database(db.name).Collection(collection_name).Find(*session, query)
-
 	if err != nil {
 		return convertMgoError(err)
 	}
@@ -257,10 +278,15 @@ func (db *MongoDatabase) FindAll(collection_name string, query interface{}, resu
 	Find all elements matching the given query parameters, and sorts them based on given sort fields
         The first sort field is highest priority, each subsequent field breaks ties
 */
-func (db *MongoDatabase) FindAllSorted(collection_name string, query interface{}, sort_fields bson.D, result interface{}, session *mongo.SessionContext) error {
+func (db *MongoDatabase) FindAllSorted(
+	collection_name string,
+	query interface{},
+	sort_fields bson.D,
+	result interface{},
+	session *mongo.SessionContext,
+) error {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return convertMgoError(err)
 		}
@@ -277,7 +303,6 @@ func (db *MongoDatabase) FindAllSorted(collection_name string, query interface{}
 	options := options.Find().SetSort(sort_fields)
 
 	cursor, err := db.client.Database(db.name).Collection(collection_name).Find(*session, query, options)
-
 	if err != nil {
 		return convertMgoError(err)
 	}
@@ -295,7 +320,6 @@ func (db *MongoDatabase) FindAllSorted(collection_name string, query interface{}
 func (db *MongoDatabase) RemoveOne(collection_name string, query interface{}, session *mongo.SessionContext) error {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return convertMgoError(err)
 		}
@@ -317,10 +341,13 @@ func (db *MongoDatabase) RemoveOne(collection_name string, query interface{}, se
 /*
 	Remove all elements matching the given query parameters
 */
-func (db *MongoDatabase) RemoveAll(collection_name string, query interface{}, session *mongo.SessionContext) (*ChangeResults, error) {
+func (db *MongoDatabase) RemoveAll(
+	collection_name string,
+	query interface{},
+	session *mongo.SessionContext,
+) (*ChangeResults, error) {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return nil, convertMgoError(err)
 		}
@@ -335,7 +362,6 @@ func (db *MongoDatabase) RemoveAll(collection_name string, query interface{}, se
 	query = nilToEmptyBson(query)
 
 	res, err := db.client.Database(db.name).Collection(collection_name).DeleteMany(*session, query)
-
 	if err != nil {
 		return nil, convertMgoError(err)
 	}
@@ -354,7 +380,6 @@ func (db *MongoDatabase) RemoveAll(collection_name string, query interface{}, se
 func (db *MongoDatabase) Insert(collection_name string, item interface{}, session *mongo.SessionContext) error {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return convertMgoError(err)
 		}
@@ -377,10 +402,14 @@ func (db *MongoDatabase) Insert(collection_name string, item interface{}, sessio
 	Upsert the given item into the collection i.e.,
 	if the item exists, it is updated with the given values, else a new item with those values is created.
 */
-func (db *MongoDatabase) Upsert(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) (*ChangeResults, error) {
+func (db *MongoDatabase) Upsert(
+	collection_name string,
+	selector interface{},
+	update interface{},
+	session *mongo.SessionContext,
+) (*ChangeResults, error) {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return nil, convertMgoError(err)
 		}
@@ -397,7 +426,6 @@ func (db *MongoDatabase) Upsert(collection_name string, selector interface{}, up
 	options := options.Update().SetUpsert(true)
 
 	res, err := db.client.Database(db.name).Collection(collection_name).UpdateOne(*session, selector, update, options)
-
 	if err != nil {
 		return nil, convertMgoError(err)
 	}
@@ -413,10 +441,14 @@ func (db *MongoDatabase) Upsert(collection_name string, selector interface{}, up
 /*
 	Finds an item based on the given selector and updates it with the data in update
 */
-func (db *MongoDatabase) Update(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) error {
+func (db *MongoDatabase) Update(
+	collection_name string,
+	selector interface{},
+	update interface{},
+	session *mongo.SessionContext,
+) error {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return convertMgoError(err)
 		}
@@ -431,7 +463,6 @@ func (db *MongoDatabase) Update(collection_name string, selector interface{}, up
 	selector = nilToEmptyBson(selector)
 
 	res, err := db.client.Database(db.name).Collection(collection_name).UpdateOne(*session, selector, update)
-
 	if err != nil {
 		return convertMgoError(err)
 	}
@@ -446,10 +477,14 @@ func (db *MongoDatabase) Update(collection_name string, selector interface{}, up
 /*
 	Finds all items based on the given selector and updates them with the data in update
 */
-func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{}, update interface{}, session *mongo.SessionContext) (*ChangeResults, error) {
+func (db *MongoDatabase) UpdateAll(
+	collection_name string,
+	selector interface{},
+	update interface{},
+	session *mongo.SessionContext,
+) (*ChangeResults, error) {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return nil, convertMgoError(err)
 		}
@@ -464,7 +499,6 @@ func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{},
 	selector = nilToEmptyBson(selector)
 
 	res, err := db.client.Database(db.name).Collection(collection_name).UpdateMany(*session, selector, update)
-
 	if err != nil {
 		return nil, convertMgoError(err)
 	}
@@ -480,10 +514,15 @@ func (db *MongoDatabase) UpdateAll(collection_name string, selector interface{},
 /*
 	Finds an item based on the given selector and replaces it with the data in update
 */
-func (db *MongoDatabase) Replace(collection_name string, selector interface{}, update interface{}, upsert bool, session *mongo.SessionContext) error {
+func (db *MongoDatabase) Replace(
+	collection_name string,
+	selector interface{},
+	update interface{},
+	upsert bool,
+	session *mongo.SessionContext,
+) error {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return convertMgoError(err)
 		}
@@ -500,7 +539,6 @@ func (db *MongoDatabase) Replace(collection_name string, selector interface{}, u
 	options := options.Replace().SetUpsert(upsert)
 
 	res, err := db.client.Database(db.name).Collection(collection_name).ReplaceOne(*session, selector, update, options)
-
 	if err != nil {
 		return convertMgoError(err)
 	}
@@ -518,7 +556,6 @@ func (db *MongoDatabase) Replace(collection_name string, selector interface{}, u
 func (db *MongoDatabase) DropDatabase(session *mongo.SessionContext) error {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return convertMgoError(err)
 		}
@@ -538,10 +575,13 @@ func (db *MongoDatabase) DropDatabase(session *mongo.SessionContext) error {
 /*
 	Returns a map of statistics for a given collection
 */
-func (db *MongoDatabase) GetStats(collection_name string, fields []string, session *mongo.SessionContext) (map[string]interface{}, error) {
+func (db *MongoDatabase) GetStats(
+	collection_name string,
+	fields []string,
+	session *mongo.SessionContext,
+) (map[string]interface{}, error) {
 	if session == nil {
 		s, err := db.GetSession()
-
 		if err != nil {
 			return nil, convertMgoError(err)
 		}
@@ -554,7 +594,6 @@ func (db *MongoDatabase) GetStats(collection_name string, fields []string, sessi
 	}
 
 	cursor, err := db.client.Database(db.name).Collection(collection_name).Find(*session, bson.D{})
-
 	if err != nil {
 		return nil, convertMgoError(err)
 	}
@@ -568,7 +607,6 @@ func (db *MongoDatabase) GetStats(collection_name string, fields []string, sessi
 		if err := cursor.Decode(&result); err != nil {
 			count += 1
 			err := AddEntryToStats(stats, result, fields)
-
 			if err != nil {
 				return nil, convertMgoError(err)
 			}

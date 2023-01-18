@@ -603,11 +603,13 @@ func CheckinUserByCode(user_id string, code string) (*models.CheckinResponse, er
 */
 func CheckinUserTokenToEvent(user_token string, event_id string) (*models.CheckinResponse, error) {
 	// Validate user_token, extract userId
-	user_id, err := utils.ExtractFieldFromJWT(common_config.TOKEN_SECRET, user_token, "userId")
+	value_arr, err := utils.ExtractFieldFromJWT(common_config.TOKEN_SECRET, user_token, "userId")
 
-	if err != nil {
+	if len(value_arr) != 1 || err != nil {
 		return NewCheckinResponseFailed("BadUserToken"), nil
 	}
+
+	user_id := value_arr[0]
 
 	// Validate event exists
 	_, err = GetEvent(event_id)
@@ -616,5 +618,5 @@ func CheckinUserTokenToEvent(user_token string, event_id string) (*models.Checki
 		return NewCheckinResponseFailed("InvalidEventId"), nil
 	}
 
-	return PerformCheckin(user_id[0], event_id)
+	return PerformCheckin(user_id, event_id)
 }

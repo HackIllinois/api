@@ -106,9 +106,13 @@ The QR code string will contain information stored in the form of a URI.
 Request requires no body.
 
 ```json title="Example response"
+SECRET_STRING = your-256-bit-secret
+signed_token = token.SignedString([]byte(SECRET_STRING))
+token = []string{signed_token}
+
 {
 	"id": "github0000001",
-	"qrInfo": "hackillinois://user?userid=github0000001"
+	"qrInfo": "hackillinois://user?userToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NzQwOTg3NDMsInVzZXJJZCI6ImxvY2FsYWRtaW4ifQ.mWZfc9b4zLEzyqqqFmSbvFcEXuY2CEjiAqWhbrVdzcc"
 }
 ```
 
@@ -121,8 +125,11 @@ The QR code string will contain information stored in the form of a URI.
 Request requires no body.
 
 ```json title="Example response"
+SECRET_STRING = your-256-bit-secret
+signed_token = token.SignedString([]byte(SECRET_STRING))
+token = []string{signed_token}
 {
 	"id": "github0000001",
-	"qrInfo": "hackillinois://user?userid=github0000001"
+	"qrInfo": "hackillinois://user?userToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NzQwOTg3NDMsInVzZXJJZCI6ImxvY2FsYWRtaW4ifQ.mWZfc9b4zLEzyqqqFmSbvFcEXuY2CEjiAqWhbrVdzcc"
 }
 ```

@@ -103,16 +103,19 @@ GET /user/qr/
 Get the string to be embedded in the current user's QR code. 
 The QR code string will contain information stored in the form of a URI.
 
+!!! warning
+	The URI wll contain a JWT that will expire in 20 seconds after the request was received. If you
+	need a new user token, poll this endpoint again and it will give a fresh token.
+	
+	Since each token expires after 20 seconds, it is recommended that you poll every 15 seconds to 
+	allow for any last second user QR scans to succeed.
+
 Request requires no body.
 
 ```json title="Example response"
-SECRET_STRING = your-256-bit-secret
-signed_token = token.SignedString([]byte(SECRET_STRING))
-token = []string{signed_token}
-
 {
 	"id": "github0000001",
-	"qrInfo": "hackillinois://user?userToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NzQwOTg3NDMsInVzZXJJZCI6ImxvY2FsYWRtaW4ifQ.mWZfc9b4zLEzyqqqFmSbvFcEXuY2CEjiAqWhbrVdzcc"
+	"qrInfo": "hackillinois://user?userToken=mWZfc9b4zLEzyqqqFmSbvFcEXuY2CEjiAqWhbrVdzcc"
 }
 ```
 
@@ -122,14 +125,15 @@ GET /user/qr/{id}/
 Get the string to be embedded in the specified user's QR code. 
 The QR code string will contain information stored in the form of a URI.
 
+!!! warning
+	See `GET /user/qr/` for more information the user token's lifetime that is embedded into the URI.
+	If you need a new user token, poll this endpoint again and it will give a fresh token.
+
 Request requires no body.
 
 ```json title="Example response"
-SECRET_STRING = your-256-bit-secret
-signed_token = token.SignedString([]byte(SECRET_STRING))
-token = []string{signed_token}
 {
 	"id": "github0000001",
-	"qrInfo": "hackillinois://user?userToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NzQwOTg3NDMsInVzZXJJZCI6ImxvY2FsYWRtaW4ifQ.mWZfc9b4zLEzyqqqFmSbvFcEXuY2CEjiAqWhbrVdzcc"
+	"qrInfo": "hackillinois://user?userToken=mWZfc9b4zLEzyqqqFmSbvFcEXuY2CEjiAqWhbrVdzcc"
 }
 ```

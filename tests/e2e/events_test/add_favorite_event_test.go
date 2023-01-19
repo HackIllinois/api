@@ -16,7 +16,7 @@ func TestAddFavoriteEventNormal(t *testing.T) {
 	defer ClearEvents()
 
 	req := models.EventFavoriteModification{
-		EventID: "testeventid12345",
+		EventID: TEST_EVENT_1_ID,
 	}
 	received_res := models.EventFavorites{}
 	response, err := user_client.New().Post("/event/favorite/").BodyJSON(req).ReceiveSuccess(&received_res)
@@ -31,9 +31,9 @@ func TestAddFavoriteEventNormal(t *testing.T) {
 	}
 
 	expected_res := models.EventFavorites{
-		ID: "localadmin",
+		ID: TEST_USER_ID,
 		Events: []string{
-			"testeventid12345",
+			TEST_EVENT_1_ID,
 		},
 	}
 
@@ -42,7 +42,7 @@ func TestAddFavoriteEventNormal(t *testing.T) {
 		return
 	}
 
-	res := client.Database(events_db_name).Collection("favorites").FindOne(context.Background(), bson.M{"id": "localadmin"})
+	res := client.Database(events_db_name).Collection("favorites").FindOne(context.Background(), bson.M{"id": TEST_USER_ID})
 
 	err = res.Decode(&received_res)
 
@@ -87,7 +87,7 @@ func TestAddFavoriteEventNotExist(t *testing.T) {
 		t.Fatalf("Wrong reponse received. Expected %v, got %v", expected_error, api_err)
 	}
 
-	cursor, err := client.Database(events_db_name).Collection("favorites").Find(context.Background(), bson.M{"id": "localadmin"})
+	cursor, err := client.Database(events_db_name).Collection("favorites").Find(context.Background(), bson.M{"id": TEST_USER_ID})
 
 	res := []models.EventFavorites{}
 	err = cursor.All(context.TODO(), &res)

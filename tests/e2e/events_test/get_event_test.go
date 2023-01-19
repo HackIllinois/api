@@ -14,7 +14,7 @@ func TestGetEventNormal(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 
-	event_id := "testeventid12345"
+	event_id := TEST_EVENT_1_ID
 	received_event := models.Event{}
 	response, err := public_client.New().Get(fmt.Sprintf("/event/%s/", event_id)).ReceiveSuccess(&received_event)
 
@@ -28,7 +28,7 @@ func TestGetEventNormal(t *testing.T) {
 	}
 
 	expected_event := models.Event{
-		ID:          "testeventid12345",
+		ID:          TEST_EVENT_1_ID,
 		Name:        "testevent1",
 		Description: "testdescription1",
 		StartTime:   current_unix_time,

@@ -73,7 +73,7 @@ func TestGetFilteredEventsNormal(t *testing.T) {
 	expected_events := models.EventList{
 		Events: []models.Event{
 			{
-				ID:          "testeventid12345",
+				ID:          TEST_EVENT_1_ID,
 				Name:        "testevent1",
 				Description: "testdescription1",
 				StartTime:   current_unix_time,
@@ -118,7 +118,7 @@ func TestGetFilteredEventsNoFilter(t *testing.T) {
 	expected_events := models.EventList{
 		Events: []models.Event{
 			{
-				ID:          "testeventid12345",
+				ID:          TEST_EVENT_1_ID,
 				Name:        "testevent1",
 				Description: "testdescription1",
 				StartTime:   current_unix_time,
@@ -136,7 +136,7 @@ func TestGetFilteredEventsNoFilter(t *testing.T) {
 				Points: 50,
 			},
 			{
-				ID:          "testeventid67890",
+				ID:          TEST_EVENT_2_ID,
 				Name:        "testevent2",
 				Description: "testdescription2",
 				StartTime:   current_unix_time + 60000,
@@ -216,7 +216,7 @@ func TestGetFilteredEventsByName(t *testing.T) {
 	expected_events := models.EventList{
 		Events: []models.Event{
 			{
-				ID:          "testeventid67890",
+				ID:          TEST_EVENT_2_ID,
 				Name:        "testevent2",
 				Description: "testdescription2",
 				StartTime:   current_unix_time + 60000,
@@ -260,7 +260,7 @@ func TestGetFilteredEventsByDescription(t *testing.T) {
 	expected_events := models.EventList{
 		Events: []models.Event{
 			{
-				ID:          "testeventid12345",
+				ID:          TEST_EVENT_1_ID,
 				Name:        "testevent1",
 				Description: "testdescription1",
 				StartTime:   current_unix_time,
@@ -309,7 +309,7 @@ func TestGetFilteredEventsByStartTime(t *testing.T) {
 	expected_events := models.EventList{
 		Events: []models.Event{
 			{
-				ID:          "testeventid12345",
+				ID:          TEST_EVENT_1_ID,
 				Name:        "testevent1",
 				Description: "testdescription1",
 				StartTime:   current_unix_time,
@@ -354,7 +354,7 @@ func TestGetFilteredEventsByEndTime(t *testing.T) {
 	expected_events := models.EventList{
 		Events: []models.Event{
 			{
-				ID:          "testeventid12345",
+				ID:          TEST_EVENT_1_ID,
 				Name:        "testevent1",
 				Description: "testdescription1",
 				StartTime:   current_unix_time,
@@ -399,7 +399,7 @@ func TestGetFilteredEventBySponsor(t *testing.T) {
 	expected_events := models.EventList{
 		Events: []models.Event{
 			{
-				ID:          "testeventid12345",
+				ID:          TEST_EVENT_1_ID,
 				Name:        "testevent1",
 				Description: "testdescription1",
 				StartTime:   current_unix_time,
@@ -462,7 +462,7 @@ func TestGetFilteredEventByEventType(t *testing.T) {
 	expected_events := models.EventList{
 		Events: []models.Event{
 			{
-				ID:          "testeventid67890",
+				ID:          TEST_EVENT_2_ID,
 				Name:        "testevent2",
 				Description: "testdescription2",
 				StartTime:   current_unix_time + 60000,

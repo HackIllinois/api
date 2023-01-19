@@ -29,6 +29,16 @@ var events_db_name string
 var profile_db_name string
 var checkin_db_name string
 
+var TOKEN_SECRET []byte
+
+const TEST_EVENT_1_ID = "testeventid1"
+const TEST_EVENT_2_ID = "testeventid2"
+const TEST_EVENT_1_CODE = "testeventcode1"
+const TEST_EVENT_2_CODE = "testeventcode2"
+
+const TEST_USER_ID = "localadmin"
+const TEST_PROFILE_ID = "localadminprofileid"
+
 var current_unix_time = time.Now().Unix()
 
 func TestMain(m *testing.M) {
@@ -62,6 +72,14 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 	ResetDatabase()
+
+	token_secret_string, err := cfg.Get("TOKEN_SECRET")
+	if err != nil {
+		fmt.Printf("ERROR: %v\n", err)
+		os.Exit(1)
+	}
+
+	TOKEN_SECRET = []byte(token_secret_string)
 
 	return_code := m.Run()
 	ResetDatabase()
@@ -106,7 +124,7 @@ func ResetDatabase() {
 
 func CreateEvents() {
 	event1 := event_models.Event{
-		ID:          "testeventid12345",
+		ID:          TEST_EVENT_1_ID,
 		Name:        "testevent1",
 		Description: "testdescription1",
 		StartTime:   current_unix_time,
@@ -125,7 +143,7 @@ func CreateEvents() {
 	}
 
 	event2 := event_models.Event{
-		ID:          "testeventid67890",
+		ID:          TEST_EVENT_2_ID,
 		Name:        "testevent2",
 		Description: "testdescription2",
 		StartTime:   current_unix_time + 60000,
@@ -147,13 +165,13 @@ func CreateEvents() {
 	client.Database(events_db_name).Collection("events").InsertOne(context.Background(), event2)
 
 	event_tracker1 := event_models.EventTracker{
-		EventID: "testeventid12345",
+		EventID: TEST_EVENT_1_ID,
 		Users:   []string{},
 	}
 	event_tracker2 := event_models.EventTracker{
-		EventID: "testeventid67890",
+		EventID: TEST_EVENT_2_ID,
 		Users: []string{
-			"localadmin",
+			TEST_USER_ID,
 		},
 	}
 
@@ -161,22 +179,22 @@ func CreateEvents() {
 	client.Database(events_db_name).Collection("eventtrackers").InsertOne(context.Background(), event_tracker2)
 
 	user_tracker := event_models.UserTracker{
-		UserID: "localadmin",
+		UserID: TEST_USER_ID,
 		Events: []string{
-			"testeventid67890",
+			TEST_EVENT_2_ID,
 		},
 	}
 
 	client.Database(events_db_name).Collection("usertrackers").InsertOne(context.Background(), user_tracker)
 
 	event_code1 := event_models.EventCode{
-		ID:         "testeventid12345",
-		Code:       "123456",
+		ID:         TEST_EVENT_1_ID,
+		Code:       TEST_EVENT_1_CODE,
 		Expiration: current_unix_time + 60000,
 	}
 	event_code2 := event_models.EventCode{
-		ID:         "testeventid67890",
-		Code:       "abcdef",
+		ID:         TEST_EVENT_2_ID,
+		Code:       TEST_EVENT_2_CODE,
 		Expiration: current_unix_time - 60000,
 	}
 
@@ -186,7 +204,7 @@ func CreateEvents() {
 
 func CreateProfile() {
 	profile := profile_models.Profile{
-		ID:        "theadminprofile",
+		ID:        TEST_PROFILE_ID,
 		FirstName: "HackIllinois",
 		LastName:  "Admin",
 		Points:    0,
@@ -195,8 +213,8 @@ func CreateProfile() {
 	client.Database(profile_db_name).Collection("profiles").InsertOne(context.Background(), profile)
 
 	userid_profileid := profile_models.IdMap{
-		UserID:    "localadmin",
-		ProfileID: "theadminprofile",
+		UserID:    TEST_USER_ID,
+		ProfileID: TEST_PROFILE_ID,
 	}
 	client.Database(profile_db_name).Collection("profileids").InsertOne(context.Background(), userid_profileid)
 }

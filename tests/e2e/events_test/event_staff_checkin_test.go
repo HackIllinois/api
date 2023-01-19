@@ -5,24 +5,73 @@ import (
 	"net/http"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/HackIllinois/api/services/event/models"
 	profile_models "github.com/HackIllinois/api/services/profile/models"
+	"github.com/golang-jwt/jwt/v4"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func TestCheckinNormal(t *testing.T) {
+func GenerateValidUserToken(t *testing.T) string {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"exp":    time.Now().Add(time.Hour).Unix(),
+		"userId": TEST_USER_ID,
+	})
+
+	signed, err := token.SignedString(TOKEN_SECRET)
+
+	if err != nil {
+		t.Fatalf("Failed to generate signed token: %v", err)
+	}
+
+	return signed
+}
+
+func GenerateExpiredUserToken(t *testing.T) string {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"exp":    time.Now().Add(-time.Hour).Unix(),
+		"userId": TEST_USER_ID,
+	})
+
+	signed, err := token.SignedString(TOKEN_SECRET)
+
+	if err != nil {
+		t.Fatalf("Failed to generate signed token: %v", err)
+	}
+
+	return signed
+}
+
+func GenerateInvalidUserToken(t *testing.T) string {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"exp":    time.Now().Add(time.Hour).Unix(),
+		"userId": TEST_USER_ID,
+	})
+
+	// Note: please do not ever use nonsense as a secret or this will break
+	signed, err := token.SignedString([]byte("nonsense"))
+
+	if err != nil {
+		t.Fatalf("Failed to generate signed token: %v", err)
+	}
+
+	return signed
+}
+
+func TestStaffCheckinNormal(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 	CreateProfile()
 	defer ClearProfiles()
 
-	req := models.CheckinRequest{
-		Code: TEST_EVENT_1_CODE,
+	req := models.StaffCheckinRequest{
+		EventID:   TEST_EVENT_1_ID,
+		UserToken: GenerateValidUserToken(t),
 	}
 	received_res := models.CheckinResponse{}
-	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
+	response, err := staff_client.New().Post("/event/staff/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
 
 	if err != nil {
 		t.Fatal("Unable to make request")
@@ -59,7 +108,7 @@ func TestCheckinNormal(t *testing.T) {
 	}
 }
 
-func TestCheckinAddToExistingPoints(t *testing.T) {
+func TestStaffCheckinAddToExistingPoints(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 	CreateProfile()
@@ -73,11 +122,12 @@ func TestCheckinAddToExistingPoints(t *testing.T) {
 		}},
 	)
 
-	req := models.CheckinRequest{
-		Code: TEST_EVENT_1_CODE,
+	req := models.StaffCheckinRequest{
+		EventID:   TEST_EVENT_1_ID,
+		UserToken: GenerateValidUserToken(t),
 	}
 	received_res := models.CheckinResponse{}
-	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
+	response, err := staff_client.New().Post("/event/staff/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
 
 	if err != nil {
 		t.Fatal("Unable to make request")
@@ -114,17 +164,18 @@ func TestCheckinAddToExistingPoints(t *testing.T) {
 	}
 }
 
-func TestCheckinInvalidCode(t *testing.T) {
+func TestStaffCheckinInvalidEvent(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 	CreateProfile()
 	defer ClearProfiles()
 
-	req := models.CheckinRequest{
-		Code: "wrongcode",
+	req := models.StaffCheckinRequest{
+		EventID:   "bogus",
+		UserToken: GenerateValidUserToken(t),
 	}
 	received_res := models.CheckinResponse{}
-	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
+	response, err := staff_client.New().Post("/event/staff/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
 
 	if err != nil {
 		t.Fatal("Unable to make request")
@@ -138,7 +189,7 @@ func TestCheckinInvalidCode(t *testing.T) {
 	expected_res := models.CheckinResponse{
 		NewPoints:   -1,
 		TotalPoints: -1,
-		Status:      "InvalidCode",
+		Status:      "InvalidEventId",
 	}
 
 	if !reflect.DeepEqual(received_res, expected_res) {
@@ -155,55 +206,7 @@ func TestCheckinInvalidCode(t *testing.T) {
 		return
 	}
 
-	// it's not crucial we check every field. The profile E2E tests should be doing that
-	expected_points := 0
-	if expected_points != profile.Points {
-		t.Fatalf("Wrong amount of points in profile database. Expected %v, got %v", expected_points, profile.Points)
-	}
-}
-
-func TestCheckinExpiredOrProspective(t *testing.T) {
-	CreateEvents()
-	defer ClearEvents()
-	CreateProfile()
-	defer ClearProfiles()
-
-	req := models.CheckinRequest{
-		Code: TEST_EVENT_2_CODE,
-	}
-	received_res := models.CheckinResponse{}
-	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
-
-	if err != nil {
-		t.Fatal("Unable to make request")
-		return
-	}
-	if response.StatusCode != http.StatusOK {
-		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
-		return
-	}
-
-	expected_res := models.CheckinResponse{
-		NewPoints:   -1,
-		TotalPoints: -1,
-		Status:      "ExpiredOrProspective",
-	}
-
-	if !reflect.DeepEqual(received_res, expected_res) {
-		t.Fatalf("Wrong result received. Expected %v, got %v", expected_res, received_res)
-	}
-
-	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": TEST_PROFILE_ID})
-
-	profile := profile_models.Profile{}
-	err = res.Decode(&profile)
-
-	if err != nil {
-		t.Fatalf("Had trouble finding profile in database: %v", err)
-		return
-	}
-
-	// it's not crucial we check every field. The profile E2E tests should be doing that
+	// it's not crucial we check every field in profile. The profile E2E tests should be doing that
 	expected_points := 0
 	if expected_points != profile.Points {
 		t.Fatalf("Wrong amount of points in profile database. Expected %v, got %v", expected_points, profile.Points)
@@ -221,7 +224,105 @@ func TestCheckinExpiredOrProspective(t *testing.T) {
 	}
 }
 
-func TestCheckinAlreadyCheckedIn(t *testing.T) {
+func TestStaffCheckinBadUserTokenInvalidToken(t *testing.T) {
+	CreateEvents()
+	defer ClearEvents()
+	CreateProfile()
+	defer ClearProfiles()
+
+	req := models.StaffCheckinRequest{
+		EventID:   TEST_EVENT_1_ID,
+		UserToken: GenerateInvalidUserToken(t),
+	}
+	received_res := models.CheckinResponse{}
+	response, err := staff_client.New().Post("/event/staff/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
+
+	if err != nil {
+		t.Fatal("Unable to make request")
+		return
+	}
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
+		return
+	}
+
+	expected_res := models.CheckinResponse{
+		NewPoints:   -1,
+		TotalPoints: -1,
+		Status:      "BadUserToken",
+	}
+
+	if !reflect.DeepEqual(received_res, expected_res) {
+		t.Fatalf("Wrong result received. Expected %v, got %v", expected_res, received_res)
+	}
+
+	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": TEST_PROFILE_ID})
+
+	profile := profile_models.Profile{}
+	err = res.Decode(&profile)
+
+	if err != nil {
+		t.Fatalf("Had trouble finding profile in database: %v", err)
+		return
+	}
+
+	// it's not crucial we check every field. The profile E2E tests should be doing that
+	expected_points := 0
+	if expected_points != profile.Points {
+		t.Fatalf("Wrong amount of points in profile database. Expected %v, got %v", expected_points, profile.Points)
+	}
+}
+
+func TestStaffCheckinBadUserTokenExpiredToken(t *testing.T) {
+	CreateEvents()
+	defer ClearEvents()
+	CreateProfile()
+	defer ClearProfiles()
+
+	req := models.StaffCheckinRequest{
+		EventID:   TEST_EVENT_1_ID,
+		UserToken: GenerateExpiredUserToken(t),
+	}
+	received_res := models.CheckinResponse{}
+	response, err := staff_client.New().Post("/event/staff/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
+
+	if err != nil {
+		t.Fatal("Unable to make request")
+		return
+	}
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
+		return
+	}
+
+	expected_res := models.CheckinResponse{
+		NewPoints:   -1,
+		TotalPoints: -1,
+		Status:      "BadUserToken",
+	}
+
+	if !reflect.DeepEqual(received_res, expected_res) {
+		t.Fatalf("Wrong result received. Expected %v, got %v", expected_res, received_res)
+	}
+
+	res := client.Database(profile_db_name).Collection("profiles").FindOne(context.Background(), bson.M{"id": TEST_PROFILE_ID})
+
+	profile := profile_models.Profile{}
+	err = res.Decode(&profile)
+
+	if err != nil {
+		t.Fatalf("Had trouble finding profile in database: %v", err)
+		return
+	}
+
+	// it's not crucial we check every field. The profile E2E tests should be doing that
+	expected_points := 0
+	if expected_points != profile.Points {
+		t.Fatalf("Wrong amount of points in profile database. Expected %v, got %v", expected_points, profile.Points)
+	}
+}
+
+func TestStaffCheckinAlreadyCheckedIn(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 	CreateProfile()
@@ -236,11 +337,12 @@ func TestCheckinAlreadyCheckedIn(t *testing.T) {
 		options.Update().SetUpsert(true),
 	)
 
-	req := models.CheckinRequest{
-		Code: TEST_EVENT_1_CODE,
+	req := models.StaffCheckinRequest{
+		EventID:   TEST_EVENT_1_ID,
+		UserToken: GenerateValidUserToken(t),
 	}
 	received_res := models.CheckinResponse{}
-	response, err := staff_client.New().Post("/event/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
+	response, err := staff_client.New().Post("/event/staff/checkin/").BodyJSON(req).ReceiveSuccess(&received_res)
 
 	if err != nil {
 		t.Fatal("Unable to make request: ", err)

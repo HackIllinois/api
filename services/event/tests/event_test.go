@@ -50,6 +50,8 @@ var TestTime = time.Now().Unix()
 	Initialize db with a test event
 */
 func SetupTestDB(t *testing.T) {
+	CleanupTestDB(t) // This prevents tests failing to cleanup from affecting other tests
+
 	event := models.Event{
 		ID:          "testid",
 		Name:        "testname",

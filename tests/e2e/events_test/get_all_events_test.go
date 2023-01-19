@@ -27,7 +27,7 @@ func TestGetAllEventsNormal(t *testing.T) {
 	expected_events := models.EventList{
 		Events: []models.Event{
 			{
-				ID:          "testeventid12345",
+				ID:          TEST_EVENT_1_ID,
 				Name:        "testevent1",
 				Description: "testdescription1",
 				StartTime:   current_unix_time,
@@ -45,7 +45,7 @@ func TestGetAllEventsNormal(t *testing.T) {
 				Points: 50,
 			},
 			{
-				ID:          "testeventid67890",
+				ID:          TEST_EVENT_2_ID,
 				Name:        "testevent2",
 				Description: "testdescription2",
 				StartTime:   current_unix_time + 60000,

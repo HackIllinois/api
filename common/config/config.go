@@ -1,12 +1,14 @@
 package config
 
 import (
-	"github.com/HackIllinois/api/common/configloader"
 	"os"
+
+	"github.com/HackIllinois/api/common/configloader"
 )
 
 var IS_PRODUCTION bool
 var DEBUG_MODE bool
+var TOKEN_SECRET string
 
 func init() {
 	err := Initialize()
@@ -38,6 +40,12 @@ func Initialize() error {
 	}
 
 	DEBUG_MODE = (debug_mode == "true")
+
+	TOKEN_SECRET, err = cfg_loader.Get("TOKEN_SECRET")
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

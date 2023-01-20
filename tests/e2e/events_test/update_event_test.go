@@ -15,7 +15,7 @@ func TestUpdateEventNormal(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 
-	res := client.Database(events_db_name).Collection("events").FindOne(context.Background(), bson.M{"id": "testeventid12345"})
+	res := client.Database(events_db_name).Collection("events").FindOne(context.Background(), bson.M{"id": TEST_EVENT_1_ID})
 
 	event := models.Event{}
 
@@ -44,7 +44,7 @@ func TestUpdateEventForbidden(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 
-	res := client.Database(events_db_name).Collection("events").FindOne(context.Background(), bson.M{"id": "testeventid12345"})
+	res := client.Database(events_db_name).Collection("events").FindOne(context.Background(), bson.M{"id": TEST_EVENT_1_ID})
 
 	event := models.Event{}
 
@@ -69,7 +69,7 @@ func TestUpdateEventNotFound(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
 
-	res := client.Database(events_db_name).Collection("events").FindOne(context.Background(), bson.M{"id": "testeventid12345"})
+	res := client.Database(events_db_name).Collection("events").FindOne(context.Background(), bson.M{"id": TEST_EVENT_1_ID})
 
 	event := models.Event{}
 

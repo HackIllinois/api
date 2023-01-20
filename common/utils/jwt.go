@@ -1,8 +1,8 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
-	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -12,21 +12,33 @@ func GenerateSignedToken(secret []byte, data jwt.Claims) (string, error) {
 	return token.SignedString(secret)
 }
 
-func ExtractFieldFromJWT(secret string, token string, field string) ([]string, error) {
-	jwt_token, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+func ExtractFieldFromJWT(secret string, token_string string, field string) ([]string, error) {
+	token, err := jwt.Parse(token_string, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 		return []byte(secret), nil
 	})
 
-	if err != nil {
-		return nil, fmt.Errorf("Invalid token")
+	if errors.Is(err, jwt.ErrTokenExpired) || errors.Is(err, jwt.ErrTokenNotValidYet) {
+		return nil, fmt.Errorf("Expired token")
 	}
 
-	if claims, ok := jwt_token.Claims.(jwt.MapClaims); ok && jwt_token.Valid {
-		if int64(claims["exp"].(float64)) < time.Now().Unix() {
-			return nil, fmt.Errorf("Expired token")
+	if err != nil || !token.Valid {
+		return nil, fmt.Errorf("Invalid token: %v", err)
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		// We need to validate exp field exists - jwt will not do this on its own, as:
+		// Valid validates time based claims "exp ...
+		// if any of the above claims are not in the token, it will still be considered a valid claim.
+		if claims["exp"] == nil {
+			return nil, fmt.Errorf("Invalid token: 'exp' field missing")
+		}
+
+		_, ok := claims["exp"].(float64)
+		if !ok {
+			return nil, fmt.Errorf("Invalid token: 'exp' field malformed")
 		}
 
 		var data []string

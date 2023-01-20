@@ -1,9 +1,10 @@
 package service
 
 import (
+	"net/http"
+
 	"github.com/HackIllinois/api/common/apirequest"
 	"github.com/HackIllinois/api/services/event/config"
-	"net/http"
 )
 
 /*

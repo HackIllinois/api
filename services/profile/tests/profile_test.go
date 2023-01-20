@@ -47,7 +47,7 @@ func TestMain(m *testing.M) {
 var TestTime = time.Now().Unix()
 
 /*
-	Initialize db with a test profile
+Initialize db with a test profile
 */
 func SetupTestDB(t *testing.T) {
 	profile_id := "testid"
@@ -103,7 +103,7 @@ func SetupTestDB(t *testing.T) {
 }
 
 /*
-	Drop test db
+Drop test db
 */
 func CleanupTestDB(t *testing.T) {
 	err := db.DropDatabase(nil)
@@ -114,7 +114,7 @@ func CleanupTestDB(t *testing.T) {
 }
 
 /*
-	Service level test for getting all profiles from db
+Service level test for getting all profiles from db
 */
 func TestGetAllProfilesService(t *testing.T) {
 	SetupTestDB(t)
@@ -191,7 +191,7 @@ func TestGetAllProfilesService(t *testing.T) {
 }
 
 /*
-	Service level test for getting profile from db
+Service level test for getting profile from db
 */
 func TestGetProfileService(t *testing.T) {
 	SetupTestDB(t)
@@ -220,7 +220,7 @@ func TestGetProfileService(t *testing.T) {
 }
 
 /*
-	Service level test for creating a profile in the db
+Service level test for creating a profile in the db
 */
 func TestCreateProfileService(t *testing.T) {
 	SetupTestDB(t)
@@ -276,7 +276,7 @@ func TestCreateProfileService(t *testing.T) {
 }
 
 /*
-	Service level test for deleting a profile in the db
+Service level test for deleting a profile in the db
 */
 func TestDeleteProfileService(t *testing.T) {
 	SetupTestDB(t)
@@ -302,7 +302,7 @@ func TestDeleteProfileService(t *testing.T) {
 }
 
 /*
-	Service level test for updating a profile in the db
+Service level test for updating a profile in the db
 */
 func TestUpdateProfileService(t *testing.T) {
 	SetupTestDB(t)

@@ -5,6 +5,9 @@ Registration
 	The exact fields in the registration requests and responses **will change** based on the registration definitions provided in the API configuration file.
 	Please consult them accordingly.
 
+	`config/production_config.json` contains the most up-to-date version of `REGISTRATION_DEFINITION`,
+	`MENTOR_REGISTRATION_DEFINITION`, and `REGISTRATION_STAT_FIELDS`.
+
 GET /registration/
 -------------------------
 
@@ -19,42 +22,29 @@ Request requires no body.
 		"id": "github0000001",
 		"firstName": "John",
 		"lastName": "Smith",
+		"gender": "MALE",
 		"email": "john@gmail.com",
-		"shirtSize": "M",
-		"diet": "NONE",
-		"age": 19,
-		"graduationYear": 2019,
-		"transportation": "NONE",
+		"race": "WHITE",
+		"selfTransport": "YES",
+		"chicagoPurdueTransport": "N/A",
+		"location": "Champaign, IL",
 		"school": "University of Illinois at Urbana-Champaign",
 		"major": "Computer Science",
-		"gender": "MALE",
-		"professionalInterest": "INTERNSHIP",
-		"github": "JSmith",
-		"linkedin": "john-smith",
-		"interests": "Software",
-		"isNovice": false,
-		"isPrivate": false,
-		"phoneNumber": "555-555-5555",
-		"longforms": [
-			{
-				"response": "This is a longform."
-			}
+		"degreePursued": "BACHELORS",
+		"graduationYear": 2025,
+		"resumeFilename": "smith-resume.pdf",
+		"whyHack": "I want to learn and program. Hack yeah!",
+		"programmingYears": 2,
+		"programmingAbility": 5,
+		"interests": [
+			"Company Q&As and Networking events",
+			"Meeting new people"
 		],
-		"extraInfos": [
-			{
-				"response": "This is an extra info."
-			}
+		"outreachSurvey": [
+			"CS Department Email"
 		],
-		"osContributors": [
-			{
-				"name": "Tom",
-				"contactInfo": "tom@gmail.com"
-			}
-		],
-		"collaborators": [
-			{
-				"github": "collabgithub"
-			}
+		"dietary": [
+			"Lactose-Intolerant"
 		]
 	},
 	"mentor": {
@@ -83,42 +73,29 @@ Request requires no body.
 		"id": "github0000001",
 		"firstName": "John",
 		"lastName": "Smith",
+		"gender": "MALE",
 		"email": "john@gmail.com",
-		"shirtSize": "M",
-		"diet": "NONE",
-		"age": 19,
-		"graduationYear": 2019,
-		"transportation": "NONE",
+		"race": "WHITE",
+		"selfTransport": "YES",
+		"chicagoPurdueTransport": "N/A",
+		"location": "Champaign, IL",
 		"school": "University of Illinois at Urbana-Champaign",
 		"major": "Computer Science",
-		"gender": "MALE",
-		"professionalInterest": "INTERNSHIP",
-		"github": "JSmith",
-		"linkedin": "john-smith",
-		"interests": "Software",
-		"isNovice": false,
-		"isPrivate": false,
-		"phoneNumber": "555-555-5555",
-		"longforms": [
-			{
-				"response": "This is a longform."
-			}
+		"degreePursued": "BACHELORS",
+		"graduationYear": 2025,
+		"resumeFilename": "smith-resume.pdf",
+		"whyHack": "I want to learn and program. Hack yeah!",
+		"programmingYears": 2,
+		"programmingAbility": 5,
+		"interests": [
+			"Company Q&As and Networking events",
+			"Meeting new people"
 		],
-		"extraInfos": [
-			{
-				"response": "This is an extra info."
-			}
+		"outreachSurvey": [
+			"CS Department Email"
 		],
-		"osContributors": [
-			{
-				"name": "Tom",
-				"contactInfo": "tom@gmail.com"
-			}
-		],
-		"collaborators": [
-			{
-				"github": "collabgithub"
-			}
+		"dietary": [
+			"Lactose-Intolerant"
 		]
 	},
 	"mentor": {
@@ -145,42 +122,29 @@ Request requires no body.
 	"id": "github0000001",
 	"firstName": "John",
 	"lastName": "Smith",
+	"gender": "MALE",
 	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"diet": "NONE",
-	"age": 19,
-	"graduationYear": 2019,
-	"transportation": "NONE",
+	"race": "WHITE",
+	"selfTransport": "YES",
+	"chicagoPurdueTransport": "N/A",
+	"location": "Champaign, IL",
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
-	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
-	"github": "JSmith",
-	"linkedin": "john-smith",
-	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
+	"degreePursued": "BACHELORS",
+	"graduationYear": 2025,
+	"resumeFilename": "smith-resume.pdf",
+	"whyHack": "I want to learn and program. Hack yeah!",
+	"programmingYears": 2,
+	"programmingAbility": 5,
+	"interests": [
+		"Company Q&As and Networking events",
+		"Meeting new people"
 	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
+	"outreachSurvey": [
+		"CS Department Email"
 	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
+	"dietary": [
+		"Lactose-Intolerant"
 	]
 }
 ```
@@ -197,42 +161,29 @@ Request requires no body.
 	"id": "github0000001",
 	"firstName": "John",
 	"lastName": "Smith",
+	"gender": "MALE",
 	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"diet": "NONE",
-	"age": 19,
-	"graduationYear": 2019,
-	"transportation": "NONE",
+	"race": "WHITE",
+	"selfTransport": "YES",
+	"chicagoPurdueTransport": "N/A",
+	"location": "Champaign, IL",
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
-	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
-	"github": "JSmith",
-	"linkedin": "john-smith",
-	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
+	"degreePursued": "BACHELORS",
+	"graduationYear": 2025,
+	"resumeFilename": "smith-resume.pdf",
+	"whyHack": "I want to learn and program. Hack yeah!",
+	"programmingYears": 2,
+	"programmingAbility": 5,
+	"interests": [
+		"Company Q&As and Networking events",
+		"Meeting new people"
 	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
+	"outreachSurvey": [
+		"CS Department Email"
 	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
+	"dietary": [
+		"Lactose-Intolerant"
 	]
 }
 ```
@@ -246,23 +197,29 @@ Creates a registration for the currently authenticated user (determined by the J
 {
 	"firstName": "John",
 	"lastName": "Smith",
+	"gender": "MALE",
 	"email": "john@gmail.com",
-	"github": "JohnSmith",
-	"location": "Urbana, IL",
-	"timezone": "CST",
-	"gender": [
-		"Prefer not to answer"
-	],
-	"race": "MALE",
-	"graduationYear": 2019,
+	"race": "WHITE",
+	"selfTransport": "YES",
+	"chicagoPurdueTransport": "N/A",
+	"location": "Champaign, IL",
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
-	"graduationYear": 2019,
-	"programmingYears": 5,
-	"programmingAbility": 10,
+	"degreePursued": "BACHELORS",
+	"graduationYear": 2025,
+	"resumeFilename": "smith-resume.pdf",
+	"whyHack": "I want to learn and program. Hack yeah!",
+	"programmingYears": 2,
+	"programmingAbility": 5,
 	"interests": [
-		"corporate engagement",
-		"learning"
+		"Company Q&As and Networking events",
+		"Meeting new people"
+	],
+	"outreachSurvey": [
+		"CS Department Email"
+	],
+	"dietary": [
+		"Lactose-Intolerant"
 	]
 }
 ```
@@ -272,23 +229,29 @@ Creates a registration for the currently authenticated user (determined by the J
 	"id": "github0000001",
 	"firstName": "John",
 	"lastName": "Smith",
+	"gender": "MALE",
 	"email": "john@gmail.com",
-	"github": "JohnSmith",
-	"location": "Urbana, IL",
-	"timezone": "CST",
-	"gender": [
-		"Prefer not to answer"
-	],
-	"race": "MALE",
-	"graduationYear": 2019,
+	"race": "WHITE",
+	"selfTransport": "YES",
+	"chicagoPurdueTransport": "N/A",
+	"location": "Champaign, IL",
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
-	"graduationYear": 2019,
-	"programmingYears": 5,
-	"programmingAbility": 10,
+	"degreePursued": "BACHELORS",
+	"graduationYear": 2025,
+	"resumeFilename": "smith-resume.pdf",
+	"whyHack": "I want to learn and program. Hack yeah!",
+	"programmingYears": 2,
+	"programmingAbility": 5,
 	"interests": [
-		"corporate engagement",
-		"learning"
+		"Company Q&As and Networking events",
+		"Meeting new people"
+	],
+	"outreachSurvey": [
+		"CS Department Email"
+	],
+	"dietary": [
+		"Lactose-Intolerant"
 	]
 }
 ```
@@ -302,42 +265,29 @@ Update the registration for the currently authenticated user (determined by the 
 {
 	"firstName": "John",
 	"lastName": "Smith",
+	"gender": "MALE",
 	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"diet": "NONE",
-	"age": 19,
-	"graduationYear": 2019,
-	"transportation": "NONE",
+	"race": "WHITE",
+	"selfTransport": "YES",
+	"chicagoPurdueTransport": "N/A",
+	"location": "Champaign, IL",
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
-	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
-	"github": "JSmith",
-	"linkedin": "john-smith",
-	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
+	"degreePursued": "BACHELORS",
+	"graduationYear": 2025,
+	"resumeFilename": "smith-resume.pdf",
+	"whyHack": "I want to learn and program. Hack yeah!",
+	"programmingYears": 2,
+	"programmingAbility": 5,
+	"interests": [
+		"Company Q&As and Networking events",
+		"Meeting new people"
 	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
+	"outreachSurvey": [
+		"CS Department Email"
 	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
+	"dietary": [
+		"Lactose-Intolerant"
 	]
 }
 ```
@@ -347,42 +297,29 @@ Update the registration for the currently authenticated user (determined by the 
 	"id": "github0000001",
 	"firstName": "John",
 	"lastName": "Smith",
+	"gender": "MALE",
 	"email": "john@gmail.com",
-	"shirtSize": "M",
-	"diet": "NONE",
-	"age": 19,
-	"graduationYear": 2019,
-	"transportation": "NONE",
+	"race": "WHITE",
+	"selfTransport": "YES",
+	"chicagoPurdueTransport": "N/A",
+	"location": "Champaign, IL",
 	"school": "University of Illinois at Urbana-Champaign",
 	"major": "Computer Science",
-	"gender": "MALE",
-	"professionalInterest": "INTERNSHIP",
-	"github": "JSmith",
-	"linkedin": "john-smith",
-	"interests": "Software",
-	"isNovice": false,
-	"isPrivate": false,
-	"phoneNumber": "555-555-5555",
-	"longforms": [
-		{
-			"response": "This is a longform."
-		}
+	"degreePursued": "BACHELORS",
+	"graduationYear": 2025,
+	"resumeFilename": "smith-resume.pdf",
+	"whyHack": "I want to learn and program. Hack yeah!",
+	"programmingYears": 2,
+	"programmingAbility": 5,
+	"interests": [
+		"Company Q&As and Networking events",
+		"Meeting new people"
 	],
-	"extraInfos": [
-		{
-			"response": "This is an extra info."
-		}
+	"outreachSurvey": [
+		"CS Department Email"
 	],
-	"osContributors": [
-		{
-			"name": "Tom",
-			"contactInfo": "tom@gmail.com"
-		}
-	],
-	"collaborators": [
-		{
-			"github": "collabgithub"
-		}
+	"dietary": [
+		"Lactose-Intolerant"
 	]
 }
 ```
@@ -495,85 +432,56 @@ Request requires no body.
 			"id": "github0000001",
 			"firstName": "John",
 			"lastName": "Smith",
+			"gender": "MALE",
 			"email": "john@gmail.com",
-			"shirtSize": "M",
-			"diet": "NONE",
-			"age": 19,
-			"graduationYear": 2019,
-			"transportation": "NONE",
+			"race": "WHITE",
+			"selfTransport": "YES",
+			"chicagoPurdueTransport": "N/A",
+			"location": "Champaign, IL",
 			"school": "University of Illinois at Urbana-Champaign",
 			"major": "Computer Science",
-			"gender": "MALE",
-			"professionalInterest": "INTERNSHIP",
-			"github": "JSmith",
-			"linkedin": "john-smith",
-			"interests": "Software",
-			"isNovice": false,
-			"isPrivate": false,
-			"phoneNumber": "555-555-5555",
-			"longforms": [
-				{
-					"response": "This is a longform."
-				}
+			"degreePursued": "BACHELORS",
+			"graduationYear": 2025,
+			"resumeFilename": "smith-resume.pdf",
+			"whyHack": "I want to learn and program. Hack yeah!",
+			"programmingYears": 2,
+			"programmingAbility": 5,
+			"interests": [
+				"Company Q&As and Networking events",
+				"Meeting new people"
 			],
-			"extraInfos": [
-				{
-					"response": "This is an extra info."
-				}
+			"outreachSurvey": [
+				"CS Department Email"
 			],
-			"osContributors": [
-				{
-					"name": "Tom",
-					"contactInfo": "tom@gmail.com"
-				}
-			],
-			"collaborators": [
-				{
-					"github": "collabgithub"
-				}
+			"dietary": [
+				"Lactose-Intolerant"
 			]
 		},
 		{
 			"id": "github0000002",
 			"firstName": "John",
 			"lastName": "Doe",
-			"email": "jdoe@gmail.com",
-			"shirtSize": "M",
-			"diet": "NONE",
-			"age": 19,
-			"graduationYear": 2019,
-			"transportation": "NONE",
-			"school": "Purdue",
-			"major": "Computer Science",
 			"gender": "MALE",
-			"professionalInterest": "INTERNSHIP",
-			"github": "JDoe",
-			"linkedin": "john-doe",
-			"interests": "Software",
-			"isNovice": false,
-			"isPrivate": false,
-			"phoneNumber": "666-666-6666",
-			"longforms": [
-				{
-					"response": "This is a longform."
-				}
+			"email": "jdoe@gmail.com",
+			"race": "MULTIRACIAL",
+			"selfTransport": "YES",
+			"chicagoPurdueTransport": "N/A",
+			"location": "Champaign, IL",
+			"school": "University of Illinois at Urbana-Champaign",
+			"major": "Computer Science",
+			"degreePursued": "MASTERS",
+			"graduationYear": 2023,
+			"resumeFilename": "doe-resume.pdf",
+			"whyHack": "I also want to learn and program. Hack yeah!",
+			"programmingYears": 6,
+			"programmingAbility": 8,
+			"interests": [
+				"Company Q&As and Networking events"
 			],
-			"extraInfos": [
-				{
-					"response": "This is an extra info."
-				}
+			"outreachSurvey": [
+				"CS Department Email"
 			],
-			"osContributors": [
-				{
-					"name": "Tom",
-					"contactInfo": "tom@gmail.com"
-				}
-			],
-			"collaborators": [
-				{
-					"github": "collabgithub"
-				}
-			]
+			"dietary": []
 		}
 	]
 }

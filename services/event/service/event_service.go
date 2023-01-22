@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"time"
 
+	common_config "github.com/HackIllinois/api/common/config"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/event/config"
@@ -50,7 +51,6 @@ func GetEvent[T models.Event](id string) (*T, error) {
 
 	var event T
 	err := db.FindOne("events", query, &event, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -64,11 +64,9 @@ func GetEvent[T models.Event](id string) (*T, error) {
 	Returns the event that was deleted.
 */
 func DeleteEvent(id string) (*models.EventDB, error) {
-
 	// Gets event to be able to return it later
 
 	event, err := GetEvent[models.EventDB](id)
-
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +125,6 @@ func GetAllEvents[T models.Event]() (*models.EventList[T], error) {
 	events := []T{}
 	// nil implies there are no filters on the query, therefore everything in the "events" collection is returned.
 	err := db.FindAll("events", query, &events, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +141,6 @@ func GetAllEvents[T models.Event]() (*models.EventList[T], error) {
 */
 func GetFilteredEvents[T models.Event](parameters map[string][]string) (*models.EventList[T], error) {
 	query, err := database.CreateFilterQuery(parameters, *new(T))
-
 	if err != nil {
 		return nil, err
 	}
@@ -170,7 +166,6 @@ func GetFilteredEvents[T models.Event](parameters map[string][]string) (*models.
 */
 func CreateEvent(id string, code string, event models.EventDB) error {
 	err := validate.Struct(event)
-
 	if err != nil {
 		return err
 	}
@@ -217,7 +212,6 @@ func CreateEvent(id string, code string, event models.EventDB) error {
 */
 func UpdateEvent(id string, event models.EventDB) error {
 	err := validate.Struct(event)
-
 	if err != nil {
 		return err
 	}
@@ -241,7 +235,6 @@ func GetEventTracker(event_id string) (*models.EventTracker, error) {
 
 	var tracker models.EventTracker
 	err := db.FindOne("eventtrackers", query, &tracker, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -259,7 +252,6 @@ func GetUserTracker(user_id string) (*models.UserTracker, error) {
 
 	var tracker models.UserTracker
 	err := db.FindOne("usertrackers", query, &tracker, nil)
-
 	if err != nil {
 		if err == database.ErrNotFound {
 			return &models.UserTracker{
@@ -279,7 +271,6 @@ func GetUserTracker(user_id string) (*models.UserTracker, error) {
 */
 func IsUserAttendingEvent(event_id string, user_id string) (bool, error) {
 	tracker, err := GetEventTracker(event_id)
-
 	if err != nil {
 		return false, err
 	}
@@ -299,7 +290,6 @@ func IsUserAttendingEvent(event_id string, user_id string) (bool, error) {
 */
 func MarkUserAsAttendingEvent(event_id string, user_id string) error {
 	is_attending, err := IsUserAttendingEvent(event_id, user_id)
-
 	if err != nil {
 		return err
 	}
@@ -310,7 +300,6 @@ func MarkUserAsAttendingEvent(event_id string, user_id string) error {
 
 	if config.EVENT_CHECKIN_TIME_RESTRICTED {
 		is_event_active, err := IsEventActive(event_id)
-
 		if err != nil {
 			return err
 		}
@@ -359,8 +348,10 @@ func MarkUserAsAttendingEvent(event_id string, user_id string) error {
 	return err
 }
 
-const PreEventCheckinIntervalInMinutes = 15
-const PreEventCheckinIntervalInSeconds = PreEventCheckinIntervalInMinutes * 60
+const (
+	PreEventCheckinIntervalInMinutes = 15
+	PreEventCheckinIntervalInSeconds = PreEventCheckinIntervalInMinutes * 60
+)
 
 /*
 	Check if an event is active, i.e., that check-ins are allowed for the event at the current time.
@@ -368,7 +359,6 @@ const PreEventCheckinIntervalInSeconds = PreEventCheckinIntervalInMinutes * 60
 */
 func IsEventActive(event_id string) (bool, error) {
 	event, err := GetEvent[models.EventDB](event_id)
-
 	if err != nil {
 		return false, err
 	}
@@ -394,7 +384,6 @@ func GetEventFavorites(id string) (*models.EventFavorites, error) {
 
 	var event_favorites models.EventFavorites
 	err := db.FindOne("favorites", query, &event_favorites, nil)
-
 	if err != nil {
 		if err == database.ErrNotFound {
 			err = db.Insert("favorites", &models.EventFavorites{
@@ -428,13 +417,11 @@ func AddEventFavorite(id string, event string) error {
 	}
 
 	_, err := GetEvent[models.EventPublic](event)
-
 	if err != nil {
 		return errors.New("Could not find event with the given id.")
 	}
 
 	event_favorites, err := GetEventFavorites(id)
-
 	if err != nil {
 		return err
 	}
@@ -457,7 +444,6 @@ func RemoveEventFavorite(id string, event string) error {
 	}
 
 	event_favorites, err := GetEventFavorites(id)
-
 	if err != nil {
 		return err
 	}
@@ -481,7 +467,6 @@ func GetStats() (map[string]interface{}, error) {
 
 	var trackers []models.EventTracker
 	err := db.FindAll("eventtrackers", query, &trackers, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -506,7 +491,6 @@ func CanRedeemPoints(event_code string) (bool, string, error) {
 
 	var eventCode models.EventCode
 	err := db.FindOne("eventcodes", query, &eventCode, nil)
-
 	if err != nil {
 		return false, "invalid", err
 	}
@@ -527,7 +511,6 @@ func GetEventCode(id string) (*models.EventCode, error) {
 
 	var eventCode models.EventCode
 	err := db.FindOne("eventcodes", query, &eventCode, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -546,4 +529,94 @@ func UpdateEventCode(id string, eventCode models.EventCode) error {
 	err := db.Replace("eventcodes", selector, &eventCode, false, nil)
 
 	return err
+}
+
+/*
+	Returns a CheckinResponse with NewPoints and TotalPoints defaulted to -1, and a status of status
+*/
+func NewCheckinResponseFailed(status string) *models.CheckinResponse {
+	return &models.CheckinResponse{
+		NewPoints:   -1,
+		TotalPoints: -1,
+		Status:      status,
+	}
+}
+
+/*
+	Attempts to checkin a user id to an event id by seeing if they can checkin,
+	and then attempting to award them points for doing so
+*/
+func PerformCheckin(user_id string, event_id string) (*models.CheckinResponse, error) {
+	redemption_status, err := RedeemEvent(user_id, event_id)
+
+	if err != nil || redemption_status == nil {
+		return nil, errors.New("Failed to verify if user already had redeemed event points")
+	}
+
+	if redemption_status.Status != "Success" {
+		return NewCheckinResponseFailed("AlreadyCheckedIn"), nil
+	}
+
+	// Determine the current event and its point value
+	event, err := GetEvent[models.EventDB](event_id)
+	if err != nil {
+		return nil, errors.New("Could not fetch the event specified")
+	}
+
+	// Add this point value to given profile
+	profile, err := AwardPoints(user_id, event.Points)
+	if err != nil {
+		return nil, errors.New("Failed to award user with points")
+	}
+
+	return &models.CheckinResponse{
+		Status:      "Success",
+		NewPoints:   event.Points,
+		TotalPoints: profile.Points,
+	}, nil
+}
+
+/*
+	Attempts to checkin a user to an event determined by a code
+*/
+func CheckinUserByCode(user_id string, code string) (*models.CheckinResponse, error) {
+	// Check if we can redeem points for this given code still
+	valid, event_id, err := CanRedeemPoints(code)
+
+	// For this specific error, we know the issue was the code doesn't exist / is not valid
+	if err == database.ErrNotFound {
+		return NewCheckinResponseFailed("InvalidCode"), nil
+	} else if err != nil {
+		return nil, errors.New("Failed to receive event code information from database")
+	}
+
+	if !valid {
+		return NewCheckinResponseFailed("ExpiredOrProspective"), nil
+	}
+
+	// We've gotten the user id and event id, now we need to Checkin
+	return PerformCheckin(user_id, event_id)
+}
+
+/*
+	Attempts to checkin a user determined by a JWT token to an event
+*/
+func CheckinUserTokenToEvent(user_token string, event_id string) (*models.CheckinResponse, error) {
+	// Validate user_token, extract userId
+	value_arr, err := utils.ExtractFieldFromJWT(common_config.TOKEN_SECRET, user_token, "userId")
+
+	if len(value_arr) != 1 || err != nil {
+		return NewCheckinResponseFailed("BadUserToken"), nil
+	}
+
+	user_id := value_arr[0]
+
+	// Validate event exists
+	_, err = GetEvent[models.EventDB](event_id)
+
+	if err != nil {
+		return NewCheckinResponseFailed("InvalidEventId"), nil
+	}
+
+	return PerformCheckin(user_id, event_id)
 }

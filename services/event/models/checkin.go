@@ -1,12 +1,16 @@
 package models
 
+type StaffCheckinRequest struct {
+	UserToken string `json:"userToken"`
+	EventID   string `json:"eventId"`
+}
 type CheckinRequest struct {
 	Code string `json:"code"`
 }
 
-type CheckinResult struct {
-	NewPoints   int    `json:"newPoints"`
-	TotalPoints int    `json:"totalPoints"`
+type CheckinResponse struct {
+	NewPoints   int    `default:"-1" json:"newPoints"`
+	TotalPoints int    `default:"-1" json:"totalPoints"`
 	Status      string `json:"status"`
 }
 

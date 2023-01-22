@@ -11,8 +11,6 @@ import (
 
 var GATEWAY_PORT uint16
 
-var TOKEN_SECRET string
-
 var AUTH_SERVICE string
 var USER_SERVICE string
 var REGISTRATION_SERVICE string
@@ -30,12 +28,6 @@ var PROFILE_SERVICE string
 func Initialize() error {
 
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
-
-	if err != nil {
-		return err
-	}
-
-	TOKEN_SECRET, err = cfg_loader.Get("TOKEN_SECRET")
 
 	if err != nil {
 		return err

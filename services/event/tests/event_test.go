@@ -18,7 +18,6 @@ var db database.Database
 
 func TestMain(m *testing.M) {
 	err := config.Initialize()
-
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
@@ -50,6 +49,7 @@ var TestTime = time.Now().Unix()
 	Initialize db with a test event
 */
 func SetupTestDB(t *testing.T) {
+	CleanupTestDB(t) // This prevents tests failing to cleanup from affecting other tests
 	event := models.EventDB{
 		EventPublic: models.EventPublic{
 			ID:          "testid",
@@ -73,7 +73,6 @@ func SetupTestDB(t *testing.T) {
 	}
 
 	err := db.Insert("events", &event, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -95,7 +94,6 @@ func SetupTestDB(t *testing.T) {
 */
 func CleanupTestDB(t *testing.T) {
 	err := db.DropDatabase(nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -145,7 +143,6 @@ func TestGetAllEventsService(t *testing.T) {
 	}
 
 	err := db.Insert("events", &event, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -157,7 +154,6 @@ func TestGetAllEventsService(t *testing.T) {
 	}
 
 	actual_event_list, err := service.GetAllEvents[models.EventDB]()
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -230,7 +226,6 @@ func TestGetAllEventsService(t *testing.T) {
 	}
 
 	actual_public_list, err := service.GetAllEvents[models.EventPublic]()
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -330,7 +325,6 @@ func TestGetFilteredEventsService(t *testing.T) {
 	}
 
 	err := db.Insert("events", &event, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -361,7 +355,6 @@ func TestGetFilteredEventsService(t *testing.T) {
 		"name": {"testname2"},
 	}
 	actual_event_list, err := service.GetFilteredEvents[models.EventDB](parameters)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -370,7 +363,6 @@ func TestGetFilteredEventsService(t *testing.T) {
 		Events: []models.EventDB{
 			{
 				EventPublic: models.EventPublic{
-
 					ID:          "testid2",
 					Name:        "testname2",
 					Description: "testdescription2",
@@ -403,7 +395,6 @@ func TestGetFilteredEventsService(t *testing.T) {
 		"sponsor": {"testsponsor"},
 	}
 	actual_public_list, err := service.GetFilteredEvents[models.EventPublic](parameters)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -514,20 +505,17 @@ func TestGetEventService(t *testing.T) {
 	}
 
 	err := db.Insert("events", hidden_event, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	event, err := service.GetEvent[models.EventDB]("testid")
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	expected_event := models.EventDB{
 		EventPublic: models.EventPublic{
-
 			ID:          "testid",
 			Name:        "testname",
 			Description: "testdescription",
@@ -588,13 +576,11 @@ func TestCreateEventService(t *testing.T) {
 	}
 
 	err := service.CreateEvent("testid2", "testcode2", new_event)
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	event, err := service.GetEvent[models.EventDB]("testid2")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -656,7 +642,6 @@ func TestCreateEventService(t *testing.T) {
 	}
 
 	event_async, err := service.GetEvent[models.EventDB]("testid2")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -699,7 +684,6 @@ func TestDeleteEventService(t *testing.T) {
 	// Mark 3 users as attending the event
 
 	err := service.MarkUserAsAttendingEvent(event_id, "user0")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -781,13 +765,11 @@ func TestUpdateEventService(t *testing.T) {
 	}
 
 	err := service.UpdateEvent("testid", event)
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	updated_event, err := service.GetEvent[models.EventDB]("testid")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -827,13 +809,11 @@ func TestMarkUserAsAttendingEventService(t *testing.T) {
 	defer CleanupTestDB(t)
 
 	err := service.MarkUserAsAttendingEvent("testid", "testuser")
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	event_tracker, err := service.GetEventTracker("testid")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -848,7 +828,6 @@ func TestMarkUserAsAttendingEventService(t *testing.T) {
 	}
 
 	user_tracker, err := service.GetUserTracker("testuser")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -872,7 +851,6 @@ func TestMarkUserAsAttendingEventErrorService(t *testing.T) {
 	defer CleanupTestDB(t)
 
 	err := service.MarkUserAsAttendingEvent("testid", "testuser")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -884,7 +862,6 @@ func TestMarkUserAsAttendingEventErrorService(t *testing.T) {
 	}
 
 	event_tracker, err := service.GetEventTracker("testid")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -899,7 +876,6 @@ func TestMarkUserAsAttendingEventErrorService(t *testing.T) {
 	}
 
 	user_tracker, err := service.GetUserTracker("testuser")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -946,14 +922,18 @@ func TestIsEventActive(t *testing.T) {
 	service.CreateEvent(new_event.ID, "testcode3", new_event)
 
 	is_active, err := service.IsEventActive("testid3")
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if is_active {
 		current_time := TestTime
-		t.Errorf("Event was incorrectly deemed active. Current time: %v, event start time: %v, time difference: %v", current_time, new_event.StartTime, math.Abs((float64)(current_time-new_event.StartTime)))
+		t.Errorf(
+			"Event was incorrectly deemed active. Current time: %v, event start time: %v, time difference: %v",
+			current_time,
+			new_event.StartTime,
+			math.Abs((float64)(current_time-new_event.StartTime)),
+		)
 	}
 
 	// Creating a 20 minute long event that SHOULD be active
@@ -972,7 +952,12 @@ func TestIsEventActive(t *testing.T) {
 
 	if !is_active {
 		current_time := TestTime
-		t.Errorf("Event was incorrectly deemed inactive. Current time: %v, event start time: %v, time difference: %v", current_time, new_event.StartTime, math.Abs((float64)((current_time - new_event.StartTime))))
+		t.Errorf(
+			"Event was incorrectly deemed inactive. Current time: %v, event start time: %v, time difference: %v",
+			current_time,
+			new_event.StartTime,
+			math.Abs((float64)((current_time - new_event.StartTime))),
+		)
 	}
 }
 
@@ -984,7 +969,6 @@ func TestGetEventFavorites(t *testing.T) {
 	defer CleanupTestDB(t)
 
 	event_favorites, err := service.GetEventFavorites("testid")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1007,13 +991,11 @@ func TestAddEventFavorite(t *testing.T) {
 	defer CleanupTestDB(t)
 
 	err := service.AddEventFavorite("testid", "testid")
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	event_favorites, err := service.GetEventFavorites("testid")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1036,7 +1018,6 @@ func TestRemoveEventFavorite(t *testing.T) {
 	defer CleanupTestDB(t)
 
 	err := service.AddEventFavorite("testid", "testid")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1048,7 +1029,6 @@ func TestRemoveEventFavorite(t *testing.T) {
 	}
 
 	event_favorites, err := service.GetEventFavorites("testid")
-
 	if err != nil {
 		t.Fatal(err)
 	}

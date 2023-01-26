@@ -20,31 +20,37 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var staff_client *sling.Sling
-var public_client *sling.Sling
-var user_client *sling.Sling
-var client *mongo.Client
+var (
+	staff_client  *sling.Sling
+	public_client *sling.Sling
+	user_client   *sling.Sling
+	client        *mongo.Client
+)
 
-var events_db_name string
-var profile_db_name string
-var checkin_db_name string
+var (
+	events_db_name  string
+	profile_db_name string
+	checkin_db_name string
+)
 
 var TOKEN_SECRET []byte
 
-const TEST_EVENT_1_ID = "testeventid1"
-const TEST_EVENT_2_ID = "testeventid2"
-const TEST_EVENT_1_CODE = "testeventcode1"
-const TEST_EVENT_2_CODE = "testeventcode2"
+const (
+	TEST_EVENT_1_ID   = "testeventid1"
+	TEST_EVENT_2_ID   = "testeventid2"
+	TEST_EVENT_1_CODE = "testeventcode1"
+	TEST_EVENT_2_CODE = "testeventcode2"
+)
 
-const TEST_USER_ID = "localadmin"
-const TEST_PROFILE_ID = "localadminprofileid"
+const (
+	TEST_USER_ID    = "localadmin"
+	TEST_PROFILE_ID = "localadminprofileid"
+)
 
 var current_unix_time = time.Now().Unix()
 
 func TestMain(m *testing.M) {
-
 	cfg, err := configloader.Load(os.Getenv("HI_CONFIG"))
-
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
@@ -123,42 +129,48 @@ func ResetDatabase() {
 }
 
 func CreateEvents() {
-	event1 := event_models.Event{
-		ID:          TEST_EVENT_1_ID,
-		Name:        "testevent1",
-		Description: "testdescription1",
-		StartTime:   current_unix_time,
-		EndTime:     current_unix_time + 60000,
-		Sponsor:     "testsponsor1",
-		EventType:   "WORKSHOP",
-		Locations: []event_models.EventLocation{
-			{
-				Description: "testlocationdescription1",
-				Tags:        []string{"SIEBEL3", "ECEB2"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	event1 := event_models.EventDB{
+		EventPublic: event_models.EventPublic{
+			ID:          TEST_EVENT_1_ID,
+			Name:        "testevent1",
+			Description: "testdescription1",
+			StartTime:   current_unix_time,
+			EndTime:     current_unix_time + 60000,
+			Sponsor:     "testsponsor1",
+			EventType:   "OTHER",
+			Locations: []event_models.EventLocation{
+				{
+					Description: "testlocationdescription1",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 50,
 		},
-		Points: 50,
+		IsPrivate: true,
 	}
 
-	event2 := event_models.Event{
-		ID:          TEST_EVENT_2_ID,
-		Name:        "testevent2",
-		Description: "testdescription2",
-		StartTime:   current_unix_time + 60000,
-		EndTime:     current_unix_time + 120000,
-		Sponsor:     "",
-		EventType:   "FOOD",
-		Locations: []event_models.EventLocation{
-			{
-				Description: "testlocationdescription2",
-				Tags:        []string{"SIEBEL3", "ECEB2"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	event2 := event_models.EventDB{
+		EventPublic: event_models.EventPublic{
+			ID:          TEST_EVENT_2_ID,
+			Name:        "testevent2",
+			Description: "testdescription2",
+			StartTime:   current_unix_time + 60000,
+			EndTime:     current_unix_time + 120000,
+			Sponsor:     "",
+			EventType:   "FOOD",
+			Locations: []event_models.EventLocation{
+				{
+					Description: "testlocationdescription2",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 0,
 		},
-		Points: 0,
+		IsPrivate: false,
 	}
 
 	client.Database(events_db_name).Collection("events").InsertOne(context.Background(), event1)
@@ -259,7 +271,6 @@ func TestStaffActions(t *testing.T) {
 
 	received_event := event_models.EventDB{}
 	response, err := staff_client.New().Post("/event/").BodyJSON(event_info).ReceiveSuccess(&received_event)
-
 	if err != nil {
 		t.Errorf("Unable to make request")
 	}

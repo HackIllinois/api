@@ -20,31 +20,37 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var staff_client *sling.Sling
-var public_client *sling.Sling
-var user_client *sling.Sling
-var client *mongo.Client
+var (
+	staff_client  *sling.Sling
+	public_client *sling.Sling
+	user_client   *sling.Sling
+	client        *mongo.Client
+)
 
-var events_db_name string
-var profile_db_name string
-var checkin_db_name string
+var (
+	events_db_name  string
+	profile_db_name string
+	checkin_db_name string
+)
 
 var TOKEN_SECRET []byte
 
-const TEST_EVENT_1_ID = "testeventid1"
-const TEST_EVENT_2_ID = "testeventid2"
-const TEST_EVENT_1_CODE = "testeventcode1"
-const TEST_EVENT_2_CODE = "testeventcode2"
+const (
+	TEST_EVENT_1_ID   = "testeventid1"
+	TEST_EVENT_2_ID   = "testeventid2"
+	TEST_EVENT_1_CODE = "testeventcode1"
+	TEST_EVENT_2_CODE = "testeventcode2"
+)
 
-const TEST_USER_ID = "localadmin"
-const TEST_PROFILE_ID = "localadminprofileid"
+const (
+	TEST_USER_ID    = "localadmin"
+	TEST_PROFILE_ID = "localadminprofileid"
+)
 
 var current_unix_time = time.Now().Unix()
 
 func TestMain(m *testing.M) {
-
 	cfg, err := configloader.Load(os.Getenv("HI_CONFIG"))
-
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
@@ -258,7 +264,6 @@ func TestStaffActions(t *testing.T) {
 
 	received_event := event_models.Event{}
 	response, err := staff_client.New().Post("/event/").BodyJSON(event_info).ReceiveSuccess(&received_event)
-
 	if err != nil {
 		t.Errorf("Unable to make request")
 	}

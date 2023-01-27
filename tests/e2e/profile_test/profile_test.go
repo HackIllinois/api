@@ -38,10 +38,14 @@ func TestMain(m *testing.M) {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
 	}
-	client.Database(profile_db_name).Drop(context.Background())
+	DropDatabases()
 
 	return_code := m.Run()
 	os.Exit(return_code)
+}
+
+func DropDatabases() {
+	client.Database(profile_db_name).Drop(context.Background())
 }
 
 func CheckDatabaseProfileNotFound(t *testing.T, filter bson.M) {

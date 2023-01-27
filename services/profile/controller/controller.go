@@ -102,6 +102,9 @@ func CreateProfile(w http.ResponseWriter, r *http.Request) {
 	var profile models.Profile
 	json.NewDecoder(r.Body).Decode(&profile)
 
+	profile.Points = 0
+	profile.FoodWave = 0
+
 	err = service.CreateProfile(id, profile_id, profile)
 
 	if err != nil {
@@ -141,14 +144,19 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&profile)
 
 	old_profile, err := service.GetProfile(profile_id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile associated with this profile id."))
 		return
 	}
 
-	if profile.Points != old_profile.Points {
+	is_staff := service.IsRequestFromStaffOrHigher(r)
+
+	if !is_staff {
 		profile.Points = old_profile.Points
+	}
+
+	if !is_staff || profile.FoodWave == 0 {
+		profile.FoodWave = old_profile.FoodWave
 	}
 
 	err = service.UpdateProfile(profile_id, profile)

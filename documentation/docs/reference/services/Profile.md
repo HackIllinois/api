@@ -23,9 +23,9 @@ Request requires no body.
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
-    "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234"
+    "discord": "patrick#1234",
+    "foodWave": 1
 }
 
 ```
@@ -43,9 +43,9 @@ Request requires no body.
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
-    "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234"
+    "discord": "patrick#1234",
+    "foodWave": 1
 }
 ```
 
@@ -79,18 +79,18 @@ Request requires no body.
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
-            "timezone": "Americas UTC+8",
             "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234"
+            "discord": "patrick#1234",
+            "foodWave": 1
         },
         {
             "id": "profileid123456",
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
-            "timezone": "Americas UTC+8",
             "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234"
+            "discord": "patrick#1234",
+            "foodWave": 2
         },
     ]
 }
@@ -105,7 +105,6 @@ Creates a profile for the currently authenticated user (determined by the JWT in
 {
     "firstName": "John",
     "lastName": "Doe",
-    "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
     "discord": "patrick#1234"
 }
@@ -116,10 +115,11 @@ Creates a profile for the currently authenticated user (determined by the JWT in
     "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
-    "points": 2021,
+    "points": 0,
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234"
+    "discord": "patrick#1234",
+    "foodWave": 0
 }
 ```
 
@@ -135,7 +135,6 @@ Updates the profile for the currently authenticated user (determined by the JWT 
 {
     "firstName": "John",
     "lastName": "Doe",
-    "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
     "discord": "patrick#1234"
 }
@@ -147,9 +146,9 @@ Updates the profile for the currently authenticated user (determined by the JWT 
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
-    "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234"
+    "discord": "patrick#1234",
+    "foodWave": 2
 }
 ```
 
@@ -170,9 +169,9 @@ Request requires no body.
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
-    "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234"
+    "discord": "patrick#1234",
+    "foodWave": 2
 }
 ```
 
@@ -292,11 +291,10 @@ Note: here, the "id" actually refers to the user id, not the profile id (hence `
     "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
-    "points": 2021,
-    "timezone": "Americas UTC+8",
+    "points": 10,
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234"
-    "points": 10
+    "discord": "patrick#1234",
+    "foodWave": 2
 }
 ```
 

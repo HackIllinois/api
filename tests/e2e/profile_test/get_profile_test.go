@@ -16,9 +16,9 @@ func TestGetProfile(t *testing.T) {
 		FirstName: "John",
 		LastName:  "Smith",
 		Points:    5,
-		Timezone:  "CST",
 		Discord:   "discord",
 		AvatarUrl: "url",
+		FoodWave:  2,
 	}
 	client.Database(profile_db_name).Collection("profiles").InsertOne(context.Background(), profile_info)
 
@@ -39,15 +39,14 @@ func TestGetProfile(t *testing.T) {
 }
 
 func TestUnauthenticatedGetProfile(t *testing.T) {
-
 	profile_info := profile_models.Profile{
 		ID:        "12345",
 		FirstName: "John",
 		LastName:  "Smith",
 		Points:    5,
-		Timezone:  "CST",
 		Discord:   "discord",
 		AvatarUrl: "url",
+		FoodWave:  1,
 	}
 	client.Database(profile_db_name).Collection("profiles").InsertOne(context.Background(), profile_info)
 

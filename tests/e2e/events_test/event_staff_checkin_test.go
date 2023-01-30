@@ -33,8 +33,6 @@ func GenerateValidUserToken(t *testing.T) string {
 	return signed
 }
 
-// This test + TestGetUserQR verify that an expired token will not checkin and
-// that an expiring token will be generated, respectively.
 func GenerateExpiredUserToken(t *testing.T) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"exp":    time.Now().Add(-time.Hour).Unix(),
@@ -279,6 +277,8 @@ func TestStaffCheckinBadUserTokenInvalidToken(t *testing.T) {
 	}
 }
 
+// This test + TestGetUserQR verify that an expired token will not checkin and
+// that an expiring token will be generated, respectively.
 func TestStaffCheckinBadUserTokenExpiredToken(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()

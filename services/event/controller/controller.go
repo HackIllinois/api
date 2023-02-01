@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/HackIllinois/api/common/authtoken"
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/common/utils"
@@ -46,7 +47,7 @@ func SetupController(route *mux.Route) {
 */
 func GetEvent(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	is_staff := service.IsRequestFromStaffOrHigher(r)
+	is_staff := authtoken.IsRequestFromStaffOrHigher(r)
 
 	var event interface{}
 	var err error
@@ -93,7 +94,7 @@ func DeleteEvent(w http.ResponseWriter, r *http.Request) {
 	Endpoint to get all events
 */
 func GetAllEvents(w http.ResponseWriter, r *http.Request) {
-	is_staff := service.IsRequestFromStaffOrHigher(r)
+	is_staff := authtoken.IsRequestFromStaffOrHigher(r)
 
 	var event_list interface{}
 	var err error
@@ -117,7 +118,7 @@ func GetAllEvents(w http.ResponseWriter, r *http.Request) {
 */
 func GetFilteredEvents(w http.ResponseWriter, r *http.Request) {
 	parameters := r.URL.Query()
-	is_staff := service.IsRequestFromStaffOrHigher(r)
+	is_staff := authtoken.IsRequestFromStaffOrHigher(r)
 
 	var event interface{}
 	var err error

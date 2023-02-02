@@ -217,11 +217,14 @@ func GetProfileLeaderboard(parameters map[string][]string) (*models.LeaderboardE
 	}
 
 	limit, err := strconv.Atoi(limit_param[0])
-
 	if err != nil {
 		return nil, errors.New("Could not convert 'limit' to int.")
 	}
 
+	return GetProfileLeaderboardWithLimit(limit)
+}
+
+func GetProfileLeaderboardWithLimit(limit int) (*models.LeaderboardEntryList, error) {
 	leaderboard_entries := []models.LeaderboardEntry{}
 
 	sort_field := bson.D{
@@ -231,8 +234,7 @@ func GetProfileLeaderboard(parameters map[string][]string) (*models.LeaderboardE
 		},
 	}
 
-	err = db.FindAllSorted("profiles", nil, sort_field, &leaderboard_entries, nil)
-
+	err := db.FindAllSorted("profiles", nil, sort_field, &leaderboard_entries, nil)
 	if err != nil {
 		return nil, err
 	}

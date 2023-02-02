@@ -50,6 +50,12 @@ var ProfileRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetProfileLeaderboard).ServeHTTP,
 	},
 	arbor.Route{
+		"GetProfileLeaderboard",
+		"GET",
+		"/profile/live/leaderboard/",
+		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetLiveProfileLeaderboard).ServeHTTP,
+	},
+	arbor.Route{
 		"GetValidFilteredProfiles",
 		"GET",
 		"/profile/search/",
@@ -130,6 +136,10 @@ func DeleteProfile(w http.ResponseWriter, r *http.Request) {
 
 func GetProfileLeaderboard(w http.ResponseWriter, r *http.Request) {
 	arbor.GET(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
+}
+
+func GetLiveProfileLeaderboard(w http.ResponseWriter, r *http.Request) {
+	arbor.ProxyWebsocket(w, config.PROFILE_SERVICE+r.URL.String(), ProfileFormat, "", r)
 }
 
 func RedeemEvent(w http.ResponseWriter, r *http.Request) {

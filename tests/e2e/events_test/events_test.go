@@ -51,7 +51,7 @@ func TestMain(m *testing.M) {
 	}
 
 	staff_client = common.GetSlingClient("Staff")
-	public_client = common.GetSlingClient("")
+	public_client = common.GetSlingClient("Unauthenticated")
 	user_client = common.GetSlingClient("User")
 
 	client = common.GetLocalMongoSession()

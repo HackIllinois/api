@@ -60,7 +60,7 @@ var ProfileRoutes = arbor.RouteCollection{
 		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetProfileLeaderboard).ServeHTTP,
 	},
 	arbor.Route{
-		"GetProfileLeaderboard",
+		"WSLiveProfileLeaderboard",
 		"GET",
 		"/profile/live/leaderboard/",
 		alice.New(middleware.IdentificationMiddleware).ThenFunc(GetLiveProfileLeaderboard).ServeHTTP,

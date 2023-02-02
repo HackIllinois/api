@@ -17,31 +17,41 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetCurrentUserProfile",
 		"GET",
 		"/profile/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole})).ThenFunc(GetProfile).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole})).
+			ThenFunc(GetProfile).
+			ServeHTTP,
 	},
 	arbor.Route{
 		"CreateCurrentUserProfile",
 		"POST",
 		"/profile/",
-		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole})).ThenFunc(CreateProfile).ServeHTTP,
+		alice.New(middleware.IdentificationMiddleware, middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole})).
+			ThenFunc(CreateProfile).
+			ServeHTTP,
 	},
 	arbor.Route{
 		"UpdateCurrentUserProfile",
 		"PUT",
 		"/profile/",
-		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateProfile).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole}), middleware.IdentificationMiddleware).
+			ThenFunc(UpdateProfile).
+			ServeHTTP,
 	},
 	arbor.Route{
 		"DeleteCurrentUserProfile",
 		"DELETE",
 		"/profile/",
-		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole}), middleware.IdentificationMiddleware).ThenFunc(DeleteProfile).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole}), middleware.IdentificationMiddleware).
+			ThenFunc(DeleteProfile).
+			ServeHTTP,
 	},
 	arbor.Route{
 		"GetAllProfiles",
 		"GET",
 		"/profile/list/",
-		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(GetFilteredProfiles).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.StaffRole}), middleware.IdentificationMiddleware).
+			ThenFunc(GetFilteredProfiles).
+			ServeHTTP,
 	},
 	arbor.Route{
 		"GetProfileLeaderboard",
@@ -59,37 +69,49 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetValidFilteredProfiles",
 		"GET",
 		"/profile/search/",
-		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetValidFilteredProfiles).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole}), middleware.IdentificationMiddleware).
+			ThenFunc(GetValidFilteredProfiles).
+			ServeHTTP,
 	},
 	arbor.Route{
 		"RedeemEvent",
 		"POST",
 		"/profile/event/checkin/",
-		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(RedeemEvent).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.StaffRole}), middleware.IdentificationMiddleware).
+			ThenFunc(RedeemEvent).
+			ServeHTTP,
 	},
 	arbor.Route{
 		"AwardPoints",
 		"POST",
 		"/profile/points/award/",
-		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(AwardPoints).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.StaffRole}), middleware.IdentificationMiddleware).
+			ThenFunc(AwardPoints).
+			ServeHTTP,
 	},
 	arbor.Route{
 		"GetProfileFavorites",
 		"GET",
 		"/profile/favorite/",
-		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetProfileFavorites).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole}), middleware.IdentificationMiddleware).
+			ThenFunc(GetProfileFavorites).
+			ServeHTTP,
 	},
 	arbor.Route{
 		"AddProfileFavorite",
 		"POST",
 		"/profile/favorite/",
-		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(AddProfileFavorite).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole}), middleware.IdentificationMiddleware).
+			ThenFunc(AddProfileFavorite).
+			ServeHTTP,
 	},
 	arbor.Route{
 		"RemoveProfileFavorite",
 		"DELETE",
 		"/profile/favorite/",
-		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(RemoveProfileFavorite).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole}), middleware.IdentificationMiddleware).
+			ThenFunc(RemoveProfileFavorite).
+			ServeHTTP,
 	},
 	arbor.Route{
 		"GetTierThresholds",
@@ -102,7 +124,9 @@ var ProfileRoutes = arbor.RouteCollection{
 		"GetUserProfileById",
 		"GET",
 		"/profile/{id}/",
-		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole}), middleware.IdentificationMiddleware).ThenFunc(GetProfileById).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.AdminRole, authtoken.AttendeeRole, authtoken.ApplicantRole, authtoken.StaffRole, authtoken.MentorRole}), middleware.IdentificationMiddleware).
+			ThenFunc(GetProfileById).
+			ServeHTTP,
 	},
 }
 

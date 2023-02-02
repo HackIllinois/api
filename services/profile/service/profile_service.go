@@ -44,7 +44,6 @@ func GetProfileIdFromUserId(id string) (string, error) {
 
 	var id_map models.IdMap
 	err := db.FindOne("profileids", query, &id_map, nil)
-
 	// Returns error if no mapping was found
 	if err != nil {
 		return "", err
@@ -63,7 +62,6 @@ func GetProfile(profile_id string) (*models.Profile, error) {
 
 	var profile models.Profile
 	err := db.FindOne("profiles", query, &profile, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +77,6 @@ func GetProfile(profile_id string) (*models.Profile, error) {
 func DeleteProfile(profile_id string) (*models.Profile, error) {
 	// Gets profile to be able to return it later
 	profile, err := GetProfile(profile_id)
-
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +124,6 @@ func DeleteProfile(profile_id string) (*models.Profile, error) {
 func CreateProfile(id string, profile_id string, profile models.Profile) error {
 	profile.ID = profile_id
 	err := validate.Struct(profile)
-
 	if err != nil {
 		return err
 	}
@@ -191,7 +187,6 @@ func CreateProfile(id string, profile_id string, profile models.Profile) error {
 func UpdateProfile(profile_id string, profile models.Profile) error {
 	profile.ID = profile_id
 	err := validate.Struct(profile)
-
 	if err != nil {
 		return err
 	}
@@ -262,7 +257,6 @@ func GetFilteredProfiles(parameters map[string][]string) (*models.ProfileList, e
 	}
 
 	limit, err := strconv.Atoi(limit_param[0])
-
 	if err != nil {
 		return nil, errors.New("Could not convert 'limit' to int.")
 	}
@@ -271,7 +265,6 @@ func GetFilteredProfiles(parameters map[string][]string) (*models.ProfileList, e
 	delete(parameters, "limit")
 
 	query, err := database.CreateFilterQuery(parameters, models.Profile{})
-
 	if err != nil {
 		return nil, err
 	}
@@ -303,7 +296,6 @@ func GetFilteredProfiles(parameters map[string][]string) (*models.ProfileList, e
 */
 func GetValidFilteredProfiles(parameters map[string][]string) (*models.ProfileList, error) {
 	filtered_profile_list, err := GetFilteredProfiles(parameters)
-
 	if err != nil {
 		return nil, errors.New("Could not get filtered profiles")
 	}
@@ -324,7 +316,6 @@ func RedeemEvent(profile_id string, event_id string) (*models.RedeemEventRespons
 
 	var attended_events models.AttendanceTracker
 	err := db.FindOne("profileattendance", selector, &attended_events, nil)
-
 	if err != nil {
 		if err == database.ErrNotFound {
 			attended_events = models.AttendanceTracker{
@@ -365,7 +356,6 @@ func GetProfileFavorites(profile_id string) (*models.ProfileFavorites, error) {
 
 	var profile_favorites models.ProfileFavorites
 	err := db.FindOne("profilefavorites", query, &profile_favorites, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -386,13 +376,11 @@ func AddProfileFavorite(profile_id string, profile string) error {
 	}
 
 	_, err := GetProfile(profile)
-
 	if err != nil {
 		return errors.New("Could not find profile with the given id.")
 	}
 
 	profile_favorites, err := GetProfileFavorites(profile_id)
-
 	if err != nil {
 		return err
 	}
@@ -415,7 +403,6 @@ func RemoveProfileFavorite(profile_id string, profile string) error {
 	}
 
 	profile_favorites, err := GetProfileFavorites(profile_id)
-
 	if err != nil {
 		return err
 	}

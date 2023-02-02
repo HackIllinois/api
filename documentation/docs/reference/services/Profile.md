@@ -203,6 +203,47 @@ Request requires no body.
 }
 ```
 
+WS /profile/live/leaderboard/?limit=
+-------------------------
+
+!!! note
+    This is a public endpoint
+
+This endpoint expects a websocket connection.
+
+Returns a list of profiles sorted by points descending. If a `limit` parameter is provided, it will
+return the first `limit` profiles. Otherwise, it will return all of the profiles.
+
+Once, the connection has been established, `limit` can be easily changed by simply sending the key
+in a JSON.
+
+The API will send back a list of profiles whenever a user gets awarded points (ratelimited to 1
+response per second) or if 5 minutes elapse with no activity (i.e. no point values change). The
+latter is more or less a failsafe in order to ensure the leaderboard is the most up-to-date.
+
+```json title="Exmaple WS message request"
+{
+    "limit": 20
+}
+```
+
+```json title="Example WS response"
+{
+    "profiles": [
+        {
+            "id": "profileid123456",
+            "points": 2021,
+            "discord": "patrick#1234"
+        },
+        {
+            "id": "profileid123456",
+            "points": 2021,
+            "discord": "patrick#1234"
+        },
+    ]
+}
+```
+
 GET /profile/search/?teamStatus=value&interests=value,value,value&limit=value
 -------------------------
 

@@ -99,7 +99,12 @@ Request requires no body.
 POST /profile/
 -------------------
 
-Creates a profile for the currently authenticated user (determined by the JWT in the `Authorization` header).
+Creates a profile for the currently authenticated user (determined by the JWT in the `Authorization`
+header).
+
+!!! warning
+    You cannot set `points` or `foodWave` to any value. Both these fields will default to `0`. If
+    you want to edit these fields, call `PUT /profile/`.
 
 ```json title="Example request"
 {
@@ -126,10 +131,12 @@ Creates a profile for the currently authenticated user (determined by the JWT in
 PUT /profile/
 ------------------
 
-Updates the profile for the currently authenticated user (determined by the JWT in the `Authorization` header).
+Updates the profile for the currently authenticated user (determined by the JWT in the
+`Authorization` header).
 
 !!! warning
-    You can not edit the `points` field through this (for security reasons)
+    If the user is not a Staff or Admin, they cannot edit the `points` or `foodWave` field through
+    this (for security reasons)
 
 ```json title="Example request"
 {

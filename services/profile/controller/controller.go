@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/HackIllinois/api/common/authtoken"
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/common/utils"
@@ -144,7 +145,7 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	is_staff := service.IsRequestFromStaffOrHigher(r)
+	is_staff := authtoken.IsRequestFromStaffOrHigher(r)
 
 	if !is_staff {
 		profile.Points = old_profile.Points

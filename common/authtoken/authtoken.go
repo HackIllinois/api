@@ -1,6 +1,11 @@
 package authtoken
 
-import "github.com/HackIllinois/api/common/utils"
+import (
+	"net/http"
+
+	"github.com/HackIllinois/api/common/config"
+	"github.com/HackIllinois/api/common/utils"
+)
 
 type Role = string
 
@@ -44,4 +49,15 @@ func HasRole(secret string, token string, required_role Role) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func IsRequestFromStaffOrHigher(r *http.Request) bool {
+	token := r.Header.Get("Authorization")
+	is_at_least_staff, err := IsAuthorized(
+		config.TOKEN_SECRET,
+		token,
+		[]Role{StaffRole, AdminRole},
+	)
+
+	return err == nil && is_at_least_staff
 }

@@ -17,9 +17,8 @@ func TestDeleteEventNormal(t *testing.T) {
 	defer ClearEvents()
 
 	event_id := TEST_EVENT_1_ID
-	received_event := models.Event{}
+	received_event := models.EventDB{}
 	response, err := staff_client.New().Delete(fmt.Sprintf("/event/%s/", event_id)).ReceiveSuccess(&received_event)
-
 	if err != nil {
 		t.Fatal("Unable to make request")
 		return
@@ -29,23 +28,26 @@ func TestDeleteEventNormal(t *testing.T) {
 		return
 	}
 
-	expected_event := models.Event{
-		ID:          TEST_EVENT_1_ID,
-		Name:        "testevent1",
-		Description: "testdescription1",
-		StartTime:   current_unix_time,
-		EndTime:     current_unix_time + 60000,
-		Sponsor:     "testsponsor1",
-		EventType:   "WORKSHOP",
-		Locations: []models.EventLocation{
-			{
-				Description: "testlocationdescription1",
-				Tags:        []string{"SIEBEL3", "ECEB2"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	expected_event := models.EventDB{
+		EventPublic: models.EventPublic{
+			ID:          TEST_EVENT_1_ID,
+			Name:        "testevent1",
+			Description: "testdescription1",
+			StartTime:   current_unix_time,
+			EndTime:     current_unix_time + 60000,
+			Sponsor:     "testsponsor1",
+			EventType:   "OTHER",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription1",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 50,
 		},
-		Points: 50,
+		IsPrivate: true,
 	}
 
 	if !reflect.DeepEqual(received_event, expected_event) {
@@ -53,7 +55,7 @@ func TestDeleteEventNormal(t *testing.T) {
 	}
 
 	cursor, _ := client.Database(events_db_name).Collection("events").Find(context.Background(), bson.D{})
-	res := []models.Event{}
+	res := []models.EventDB{}
 	err = cursor.All(context.TODO(), &res)
 
 	if err != nil {
@@ -61,24 +63,27 @@ func TestDeleteEventNormal(t *testing.T) {
 		return
 	}
 
-	expected_events := []models.Event{
+	expected_events := []models.EventDB{
 		{
-			ID:          TEST_EVENT_2_ID,
-			Name:        "testevent2",
-			Description: "testdescription2",
-			StartTime:   current_unix_time + 60000,
-			EndTime:     current_unix_time + 120000,
-			Sponsor:     "",
-			EventType:   "FOOD",
-			Locations: []models.EventLocation{
-				{
-					Description: "testlocationdescription2",
-					Tags:        []string{"SIEBEL3", "ECEB2"},
-					Latitude:    123.456,
-					Longitude:   123.456,
+			EventPublic: models.EventPublic{
+				ID:          TEST_EVENT_2_ID,
+				Name:        "testevent2",
+				Description: "testdescription2",
+				StartTime:   current_unix_time + 60000,
+				EndTime:     current_unix_time + 120000,
+				Sponsor:     "",
+				EventType:   "FOOD",
+				Locations: []models.EventLocation{
+					{
+						Description: "testlocationdescription2",
+						Tags:        []string{"SIEBEL3", "ECEB2"},
+						Latitude:    123.456,
+						Longitude:   123.456,
+					},
 				},
+				Points: 0,
 			},
-			Points: 0,
+			IsPrivate: false,
 		},
 	}
 
@@ -94,7 +99,6 @@ func TestDeleteEventNotExist(t *testing.T) {
 	event_id := "nonsense_eventid"
 	api_err := errors.ApiError{}
 	response, err := staff_client.New().Delete(fmt.Sprintf("/event/%s/", event_id)).Receive(nil, &api_err)
-
 	if err != nil {
 		t.Fatal("Unable to make request")
 		return
@@ -116,7 +120,7 @@ func TestDeleteEventNotExist(t *testing.T) {
 	}
 
 	cursor, _ := client.Database(events_db_name).Collection("events").Find(context.Background(), bson.D{})
-	res := []models.Event{}
+	res := []models.EventDB{}
 	err = cursor.All(context.TODO(), &res)
 
 	if err != nil {
@@ -124,42 +128,48 @@ func TestDeleteEventNotExist(t *testing.T) {
 		return
 	}
 
-	expected_events := []models.Event{
+	expected_events := []models.EventDB{
 		{
-			ID:          TEST_EVENT_1_ID,
-			Name:        "testevent1",
-			Description: "testdescription1",
-			StartTime:   current_unix_time,
-			EndTime:     current_unix_time + 60000,
-			Sponsor:     "testsponsor1",
-			EventType:   "WORKSHOP",
-			Locations: []models.EventLocation{
-				{
-					Description: "testlocationdescription1",
-					Tags:        []string{"SIEBEL3", "ECEB2"},
-					Latitude:    123.456,
-					Longitude:   123.456,
+			EventPublic: models.EventPublic{
+				ID:          TEST_EVENT_1_ID,
+				Name:        "testevent1",
+				Description: "testdescription1",
+				StartTime:   current_unix_time,
+				EndTime:     current_unix_time + 60000,
+				Sponsor:     "testsponsor1",
+				EventType:   "OTHER",
+				Locations: []models.EventLocation{
+					{
+						Description: "testlocationdescription1",
+						Tags:        []string{"SIEBEL3", "ECEB2"},
+						Latitude:    123.456,
+						Longitude:   123.456,
+					},
 				},
+				Points: 50,
 			},
-			Points: 50,
+			IsPrivate: true,
 		},
 		{
-			ID:          TEST_EVENT_2_ID,
-			Name:        "testevent2",
-			Description: "testdescription2",
-			StartTime:   current_unix_time + 60000,
-			EndTime:     current_unix_time + 120000,
-			Sponsor:     "",
-			EventType:   "FOOD",
-			Locations: []models.EventLocation{
-				{
-					Description: "testlocationdescription2",
-					Tags:        []string{"SIEBEL3", "ECEB2"},
-					Latitude:    123.456,
-					Longitude:   123.456,
+			EventPublic: models.EventPublic{
+				ID:          TEST_EVENT_2_ID,
+				Name:        "testevent2",
+				Description: "testdescription2",
+				StartTime:   current_unix_time + 60000,
+				EndTime:     current_unix_time + 120000,
+				Sponsor:     "",
+				EventType:   "FOOD",
+				Locations: []models.EventLocation{
+					{
+						Description: "testlocationdescription2",
+						Tags:        []string{"SIEBEL3", "ECEB2"},
+						Latitude:    123.456,
+						Longitude:   123.456,
+					},
 				},
+				Points: 0,
 			},
-			Points: 0,
+			IsPrivate: false,
 		},
 	}
 
@@ -174,7 +184,6 @@ func TestDeleteEventForbidden(t *testing.T) {
 
 	event_id := TEST_EVENT_1_ID
 	response, err := user_client.New().Delete(fmt.Sprintf("/event/%s/", event_id)).Receive(nil, nil)
-
 	if err != nil {
 		t.Fatal("Unable to make request")
 		return
@@ -185,7 +194,7 @@ func TestDeleteEventForbidden(t *testing.T) {
 	}
 
 	cursor, _ := client.Database(events_db_name).Collection("events").Find(context.Background(), bson.D{})
-	res := []models.Event{}
+	res := []models.EventDB{}
 	err = cursor.All(context.TODO(), &res)
 
 	if err != nil {
@@ -193,42 +202,48 @@ func TestDeleteEventForbidden(t *testing.T) {
 		return
 	}
 
-	expected_events := []models.Event{
+	expected_events := []models.EventDB{
 		{
-			ID:          TEST_EVENT_1_ID,
-			Name:        "testevent1",
-			Description: "testdescription1",
-			StartTime:   current_unix_time,
-			EndTime:     current_unix_time + 60000,
-			Sponsor:     "testsponsor1",
-			EventType:   "WORKSHOP",
-			Locations: []models.EventLocation{
-				{
-					Description: "testlocationdescription1",
-					Tags:        []string{"SIEBEL3", "ECEB2"},
-					Latitude:    123.456,
-					Longitude:   123.456,
+			EventPublic: models.EventPublic{
+				ID:          TEST_EVENT_1_ID,
+				Name:        "testevent1",
+				Description: "testdescription1",
+				StartTime:   current_unix_time,
+				EndTime:     current_unix_time + 60000,
+				Sponsor:     "testsponsor1",
+				EventType:   "OTHER",
+				Locations: []models.EventLocation{
+					{
+						Description: "testlocationdescription1",
+						Tags:        []string{"SIEBEL3", "ECEB2"},
+						Latitude:    123.456,
+						Longitude:   123.456,
+					},
 				},
+				Points: 50,
 			},
-			Points: 50,
+			IsPrivate: true,
 		},
 		{
-			ID:          TEST_EVENT_2_ID,
-			Name:        "testevent2",
-			Description: "testdescription2",
-			StartTime:   current_unix_time + 60000,
-			EndTime:     current_unix_time + 120000,
-			Sponsor:     "",
-			EventType:   "FOOD",
-			Locations: []models.EventLocation{
-				{
-					Description: "testlocationdescription2",
-					Tags:        []string{"SIEBEL3", "ECEB2"},
-					Latitude:    123.456,
-					Longitude:   123.456,
+			EventPublic: models.EventPublic{
+				ID:          TEST_EVENT_2_ID,
+				Name:        "testevent2",
+				Description: "testdescription2",
+				StartTime:   current_unix_time + 60000,
+				EndTime:     current_unix_time + 120000,
+				Sponsor:     "",
+				EventType:   "FOOD",
+				Locations: []models.EventLocation{
+					{
+						Description: "testlocationdescription2",
+						Tags:        []string{"SIEBEL3", "ECEB2"},
+						Latitude:    123.456,
+						Longitude:   123.456,
+					},
 				},
+				Points: 0,
 			},
-			Points: 0,
+			IsPrivate: false,
 		},
 	}
 

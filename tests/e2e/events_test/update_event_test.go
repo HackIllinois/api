@@ -17,15 +17,14 @@ func TestUpdateEventNormal(t *testing.T) {
 
 	res := client.Database(events_db_name).Collection("events").FindOne(context.Background(), bson.M{"id": TEST_EVENT_1_ID})
 
-	event := models.Event{}
+	event := models.EventDB{}
 
 	res.Decode(&event)
 
 	event.Description = "It's a new description!"
-	var received_event models.Event
+	var received_event models.EventDB
 
 	response, err := staff_client.New().Put("/event/").BodyJSON(event).ReceiveSuccess(&received_event)
-
 	if err != nil {
 		t.Fatal("Unable to make request")
 		return
@@ -46,15 +45,15 @@ func TestUpdateEventForbidden(t *testing.T) {
 
 	res := client.Database(events_db_name).Collection("events").FindOne(context.Background(), bson.M{"id": TEST_EVENT_1_ID})
 
-	event := models.Event{}
+	event := models.EventDB{}
 
 	res.Decode(&event)
 
 	event.Description = "It's a new description!"
-	var received_event models.Event
+	event.IsPrivate = false
+	var received_event models.EventDB
 
 	response, err := user_client.New().Put("/event/").BodyJSON(event).ReceiveSuccess(&received_event)
-
 	if err != nil {
 		t.Fatal("Unable to make request")
 		return
@@ -71,7 +70,7 @@ func TestUpdateEventNotFound(t *testing.T) {
 
 	res := client.Database(events_db_name).Collection("events").FindOne(context.Background(), bson.M{"id": TEST_EVENT_1_ID})
 
-	event := models.Event{}
+	event := models.EventDB{}
 
 	res.Decode(&event)
 
@@ -80,7 +79,6 @@ func TestUpdateEventNotFound(t *testing.T) {
 
 	api_err := errors.ApiError{}
 	response, err := staff_client.New().Put("/event/").BodyJSON(event).Receive(nil, &api_err)
-
 	if err != nil {
 		t.Fatal("Unable to make request")
 		return

@@ -69,7 +69,8 @@ func SetupTestDB(t *testing.T) {
 			},
 			Points: 10,
 		},
-		IsPrivate: false,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: false,
 	}
 
 	err := db.Insert("events", &event, nil)
@@ -124,7 +125,8 @@ func TestGetAllEventsService(t *testing.T) {
 				},
 			},
 		},
-		IsPrivate: false,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: false,
 	}
 
 	event2 := models.EventDB{
@@ -139,7 +141,8 @@ func TestGetAllEventsService(t *testing.T) {
 			Locations:   []models.EventLocation{},
 			Points:      100,
 		},
-		IsPrivate: true,
+		IsPrivate:             true,
+		DisplayOnStaffCheckin: true,
 	}
 
 	err := db.Insert("events", &event, nil)
@@ -180,7 +183,8 @@ func TestGetAllEventsService(t *testing.T) {
 					},
 					Points: 10,
 				},
-				IsPrivate: false,
+				IsPrivate:             false,
+				DisplayOnStaffCheckin: false,
 			},
 			{
 				EventPublic: models.EventPublic{
@@ -202,7 +206,8 @@ func TestGetAllEventsService(t *testing.T) {
 					},
 					Points: 0,
 				},
-				IsPrivate: false,
+				IsPrivate:             false,
+				DisplayOnStaffCheckin: false,
 			},
 			{
 				EventPublic: models.EventPublic{
@@ -216,7 +221,8 @@ func TestGetAllEventsService(t *testing.T) {
 					Locations:   []models.EventLocation{},
 					Points:      100,
 				},
-				IsPrivate: true,
+				IsPrivate:             true,
+				DisplayOnStaffCheckin: true,
 			},
 		},
 	}
@@ -321,7 +327,8 @@ func TestGetFilteredEventsService(t *testing.T) {
 			},
 			Points: 0,
 		},
-		IsPrivate: false,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: false,
 	}
 
 	err := db.Insert("events", &event, nil)
@@ -341,7 +348,8 @@ func TestGetFilteredEventsService(t *testing.T) {
 			Locations:   []models.EventLocation{},
 			Points:      100,
 		},
-		IsPrivate: true,
+		IsPrivate:             true,
+		DisplayOnStaffCheckin: true,
 	}
 
 	err = db.Insert("events", &event2, nil)
@@ -381,7 +389,8 @@ func TestGetFilteredEventsService(t *testing.T) {
 					},
 					Points: 0,
 				},
-				IsPrivate: false,
+				IsPrivate:             false,
+				DisplayOnStaffCheckin: false,
 			},
 		},
 	}
@@ -501,7 +510,8 @@ func TestGetEventService(t *testing.T) {
 			Locations:   []models.EventLocation{},
 			Points:      1337,
 		},
-		IsPrivate: true,
+		IsPrivate:             true,
+		DisplayOnStaffCheckin: true,
 	}
 
 	err := db.Insert("events", hidden_event, nil)
@@ -533,7 +543,8 @@ func TestGetEventService(t *testing.T) {
 			},
 			Points: 10,
 		},
-		IsPrivate: false,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: false,
 	}
 
 	if !reflect.DeepEqual(event, &expected_event) {
@@ -572,7 +583,8 @@ func TestCreateEventService(t *testing.T) {
 				},
 			},
 		},
-		IsPrivate: true,
+		IsPrivate:             true,
+		DisplayOnStaffCheckin: false,
 	}
 
 	err := service.CreateEvent("testid2", "testcode2", new_event)
@@ -604,7 +616,8 @@ func TestCreateEventService(t *testing.T) {
 			},
 			Points: 0,
 		},
-		IsPrivate: true,
+		IsPrivate:             true,
+		DisplayOnStaffCheckin: false,
 	}
 
 	if !reflect.DeepEqual(event, &expected_event) {
@@ -632,7 +645,8 @@ func TestCreateEventService(t *testing.T) {
 			},
 			IsAsync: true,
 		},
-		IsPrivate: false,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: false,
 	}
 
 	err = service.CreateEvent("testid2", "testcode2", new_event_async)
@@ -664,7 +678,8 @@ func TestCreateEventService(t *testing.T) {
 			IsAsync: true,
 			Points:  0,
 		},
-		IsPrivate: false,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: false,
 	}
 
 	if !reflect.DeepEqual(event_async, &expected_event_async) {
@@ -761,7 +776,8 @@ func TestUpdateEventService(t *testing.T) {
 			},
 			Points: 100,
 		},
-		IsPrivate: false,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: false,
 	}
 
 	err := service.UpdateEvent("testid", event)
@@ -793,7 +809,8 @@ func TestUpdateEventService(t *testing.T) {
 			},
 			Points: 100,
 		},
-		IsPrivate: false,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: false,
 	}
 
 	if !reflect.DeepEqual(updated_event, &expected_event) {
@@ -916,7 +933,8 @@ func TestIsEventActive(t *testing.T) {
 				},
 			},
 		},
-		IsPrivate: false,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: false,
 	}
 
 	service.CreateEvent(new_event.ID, "testcode3", new_event)

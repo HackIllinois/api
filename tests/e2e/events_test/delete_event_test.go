@@ -47,7 +47,8 @@ func TestDeleteEventNormal(t *testing.T) {
 			},
 			Points: 50,
 		},
-		IsPrivate: true,
+		IsPrivate:             true,
+		DisplayOnStaffCheckin: false,
 	}
 
 	if !reflect.DeepEqual(received_event, expected_event) {
@@ -83,7 +84,8 @@ func TestDeleteEventNormal(t *testing.T) {
 				},
 				Points: 0,
 			},
-			IsPrivate: false,
+			IsPrivate:             false,
+			DisplayOnStaffCheckin: true,
 		},
 	}
 
@@ -148,7 +150,8 @@ func TestDeleteEventNotExist(t *testing.T) {
 				},
 				Points: 50,
 			},
-			IsPrivate: true,
+			IsPrivate:             true,
+			DisplayOnStaffCheckin: false,
 		},
 		{
 			EventPublic: models.EventPublic{
@@ -169,7 +172,8 @@ func TestDeleteEventNotExist(t *testing.T) {
 				},
 				Points: 0,
 			},
-			IsPrivate: false,
+			IsPrivate:             false,
+			DisplayOnStaffCheckin: true,
 		},
 	}
 
@@ -222,7 +226,8 @@ func TestDeleteEventForbidden(t *testing.T) {
 				},
 				Points: 50,
 			},
-			IsPrivate: true,
+			IsPrivate:             true,
+			DisplayOnStaffCheckin: false,
 		},
 		{
 			EventPublic: models.EventPublic{
@@ -243,7 +248,8 @@ func TestDeleteEventForbidden(t *testing.T) {
 				},
 				Points: 0,
 			},
-			IsPrivate: false,
+			IsPrivate:             false,
+			DisplayOnStaffCheckin: true,
 		},
 	}
 

@@ -129,42 +129,48 @@ func ResetDatabase() {
 }
 
 func CreateEvents() {
-	event1 := event_models.Event{
-		ID:          TEST_EVENT_1_ID,
-		Name:        "testevent1",
-		Description: "testdescription1",
-		StartTime:   current_unix_time,
-		EndTime:     current_unix_time + 60000,
-		Sponsor:     "testsponsor1",
-		EventType:   "WORKSHOP",
-		Locations: []event_models.EventLocation{
-			{
-				Description: "testlocationdescription1",
-				Tags:        []string{"SIEBEL3", "ECEB2"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	event1 := event_models.EventDB{
+		EventPublic: event_models.EventPublic{
+			ID:          TEST_EVENT_1_ID,
+			Name:        "testevent1",
+			Description: "testdescription1",
+			StartTime:   current_unix_time,
+			EndTime:     current_unix_time + 60000,
+			Sponsor:     "testsponsor1",
+			EventType:   "OTHER",
+			Locations: []event_models.EventLocation{
+				{
+					Description: "testlocationdescription1",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 50,
 		},
-		Points: 50,
+		IsPrivate: true,
 	}
 
-	event2 := event_models.Event{
-		ID:          TEST_EVENT_2_ID,
-		Name:        "testevent2",
-		Description: "testdescription2",
-		StartTime:   current_unix_time + 60000,
-		EndTime:     current_unix_time + 120000,
-		Sponsor:     "",
-		EventType:   "FOOD",
-		Locations: []event_models.EventLocation{
-			{
-				Description: "testlocationdescription2",
-				Tags:        []string{"SIEBEL3", "ECEB2"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	event2 := event_models.EventDB{
+		EventPublic: event_models.EventPublic{
+			ID:          TEST_EVENT_2_ID,
+			Name:        "testevent2",
+			Description: "testdescription2",
+			StartTime:   current_unix_time + 60000,
+			EndTime:     current_unix_time + 120000,
+			Sponsor:     "",
+			EventType:   "FOOD",
+			Locations: []event_models.EventLocation{
+				{
+					Description: "testlocationdescription2",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 0,
 		},
-		Points: 0,
+		IsPrivate: false,
 	}
 
 	client.Database(events_db_name).Collection("events").InsertOne(context.Background(), event1)
@@ -244,25 +250,28 @@ func ClearEvents() {
 func TestStaffActions(t *testing.T) {
 	defer ClearEvents()
 	// 1. Create event
-	event_info := event_models.Event{
-		Name:        "testname",
-		Description: "testdescription2",
-		StartTime:   534545,
-		EndTime:     534545 + 60000,
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []event_models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"SIEBEL3", "ECEB2"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	event_info := event_models.EventDB{
+		EventPublic: event_models.EventPublic{
+			Name:        "testname",
+			Description: "testdescription2",
+			StartTime:   534545,
+			EndTime:     534545 + 60000,
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []event_models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 100,
 		},
-		Points: 100,
+		IsPrivate: false,
 	}
 
-	received_event := event_models.Event{}
+	received_event := event_models.EventDB{}
 	response, err := staff_client.New().Post("/event/").BodyJSON(event_info).ReceiveSuccess(&received_event)
 	if err != nil {
 		t.Errorf("Unable to make request")
@@ -273,26 +282,29 @@ func TestStaffActions(t *testing.T) {
 
 	// 2. Update event
 	event_id := received_event.ID
-	event_info_updated := event_models.Event{
-		ID:          event_id,
-		Name:        "testname",
-		Description: "testdescription2",
-		StartTime:   534545,
-		EndTime:     534545 + 60000,
-		Sponsor:     "testsponsor",
-		EventType:   "WORKSHOP",
-		Locations: []event_models.EventLocation{
-			{
-				Description: "testlocationdescription",
-				Tags:        []string{"SIEBEL3", "ECEB2"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	event_info_updated := event_models.EventDB{
+		EventPublic: event_models.EventPublic{
+			ID:          event_id,
+			Name:        "testname",
+			Description: "testdescription2",
+			StartTime:   534545,
+			EndTime:     534545 + 60000,
+			Sponsor:     "testsponsor",
+			EventType:   "WORKSHOP",
+			Locations: []event_models.EventLocation{
+				{
+					Description: "testlocationdescription",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 200,
 		},
-		Points: 200,
+		IsPrivate: false,
 	}
 
-	received_event = event_models.Event{}
+	received_event = event_models.EventDB{}
 	response, err = staff_client.New().Put("/event/").BodyJSON(event_info_updated).ReceiveSuccess(&received_event)
 
 	if err != nil {
@@ -308,7 +320,7 @@ func TestStaffActions(t *testing.T) {
 	// 3. Fetch event
 	endpoint_address := fmt.Sprintf("/event/%s/", event_id)
 
-	received_event = event_models.Event{}
+	received_event = event_models.EventDB{}
 	response, err = staff_client.New().Get(endpoint_address).ReceiveSuccess(&received_event)
 
 	if err != nil {

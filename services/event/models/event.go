@@ -1,6 +1,10 @@
 package models
 
-type Event struct {
+type Event interface {
+	EventPublic | EventDB
+}
+
+type EventPublic struct {
 	ID          string          `json:"id"                  validate:"required"`
 	Name        string          `json:"name"                validate:"required"`
 	Description string          `json:"description"         validate:"required"`
@@ -11,6 +15,12 @@ type Event struct {
 	EventType   string          `json:"eventType"           validate:"required,oneof=MEAL SPEAKER WORKSHOP MINIEVENT QNA OTHER"`
 	Points      int             `json:"points"`
 	IsAsync     bool            `json:"isAsync"`
+}
+
+// Struct to encapsulate hidden fields
+type EventDB struct {
+	EventPublic `bson:",inline"`
+	IsPrivate   bool `json:"isPrivate"`
 }
 
 type EventLocation struct {

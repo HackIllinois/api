@@ -87,7 +87,8 @@ func TestGetAllEventsNormal(t *testing.T) {
 					},
 					Points: 50,
 				},
-				IsPrivate: true,
+				IsPrivate:             true,
+				DisplayOnStaffCheckin: false,
 			},
 			{
 				EventPublic: models.EventPublic{
@@ -108,7 +109,8 @@ func TestGetAllEventsNormal(t *testing.T) {
 					},
 					Points: 0,
 				},
-				IsPrivate: false,
+				IsPrivate:             false,
+				DisplayOnStaffCheckin: true,
 			},
 		},
 	}

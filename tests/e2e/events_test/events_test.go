@@ -148,7 +148,8 @@ func CreateEvents() {
 			},
 			Points: 50,
 		},
-		IsPrivate: true,
+		IsPrivate:             true,
+		DisplayOnStaffCheckin: false,
 	}
 
 	event2 := event_models.EventDB{
@@ -170,7 +171,8 @@ func CreateEvents() {
 			},
 			Points: 0,
 		},
-		IsPrivate: false,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: true,
 	}
 
 	client.Database(events_db_name).Collection("events").InsertOne(context.Background(), event1)

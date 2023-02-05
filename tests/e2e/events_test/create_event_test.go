@@ -30,7 +30,8 @@ func TestCreateEventNormal(t *testing.T) {
 			},
 			Points: 50,
 		},
-		IsPrivate: false,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: true,
 	}
 	received_event := models.EventDB{}
 	response, err := staff_client.New().Post("/event/").BodyJSON(event_info).ReceiveSuccess(&received_event)
@@ -87,7 +88,8 @@ func TestCreateEventForbidden(t *testing.T) {
 			},
 			Points: 50,
 		},
-		IsPrivate: false,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: true,
 	}
 
 	response, err := user_client.New().Post("/event/").BodyJSON(event_info).Receive(nil, nil)

@@ -23,9 +23,9 @@ Request requires no body.
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
-    "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234"
+    "discord": "patrick#1234",
+    "foodWave": 1
 }
 
 ```
@@ -43,9 +43,9 @@ Request requires no body.
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
-    "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234"
+    "discord": "patrick#1234",
+    "foodWave": 1
 }
 ```
 
@@ -79,18 +79,18 @@ Request requires no body.
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
-            "timezone": "Americas UTC+8",
             "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234"
+            "discord": "patrick#1234",
+            "foodWave": 1
         },
         {
             "id": "profileid123456",
             "firstName": "John",
             "lastName": "Doe",
             "points": 2021,
-            "timezone": "Americas UTC+8",
             "avatarUrl": "https://github.com/.../profile.jpg",
-            "discord": "patrick#1234"
+            "discord": "patrick#1234",
+            "foodWave": 2
         },
     ]
 }
@@ -99,13 +99,17 @@ Request requires no body.
 POST /profile/
 -------------------
 
-Creates a profile for the currently authenticated user (determined by the JWT in the `Authorization` header).
+Creates a profile for the currently authenticated user (determined by the JWT in the `Authorization`
+header).
+
+!!! warning
+    You cannot set `points` or `foodWave` to any value. Both these fields will default to `0`. If
+    you want to edit these fields, call `PUT /profile/`.
 
 ```json title="Example request"
 {
     "firstName": "John",
     "lastName": "Doe",
-    "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
     "discord": "patrick#1234"
 }
@@ -116,26 +120,28 @@ Creates a profile for the currently authenticated user (determined by the JWT in
     "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
-    "points": 2021,
+    "points": 0,
     "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234"
+    "discord": "patrick#1234",
+    "foodWave": 0
 }
 ```
 
 PUT /profile/
 ------------------
 
-Updates the profile for the currently authenticated user (determined by the JWT in the `Authorization` header).
+Updates the profile for the currently authenticated user (determined by the JWT in the
+`Authorization` header).
 
 !!! warning
-    You can not edit the `points` field through this (for security reasons)
+    If the user is not a Staff or Admin, they cannot edit the `points` or `foodWave` field through
+    this (for security reasons)
 
 ```json title="Example request"
 {
     "firstName": "John",
     "lastName": "Doe",
-    "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
     "discord": "patrick#1234"
 }
@@ -147,9 +153,9 @@ Updates the profile for the currently authenticated user (determined by the JWT 
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
-    "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234"
+    "discord": "patrick#1234",
+    "foodWave": 2
 }
 ```
 
@@ -170,9 +176,9 @@ Request requires no body.
     "firstName": "John",
     "lastName": "Doe",
     "points": 2021,
-    "timezone": "Americas UTC+8",
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234"
+    "discord": "patrick#1234",
+    "foodWave": 2
 }
 ```
 
@@ -292,11 +298,10 @@ Note: here, the "id" actually refers to the user id, not the profile id (hence `
     "id": "profileid123456",
     "firstName": "John",
     "lastName": "Doe",
-    "points": 2021,
-    "timezone": "Americas UTC+8",
+    "points": 10,
     "avatarUrl": "https://github.com/.../profile.jpg",
-    "discord": "patrick#1234"
-    "points": 10
+    "discord": "patrick#1234",
+    "foodWave": 2
 }
 ```
 

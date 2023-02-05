@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/HackIllinois/api/common/authtoken"
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/common/utils"
@@ -47,14 +48,12 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("HackIllinois-Identity")
 
 	profile_id, err := service.GetProfileIdFromUserId(id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
 		return
 	}
 
 	user_profile, err := service.GetProfile(profile_id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get current user's profile."))
 		return
@@ -70,7 +69,6 @@ func GetProfileById(w http.ResponseWriter, r *http.Request) {
 	profile_id := mux.Vars(r)["id"]
 
 	user_profile, err := service.GetProfile(profile_id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile for profile id "+profile_id))
 		return
@@ -102,6 +100,9 @@ func CreateProfile(w http.ResponseWriter, r *http.Request) {
 	var profile models.Profile
 	json.NewDecoder(r.Body).Decode(&profile)
 
+	profile.Points = 0
+	profile.FoodWave = 0
+
 	err = service.CreateProfile(id, profile_id, profile)
 
 	if err != nil {
@@ -110,7 +111,6 @@ func CreateProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	created_profile, err := service.GetProfile(profile_id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get created profile."))
 		return
@@ -131,7 +131,6 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	profile_id, err := service.GetProfileIdFromUserId(id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
 		return
@@ -141,14 +140,19 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&profile)
 
 	old_profile, err := service.GetProfile(profile_id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile associated with this profile id."))
 		return
 	}
 
-	if profile.Points != old_profile.Points {
+	is_staff := authtoken.IsRequestFromStaffOrHigher(r)
+
+	if !is_staff {
 		profile.Points = old_profile.Points
+	}
+
+	if !is_staff || profile.FoodWave == 0 {
+		profile.FoodWave = old_profile.FoodWave
 	}
 
 	err = service.UpdateProfile(profile_id, profile)
@@ -159,7 +163,6 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updated_profile, err := service.GetProfile(profile_id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated profile details."))
 		return
@@ -253,16 +256,21 @@ func RedeemEvent(w http.ResponseWriter, r *http.Request) {
 	id := request.ID
 
 	profile_id, err := service.GetProfileIdFromUserId(id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
 		return
 	}
 
 	redemption_status, err := service.RedeemEvent(profile_id, request.EventID)
-
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not check if event was redeemed for id "+request.ID+" and event id "+request.EventID+". "+redemption_status.Status))
+		errors.WriteError(
+			w,
+			r,
+			errors.DatabaseError(
+				err.Error(),
+				"Could not check if event was redeemed for id "+request.ID+" and event id "+request.EventID+". "+redemption_status.Status,
+			),
+		)
 		return
 	}
 
@@ -279,16 +287,18 @@ func AwardPoints(w http.ResponseWriter, r *http.Request) {
 	id := request.ID
 
 	profile_id, err := service.GetProfileIdFromUserId(id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
 		return
 	}
 
 	user_profile, err := service.GetProfile(profile_id)
-
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile for id "+request.ID+" when trying to award points."))
+		errors.WriteError(
+			w,
+			r,
+			errors.DatabaseError(err.Error(), "Could not get profile for id "+request.ID+" when trying to award points."),
+		)
 		return
 	}
 
@@ -302,9 +312,12 @@ func AwardPoints(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updated_profile, err := service.GetProfile(profile_id)
-
 	if err != nil {
-		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated profile details after awarding points."))
+		errors.WriteError(
+			w,
+			r,
+			errors.DatabaseError(err.Error(), "Could not get updated profile details after awarding points."),
+		)
 		return
 	}
 
@@ -323,14 +336,12 @@ func GetProfileFavorites(w http.ResponseWriter, r *http.Request) {
 	}
 
 	profile_id, err := service.GetProfileIdFromUserId(id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
 		return
 	}
 
 	favorites, err := service.GetProfileFavorites(profile_id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's profile favorites."))
 		return
@@ -351,7 +362,6 @@ func AddProfileFavorite(w http.ResponseWriter, r *http.Request) {
 	}
 
 	profile_id, err := service.GetProfileIdFromUserId(id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
 		return
@@ -368,7 +378,6 @@ func AddProfileFavorite(w http.ResponseWriter, r *http.Request) {
 	}
 
 	favorites, err := service.GetProfileFavorites(profile_id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated user profile favorites."))
 		return
@@ -389,7 +398,6 @@ func RemoveProfileFavorite(w http.ResponseWriter, r *http.Request) {
 	}
 
 	profile_id, err := service.GetProfileIdFromUserId(id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get profile id associated with the user"))
 		return
@@ -406,7 +414,6 @@ func RemoveProfileFavorite(w http.ResponseWriter, r *http.Request) {
 	}
 
 	favorites, err := service.GetProfileFavorites(profile_id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get updated user profile favorites."))
 		return

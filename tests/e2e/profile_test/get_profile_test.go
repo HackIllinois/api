@@ -16,9 +16,9 @@ func TestGetProfile(t *testing.T) {
 		FirstName: "John",
 		LastName:  "Smith",
 		Points:    5,
-		Timezone:  "CST",
 		Discord:   "discord",
 		AvatarUrl: "url",
+		FoodWave:  2,
 	}
 	client.Database(profile_db_name).Collection("profiles").InsertOne(context.Background(), profile_info)
 
@@ -26,7 +26,6 @@ func TestGetProfile(t *testing.T) {
 
 	received_profile := profile_models.Profile{}
 	response, err := admin_client.New().Get(endpoint_address).ReceiveSuccess(&received_profile)
-
 	if err != nil {
 		t.Fatalf("Unable to make request")
 	}
@@ -39,15 +38,14 @@ func TestGetProfile(t *testing.T) {
 }
 
 func TestUnauthenticatedGetProfile(t *testing.T) {
-
 	profile_info := profile_models.Profile{
 		ID:        "12345",
 		FirstName: "John",
 		LastName:  "Smith",
 		Points:    5,
-		Timezone:  "CST",
 		Discord:   "discord",
 		AvatarUrl: "url",
+		FoodWave:  1,
 	}
 	client.Database(profile_db_name).Collection("profiles").InsertOne(context.Background(), profile_info)
 
@@ -55,7 +53,6 @@ func TestUnauthenticatedGetProfile(t *testing.T) {
 
 	received_profile := profile_models.Profile{}
 	response, err := unauthenticated_client.New().Get(endpoint_address).ReceiveSuccess(&received_profile)
-
 	if err != nil {
 		t.Fatalf("Unable to make request")
 	}
@@ -70,7 +67,6 @@ func TestNonExistantGetProfile(t *testing.T) {
 
 	recieved_profile := profile_models.Profile{}
 	response, err := admin_client.New().Get(endpoint_address).ReceiveSuccess(&recieved_profile)
-
 	if err != nil {
 		t.Fatalf("Unable to make request")
 	}

@@ -222,6 +222,8 @@ func CreateProfile() {
 		FirstName: "HackIllinois",
 		LastName:  "Admin",
 		Points:    0,
+		Discord:   "hackillinois#0001",
+		AvatarUrl: "https://avatarurl.local/test.png",
 	}
 
 	client.Database(profile_db_name).Collection("profiles").InsertOne(context.Background(), profile)

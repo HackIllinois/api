@@ -22,7 +22,7 @@ import (
 )
 
 var (
-  admin_client *sling.Sling
+	admin_client  *sling.Sling
 	staff_client  *sling.Sling
 	public_client *sling.Sling
 	user_client   *sling.Sling
@@ -33,7 +33,7 @@ var (
 	events_db_name  string
 	profile_db_name string
 	checkin_db_name string
-  user_db_name string
+	user_db_name    string
 )
 
 var TOKEN_SECRET []byte

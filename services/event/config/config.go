@@ -6,8 +6,10 @@ import (
 	"github.com/HackIllinois/api/common/configloader"
 )
 
-var EVENT_DB_HOST string
-var EVENT_DB_NAME string
+var (
+	EVENT_DB_HOST string
+	EVENT_DB_NAME string
+)
 
 var EVENT_PORT string
 
@@ -19,7 +21,6 @@ var EVENT_CHECKIN_TIME_RESTRICTED bool
 
 func Initialize() error {
 	cfg_loader, err := configloader.Load(os.Getenv("HI_CONFIG"))
-
 	if err != nil {
 		return err
 	}
@@ -55,7 +56,6 @@ func Initialize() error {
 	}
 
 	checkin_time_res_str, err := cfg_loader.Get("EVENT_CHECKIN_TIME_RESTRICTED")
-
 	if err != nil {
 		return err
 	}

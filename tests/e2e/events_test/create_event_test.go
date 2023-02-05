@@ -12,26 +12,29 @@ import (
 
 func TestCreateEventNormal(t *testing.T) {
 	defer ClearEvents()
-	event_info := models.Event{
-		Name:        "testevent1",
-		Description: "testdescription1",
-		StartTime:   current_unix_time,
-		EndTime:     current_unix_time + 60000,
-		Sponsor:     "testsponsor1",
-		EventType:   "WORKSHOP",
-		Locations: []models.EventLocation{
-			{
-				Description: "testlocationdescription1",
-				Tags:        []string{"SIEBEL3", "ECEB2"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	event_info := models.EventDB{
+		EventPublic: models.EventPublic{
+			Name:        "testevent1",
+			Description: "testdescription1",
+			StartTime:   current_unix_time,
+			EndTime:     current_unix_time + 60000,
+			Sponsor:     "testsponsor1",
+			EventType:   "WORKSHOP",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription1",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 50,
 		},
-		Points: 50,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: true,
 	}
-	received_event := models.Event{}
+	received_event := models.EventDB{}
 	response, err := staff_client.New().Post("/event/").BodyJSON(event_info).ReceiveSuccess(&received_event)
-
 	if err != nil {
 		t.Fatal("Unable to make request")
 		return
@@ -48,7 +51,7 @@ func TestCreateEventNormal(t *testing.T) {
 	}
 
 	cursor, _ := client.Database(events_db_name).Collection("events").Find(context.Background(), bson.D{})
-	res := []models.Event{}
+	res := []models.EventDB{}
 	err = cursor.All(context.TODO(), &res)
 
 	if err != nil {
@@ -56,7 +59,7 @@ func TestCreateEventNormal(t *testing.T) {
 		return
 	}
 
-	expected_res := []models.Event{
+	expected_res := []models.EventDB{
 		event_info,
 	}
 
@@ -67,26 +70,29 @@ func TestCreateEventNormal(t *testing.T) {
 
 func TestCreateEventForbidden(t *testing.T) {
 	defer ClearEvents()
-	event_info := models.Event{
-		Name:        "testevent1",
-		Description: "testdescription1",
-		StartTime:   current_unix_time,
-		EndTime:     current_unix_time + 60000,
-		Sponsor:     "testsponsor1",
-		EventType:   "WORKSHOP",
-		Locations: []models.EventLocation{
-			{
-				Description: "testlocationdescription1",
-				Tags:        []string{"SIEBEL3", "ECEB2"},
-				Latitude:    123.456,
-				Longitude:   123.456,
+	event_info := models.EventDB{
+		EventPublic: models.EventPublic{
+			Name:        "testevent1",
+			Description: "testdescription1",
+			StartTime:   current_unix_time,
+			EndTime:     current_unix_time + 60000,
+			Sponsor:     "testsponsor1",
+			EventType:   "WORKSHOP",
+			Locations: []models.EventLocation{
+				{
+					Description: "testlocationdescription1",
+					Tags:        []string{"SIEBEL3", "ECEB2"},
+					Latitude:    123.456,
+					Longitude:   123.456,
+				},
 			},
+			Points: 50,
 		},
-		Points: 50,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: true,
 	}
 
 	response, err := user_client.New().Post("/event/").BodyJSON(event_info).Receive(nil, nil)
-
 	if err != nil {
 		t.Fatal("Unable to make request")
 		return
@@ -97,7 +103,7 @@ func TestCreateEventForbidden(t *testing.T) {
 	}
 
 	cursor, _ := client.Database(events_db_name).Collection("events").Find(context.Background(), bson.D{})
-	res := []models.Event{}
+	res := []models.EventDB{}
 	err = cursor.All(context.TODO(), &res)
 
 	if err != nil {
@@ -105,7 +111,7 @@ func TestCreateEventForbidden(t *testing.T) {
 		return
 	}
 
-	expected_res := []models.Event{}
+	expected_res := []models.EventDB{}
 
 	if !reflect.DeepEqual(res, expected_res) {
 		t.Fatalf("Database contained wrong event info. Expected %v, got %v", expected_res, res)

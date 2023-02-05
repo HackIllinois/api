@@ -32,7 +32,8 @@ func AddAdditionalEvents() {
 			},
 			Points: 1337,
 		},
-		IsPrivate: false,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: false,
 	}
 
 	event4 := models.EventDB{
@@ -54,7 +55,8 @@ func AddAdditionalEvents() {
 			},
 			Points: 0,
 		},
-		IsPrivate: false,
+		IsPrivate:             false,
+		DisplayOnStaffCheckin: true,
 	}
 
 	client.Database(events_db_name).Collection("events").InsertOne(context.Background(), event3)
@@ -164,7 +166,8 @@ func TestGetFilteredAllEventsAsStaff(t *testing.T) {
 					},
 					Points: 50,
 				},
-				IsPrivate: true,
+				IsPrivate:             true,
+				DisplayOnStaffCheckin: false,
 			},
 		},
 	}
@@ -210,7 +213,8 @@ func TestGetFilteredAllEventsNoFilter(t *testing.T) {
 					},
 					Points: 50,
 				},
-				IsPrivate: true,
+				IsPrivate:             true,
+				DisplayOnStaffCheckin: false,
 			},
 			{
 				EventPublic: models.EventPublic{
@@ -231,7 +235,8 @@ func TestGetFilteredAllEventsNoFilter(t *testing.T) {
 					},
 					Points: 0,
 				},
-				IsPrivate: false,
+				IsPrivate:             false,
+				DisplayOnStaffCheckin: true,
 			},
 		},
 	}
@@ -685,6 +690,76 @@ func TestGetFilteredPrivateEventsAsPublic(t *testing.T) {
 	}
 }
 
+func TestGetFilteredDisplayStaffCheckinEventsAsStaff(t *testing.T) {
+	CreateEvents()
+	AddAdditionalEvents()
+	defer ClearEvents()
+
+	received_events := models.EventList[models.EventDB]{}
+	response, err := staff_client.New().Get("/event/filter/?displayOnStaffCheckin=true").ReceiveSuccess(&received_events)
+	if err != nil {
+		t.Fatal("Unable to make request")
+		return
+	}
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("Request returned HTTP error %d", response.StatusCode)
+		return
+	}
+
+	expected_events := models.EventList[models.EventDB]{
+		Events: []models.EventDB{
+			{
+				EventPublic: models.EventPublic{
+					ID:          TEST_EVENT_2_ID,
+					Name:        "testevent2",
+					Description: "testdescription2",
+					StartTime:   current_unix_time + 60000,
+					EndTime:     current_unix_time + 120000,
+					Sponsor:     "",
+					EventType:   "FOOD",
+					Locations: []models.EventLocation{
+						{
+							Description: "testlocationdescription2",
+							Tags:        []string{"SIEBEL3", "ECEB2"},
+							Latitude:    123.456,
+							Longitude:   123.456,
+						},
+					},
+					Points: 0,
+				},
+				IsPrivate:             false,
+				DisplayOnStaffCheckin: true,
+			},
+			{
+				EventPublic: models.EventPublic{
+					ID:          "testeventid4",
+					Name:        "eventdinner",
+					Description: "Get your dinner!",
+					StartTime:   current_unix_time + 240000,
+					EndTime:     current_unix_time + 300000,
+					Sponsor:     "",
+					EventType:   "FOOD",
+					Locations: []models.EventLocation{
+						{
+							Description: "testlocationdescription4",
+							Tags:        []string{"SIEBEL3", "ECEB2"},
+							Latitude:    123.456,
+							Longitude:   123.456,
+						},
+					},
+					Points: 0,
+				},
+				IsPrivate:             false,
+				DisplayOnStaffCheckin: true,
+			},
+		},
+	}
+
+	if !reflect.DeepEqual(received_events, expected_events) {
+		t.Fatalf("Wrong event info. Expected %v, got %v", expected_events, received_events)
+	}
+}
+
 func TestGetFilteredPrivateEventsAsStaff(t *testing.T) {
 	CreateEvents()
 	defer ClearEvents()
@@ -721,7 +796,8 @@ func TestGetFilteredPrivateEventsAsStaff(t *testing.T) {
 					},
 					Points: 50,
 				},
-				IsPrivate: true,
+				IsPrivate:             true,
+				DisplayOnStaffCheckin: false,
 			},
 		},
 	}

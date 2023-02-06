@@ -491,7 +491,7 @@ Valid values for `status` are `Success`, `InvalidEventId`, `BadUserToken`, `Alre
     "rsvpData": {
         "id": "github0123456",
         "isAttending": true,
-        "registrationData": {}
+        "registrationData": { ... }
     }
 }
 ```

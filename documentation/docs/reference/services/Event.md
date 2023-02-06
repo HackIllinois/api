@@ -469,7 +469,12 @@ Valid values for `status` are `Success`, `InvalidEventId`, `BadUserToken`, `Alre
 	When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.
 
 !!! note
-	The `userToken` should be retrieved from the `userToken` field of a user QR code URI (`hackillinois://user?userToken=some_token`)
+    On status `Sucess` and `AlreadyCheckedIn`, the field `rsvpData` will be populated with the
+    user's RSVP data and registration data.
+
+!!! note
+	The user token `some_token` should be retrieved from the `userToken` field of a user QR code URI
+    (`hackillinois://user?userToken=some_token`)
 
 ```json title="Example request"
 {
@@ -483,6 +488,11 @@ Valid values for `status` are `Success`, `InvalidEventId`, `BadUserToken`, `Alre
     "newPoints": 10,
     "totalPoints": 10,
     "status": "Success"
+    "rsvpData": {
+        "id": "github0123456",
+        "isAttending": true,
+        "registrationData": {}
+    }
 }
 ```
 

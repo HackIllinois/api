@@ -618,5 +618,17 @@ func CheckinUserTokenToEvent(user_token string, event_id string) (*models.Checki
 		return NewCheckinResponseFailed("InvalidEventId"), nil
 	}
 
-	return PerformCheckin(user_id, event_id)
+	rsvp_data, err := GetRsvpData(user_id)
+	if err != nil {
+		return nil, errors.New("Failed to fetch RSVP data")
+	}
+
+	status, err := PerformCheckin(user_id, event_id)
+	if err != nil {
+		return nil, err
+	}
+
+	status.RsvpData = rsvp_data
+
+	return status, nil
 }

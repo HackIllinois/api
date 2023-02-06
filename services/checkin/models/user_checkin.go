@@ -1,7 +1,8 @@
 package models
 
 type UserCheckin struct {
-	ID              string                 `json:"id"`
+	UserToken       string                 `json:"userToken" bson:"-" validate:"required"`
+	ID              string                 `json:"id" validate:"omitempty"`
 	Override        bool                   `json:"override"`
 	HasCheckedIn    bool                   `json:"hasCheckedIn"`
 	HasPickedUpSwag bool                   `json:"hasPickedUpSwag"`

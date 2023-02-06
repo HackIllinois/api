@@ -119,3 +119,6 @@ jobs:
     if: "github.ref == 'refs/heads/master' || github.event_name == 'release'"
     needs: [deploy]
     uses: "./.github/workflows/deployment.yml"
+    secrets:
+      ECS_AWS_ACCESS_KEY_ID: ${{ secrets.ECS_AWS_ACCESS_KEY_ID }}
+      ECS_AWS_SECRET_ACCESS_KEY: ${{ secrets.ECS_AWS_SECRET_ACCESS_KEY }}

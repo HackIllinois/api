@@ -12,6 +12,24 @@ func GenerateSignedToken(secret []byte, data jwt.Claims) (string, error) {
 	return token.SignedString(secret)
 }
 
+func GenerateIdFromSignedToken(secret string, signed_token string) (string, error) {
+	token, err := jwt.Parse(signed_token, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return secret, nil
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	id := token.Claims.(jwt.MapClaims)["userId"]
+
+	return id.(string), nil
+
+}
+
 func ExtractFieldFromJWT(secret string, token_string string, field string) ([]string, error) {
 	token, err := jwt.Parse(token_string, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

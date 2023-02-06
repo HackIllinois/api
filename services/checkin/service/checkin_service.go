@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 
+	common_config "github.com/HackIllinois/api/common/config"
 	"github.com/HackIllinois/api/common/database"
 	"github.com/HackIllinois/api/common/utils"
 	"github.com/HackIllinois/api/services/checkin/config"
@@ -28,7 +29,7 @@ func Initialize() error {
 }
 
 /*
-	Returns the checkin associated with the given user id
+Returns the checkin associated with the given user id
 */
 func GetUserCheckin(id string) (*models.UserCheckin, error) {
 	query := database.QuerySelector{
@@ -46,10 +47,16 @@ func GetUserCheckin(id string) (*models.UserCheckin, error) {
 }
 
 /*
-	Create the checkin associated with the given user id
+Create the checkin associated with the given user id
 */
-func CreateUserCheckin(id string, user_checkin models.UserCheckin) error {
-	_, err := GetUserCheckin(id)
+func CreateUserCheckin(signed_token string, user_checkin models.UserCheckin) error {
+	id, err := utils.GenerateIdFromSignedToken(signed_token, common_config.TOKEN_SECRET)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = GetUserCheckin(id)
 
 	if err != database.ErrNotFound {
 		if err != nil {
@@ -64,21 +71,27 @@ func CreateUserCheckin(id string, user_checkin models.UserCheckin) error {
 }
 
 /*
-	Update the checkin associated with the given user id
+Update the checkin associated with the given user id
 */
-func UpdateUserCheckin(id string, user_checkin models.UserCheckin) error {
+func UpdateUserCheckin(signed_token string, user_checkin models.UserCheckin) error {
+	id, err := utils.GenerateIdFromSignedToken(signed_token, common_config.TOKEN_SECRET)
+
+	if err != nil {
+		return err
+	}
+
 	selector := database.QuerySelector{
 		"id": id,
 	}
 
-	err := db.Replace("checkins", selector, &user_checkin, false, nil)
+	err = db.Replace("checkins", selector, &user_checkin, false, nil)
 
 	return err
 }
 
 /*
-	Returns true, nil if a user with specified ID is allowed to checkin, and false, nil if not allowed.
-	Sponsors, mentors, and those with staff overrides do not need an RSVP to check-in.
+Returns true, nil if a user with specified ID is allowed to checkin, and false, nil if not allowed.
+Sponsors, mentors, and those with staff overrides do not need an RSVP to check-in.
 */
 func CanUserCheckin(id string, user_has_override bool) (bool, error) {
 	is_user_registered, err := IsUserRegistered(id)
@@ -114,7 +127,7 @@ func CanUserCheckin(id string, user_has_override bool) (bool, error) {
 }
 
 /*
-	Returns a list of all checked in user IDs
+Returns a list of all checked in user IDs
 */
 func GetAllCheckedInUsers() (*models.CheckinList, error) {
 	query := database.QuerySelector{
@@ -137,7 +150,7 @@ func GetAllCheckedInUsers() (*models.CheckinList, error) {
 }
 
 /*
-	Returns all checkin stats
+Returns all checkin stats
 */
 func GetStats() (map[string]interface{}, error) {
 	return db.GetStats("checkins", []string{"override", "hascheckedin", "haspickedupswag"}, nil)

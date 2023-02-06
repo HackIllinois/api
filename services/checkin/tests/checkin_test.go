@@ -5,8 +5,10 @@ import (
 	"os"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/HackIllinois/api/common/database"
+	auth_service "github.com/HackIllinois/api/services/auth/service"
 	"github.com/HackIllinois/api/services/checkin/config"
 	"github.com/HackIllinois/api/services/checkin/models"
 	"github.com/HackIllinois/api/services/checkin/service"
@@ -43,7 +45,7 @@ func TestMain(m *testing.M) {
 }
 
 /*
-	Initialize db with test checkin info
+Initialize db with test checkin info
 */
 func SetupTestDB(t *testing.T) {
 	checkin := models.UserCheckin{
@@ -61,7 +63,7 @@ func SetupTestDB(t *testing.T) {
 }
 
 /*
-	Drop test db
+Drop test db
 */
 func CleanupTestDB(t *testing.T) {
 	err := db.DropDatabase(nil)
@@ -72,7 +74,7 @@ func CleanupTestDB(t *testing.T) {
 }
 
 /*
-	Service level test for getting user checkin from db
+Service level test for getting user checkin from db
 */
 func TestGetUserCheckinService(t *testing.T) {
 	SetupTestDB(t)
@@ -98,7 +100,7 @@ func TestGetUserCheckinService(t *testing.T) {
 }
 
 /*
-	Service level test for creating user checkin in the db
+Service level test for creating user checkin in the db
 */
 func TestCreateUserCheckinService(t *testing.T) {
 	SetupTestDB(t)
@@ -110,7 +112,14 @@ func TestCreateUserCheckinService(t *testing.T) {
 		RsvpData:        map[string]interface{}{},
 	}
 
-	err := service.CreateUserCheckin("testid2", new_checkin)
+	exp := time.Now().Add(time.Second * 20).Unix()
+	signed_token, err := auth_service.MakeCheckinToken(new_checkin.ID, exp, new_checkin.HasCheckedIn, new_checkin.HasPickedUpSwag, new_checkin.RsvpData, auth_config.TOKEN_SECRET)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = service.CreateUserCheckin("testid2", new_checkin)
 
 	if err != nil {
 		t.Fatal(err)
@@ -137,7 +146,7 @@ func TestCreateUserCheckinService(t *testing.T) {
 }
 
 /*
-	Service level test for updating user checkin in the db
+Service level test for updating user checkin in the db
 */
 func TestUpdateUserCheckinService(t *testing.T) {
 	SetupTestDB(t)
@@ -176,7 +185,7 @@ func TestUpdateUserCheckinService(t *testing.T) {
 }
 
 /*
-	Service level test for getting list of all checked in users
+Service level test for getting list of all checked in users
 */
 func TestGetAllCheckedInUsersService(t *testing.T) {
 	SetupTestDB(t)

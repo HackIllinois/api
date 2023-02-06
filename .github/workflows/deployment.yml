@@ -15,6 +15,7 @@ on:
         description: 'Service name (multiple services separated by a space), e.g. "auth", "auth checkin", "decision", "event", "gateway", "mail", "notifications", "profile", "project", "registration", "rsvp", "stat", "upload", "user"'
         required: false
         default: 'auth checkin decision event gateway mail notifications profile project registration rsvp stat upload user'
+    secrets: inherit
 
 defaults:
   run:

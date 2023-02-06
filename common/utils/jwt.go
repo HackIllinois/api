@@ -43,6 +43,8 @@ func ExtractFieldFromJWT(secret string, token_string string, field string) ([]st
 
 		var data []string
 		switch elem := claims[field].(type) {
+		case float64:
+			data = append(data, fmt.Sprintf("%f", elem))
 		case []interface{}:
 			for _, item := range elem {
 				data = append(data, item.(string))

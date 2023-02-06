@@ -13,6 +13,7 @@ import (
 	"github.com/HackIllinois/api/common/configloader"
 	event_models "github.com/HackIllinois/api/services/event/models"
 	profile_models "github.com/HackIllinois/api/services/profile/models"
+	user_models "github.com/HackIllinois/api/services/user/models"
 	"github.com/HackIllinois/api/tests/common"
 	"github.com/dghubble/sling"
 	"go.mongodb.org/mongo-driver/bson"
@@ -21,6 +22,7 @@ import (
 )
 
 var (
+	admin_client  *sling.Sling
 	staff_client  *sling.Sling
 	public_client *sling.Sling
 	user_client   *sling.Sling
@@ -31,6 +33,7 @@ var (
 	events_db_name  string
 	profile_db_name string
 	checkin_db_name string
+	user_db_name    string
 )
 
 var TOKEN_SECRET []byte
@@ -56,6 +59,7 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
+	admin_client = common.GetSlingClient("Admin")
 	staff_client = common.GetSlingClient("Staff")
 	public_client = common.GetSlingClient("")
 	user_client = common.GetSlingClient("User")
@@ -73,6 +77,11 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 	checkin_db_name, err = cfg.Get("CHECKIN_DB_NAME")
+	if err != nil {
+		fmt.Printf("ERROR: %v\n", err)
+		os.Exit(1)
+	}
+	user_db_name, err = cfg.Get("USER_DB_NAME")
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
@@ -96,6 +105,7 @@ func ResetDatabase() {
 	client.Database(events_db_name).Drop(context.Background())
 	client.Database(profile_db_name).Drop(context.Background())
 	client.Database(checkin_db_name).Drop(context.Background())
+	client.Database(user_db_name).Drop(context.Background())
 
 	{
 		// establishes unique id indexes to prevent duplicate documents
@@ -235,6 +245,18 @@ func CreateProfile() {
 	client.Database(profile_db_name).Collection("profileids").InsertOne(context.Background(), userid_profileid)
 }
 
+func CreateUserInfo() {
+	user_info := user_models.UserInfo{
+		ID:        TEST_USER_ID,
+		Username:  "Bob",
+		FirstName: "Bob",
+		LastName:  "Ross",
+		Email:     "bob@ross.com",
+	}
+
+	client.Database(user_db_name).Collection("info").InsertOne(context.Background(), user_info)
+}
+
 func ClearProfiles() {
 	client.Database(profile_db_name).Collection("profiles").DeleteMany(context.Background(), bson.D{})
 	client.Database(profile_db_name).Collection("profileids").DeleteMany(context.Background(), bson.D{})
@@ -247,6 +269,10 @@ func ClearEvents() {
 	client.Database(events_db_name).Collection("usertrackers").DeleteMany(context.Background(), bson.D{})
 	client.Database(events_db_name).Collection("eventcodes").DeleteMany(context.Background(), bson.D{})
 	client.Database(events_db_name).Collection("favorites").DeleteMany(context.Background(), bson.D{})
+}
+
+func ClearUserInfo() {
+	client.Database(user_db_name).Collection("info").DeleteMany(context.Background(), bson.D{})
 }
 
 func TestStaffActions(t *testing.T) {

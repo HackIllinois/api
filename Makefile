@@ -80,7 +80,7 @@ fmt:
 
 # Builds a docker container with the API binary
 .PHONY: container
-container: api
+container:
 	@echo 'Builing API container'
 	@mkdir -p $(REPO_ROOT)/build
 	@cp $(REPO_ROOT)/bin/hackillinois-api $(REPO_ROOT)/build/hackillinois-api

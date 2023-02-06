@@ -15,7 +15,11 @@ on:
         description: 'Service name (multiple services separated by a space), e.g. "auth", "auth checkin", "decision", "event", "gateway", "mail", "notifications", "profile", "project", "registration", "rsvp", "stat", "upload", "user"'
         required: false
         default: 'auth checkin decision event gateway mail notifications profile project registration rsvp stat upload user'
-    secrets: inherit
+    secrets:
+      ECS_AWS_ACCESS_KEY_ID:
+        required: true
+      ECS_AWS_SECRET_ACCESS_KEY:
+        required: true
 
 defaults:
   run:

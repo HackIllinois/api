@@ -1,10 +1,7 @@
 package config
 
 import (
-	"fmt"
 	"os"
-
-	"github.com/golang-jwt/jwt/v4"
 
 	"github.com/HackIllinois/api/common/configloader"
 )
@@ -51,21 +48,4 @@ func Initialize() error {
 	}
 
 	return nil
-}
-
-func GenerateIdFromSignedToken(signed_token string) (interface{}, error) {
-	token, err := jwt.Parse(signed_token, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return []byte(TOKEN_SECRET), nil
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	id := token.Claims.(jwt.MapClaims)["userId"]
-
-	return id, err
 }

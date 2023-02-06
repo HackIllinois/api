@@ -38,22 +38,15 @@ func Initialize() error {
 }
 
 /*
-Returns the info associated with the given signed user token
+Returns the info associated with the given user id
 */
-func GetUserInfo(signed_token string, sessCtx *mongo.SessionContext) (*models.UserInfo, error) {
-
-	id, err := common_config.GenerateIdFromSignedToken(signed_token)
-
-	if err != nil {
-		return nil, err
-	}
-
+func GetUserInfo(id string, sessCtx *mongo.SessionContext) (*models.UserInfo, error) {
 	query := database.QuerySelector{
 		"id": id,
 	}
 
 	var user_info models.UserInfo
-	err = db.FindOne("info", query, &user_info, sessCtx)
+	err := db.FindOne("info", query, &user_info, sessCtx)
 
 	if err != nil {
 		return nil, err
@@ -66,19 +59,12 @@ func GetUserInfo(signed_token string, sessCtx *mongo.SessionContext) (*models.Us
 Set the info associated with the given user id
 The record will be created if it does not already exist
 */
-func SetUserInfo(signed_token string, user_info models.UserInfo, sessCtx *mongo.SessionContext) error {
-
-	id, err := common_config.GenerateIdFromSignedToken(signed_token)
-
-	if err != nil {
-		return err
-	}
-
+func SetUserInfo(id string, user_info models.UserInfo, sessCtx *mongo.SessionContext) error {
 	selector := database.QuerySelector{
 		"id": id,
 	}
 
-	err = db.Replace("info", selector, user_info, true, sessCtx)
+	err := db.Replace("info", selector, user_info, true, sessCtx)
 
 	return err
 }

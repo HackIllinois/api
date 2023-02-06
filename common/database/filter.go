@@ -29,8 +29,18 @@ func GetFieldTypes(model interface{}) map[string]string {
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i)
 
-		json_name := strings.ToLower(field.Tag.Get("json"))
-		expected_types[json_name] = field.Type.String()
+		switch field.Type.Kind() {
+		case reflect.Struct: // allows for 1 level of struct embedding
+			// TODO: if you want more than 1 level, abstract this out into a local function and add a set backtrace limit (to prevent circular loops)
+			for i := 0; i < field.Type.NumField(); i++ {
+				tp := field.Type.Field(i)
+				json_name := strings.ToLower(tp.Tag.Get("json"))
+				expected_types[json_name] = tp.Type.String()
+			}
+		default:
+			json_name := strings.ToLower(field.Tag.Get("json"))
+			expected_types[json_name] = field.Type.String()
+		}
 	}
 
 	return expected_types

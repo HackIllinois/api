@@ -1,7 +1,53 @@
 Event
 =====
 
-The isAsync field for events is optional. If it is not specified or is false, then startTime and endTime are required. Otherwise, startTime and endTime are optional.
+The `isAsync` field for events is optional. If it is not specified or is false, then `startTime` and
+`endTime` are required. Otherwise, `startTime` and `endTime` are optional.
+
+The fields `isPrivate` and `displayOnStaffCheckin` are private are only visible to users that have
+the Staff or Admin role.
+
+```json title="Example struct a non-staff/non-admin will receive"
+{
+    "id": "93d91d48a5b111edafa10242ac120002",
+	"name": "Example Event 1",
+	"description": "This is a placeholder description",
+	"startTime": 1532202702,
+	"endTime": 1532212702,
+    "sponsor": "",
+	"eventType": "MEAL",
+    "locations": [
+		{
+	        "description": "Location info here",
+			"tags": ["SIEBEL3", "CIF"],
+			"latitude":    123.456,
+			"longitude":   123.456,
+		},
+	"points": 0,
+}
+```
+
+```json title="Example struct a staff/admin will receive"
+{
+    "id": "93d91d48a5b111edafa10242ac120002",
+	"name": "Example Event 1",
+	"description": "This is a placeholder description",
+	"startTime": 1532202702,
+	"endTime": 1532212702,
+    "sponsor": "",
+	"eventType": "MEAL",
+    "locations": [
+		{
+	        "description": "Location info here",
+			"tags": ["SIEBEL3", "CIF"],
+			"latitude":    123.456,
+			"longitude":   123.456,
+		},
+	"points": 0,
+	"isPrivate": false,
+	"displayOnStaffCheckin": true,
+}
+```
 
 GET /event/EVENTID/
 ---------------------

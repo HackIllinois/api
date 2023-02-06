@@ -14,15 +14,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var admin_client *sling.Sling
-var client *mongo.Client
-var profile_db_name string
-var unauthenticated_client *sling.Sling
+var (
+	admin_client           *sling.Sling
+	client                 *mongo.Client
+	profile_db_name        string
+	unauthenticated_client *sling.Sling
+)
 
 func TestMain(m *testing.M) {
-
 	cfg, err := configloader.Load(os.Getenv("HI_CONFIG"))
-
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
@@ -38,10 +38,14 @@ func TestMain(m *testing.M) {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
 	}
-	client.Database(profile_db_name).Drop(context.Background())
+	DropDatabases()
 
 	return_code := m.Run()
 	os.Exit(return_code)
+}
+
+func DropDatabases() {
+	client.Database(profile_db_name).Drop(context.Background())
 }
 
 func CheckDatabaseProfileNotFound(t *testing.T, filter bson.M) {

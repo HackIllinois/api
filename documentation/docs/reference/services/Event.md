@@ -1,7 +1,53 @@
 Event
 =====
 
-The isAsync field for events is optional. If it is not specified or is false, then startTime and endTime are required. Otherwise, startTime and endTime are optional.
+The `isAsync` field for events is optional. If it is not specified or is false, then `startTime` and
+`endTime` are required. Otherwise, `startTime` and `endTime` are optional.
+
+The fields `isPrivate` and `displayOnStaffCheckin` are private are only visible to users that have
+the Staff or Admin role.
+
+```json title="Example struct a non-staff/non-admin will receive"
+{
+    "id": "93d91d48a5b111edafa10242ac120002",
+	"name": "Example Event 1",
+	"description": "This is a placeholder description",
+	"startTime": 1532202702,
+	"endTime": 1532212702,
+    "sponsor": "",
+	"eventType": "MEAL",
+    "locations": [
+		{
+	        "description": "Location info here",
+			"tags": ["SIEBEL3", "CIF"],
+			"latitude":    123.456,
+			"longitude":   123.456,
+		},
+	"points": 0,
+}
+```
+
+```json title="Example struct a staff/admin will receive"
+{
+    "id": "93d91d48a5b111edafa10242ac120002",
+	"name": "Example Event 1",
+	"description": "This is a placeholder description",
+	"startTime": 1532202702,
+	"endTime": 1532212702,
+    "sponsor": "",
+	"eventType": "MEAL",
+    "locations": [
+		{
+	        "description": "Location info here",
+			"tags": ["SIEBEL3", "CIF"],
+			"latitude":    123.456,
+			"longitude":   123.456,
+		},
+	"points": 0,
+	"isPrivate": false,
+	"displayOnStaffCheckin": true,
+}
+```
 
 GET /event/EVENTID/
 ---------------------
@@ -423,7 +469,12 @@ Valid values for `status` are `Success`, `InvalidEventId`, `BadUserToken`, `Alre
 	When `status != Success`, the `newPoints` and `totalPoints` fields will equal `-1` and should be ignored.
 
 !!! note
-	The `userToken` should be retrieved from the `userToken` field of a user QR code URI (`hackillinois://user?userToken=some_token`)
+    On status `Sucess` and `AlreadyCheckedIn`, the field `rsvpData` will be populated with the
+    user's RSVP data and registration data.
+
+!!! note
+	The user token `some_token` should be retrieved from the `userToken` field of a user QR code URI
+    (`hackillinois://user?userToken=some_token`)
 
 ```json title="Example request"
 {
@@ -436,7 +487,12 @@ Valid values for `status` are `Success`, `InvalidEventId`, `BadUserToken`, `Alre
 {
     "newPoints": 10,
     "totalPoints": 10,
-    "status": "Success"
+    "status": "Success",
+    "rsvpData": {
+        "id": "github0123456",
+        "isAttending": true,
+        "registrationData": { ... }
+    }
 }
 ```
 

@@ -31,6 +31,7 @@ var (
 	events_db_name  string
 	profile_db_name string
 	checkin_db_name string
+	rsvp_db_name    string
 )
 
 var TOKEN_SECRET []byte
@@ -77,6 +78,11 @@ func TestMain(m *testing.M) {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
 	}
+	rsvp_db_name, err = cfg.Get("RSVP_DB_NAME")
+	if err != nil {
+		fmt.Printf("ERROR: %v\n", err)
+		os.Exit(1)
+	}
 	ResetDatabase()
 
 	token_secret_string, err := cfg.Get("TOKEN_SECRET")
@@ -96,6 +102,7 @@ func ResetDatabase() {
 	client.Database(events_db_name).Drop(context.Background())
 	client.Database(profile_db_name).Drop(context.Background())
 	client.Database(checkin_db_name).Drop(context.Background())
+	client.Database(rsvp_db_name).Drop(context.Background())
 
 	{
 		// establishes unique id indexes to prevent duplicate documents

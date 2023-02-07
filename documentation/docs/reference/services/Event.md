@@ -487,7 +487,7 @@ Valid values for `status` are `Success`, `InvalidEventId`, `BadUserToken`, `Alre
 {
     "newPoints": 10,
     "totalPoints": 10,
-    "status": "Success"
+    "status": "Success",
     "rsvpData": {
         "id": "github0123456",
         "isAttending": true,

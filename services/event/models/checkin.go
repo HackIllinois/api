@@ -9,9 +9,10 @@ type CheckinRequest struct {
 }
 
 type CheckinResponse struct {
-	NewPoints   int    `default:"-1" json:"newPoints"`
-	TotalPoints int    `default:"-1" json:"totalPoints"`
-	Status      string `json:"status"`
+	NewPoints   int                    `default:"-1" json:"newPoints"`
+	TotalPoints int                    `default:"-1" json:"totalPoints"`
+	Status      string                 `             json:"status"`
+	RsvpData    map[string]interface{} `             json:"rsvpData,omitempty"`
 }
 
 type RedeemEventRequest struct {

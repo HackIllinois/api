@@ -34,11 +34,17 @@ Request requires no body.
 POST /checkin/
 -----------
 
-Creates an checkin for the user with the `id` in the request body.
+Creates a checkin for the user with the associated user token `userToken` in the request body.
+
+!!! note
+    You will need a user token rather than a user id. User tokens are generated at the endpoints
+    `GET /user/qr/` and `GET /user/qr/USERID/`. If no token is provided, then the request will
+    `422`. If the token expires prior to when the request is received or the token is malformed,
+    then a response with status `403` with the message `"Bad user token."`.
 
 ```json title="Example request"
 {
-	"id": "github0000001",
+	"userToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJnaXRodWIwMDAwMDAxIiwiZXhwIjoxNjc1Nzc1MjMzfQ.tREyQsEaG4TamXYZx8gNkY40-2FOdCr9n8dLrbk2UN8",
 	"override": true,
 	"hasCheckedIn": true,
 	"hasPickedUpSwag": true
@@ -50,18 +56,25 @@ Creates an checkin for the user with the `id` in the request body.
 	"id": "github0000001",
 	"override": true,
 	"hasCheckedIn": true,
-	"hasPickedUpSwag": true
+	"hasPickedUpSwag": true,
+    "rsvpData": { ... }
 }
 ```
 
 PUT /checkin/
 ----------
 
-Updated the checkin for the user with the `id` in the request body.
+Updates the checkin for the user with the associated user token `userToken` in the request body.
+
+!!! note
+    You will need a user token rather than a user id. User tokens are generated at the endpoints
+    `GET /user/qr/` and `GET /user/qr/USERID/`. If no token is provided, then the request will
+    `422`. If the token expires prior to when the request is received or the token is malformed,
+    then a response with status `403` with the message `"Bad user token."`.
 
 ```json title="Example request"
 {
-	"id": "github0000001",
+	"userToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJnaXRodWIwMDAwMDAxIiwiZXhwIjoxNjc1Nzc1MjMzfQ.tREyQsEaG4TamXYZx8gNkY40-2FOdCr9n8dLrbk2UN8",
 	"hasCheckedIn": true,
 	"hasPickedUpSwag": true
 }
@@ -71,7 +84,8 @@ Updated the checkin for the user with the `id` in the request body.
 {
 	"id": "github0000001",
 	"hasCheckedIn": true,
-	"hasPickedUpSwag": true
+	"hasPickedUpSwag": true,
+    "rsvpData": { ... }
 }
 ```
 

@@ -10,7 +10,7 @@ import (
 )
 
 /*
-	Generates a signed oauth token with the user's id, email, and roles embedded in the claims
+Generates a signed oauth token with the user's id, email, and roles embedded in the claims
 */
 func MakeToken(user_info *models.UserInfo, roles []string) (string, error) {
 	return utils.GenerateSignedToken(config.TOKEN_SECRET, jwt.MapClaims{

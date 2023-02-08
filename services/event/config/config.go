@@ -17,6 +17,8 @@ var CHECKIN_SERVICE string
 
 var PROFILE_SERVICE string
 
+var RSVP_SERVICE string
+
 var EVENT_CHECKIN_TIME_RESTRICTED bool
 
 func Initialize() error {
@@ -50,6 +52,12 @@ func Initialize() error {
 	}
 
 	PROFILE_SERVICE, err = cfg_loader.Get("PROFILE_SERVICE")
+
+	if err != nil {
+		return err
+	}
+
+	RSVP_SERVICE, err = cfg_loader.Get("RSVP_SERVICE")
 
 	if err != nil {
 		return err

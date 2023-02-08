@@ -23,9 +23,17 @@ func FetchIdFromSignedUserToken(secret string, signed_token string) (string, err
 		return "", err
 	}
 
-	id := token.Claims.(jwt.MapClaims)["userId"]
+	id, ok := token.Claims.(jwt.MapClaims)["userId"]
+	if !ok {
+		return "", fmt.Errorf("userId is nonexistent")
+	}
 
-	return id.(string), nil
+	id_str, ok := id.(string)
+	if !ok {
+		return "", fmt.Errorf("Failed to cast id to string")
+	}
+
+	return id_str, nil
 }
 
 func ExtractFieldFromJWT(secret string, token_string string, field string) ([]string, error) {

@@ -131,18 +131,19 @@ func CreateCurrentUserRsvp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updated_rsvp, err := service.GetUserRsvp(id)
-
 	if err != nil {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not get user's RSVP."))
 		return
 	}
 
-	mail_template := "rsvp_confirmation"
-	err = service.SendUserMail(id, mail_template)
+	if isAttending {
+		mail_template := "rsvp_confirmation"
+		err = service.SendUserMail(id, mail_template)
 
-	if err != nil {
-		errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not send user RSVP confirmation mail."))
-		return
+		if err != nil {
+			errors.WriteError(w, r, errors.InternalError(err.Error(), "Could not send user RSVP confirmation mail."))
+			return
+		}
 	}
 
 	json.NewEncoder(w).Encode(updated_rsvp)

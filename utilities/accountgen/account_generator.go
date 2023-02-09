@@ -9,13 +9,13 @@ var auth_db database.Database
 var user_db database.Database
 
 func init() {
-	auth_db_connection, err := database.InitDatabase("localhost", "auth")
+	auth_db_connection, err := database.InitDatabase("mongodb://localhost", "auth")
 
 	if err != nil {
 		panic(err)
 	}
 
-	user_db_connection, err := database.InitDatabase("localhost", "user")
+	user_db_connection, err := database.InitDatabase("mongodb://localhost", "user")
 
 	if err != nil {
 		panic(err)

@@ -29,7 +29,7 @@ jobs:
   deploy:
     runs-on: ubuntu-20.04
     env:
-      SERVICES: '${{github.event.inputs.service-names}}'
+      SERVICES: '${{inputs.service-names}}'
 
     steps:
       - name: checkout code

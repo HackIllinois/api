@@ -2,6 +2,7 @@ package common
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -25,6 +26,7 @@ func getProjectRootPath() string {
 	out, err := cmd.Output()
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
+		os.Exit(1)
 	}
 
 	return strings.Trim(string(out), "\n")
@@ -43,7 +45,20 @@ func GetSlingClient(role string) *sling.Sling {
 		accountgen_cmd.Dir = root_path
 		_, err := accountgen_cmd.Output()
 		if err != nil {
-			fmt.Printf("ERROR: %v\n", err)
+			exit_error := &exec.ExitError{}
+			if errors.As(err, &exit_error) {
+				// Error code 2 is explicitly allowed, as we don't specify all the args,
+				// this removes random spew from the output.
+				// I am not liable for the inevitable git blame, this is a good enough hack.
+				// Blame Jareth.
+				if exit_error.ExitCode() != 2 {
+					fmt.Printf("ERROR: %v\n", exit_error)
+					os.Exit(1)
+				}
+			} else {
+				fmt.Printf("ERROR: %v\n", err)
+				os.Exit(1)
+			}
 		}
 
 		// tokengen
@@ -52,6 +67,7 @@ func GetSlingClient(role string) *sling.Sling {
 		out, err := tokengen_cmd.Output()
 		if err != nil {
 			fmt.Printf("ERROR: %v\n", err)
+			os.Exit(1)
 		}
 
 		out_lines := string(out)

@@ -4,7 +4,7 @@ replace github.com/arbor-dev/arbor => github.com/HackIllinois/arbor v0.3.1-0.202
 
 require (
 	github.com/arbor-dev/arbor v0.3.0
-	github.com/aws/aws-sdk-go v1.33.0
+	github.com/aws/aws-sdk-go v1.34.0
 	github.com/dghubble/sling v1.4.0
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/golang-jwt/jwt/v4 v4.4.3

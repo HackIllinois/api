@@ -7,8 +7,17 @@ import sys
 ADMIN_JWT_ENV_NAME = "HackIllinois_Admin_JWT"
 BASE_URL_ENV_NAME = "HackIllinois_Base_Url"
 
-RATE_LIMIT = 0.10  # Time to wait between each individual request, DO NOT SET TO 0
+HELP_MESSAGE = f"""\
+foodwave.py by Timothy Gonzalez
 
+Usage: python foodwave.py [WAVES]
+
+Environment variables:
+{ADMIN_JWT_ENV_NAME} = The admin JWT used to perform requests (REQUIRED)
+{BASE_URL_ENV_NAME} = The base API URL used to send requests (optional, defaults to https://api.hackillinois.org)\
+"""
+
+RATE_LIMIT = 0.10  # Time to wait between each individual request, DO NOT SET TO 0
 
 # Returns true if the diet passed represents dietary restrictions
 # This is a thing because "None" was an option...
@@ -158,27 +167,40 @@ class FoodWave:
 if __name__ == "__main__":
     # Input validation
     if len(sys.argv) != 2:
-        raise Exception("Proper usage: python foodwave.py [WAVE]")
+        print(HELP_MESSAGE)
+        exit(1)
+
+    if "help" in sys.argv[1] or "-h" == sys.argv[1] or "-v" == sys.argv[1]:
+        print(HELP_MESSAGE)
+        exit(0)
 
     waves = int(sys.argv[1])
-    print(f"Splitting users across {waves} waves")
 
     admin_jwt = os.environ.get(ADMIN_JWT_ENV_NAME)
 
-    if not admin_jwt:
-        raise Exception(f"Please set the `{ADMIN_JWT_ENV_NAME}` environment variable")
+    if not admin_jwt or len(admin_jwt.strip()) == 0:
+        print(
+            f"Please set the `{ADMIN_JWT_ENV_NAME}` environment variable, use --help for more info"
+        )
+        exit(1)
 
-    print(f"Loaded admin JWT from `{ADMIN_JWT_ENV_NAME}` environment variable")
+    base_url = "https://api.hackillinois.org"
 
-    base_url = os.environ.get(BASE_URL_ENV_NAME) or "https://api.hackillinois.org"
+    read_base_url = os.environ.get(BASE_URL_ENV_NAME)
+    if read_base_url and len(read_base_url.strip()) != 0:
+        base_url = read_base_url
 
     if "http://" not in base_url and "https://" not in base_url:
-        raise Exception(
-            f"The base url ({base_url}) must include a protocol (http://, https://). Set the `{BASE_URL_ENV_NAME}` to change this."
+        print(
+            f"The base url ({base_url}) must include a protocol (http://, https://).\n"
+            + f"Set the `{BASE_URL_ENV_NAME}` environment variable to change this, and use --help for more info."
         )
+        exit(1)
 
+    print(f"Splitting users across {waves} waves")
+    print(f"Loaded admin JWT from `{ADMIN_JWT_ENV_NAME}` environment variable")
     print(
-        f"Using base url `{base_url}`. You can set the `{BASE_URL_ENV_NAME}` to change this."
+        f"Using base url `{base_url}`. You can set the `{BASE_URL_ENV_NAME}` environment variable to change this."
     )
 
     # Run

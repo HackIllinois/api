@@ -99,16 +99,24 @@ class FoodWave:
 
             self.headers["HackIllinois-Impersonation"] = id
 
-            response = requests.put(
+            response = requests.get(
                 f"{base_url}/profile/",
-                json={
-                    "foodWave": wave,
-                },
                 headers=self.headers,
             )
 
             if response.status_code == 200:
-                assigned += 1
+                profile = response.json()
+
+                profile["foodWave"] = wave
+
+                response = requests.put(
+                    f"{base_url}/profile/",
+                    json=profile,
+                    headers=self.headers,
+                )
+
+                if response.status_code == 200:
+                    assigned += 1
 
             del self.headers["HackIllinois-Impersonation"]
 

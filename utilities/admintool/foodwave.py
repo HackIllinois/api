@@ -94,7 +94,8 @@ class FoodWave:
         rsvp_users_to_has_dietary = dict()
 
         for [id, user_info] in rsvp_users.items():
-            rsvp_users_to_has_dietary[id] = diet_exists(user_info["diet"])
+            diet = user_info.get("dietary") or user_info.get("diet")
+            rsvp_users_to_has_dietary[id] = diet_exists(diet)
 
         return rsvp_users_to_has_dietary
 

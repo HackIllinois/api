@@ -82,7 +82,7 @@ class FoodWave:
             # Notice output
             notice_percent = i / len(users)
 
-            if not last_notice or notice_percent >= last_notice + 0.1:
+            if not last_notice or notice_percent >= last_notice + 0.01:
                 last_notice = notice_percent
                 print(f"Fetching RSVP data, {notice_percent:.0%}")
 
@@ -165,7 +165,7 @@ class FoodWave:
 
             # Notice output
             notice_percent = i / len(rsvp_users_sorted_by_priority)
-            if not last_notice or notice_percent >= last_notice + 0.1:
+            if not last_notice or notice_percent >= last_notice + 0.01:
                 last_notice = notice_percent
                 print(f"Assigning food waves, {notice_percent:.0%}")
 

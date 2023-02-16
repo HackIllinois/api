@@ -24,11 +24,11 @@ RATE_LIMIT = 0.10  # Time to wait between each individual request, DO NOT SET TO
 def diet_exists(diet) -> bool:
     if diet:
         if type(diet) is str:
-            if diet.lower() != "none":
+            if diet.lower() != "none" and diet.strip() != "":
                 return True
         elif type(diet) is list:
             for item in diet:
-                if item.lower() != "none":
+                if item.lower() != "none" and diet.strip() != "":
                     return True
 
     return False

@@ -28,7 +28,7 @@ def diet_exists(diet) -> bool:
                 return True
         elif type(diet) is list:
             for item in diet:
-                if item.lower() != "none" and diet.strip() != "":
+                if item.lower() != "none" and item.strip() != "":
                     return True
 
     return False

@@ -14,6 +14,7 @@ import (
 	api_errors "github.com/HackIllinois/api/common/errors"
 	event_models "github.com/HackIllinois/api/services/event/models"
 	profile_models "github.com/HackIllinois/api/services/profile/models"
+	profile_service "github.com/HackIllinois/api/services/profile/service"
 	"github.com/gorilla/websocket"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -70,6 +71,56 @@ var (
 			ID:      "testuser12",
 			Points:  401,
 			Discord: "testuser#0012",
+		},
+		{
+			ID:      "testuser11",
+			Points:  400,
+			Discord: "testuser#0011",
+		},
+		{
+			ID:      "testuser9",
+			Points:  320,
+			Discord: "testuser#0009",
+		},
+		{
+			ID:      "testuser18",
+			Points:  120,
+			Discord: "testuser#0018",
+		},
+		{
+			ID:      "testuser2",
+			Points:  100,
+			Discord: "testuser#0002",
+		},
+		{
+			ID:      "testuser17",
+			Points:  99,
+			Discord: "testuser#0017",
+		},
+		{
+			ID:      "testuser14",
+			Points:  42,
+			Discord: "testuser#0014",
+		},
+		{
+			ID:      "testuser15",
+			Points:  10,
+			Discord: "testuser#0015",
+		},
+		{
+			ID:      "testuser3",
+			Points:  0,
+			Discord: "testuser#0003",
+		},
+		{
+			ID:      "testuser7",
+			Points:  0,
+			Discord: "testuser#0007",
+		},
+		{
+			ID:      "testuser16",
+			Points:  0,
+			Discord: "testuser#0016",
 		},
 	}
 )
@@ -183,6 +234,76 @@ func TestWSLeaderboardOneConnection(t *testing.T) {
 	}
 
 	expected_leaderboard := profile_models.LeaderboardEntryList{
+		LeaderboardEntries: expected_full_leaderboard[:limit],
+	}
+
+	if !reflect.DeepEqual(expected_leaderboard, leaderboard) {
+		t.Errorf("Wrong leaderboard. Expected %v, got %v", expected_leaderboard, leaderboard)
+	}
+}
+
+func TestWSLeaderboardUpdateLimitAfterConnect(t *testing.T) {
+	CreateProfiles()
+	defer ClearProfiles()
+	limit := 3
+	u := url.URL{
+		Scheme:   "ws",
+		Host:     "localhost:8000",
+		Path:     "/profile/live/leaderboard/",
+		RawQuery: fmt.Sprintf("limit=%d", limit),
+	}
+	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer c.Close()
+
+	msg_type, message, err := c.ReadMessage()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if msg_type != websocket.TextMessage {
+		t.Fatalf("Message recieved was not of type text message (got %v)", msg_type)
+	}
+
+	var leaderboard profile_models.LeaderboardEntryList
+
+	err = json.Unmarshal(message, &leaderboard)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_leaderboard := profile_models.LeaderboardEntryList{
+		LeaderboardEntries: expected_full_leaderboard[:limit],
+	}
+
+	if !reflect.DeepEqual(expected_leaderboard, leaderboard) {
+		t.Errorf("Wrong leaderboard. Expected %v, got %v", expected_leaderboard, leaderboard)
+	}
+
+	limit = 15
+	update_limit_req := profile_service.LiveLeaderboardConnection{
+		Limit: limit,
+	}
+	c.WriteJSON(update_limit_req)
+
+	msg_type, message, err = c.ReadMessage()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if msg_type != websocket.TextMessage {
+		t.Fatalf("Message recieved was not of type text message (got %v)", msg_type)
+	}
+
+	err = json.Unmarshal(message, &leaderboard)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected_leaderboard = profile_models.LeaderboardEntryList{
 		LeaderboardEntries: expected_full_leaderboard[:limit],
 	}
 

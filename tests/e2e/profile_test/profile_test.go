@@ -18,6 +18,7 @@ var (
 	admin_client           *sling.Sling
 	client                 *mongo.Client
 	profile_db_name        string
+	event_db_name          string
 	unauthenticated_client *sling.Sling
 )
 
@@ -38,6 +39,13 @@ func TestMain(m *testing.M) {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
 	}
+
+	event_db_name, err = cfg.Get("EVENT_DB_NAME")
+	if err != nil {
+		fmt.Printf("ERROR: %v\n", err)
+		os.Exit(1)
+	}
+
 	DropDatabases()
 
 	return_code := m.Run()
@@ -46,6 +54,7 @@ func TestMain(m *testing.M) {
 
 func DropDatabases() {
 	client.Database(profile_db_name).Drop(context.Background())
+	client.Database(event_db_name).Drop(context.Background())
 }
 
 func CheckDatabaseProfileNotFound(t *testing.T, filter bson.M) {

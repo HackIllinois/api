@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/HackIllinois/api/common/authtoken"
 	"github.com/HackIllinois/api/common/errors"
 	"github.com/HackIllinois/api/common/metrics"
 	"github.com/HackIllinois/api/common/utils"
@@ -105,6 +106,9 @@ func CreateProfile(w http.ResponseWriter, r *http.Request) {
 	var profile models.Profile
 	json.NewDecoder(r.Body).Decode(&profile)
 
+	profile.Points = 0
+	profile.FoodWave = 0
+
 	err = service.CreateProfile(id, profile_id, profile)
 
 	if err != nil {
@@ -147,8 +151,14 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if profile.Points != old_profile.Points {
+	is_staff := authtoken.IsRequestFromStaffOrHigher(r)
+
+	if !is_staff {
 		profile.Points = old_profile.Points
+	}
+
+	if !is_staff || profile.FoodWave == 0 {
+		profile.FoodWave = old_profile.FoodWave
 	}
 
 	err = service.UpdateProfile(profile_id, profile)

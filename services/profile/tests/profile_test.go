@@ -18,7 +18,6 @@ var db database.Database
 
 func TestMain(m *testing.M) {
 	err := config.Initialize()
-
 	if err != nil {
 		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
@@ -57,9 +56,9 @@ func SetupTestDB(t *testing.T) {
 		FirstName: "testfirstname",
 		LastName:  "testlastname",
 		Points:    0,
-		Timezone:  "America/Chicago",
 		Discord:   "testdiscordusername",
 		AvatarUrl: "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
+		FoodWave:  1,
 	}
 
 	id_map := models.IdMap{
@@ -68,7 +67,6 @@ func SetupTestDB(t *testing.T) {
 	}
 
 	err := db.Insert("profileids", &id_map, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -107,7 +105,6 @@ Drop test db
 */
 func CleanupTestDB(t *testing.T) {
 	err := db.DropDatabase(nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -124,13 +121,12 @@ func TestGetAllProfilesService(t *testing.T) {
 		FirstName: "testfirstname2",
 		LastName:  "testlastname2",
 		Points:    340,
-		Timezone:  "America/New York",
 		Discord:   "testdiscordusername2",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		FoodWave:  2,
 	}
 
 	err := db.Insert("profiles", &profile, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -138,7 +134,6 @@ func TestGetAllProfilesService(t *testing.T) {
 	parameters := map[string][]string{}
 
 	actual_profile_list, err := service.GetFilteredProfiles(parameters)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -150,18 +145,18 @@ func TestGetAllProfilesService(t *testing.T) {
 				FirstName: "testfirstname",
 				LastName:  "testlastname",
 				Points:    0,
-				Timezone:  "America/Chicago",
 				Discord:   "testdiscordusername",
 				AvatarUrl: "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
+				FoodWave:  1,
 			},
 			{
 				ID:        "testid2",
 				FirstName: "testfirstname2",
 				LastName:  "testlastname2",
 				Points:    340,
-				Timezone:  "America/New York",
 				Discord:   "testdiscordusername2",
 				AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				FoodWave:  2,
 			},
 		},
 	}
@@ -187,7 +182,6 @@ func TestGetAllProfilesService(t *testing.T) {
 	}
 
 	CleanupTestDB(t)
-
 }
 
 /*
@@ -197,7 +191,6 @@ func TestGetProfileService(t *testing.T) {
 	SetupTestDB(t)
 
 	profile, err := service.GetProfile("testid")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -207,9 +200,9 @@ func TestGetProfileService(t *testing.T) {
 		FirstName: "testfirstname",
 		LastName:  "testlastname",
 		Points:    0,
-		Timezone:  "America/Chicago",
 		Discord:   "testdiscordusername",
 		AvatarUrl: "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
+		FoodWave:  1,
 	}
 
 	if !reflect.DeepEqual(profile, &expected_profile) {
@@ -230,19 +223,17 @@ func TestCreateProfileService(t *testing.T) {
 		FirstName: "testfirstname2",
 		LastName:  "testlastname2",
 		Points:    340,
-		Timezone:  "America/New York",
 		Discord:   "testdiscordusername2",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		FoodWave:  3,
 	}
 
 	err := service.CreateProfile("testuserid2", "testid2", new_profile)
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	profile, err := service.GetProfile("testid2")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -252,9 +243,9 @@ func TestCreateProfileService(t *testing.T) {
 		FirstName: "testfirstname2",
 		LastName:  "testlastname2",
 		Points:    340,
-		Timezone:  "America/New York",
 		Discord:   "testdiscordusername2",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		FoodWave:  3,
 	}
 
 	if !reflect.DeepEqual(profile, &expected_profile) {
@@ -263,7 +254,6 @@ func TestCreateProfileService(t *testing.T) {
 
 	// Test that id mapping was inserted correctly
 	profile_id1, err := service.GetProfileIdFromUserId("testuserid2")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -286,7 +276,6 @@ func TestDeleteProfileService(t *testing.T) {
 	// Try to delete the profile
 
 	_, err := service.DeleteProfile(profile_id)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -312,19 +301,17 @@ func TestUpdateProfileService(t *testing.T) {
 		FirstName: "testfirstname2",
 		LastName:  "testlastname2",
 		Points:    340,
-		Timezone:  "America/New York",
 		Discord:   "testdiscordusername2",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		FoodWave:  2,
 	}
 
 	err := service.UpdateProfile("testid", profile)
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	updated_profile, err := service.GetProfile("testid")
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -334,9 +321,9 @@ func TestUpdateProfileService(t *testing.T) {
 		FirstName: "testfirstname2",
 		LastName:  "testlastname2",
 		Points:    340,
-		Timezone:  "America/New York",
 		Discord:   "testdiscordusername2",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		FoodWave:  2,
 	}
 
 	if !reflect.DeepEqual(updated_profile, &expected_profile) {
@@ -354,9 +341,9 @@ func TestGetFilteredProfiles(t *testing.T) {
 		FirstName: "testfirstname2",
 		LastName:  "testlastname2",
 		Points:    340,
-		Timezone:  "America/New York",
 		Discord:   "testdiscordusername2",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		FoodWave:  2,
 	}
 
 	err := db.Insert("profiles", &profile, nil)
@@ -366,19 +353,18 @@ func TestGetFilteredProfiles(t *testing.T) {
 		FirstName: "testfirstname3",
 		LastName:  "testlastname3",
 		Points:    342,
-		Timezone:  "America/New York",
 		Discord:   "testdiscordusername3",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		FoodWave:  2,
 	}
 	err = db.Insert("profiles", &profile, nil)
 
 	parameters := map[string][]string{
-		"timezone": {"America/New York"},
+		"foodwave": {"2"},
 		"limit":    {"0"},
 	}
 
 	filtered_profile_list, err := service.GetFilteredProfiles(parameters)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -390,18 +376,18 @@ func TestGetFilteredProfiles(t *testing.T) {
 				FirstName: "testfirstname2",
 				LastName:  "testlastname2",
 				Points:    340,
-				Timezone:  "America/New York",
 				Discord:   "testdiscordusername2",
 				AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				FoodWave:  2,
 			},
 			{
 				ID:        "testid3",
 				FirstName: "testfirstname3",
 				LastName:  "testlastname3",
 				Points:    342,
-				Timezone:  "America/New York",
 				Discord:   "testdiscordusername3",
 				AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				FoodWave:  2,
 			},
 		},
 	}
@@ -412,7 +398,7 @@ func TestGetFilteredProfiles(t *testing.T) {
 
 	// Add a limit and test that
 	parameters = map[string][]string{
-		"timezone": {"America/New York"},
+		"foodwave": {"2"},
 		"limit":    {"1"},
 	}
 
@@ -425,9 +411,9 @@ func TestGetFilteredProfiles(t *testing.T) {
 				FirstName: "testfirstname2",
 				LastName:  "testlastname2",
 				Points:    340,
-				Timezone:  "America/New York",
 				Discord:   "testdiscordusername2",
 				AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				FoodWave:  2,
 			},
 		},
 	}
@@ -447,13 +433,12 @@ func TestGetProfileLeaderboard(t *testing.T) {
 		FirstName: "testfirstname2",
 		LastName:  "testlastname2",
 		Points:    340,
-		Timezone:  "America/New York",
 		Discord:   "testdiscordusername2",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		FoodWave:  1,
 	}
 
 	err := db.Insert("profiles", &profile, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -461,7 +446,6 @@ func TestGetProfileLeaderboard(t *testing.T) {
 	parameters := map[string][]string{}
 
 	leaderboard, err := service.GetProfileLeaderboard(parameters)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -491,9 +475,9 @@ func TestGetProfileLeaderboard(t *testing.T) {
 		FirstName: "testfirstname3",
 		LastName:  "testlastname3",
 		Points:    999,
-		Timezone:  "America/New York",
 		Discord:   "testdiscordusername3",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		FoodWave:  2,
 	}
 
 	err = db.Insert("profiles", &profile, nil)
@@ -575,9 +559,9 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 		FirstName: "testfirstname2",
 		LastName:  "testlastname2",
 		Points:    340,
-		Timezone:  "America/New York",
 		Discord:   "testdiscordusername2",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		FoodWave:  1,
 	}
 
 	err := db.Insert("profiles", &profile, nil)
@@ -587,9 +571,9 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 		FirstName: "testfirstname3",
 		LastName:  "testlastname3",
 		Points:    342,
-		Timezone:  "America/New York",
 		Discord:   "testdiscordusername3",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		FoodWave:  2,
 	}
 	err = db.Insert("profiles", &profile, nil)
 
@@ -599,7 +583,6 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 	}
 
 	filtered_profile_list, err := service.GetValidFilteredProfiles(parameters)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -611,9 +594,9 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 				FirstName: "testfirstname3",
 				LastName:  "testlastname3",
 				Points:    342,
-				Timezone:  "America/New York",
 				Discord:   "testdiscordusername3",
 				AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				FoodWave:  2,
 			},
 		},
 	}
@@ -627,9 +610,9 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 		FirstName: "testfirstname3",
 		LastName:  "testlastname3",
 		Points:    342,
-		Timezone:  "America/New York",
 		Discord:   "testdiscordusername3",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		FoodWave:  3,
 	}
 	err = db.Insert("profiles", &profile, nil)
 
@@ -652,36 +635,36 @@ func TestGetValidFilteredProfiles(t *testing.T) {
 				FirstName: "testfirstname",
 				LastName:  "testlastname",
 				Points:    0,
-				Timezone:  "America/Chicago",
 				Discord:   "testdiscordusername",
 				AvatarUrl: "https://imgs.smoothradio.com/images/191589?crop=16_9&width=660&relax=1&signature=Rz93ikqcAz7BcX6SKiEC94zJnqo=",
+				FoodWave:  1,
 			},
 			{
 				ID:        "testid2",
 				FirstName: "testfirstname2",
 				LastName:  "testlastname2",
 				Points:    340,
-				Timezone:  "America/New York",
 				Discord:   "testdiscordusername2",
 				AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				FoodWave:  1,
 			},
 			{
 				ID:        "testid3",
 				FirstName: "testfirstname3",
 				LastName:  "testlastname3",
 				Points:    342,
-				Timezone:  "America/New York",
 				Discord:   "testdiscordusername3",
 				AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				FoodWave:  2,
 			},
 			{
 				ID:        "testid4",
 				FirstName: "testfirstname3",
 				LastName:  "testlastname3",
 				Points:    342,
-				Timezone:  "America/New York",
 				Discord:   "testdiscordusername3",
 				AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+				FoodWave:  3,
 			},
 		},
 	}
@@ -700,13 +683,12 @@ func TestProfileFavorites(t *testing.T) {
 		FirstName: "testfirstname2",
 		LastName:  "testlastname2",
 		Points:    340,
-		Timezone:  "America/New York",
 		Discord:   "testdiscordusername2",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		FoodWave:  2,
 	}
 
 	err := db.Insert("profiles", &profile, nil)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -769,9 +751,9 @@ func TestProfileFavorites(t *testing.T) {
 		FirstName: "testfirstname3",
 		LastName:  "testlastname3",
 		Points:    342,
-		Timezone:  "America/New York",
 		Discord:   "testdiscordusername3",
 		AvatarUrl: "https://yt3.ggpht.com/ytc/AAUvwniHNhQyp4hWj3nrADnils-6N3jNREP8rWKGDTp0Lg=s900-c-k-c0x00ffffff-no-rj",
+		FoodWave:  1,
 	}
 	err = db.Insert("profiles", &profile, nil)
 	if err != nil {

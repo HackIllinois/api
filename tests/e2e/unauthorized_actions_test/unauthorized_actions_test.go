@@ -86,7 +86,7 @@ func TestUnauthenticatedCalls(t *testing.T) {
 	}
 
 	// 3. Public endpoint
-	received_events_list := event_models.EventList{}
+	received_events_list := event_models.EventList[event_models.EventPublic]{}
 	response, _ = unauthenticated_client.New().Get("/event/filter/").Receive(&received_events_list, &received_events_list)
 
 	if response.StatusCode != 200 {

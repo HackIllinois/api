@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"reflect"
 	"time"
 
 	common_config "github.com/HackIllinois/api/common/config"
@@ -38,14 +39,18 @@ func Initialize() error {
 /*
 	Returns the event with the given id
 */
-func GetEvent(id string) (*models.Event, error) {
+func GetEvent[T models.Event](id string) (*T, error) {
 	query := database.QuerySelector{
 		"id": id,
 	}
 
-	var event models.Event
-	err := db.FindOne("events", query, &event, nil)
+	switch reflect.TypeOf(*new(T)).Name() {
+	case reflect.TypeOf(*new(models.EventPublic)).Name():
+		query["isprivate"] = false
+	}
 
+	var event T
+	err := db.FindOne("events", query, &event, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -58,12 +63,10 @@ func GetEvent(id string) (*models.Event, error) {
 	Removes the event from event trackers and every user's tracker.
 	Returns the event that was deleted.
 */
-func DeleteEvent(id string) (*models.Event, error) {
-
+func DeleteEvent(id string) (*models.EventDB, error) {
 	// Gets event to be able to return it later
 
-	event, err := GetEvent(id)
-
+	event, err := GetEvent[models.EventDB](id)
 	if err != nil {
 		return nil, err
 	}
@@ -109,16 +112,24 @@ func DeleteEvent(id string) (*models.Event, error) {
 /*
 	Returns all the events
 */
-func GetAllEvents() (*models.EventList, error) {
-	events := []models.Event{}
-	// nil implies there are no filters on the query, therefore everything in the "events" collection is returned.
-	err := db.FindAll("events", nil, &events, nil)
+func GetAllEvents[T models.Event]() (*models.EventList[T], error) {
+	var query database.QuerySelector = nil
 
+	switch reflect.TypeOf(*new(T)).Name() {
+	case reflect.TypeOf(*new(models.EventPublic)).Name():
+		query = database.QuerySelector{
+			"isprivate": false,
+		}
+	}
+
+	events := []T{}
+	// nil implies there are no filters on the query, therefore everything in the "events" collection is returned.
+	err := db.FindAll("events", query, &events, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	event_list := models.EventList{
+	event_list := models.EventList[T]{
 		Events: events,
 	}
 
@@ -128,15 +139,19 @@ func GetAllEvents() (*models.EventList, error) {
 /*
 	Returns all the events
 */
-func GetFilteredEvents(parameters map[string][]string) (*models.EventList, error) {
-	query, err := database.CreateFilterQuery(parameters, models.Event{})
-
+func GetFilteredEvents[T models.Event](parameters map[string][]string) (*models.EventList[T], error) {
+	query, err := database.CreateFilterQuery(parameters, *new(T))
 	if err != nil {
 		return nil, err
 	}
 
-	events := []models.Event{}
-	filtered_events := models.EventList{Events: events}
+	switch reflect.TypeOf(*new(T)).Name() {
+	case reflect.TypeOf(*new(models.EventPublic)).Name():
+		query["isprivate"] = false
+	}
+
+	events := []T{}
+	filtered_events := models.EventList[T]{Events: events}
 	err = db.FindAll("events", query, &filtered_events.Events, nil)
 
 	if err != nil {
@@ -149,14 +164,13 @@ func GetFilteredEvents(parameters map[string][]string) (*models.EventList, error
 /*
 	Creates an event with the given id
 */
-func CreateEvent(id string, code string, event models.Event) error {
+func CreateEvent(id string, code string, event models.EventDB) error {
 	err := validate.Struct(event)
-
 	if err != nil {
 		return err
 	}
 
-	_, err = GetEvent(id)
+	_, err = GetEvent[models.EventDB](id)
 
 	if err != database.ErrNotFound {
 		if err != nil {
@@ -196,9 +210,8 @@ func CreateEvent(id string, code string, event models.Event) error {
 /*
 	Updates the event with the given id
 */
-func UpdateEvent(id string, event models.Event) error {
+func UpdateEvent(id string, event models.EventDB) error {
 	err := validate.Struct(event)
-
 	if err != nil {
 		return err
 	}
@@ -222,7 +235,6 @@ func GetEventTracker(event_id string) (*models.EventTracker, error) {
 
 	var tracker models.EventTracker
 	err := db.FindOne("eventtrackers", query, &tracker, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -240,7 +252,6 @@ func GetUserTracker(user_id string) (*models.UserTracker, error) {
 
 	var tracker models.UserTracker
 	err := db.FindOne("usertrackers", query, &tracker, nil)
-
 	if err != nil {
 		if err == database.ErrNotFound {
 			return &models.UserTracker{
@@ -260,7 +271,6 @@ func GetUserTracker(user_id string) (*models.UserTracker, error) {
 */
 func IsUserAttendingEvent(event_id string, user_id string) (bool, error) {
 	tracker, err := GetEventTracker(event_id)
-
 	if err != nil {
 		return false, err
 	}
@@ -280,7 +290,6 @@ func IsUserAttendingEvent(event_id string, user_id string) (bool, error) {
 */
 func MarkUserAsAttendingEvent(event_id string, user_id string) error {
 	is_attending, err := IsUserAttendingEvent(event_id, user_id)
-
 	if err != nil {
 		return err
 	}
@@ -291,7 +300,6 @@ func MarkUserAsAttendingEvent(event_id string, user_id string) error {
 
 	if config.EVENT_CHECKIN_TIME_RESTRICTED {
 		is_event_active, err := IsEventActive(event_id)
-
 		if err != nil {
 			return err
 		}
@@ -340,16 +348,17 @@ func MarkUserAsAttendingEvent(event_id string, user_id string) error {
 	return err
 }
 
-const PreEventCheckinIntervalInMinutes = 15
-const PreEventCheckinIntervalInSeconds = PreEventCheckinIntervalInMinutes * 60
+const (
+	PreEventCheckinIntervalInMinutes = 15
+	PreEventCheckinIntervalInSeconds = PreEventCheckinIntervalInMinutes * 60
+)
 
 /*
 	Check if an event is active, i.e., that check-ins are allowed for the event at the current time.
 	Returns true if the current time is between `PreEventCheckinIntervalInMinutes` number of minutes before the event, and the end of event.
 */
 func IsEventActive(event_id string) (bool, error) {
-	event, err := GetEvent(event_id)
-
+	event, err := GetEvent[models.EventDB](event_id)
 	if err != nil {
 		return false, err
 	}
@@ -375,7 +384,6 @@ func GetEventFavorites(id string) (*models.EventFavorites, error) {
 
 	var event_favorites models.EventFavorites
 	err := db.FindOne("favorites", query, &event_favorites, nil)
-
 	if err != nil {
 		if err == database.ErrNotFound {
 			err = db.Insert("favorites", &models.EventFavorites{
@@ -408,14 +416,12 @@ func AddEventFavorite(id string, event string) error {
 		"id": id,
 	}
 
-	_, err := GetEvent(event)
-
+	_, err := GetEvent[models.EventPublic](event)
 	if err != nil {
 		return errors.New("Could not find event with the given id.")
 	}
 
 	event_favorites, err := GetEventFavorites(id)
-
 	if err != nil {
 		return err
 	}
@@ -438,7 +444,6 @@ func RemoveEventFavorite(id string, event string) error {
 	}
 
 	event_favorites, err := GetEventFavorites(id)
-
 	if err != nil {
 		return err
 	}
@@ -462,7 +467,6 @@ func GetStats() (map[string]interface{}, error) {
 
 	var trackers []models.EventTracker
 	err := db.FindAll("eventtrackers", query, &trackers, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -487,7 +491,6 @@ func CanRedeemPoints(event_code string) (bool, string, error) {
 
 	var eventCode models.EventCode
 	err := db.FindOne("eventcodes", query, &eventCode, nil)
-
 	if err != nil {
 		return false, "invalid", err
 	}
@@ -508,7 +511,6 @@ func GetEventCode(id string) (*models.EventCode, error) {
 
 	var eventCode models.EventCode
 	err := db.FindOne("eventcodes", query, &eventCode, nil)
-
 	if err != nil {
 		return nil, err
 	}
@@ -556,15 +558,13 @@ func PerformCheckin(user_id string, event_id string) (*models.CheckinResponse, e
 	}
 
 	// Determine the current event and its point value
-	event, err := GetEvent(event_id)
-
+	event, err := GetEvent[models.EventDB](event_id)
 	if err != nil {
 		return nil, errors.New("Could not fetch the event specified")
 	}
 
 	// Add this point value to given profile
 	profile, err := AwardPoints(user_id, event.Points)
-
 	if err != nil {
 		return nil, errors.New("Failed to award user with points")
 	}
@@ -612,11 +612,23 @@ func CheckinUserTokenToEvent(user_token string, event_id string) (*models.Checki
 	user_id := value_arr[0]
 
 	// Validate event exists
-	_, err = GetEvent(event_id)
+	_, err = GetEvent[models.EventDB](event_id)
 
 	if err != nil {
 		return NewCheckinResponseFailed("InvalidEventId"), nil
 	}
 
-	return PerformCheckin(user_id, event_id)
+	rsvp_data, err := GetRsvpData(user_id)
+	if err != nil {
+		return nil, errors.New("Failed to fetch RSVP data")
+	}
+
+	status, err := PerformCheckin(user_id, event_id)
+	if err != nil {
+		return nil, err
+	}
+
+	status.RsvpData = rsvp_data
+
+	return status, nil
 }

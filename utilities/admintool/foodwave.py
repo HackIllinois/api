@@ -19,6 +19,11 @@ Environment variables:
 
 RATE_LIMIT = 0.10  # Time to wait between each individual request, DO NOT SET TO 0
 
+# Converts a wave to notification topic
+def food_wave_to_notification_topic(wave: int) -> str:
+    return f"FoodWave{wave}"
+
+
 # Returns true if the diet passed represents dietary restrictions
 # This is a thing because "None" was an option...
 def diet_exists(diet) -> bool:
@@ -43,6 +48,32 @@ class FoodWave:
 
         self.base_url = base_url
         self.waves = waves
+
+    # Gets notifications topics
+    def __get_notification_topics(self):
+        response = requests.get(
+            f"{base_url}/notifications/topic/", headers=self.headers
+        )
+
+        if response.status_code != 200:
+            print("Cannot get notification topics!")
+            print(response.status_code, response.text)
+            exit(1)
+        else:
+            return response.json().get("topics")
+
+    # Check notification topics exist
+    def __check_notification_topics_exist(self):
+        topics = self.__get_notification_topics()
+
+        for i in range(1, self.waves + 1):
+            wave_name = food_wave_to_notification_topic(i)
+
+            if not wave_name in topics:
+                print(
+                    f"`{wave_name}` not present in notification topics, please add it"
+                )
+                exit(1)
 
     # Gets all the users, returned as a set of ids
     def __get_all_users(self) -> "set[str]":
@@ -122,6 +153,8 @@ class FoodWave:
     # Gets all the users that are RSVP'd sorted by priority, and assigns food waves accordingly.
     # Highest priority gets first wave, lowest priority gets last wave
     def assign_food_waves(self):
+        self.__check_notification_topics_exist()
+
         rsvp_users_sorted_by_priority = self.__get_rsvp_users_sorted_by_priority()
 
         last_notice = None
@@ -156,7 +189,14 @@ class FoodWave:
 
                 # If that all works, we can increment our success counter
                 if response.status_code == 200:
-                    assigned += 1
+                    topic = food_wave_to_notification_topic(wave)
+                    response = requests.post(
+                        f"{base_url}/notifications/topic/{topic}/subscribe/",
+                        headers=self.headers,
+                    )
+
+                    if response.status_code == 200:
+                        assigned += 1
 
             del self.headers["HackIllinois-Impersonation"]
 

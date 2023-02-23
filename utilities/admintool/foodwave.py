@@ -189,13 +189,24 @@ class FoodWave:
 
                 # If that all works, we can increment our success counter
                 if response.status_code == 200:
-                    topic = food_wave_to_notification_topic(wave)
-                    response = requests.post(
-                        f"{base_url}/notifications/topic/{topic}/subscribe/",
-                        headers=self.headers,
-                    )
 
-                    if response.status_code == 200:
+                    worked = True
+
+                    for this_wave in range(1, waves + 1):
+                        topic = food_wave_to_notification_topic(this_wave)
+                        action = "subscribe" if wave == this_wave else "unsubscribe"
+                        url = f"{base_url}/notifications/topic/{topic}/{action}/"
+                        response = requests.post(
+                            url,
+                            headers=self.headers,
+                        )
+
+                        print(url)
+
+                        if response.status_code != 200:
+                            worked = False
+
+                    if worked:
                         assigned += 1
 
             del self.headers["HackIllinois-Impersonation"]

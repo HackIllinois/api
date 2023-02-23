@@ -201,8 +201,6 @@ class FoodWave:
                             headers=self.headers,
                         )
 
-                        print(url)
-
                         if response.status_code != 200:
                             worked = False
 

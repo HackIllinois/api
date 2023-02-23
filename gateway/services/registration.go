@@ -25,17 +25,17 @@ var RegistrationRoutes = arbor.RouteCollection{
 		"/registration/attendee/",
 		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole}), middleware.IdentificationMiddleware).ThenFunc(GetRegistration).ServeHTTP,
 	},
-	arbor.Route{
+	arbor.Route{ // Change back to authtoken.UserRole
 		"CreateCurrentUserRegistration",
 		"POST",
 		"/registration/attendee/",
-		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.UserRole}), middleware.IdentificationMiddleware).ThenFunc(CreateRegistration).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(CreateRegistration).ServeHTTP,
 	},
-	arbor.Route{
+	arbor.Route{ // Change back to authtoken.UserRole
 		"UpdateCurrentUserRegistration",
 		"PUT",
 		"/registration/attendee/",
-		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.ApplicantRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateRegistration).ServeHTTP,
+		alice.New(middleware.AuthMiddleware([]authtoken.Role{authtoken.StaffRole}), middleware.IdentificationMiddleware).ThenFunc(UpdateRegistration).ServeHTTP,
 	},
 	arbor.Route{
 		"GetFilteredUserRegistrations",

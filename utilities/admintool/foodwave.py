@@ -17,6 +17,12 @@ Environment variables:
 {BASE_URL_ENV_NAME} = The base API URL used to send requests (optional, defaults to https://api.hackillinois.org)\
 """
 
+WARNING_MESSAGE = f"""\
+Please note: this takes about 15 minutes per 750 users, please do not exit midway.
+Also: if you decrease the number of foodwaves after assigning a higher amount, you
+need to manually remove people from the old notification (or just delete the topic).\
+"""
+
 RATE_LIMIT = 0.10  # Time to wait between each individual request, DO NOT SET TO 0
 
 # Converts a wave to notification topic
@@ -262,6 +268,7 @@ if __name__ == "__main__":
     print(
         f"Using base url `{base_url}`. You can set the `{BASE_URL_ENV_NAME}` environment variable to change this."
     )
+    print(WARNING_MESSAGE)
 
     # Run
     client = FoodWave(waves, admin_jwt, base_url)

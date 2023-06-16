@@ -3,7 +3,8 @@ This script collects all registrants and exports their associated resume file. A
 collected into a directory as noted by variable `DIR` and registrant data is exported to a csv under
 the name contained within `OUT_FILE`.
 
-It is reccommended to run this in a virtual env as this does require some dependencies.
+This script is meant to be run external to the API network. It is also reccommended to run this in
+a virtual env as this does require some dependencies.
 
 First time setup:
 

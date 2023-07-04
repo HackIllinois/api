@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/HackIllinois/api/common/authtoken"
 	"github.com/HackIllinois/api/common/errors"
@@ -12,10 +13,14 @@ import (
 	"github.com/HackIllinois/api/services/profile/models"
 	"github.com/HackIllinois/api/services/profile/service"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+var wsUpgrader = websocket.Upgrader{}
+
 func SetupController(route *mux.Route) {
+	go service.LiveLeaderboardManager()
 	router := route.Subrouter()
 
 	router.Handle("/internal/metrics/", promhttp.Handler()).Methods("GET")
@@ -27,6 +32,7 @@ func SetupController(route *mux.Route) {
 
 	metrics.RegisterHandler("/list/", GetFilteredProfiles, "GET", router)
 	metrics.RegisterHandler("/leaderboard/", GetProfileLeaderboard, "GET", router)
+	metrics.RegisterHandler("/live/leaderboard/", GetLiveProfileLeaderboard, "GET", router)
 	metrics.RegisterHandler("/search/", GetValidFilteredProfiles, "GET", router)
 
 	metrics.RegisterHandler("/event/checkin/", RedeemEvent, "POST", router)
@@ -215,6 +221,28 @@ func GetProfileLeaderboard(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user_profile_list)
 }
 
+func GetLiveProfileLeaderboard(w http.ResponseWriter, r *http.Request) {
+	parameters := r.URL.Query()
+
+	limit_param, ok := parameters["limit"]
+
+	if !ok {
+		limit_param = []string{"0"}
+	}
+
+	limit, err := strconv.Atoi(limit_param[0])
+	if err != nil {
+		errors.WriteError(w, r, errors.MalformedRequestError(err.Error(), "Limit was not correctly set"))
+	}
+
+	conn, err := wsUpgrader.Upgrade(w, r, nil)
+	if err != nil {
+		errors.WriteError(w, r, errors.InternalError(err.Error(), "Failed to upgrade to websocket connection"))
+	}
+
+	service.HandleIncomingLeaderboardWS(conn, limit)
+}
+
 /*
 	Filters the profiles by TeamStatus and Interests
 */
@@ -310,6 +338,8 @@ func AwardPoints(w http.ResponseWriter, r *http.Request) {
 		errors.WriteError(w, r, errors.DatabaseError(err.Error(), "Could not update the profile when trying to award points."))
 		return
 	}
+
+	service.ChanUpdateLiveLeaderboard <- struct{}{}
 
 	updated_profile, err := service.GetProfile(profile_id)
 	if err != nil {

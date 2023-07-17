@@ -110,12 +110,17 @@
 
 	"REGISTRATION_STAT_FIELDS": [
 		"major",
+		"school",
+		"shirtSize",
+		"diet",
+		"age",
 		"graduationYear",
+		"transportation",
 		"gender",
-		"race",
-		"programmingYears"
+		"interests",
+		"isBeginner",
+		"priorAttendance"
 	],
-
 	"REGISTRATION_DEFINITION": {
 		"name": "user_registration",
 		"type": "object",
@@ -139,8 +144,6 @@
 				"validations": "required",
 				"fields": []
 			},
-
-
 			{
 				"name": "firstName",
 				"type": "string",
@@ -154,33 +157,15 @@
 				"fields": []
 			},
 			{
-				"name": "email",
-				"type": "string",
-				"validations": "required,email",
-				"fields": []
-			},
-			{
-				"name": "github",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "location",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
-				"name": "timezone",
-				"type": "string",
-				"validations": "required",
-				"fields": []
-			},
-			{
 				"name": "gender",
 				"type": "string",
 				"validations": "",
+				"fields": []
+			},
+			{
+				"name": "email",
+				"type": "string",
+				"validations": "required,email",
 				"fields": []
 			},
 			{
@@ -189,8 +174,24 @@
 				"validations": "",
 				"fields": []
 			},
-
-
+			{
+				"name": "selfTransport",
+				"type": "string",
+				"validations": "required,oneof=YES NO",
+				"fields": []
+			},
+			{
+				"name": "chicagoPurdueTransport",
+				"type": "string",
+				"validations": "required,oneof=CHICAGO PURDUE N/A",
+				"fields": []
+			},
+			{
+				"name": "location",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
 			{
 				"name": "school",
 				"type": "string",
@@ -206,7 +207,7 @@
 			{
 				"name": "degreePursued",
 				"type": "string",
-				"validations": "omitempty,oneof=HIGHSCHOOL ASSOCIATES BACHELORS MASTERS PHD",
+				"validations": "omitempty,oneof=ASSOCIATES BACHELORS MASTERS PHD GRADUATED OTHER",
 				"fields": []
 			},
 			{
@@ -215,8 +216,18 @@
 				"validations": "omitempty,min=1900,max=2030",
 				"fields": []
 			},
-
-
+			{
+				"name": "resumeFilename",
+				"type": "string",
+				"validations": "",
+				"fields": []
+			},
+			{
+				"name": "whyHack",
+				"type": "string",
+				"validations": "required",
+				"fields": []
+			},
 			{
 				"name": "programmingYears",
 				"type": "int",
@@ -226,24 +237,29 @@
 			{
 				"name": "programmingAbility",
 				"type": "int",
-				"validations": "required,min=1,max=5",
+				"validations": "required,min=1,max=10",
 				"fields": []
 			},
 			{
-				"name": "hasInternship",
-				"type": "boolean",
-				"validations": "required|isdefault",
+				"name": "interests",
+				"type": "[]string",
+				"validations": "",
 				"fields": []
 			},
 			{
-				"name": "resumeFilename",
-				"type": "string",
+				"name": "outreachSurvey",
+				"type": "[]string",
+				"validations": "",
+				"fields": []
+			},
+			{
+				"name": "dietary",
+				"type": "[]string",
 				"validations": "",
 				"fields": []
 			}
 		]
 	},
-	
 	"MENTOR_REGISTRATION_DEFINITION": {
 		"name": "mentor_registration",
 		"type": "object",
@@ -305,14 +321,12 @@
 			}
 		]
 	},
-
 	"RSVP_STAT_FIELDS": [
 		"isAttending",
 		"diet",
 		"transportation",
 		"registrationData.attendee.school"
 	],
-
 	"RSVP_DEFINITION": {
 		"name": "user_rsvp",
 		"type": "object",

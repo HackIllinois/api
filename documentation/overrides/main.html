@@ -1,0 +1,17 @@
+{% extends "base.html" %} {% block announce %}
+<p id="announcement_warning">
+  Warning: For the latest documentation, see
+  <a href="https://hackillinois.github.io/adonix-api-docs/">the current docs</a
+  >. This is the documentation for the 2022 API docs, for reference only.
+</p>
+<style>
+  div[data-md-component="announce"] .md-banner {
+    border-color: rgb(255, 255, 43);
+    border-width: 5px;
+    border-style: solid;
+    margin: 10px;
+
+    font-weight: bold;
+  }
+</style>
+{% endblock %}
